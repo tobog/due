@@ -1,0 +1,62 @@
+$prefix-cls:#{$prefix}-option;
+
+.#{$prefix-cls} {
+    margin: 0;
+    padding: 6px 16px;
+    // font-size: $subFont;
+    line-height: 1.5;
+    color: $content;
+    // white-space: nowrap;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+
+    &:hover {
+        background-color: $back;
+    }
+
+    &#{&}-hover {
+        background-color: $light-primary;
+        color: #fff;
+    }
+
+    &#{&}-selected {
+        color: #fff;
+        background-color: $primary;
+    }
+
+    &#{&}-multiple-selected {
+        color: $primary;
+        background: none;
+    }
+
+    &-disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: $disabled;
+    }
+
+    &-icon-selected {
+        font-size: 22px;
+        float: right;
+    }
+}
+
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        &.#{$prefix-cls}-selected {
+            background-color: $value;
+            color: #fff;
+        }
+
+        &.#{$prefix-cls}-multiple-selected {
+            color: $value;
+            background: none;
+        }
+
+        &.#{$prefix-cls}-hover {
+            background-color: rgba($value, 0.6);
+            color: #fff;
+        }
+    }
+}

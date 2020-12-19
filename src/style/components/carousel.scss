@@ -1,0 +1,252 @@
+$prefix-cls: #{$prefix}-carousel;
+
+.#{$prefix-cls} {
+
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    user-select: none;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+
+    &-outer {
+        display: block;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    // scroll
+    &-scroll {
+        position: relative;
+
+        &bar {
+            position: absolute;
+            bottom: 0;
+            height: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background-color: #fff;
+        }
+
+        .#{$prefix-cls}-list {
+            white-space: nowrap;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            height: calc(100% + 20px);
+        }
+
+        .#{$prefix-cls}-item {
+            display: inline-flex;
+            position: relative !important;
+            transition: none;
+        }
+
+        .#{$prefix-cls}-dots {
+            bottom: 18px !important;
+        }
+
+        // .#{$prefix-cls}-active {
+        //     transition: none;
+        // }
+
+        .#{$prefix-cls}-next,
+        .#{$prefix-cls}-pre {
+            transition: transform 1s ease;
+
+            &.#{$prefix-cls}-left {
+                transform: translate3d(-100%, 0, 0);
+            }
+
+            &.#{$prefix-cls}-right {
+                transform: translate3d(100%, 0, 0);
+            }
+        }
+    }
+
+    // scroll
+
+    &-list {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        flex-wrap: nowrap;
+    }
+
+    &-item {
+        display: none;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+
+    &-active,
+    &-next,
+    &-pre {
+        display: flex;
+        transition: transform 0.6s ease;
+    }
+
+    &-next,
+    &-pre {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    &-active {
+        &.#{$prefix-cls}-left {
+            transform: translate3d(-100%, 0, 0);
+        }
+
+        &.#{$prefix-cls}-right {
+            transform: translate3d(100%, 0, 0);
+        }
+    }
+
+    &-next {
+        transform: translateX(100%);
+    }
+
+    &-pre {
+        transform: translateX(-100%);
+    }
+
+    &-next#{&}-left,
+    &-pre#{&}-right {
+        transform: translate3d(0, 0, 0);
+    }
+
+    &-fade {
+        .#{$prefix-cls}-active {
+            transform: translate3d(0, 0, 0);
+        }
+
+        .#{$prefix-cls}-next,
+        .#{$prefix-cls}-pre,
+        .#{$prefix-cls}-active.#{$prefix-cls}-left,
+        .#{$prefix-cls}-active.#{$prefix-cls}-right {
+            transition: opacity 0.6s cubic-bezier(0.93, 0.25, 0.68, 0.49);
+            opacity: 0.1;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .#{$prefix-cls}-next.#{$prefix-cls}-left,
+        .#{$prefix-cls}-pre.#{$prefix-cls}-right {
+            opacity: 1;
+        }
+    }
+
+    &-arrow {
+        padding: 0;
+        margin: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        position: absolute;
+        top: 50%;
+        z-index: 10;
+        transform: translateY(-50%);
+        transition: background-color 0.3s ease;
+        background-color: rgba(31, 45, 61, .11);
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.6em;
+
+        &:hover {
+            background-color: rgba(31, 45, 61, 0.5);
+        }
+
+        &[data-left] {
+            left: 16px;
+        }
+
+        &[data-right] {
+            right: 16px;
+        }
+
+        &-always {
+            display: inline-flex;
+        }
+
+        &-hover {
+            display: inline-flex;
+            opacity: 0;
+        }
+    }
+
+    &:hover &-arrow-hover {
+        opacity: 1;
+    }
+
+    &-dots {
+        $padding: 6px;
+        display: none;
+        position: relative;
+        z-index: 10;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+
+        &-inside {
+            display: flex;
+            position: absolute;
+            bottom: 18px - $padding;
+        }
+
+        &-outside {
+            display: flex;
+            margin-top: 10px - $padding;
+        }
+
+        .#{$prefix-cls}-dot {
+            display: inline-block;
+            font-size: 0;
+            margin: 0 $padding;
+            cursor: pointer;
+            padding: 6px 0;
+
+            &::before {
+                content: "";
+                opacity: 0.3;
+                transition: all 0.4s ease;
+                display: block;
+                width: 16px;
+                height: 3px;
+                background: red;
+                border-radius: 1px;
+            }
+
+            &[data-radius]::before {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+            }
+
+            &-active::before {
+                opacity: 1;
+                width: 24px;
+            }
+
+            &-active[data-radius]::before {
+                opacity: 1;
+                width: 8px;
+                height: 8px;
+            }
+
+            &:hover::before {
+                opacity: 0.7;
+            }
+        }
+    }
+}

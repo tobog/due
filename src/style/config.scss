@@ -1,0 +1,58 @@
+// 前缀配置
+$prefix:'ui' !default !global;
+// 颜色配置
+$primary:#2d8cf0 !default !global;
+$confirm:#2d8cf0 !default !global;
+$light-primary:#5cadff !default !global;
+$dark-primary:#2b85e4 !default !global;
+$primary-shadow:rgba(45, 140, 240, .2) !default !global;
+$info:#2db7f5 !default !global;
+$success:#19be6b !default !global;
+$warning:#ff9900 !default !global;
+$error:#ed3f14 !default !global;
+$danger:#ed3f14 !default !global;
+$error-shadow:rgba(237, 63, 20, 0.2) !default !global;
+// 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
+$title:#17233d !default !global;
+$content:#515a6e !default !global;
+$sub-content:#808695 !default !global;
+$disabled:#e9eaec !default !global;
+$disable:#afafb0 !default !global;
+// $disabled:#f8f8f9 !default !global;
+$border:#dcdee2 !default !global;
+$divider:#e8eaec !default !global;
+$back:#f8f8f9 !default !global;
+$darkback:rgba(41, 42, 48, 0.9) !default !global;
+$mask:rgba(55, 55, 55, 0.6) !default !global;
+$hover:#ebf7ff !default !global;
+$transparent:transparent !default !global;
+$white:#fff !default !global;
+// 字体颜色
+$font-999:#999;
+$font-000:#000;
+$font-label:#495060;
+// 颜色配置
+$colors-map:(confirm:$primary, success:$success, primary:$primary, warning:$warning, error:$error, info:$info, danger:$danger);
+// 字体
+$fontBase:12px;
+$subFont:12px;
+// media
+$media-map:(xs:(max-width:768px), sm:(min-width:768px), md:(min-width:992px), lg:(min-width:1200px));
+
+.#{$prefix}-clearfix {
+
+    &::before,
+    &::after {
+        content: "";
+        display: block;
+        clear: both;
+        visibility: hidden;
+        line-height: 0;
+        font-size: 0;
+        height: 0;
+        width: 0;
+        padding: 0;
+        margin: 0;
+        zoom: 0;
+    }
+}

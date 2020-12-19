@@ -1,0 +1,76 @@
+{
+  "name": "youe",
+  "version": "3.0.0",
+  "description": "A UI framework with Vue",
+  "author": "tobog",
+  "license": "MIT",
+  "keywords": [
+    "youe",
+    "youe-ui",
+    "youe-design",
+    "vview",
+    "vview-ui",
+    "vview-design",
+    "ui",
+    "tobog",
+    "vue",
+    "framework"
+  ],
+  "scripts": {
+    "start": "npm run serve",
+    "serve": "vue-cli-service serve --mode development",
+    "build": "vue-cli-service build --target lib --name youe ./src/api.js",
+    "build:demo": "vue-cli-service build --mode demo",
+    "pub": "git pull && npm run build && node rm.js && git add . && git commit -am 'publish@youe' && git push && git checkout pub && npm run merge"
+  },
+  "main": "api/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheOrientBoyOfGod/youe.git"
+  },
+  "dependencies": {
+    "async-validator": "^1.8.2"
+  },
+  "devDependencies": {
+    "core-js": "^3.3.2",
+    "vue": "^2.6.10",
+    "@vue/cli-plugin-babel": "^4.0.0",
+    "@vue/cli-plugin-eslint": "^4.0.0",
+    "@vue/cli-service": "^4.0.0",
+    "babel-eslint": "^10.0.3",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "highlight.js": "^9.16.2",
+    "node-sass": "^4.13.0",
+    "postcss-import": "^12.0.1",
+    "postcss-url": "^8.0.0",
+    "sass-loader": "^8.0.0",
+    "vue-highlightjs": "^1.3.3",
+    "vue-router": "^3.1.3",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}

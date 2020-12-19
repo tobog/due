@@ -1,0 +1,34 @@
+
+
+.DS_Store
+node/
+node_modules/
+dist/
+.history/
+#public/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage/
+test/e2e/reports/
+selenium-debug.log
+
+# Editor directories and files
+.idea
+.vscode
+.vs
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.iml
+*.js.map
+demo.local/*
+
+
+# local env files
+.env.local
+.env.*.local
+
+
+

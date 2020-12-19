@@ -1,0 +1,70 @@
+$prefix-cls: #{$prefix}-split;
+
+.#{$prefix-cls} {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+
+    &-first,
+    &-split {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: auto;
+    }
+
+    &>.#{$prefix-cls}-trigger {
+        position: absolute;
+        width: 6px;
+        height: 100%;
+        background: $back;
+        border: 1px solid $border;
+        border-top: none;
+        border-bottom: none;
+        cursor: col-resize !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    &-moving {
+        cursor: col-resize !important;
+    }
+
+    &-trigger-bar {
+        width: 100%;
+        height: 1px;
+        background: darken($border, 40);
+        margin: 2px 0;
+        font-style: normal;
+        line-height: 0;
+        cursor: inherit !important;
+    }
+
+    &-vertical {
+        &>.#{$prefix-cls}-moving {
+            cursor: row-resize !important;
+        }
+
+        &>.#{$prefix-cls}-trigger {
+            height: 6px;
+            width: 100%;
+            border: 1px solid $border;
+            border-left: none;
+            border-right: none;
+            cursor: row-resize !important;
+            flex-direction: row;
+        }
+
+        &>.#{$prefix-cls}-trigger>.#{$prefix-cls}-trigger-bar {
+            height: 100%;
+            width: 1px;
+            margin: 0 2px;
+        }
+    }
+}

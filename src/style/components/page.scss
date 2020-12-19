@@ -1,0 +1,90 @@
+$prefix-cls: #{$prefix}-page;
+
+.#{$prefix-cls} {
+    display: inline-flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    list-style: none;
+
+    &>li {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        min-height: 32px;
+        margin: 0 2px;
+        cursor: pointer;
+        color: $content;
+        border: 1px solid $border;
+        border-radius: 3px;
+        transition: all 0.2s ease-in-out;
+        background-color: #fff;
+
+        .#{$prefix-cls}-more:last-child {
+            display: none;
+        }
+
+        &[title] {
+            padding: 0 2px;
+        }
+
+        &:hover {
+            color: $primary;
+            border-color: $primary;
+
+            .#{$prefix-cls}-more {
+                display: none;
+
+                &:last-child {
+                    display: inline-block;
+                }
+            }
+        }
+
+        &.#{$prefix-cls}-active {
+            color: #fff;
+            border-color: $primary;
+            background-color: $primary;
+        }
+
+        &.#{$prefix-cls}-select,
+        &.#{$prefix-cls}-input,
+        &.#{$prefix-cls}-total {
+            border: none;
+            margin-right: 3px;
+            background-color: none;
+            background-color: initial;
+        }
+    }
+
+    &-select {
+        width: 106px;
+        white-space: nowrap;
+    }
+
+    &-input {
+        white-space: nowrap;
+        margin-right: 0;
+    }
+
+    &-input>span {
+        padding: 0 3px;
+    }
+
+    &-small,
+    &-simple {
+        &>li {
+            border: none;
+        }
+    }
+
+    .#{$prefix-cls}-input-cell {
+        width: 80px;
+        margin-right: 3px;
+
+        input {
+            text-align: center;
+        }
+    }
+
+}

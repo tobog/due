@@ -1,0 +1,69 @@
+$prefix-cls:#{$prefix}-rate;
+
+.#{$prefix-cls} {
+    display: inline-block;
+    font-size: $fontBase * 1.6;
+    cursor: pointer;
+
+    &-disabled,
+    &-readonly {
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.9;
+    }
+
+    &-star {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        padding: 0;
+        margin: 0 8px 0 0;
+        position: relative;
+        z-index: 0;
+        transition: all 0.3s ease;
+        color: darken($back, 20);
+    }
+
+    &-full {
+        float: left;
+    }
+
+    &-half {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        opacity: 0;
+    }
+
+    &-active,
+    &-half-active &-half {
+        color: $warning;
+        opacity: 1;
+    }
+
+    &-hover {
+        transform: scale(1.1);
+    }
+
+    &-label {
+        font-size: $subFont;
+        color: $content;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+
+        .#{$prefix-cls}-active,
+        .#{$prefix-cls}-half-active .#{$prefix-cls}-half {
+            color: $value;
+        }
+    }
+}

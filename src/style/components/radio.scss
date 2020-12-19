@@ -1,0 +1,97 @@
+$prefix-cls: #{$prefix}-radio;
+
+.#{$prefix-cls} {
+    user-select: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    border: none !important;
+    outline: none !important;
+
+    &:hover>&-inner {
+        box-shadow: 0 0 2px rgba($primary, 0.8);
+    }
+
+    &-label {
+        margin: 0;
+    }
+
+    &-disabled,
+    &-readonly {
+        cursor: not-allowed !important;
+        opacity: 0.9;
+        pointer-events: none !important;
+    }
+
+
+
+    &-input {
+        display: none !important;
+    }
+
+
+    &-inner {
+        border: 1px solid $border;
+        border-radius: 9999px;
+        transition: all 0.3s ease-in-out;
+        overflow: hidden;
+        // min-width: 14px;
+        // min-height: 14px;
+        margin: 2px 6px 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+
+        &::after {
+            display: block;
+            transition: all 0.3s ease-in-out;
+            content: "";
+            line-height: 0;
+            border-radius: 9999px;
+            width: 76%;
+            height: 76%;
+        }
+
+    }
+
+    &-checked &-inner {
+        border-color: $primary;
+
+        &::after {
+            background-color: $primary;
+        }
+    }
+
+    &-disabled &-inner {
+        background-color: $disabled;
+        border-color: $disabled;
+    }
+
+    &-disabled#{&}-checked &-inner {
+        background-color: #fff;
+
+        &::after {
+            background-color: $disabled;
+        }
+    }
+
+}
+
+
+
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) .#{$prefix-cls}-inner {
+            border-color: $value;
+
+            &::after {
+                background-color: $value;
+            }
+        }
+    }
+}

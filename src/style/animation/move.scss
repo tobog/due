@@ -1,0 +1,169 @@
+@mixin move-motion($className, $keyframeName) {
+    @include make-motion($className, $keyframeName);
+
+    .#{$className}-enter-active,
+    .#{$className}-appear {
+        opacity: 0;
+        animation-timing-function: ease-in-out;
+    }
+
+    .#{$className}-leave-active {
+        animation-timing-function: ease-in-out;
+    }
+}
+
+@include move-motion(move-up, uiMoveUp);
+@include move-motion(move-down, uiMoveDown);
+@include move-motion(move-left, uiMoveLeft);
+@include move-motion(move-right, uiMoveRight);
+
+@keyframes uiMoveDownIn {
+    0% {
+        transform-origin: 0 0;
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes uiMoveDownOut {
+    0% {
+        transform-origin: 0 0;
+        transform: translateY(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes uiMoveLeftIn {
+    0% {
+        transform-origin: 0 0;
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes uiMoveLeftOut {
+    0% {
+        transform-origin: 0 0;
+        transform: translateX(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes uiMoveRightIn {
+    0% {
+        opacity: 0;
+        transform-origin: 0 0;
+        transform: translateX(100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 0 0;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes uiMoveRightOut {
+    0% {
+        transform-origin: 0 0;
+        transform: translateX(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes uiMoveUpIn {
+    0% {
+        transform-origin: center 0;
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform-origin: center 0;
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes uiMoveUpOut {
+    0% {
+        transform-origin: center 0;
+        transform: translateY(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+
+@include move-motion(move-notice, uiMoveNotice);
+
+@keyframes uiMoveNoticeIn {
+    0% {
+        opacity: 0;
+        transform-origin: 0 0;
+        transform: translate(100%, 50%) scaleY(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 0 0;
+        transform: translate(0, 0) scaleY(1);
+    }
+}
+
+@keyframes uiMoveNoticeOut {
+    0% {
+        transform-origin: 0 0;
+        transform: translate(0, 0) scaleY(1);
+        opacity: 1;
+    }
+
+    70% {
+        transform-origin: 0 0;
+        transform: translate(100%, -20%) scaleY(1);
+        height: auto;
+        opacity: 0;
+    }
+
+    100% {
+        transform-origin: 0 0;
+        transform: translate(100%, -50%) scaleY(0.5);
+        height: 0;
+        margin-bottom: 0;
+        opacity: 0;
+    }
+}

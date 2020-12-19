@@ -1,0 +1,234 @@
+$prefix-cls: #{$prefix}-button;
+$prefix-cls-group: #{$prefix}-buttongroup;
+
+@mixin btn-base($color, $bgc, $border) {
+    color: $color;
+    background-color: $bgc;
+    border-color: $border;
+}
+
+@mixin btn-active($color, $bgc, $border) {
+    &:focus {
+        color: $color;
+        background-color: rgba($bgc, 0.8);
+        border-color: rgba($border, 0.8);
+        box-shadow: 0 0 0 2px rgba($border, 0.3);
+    }
+
+    &:hover {
+        color: $color;
+        background-color: rgba($bgc, 0.8);
+        border-color: rgba($border, 0.8);
+    }
+}
+
+button.#{$prefix-cls} {
+    -webkit-appearance: button;
+}
+
+.#{$prefix-cls} {
+    -webkit-appearance: initial;
+    -webkit-appearance: unset;
+    margin: 0;
+    padding: 5px 15px 6px;
+    font-size: $fontBase;
+    line-height: normal;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    background-image: none;
+    outline: none;
+    cursor: pointer; // touch-action: manipulation;
+    white-space: nowrap;
+    transition: all 0.2s linear;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+    &-long {
+        width: 100%;
+    }
+
+    &,
+    &-text,
+    &-dashed {
+        @include btn-base($content, #fff, $border);
+        @include btn-active($primary, #fff, $primary);
+    }
+
+    &-dashed {
+        border-style: dashed;
+    }
+
+    &-text {
+        border-color: transparent !important;
+        background-color: transparent !important;
+    }
+
+    @each $key,
+    $value in $colors-map {
+        &-#{$key} {
+            @include btn-base(#fff, $value, $value);
+            @include btn-active(#fff, $value, $value);
+
+            &.#{$prefix-cls}-ghost {
+                color: $value;
+            }
+        }
+    }
+
+    &-ghost {
+        background-color: transparent;
+
+        &:hover,
+        &:focus {
+            background-color: $back;
+        }
+    }
+
+    &-size {
+        &-small {
+            padding: 5px 10px 6px;
+            font-size: $subFont;
+        }
+
+        &-large {
+            padding: 10px 21px 11px;
+        }
+    }
+
+    &-circle {
+        border-radius: 9999px;
+    }
+
+    &-loading {
+        cursor: not-allowed !important;
+        opacity: 0.8;
+    }
+
+    &-disabled {
+        opacity: 0.8;
+        cursor: not-allowed !important;
+        background-color: $disabled !important;
+        border-color: $disabled !important;
+        color: $sub-content !important;
+    }
+
+}
+
+
+
+.#{$prefix-cls-group} {
+    -webkit-appearance: none !important;
+
+    &#{&}-compact {
+        padding-left: 2px;
+
+        .#{$prefix-cls} {
+            position: relative;
+            z-index: 0;
+            border-radius: 0;
+            margin-left: -1px;
+
+            &:first-child:not(:last-child) {
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+
+            }
+
+
+            &:last-child:not(:first-child) {
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+
+            &:first-child {
+
+                &.#{$prefix-cls}-circle {
+                    border-top-left-radius: 9999px;
+                    border-bottom-left-radius: 9999px;
+                }
+            }
+
+            &:last-child {
+                &.#{$prefix-cls}-circle {
+                    border-top-right-radius: 9999px;
+                    border-bottom-right-radius: 9999px;
+
+                }
+            }
+
+            &:hover,
+            &:focus {
+                z-index: 2;
+            }
+        }
+    }
+
+    &:not(.#{$prefix-cls-group}-compact) {
+        .#{$prefix-cls} {
+            margin-right: 8px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-group}-vertical {
+    &.#{$prefix-cls-group}-compact {
+        padding-left: 0;
+        padding-top: 1px;
+
+        .#{$prefix-cls} {
+            display: flex;
+            border-radius: 0;
+            position: relative;
+            z-index: 0;
+            margin-top: -1px;
+
+            &:first-child:not(:last-child) {
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+            }
+
+            &:last-child:not(:first-child) {
+                border-bottom-left-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+
+            &:first-child {
+
+                &.#{$prefix-cls}-circle {
+                    border-top-left-radius: 9999px;
+                    border-top-right-radius: 9999px;
+                }
+            }
+
+            &:last-child {
+                &.#{$prefix-cls}-circle {
+                    border-bottom-left-radius: 9999px;
+                    border-bottom-right-radius: 9999px;
+
+                }
+            }
+
+            &:hover,
+            &:focus {
+                z-index: 2;
+            }
+        }
+    }
+
+    &:not(.#{$prefix-cls-group}-compact) {
+        .#{$prefix-cls} {
+            display: flex;
+            margin-bottom: 8px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

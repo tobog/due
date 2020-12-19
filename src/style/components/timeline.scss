@@ -1,0 +1,115 @@
+$prefix-cls: #{$prefix}-timeline;
+$prefix-cls-item: #{$prefix}-timelineitem;
+
+.#{$prefix-cls} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &item {
+        margin: 0 !important;
+        padding: 0 0 12px 0;
+        list-style: none;
+        position: relative;
+        min-height: 66px;
+
+        &-tail {
+            border: 0;
+            border-left: 1px solid $border;
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+        }
+
+
+        &-head {
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            position: absolute;
+            border-color: $primary;
+            color: $primary;
+
+            @each $key,
+            $value in $colors-map {
+                &-#{$key} {
+                    border-color: $value;
+                    color: $value;
+                }
+            }
+        }
+
+        &-head-custom {
+            width: 40px;
+            height: auto;
+            margin-top: 6px;
+            padding: 3px 0;
+            text-align: center;
+            line-height: 1;
+            border: 0;
+            border-radius: 0;
+            font-size: $fontBase;
+            position: absolute;
+            left: -13px;
+            transform: translateY(-50%);
+        }
+
+        &-content {
+            padding: 1px 1px 10px 24px;
+            position: relative;
+            top: -3px;
+        }
+
+        &:last-child &-tail {
+            display: none;
+        }
+    }
+
+    &-pending &item:nth-last-of-type(2) {
+        .#{$prefix-cls}item-tail {
+            border-style: dotted;
+        }
+
+        .#{$prefix-cls}item-content {
+            min-height: 48px;
+        }
+    }
+}
+
+.#{$prefix-cls}-horizontal {
+
+    .#{$prefix-cls}item {
+        display: inline-block;
+
+        &-content {
+            padding-top: 18px;
+            min-width: 60px;
+        }
+
+        &-head {
+            margin: 0;
+            transform: none;
+            top: 0;
+            padding: 0;
+            left: 0;
+        }
+
+        &-head-custom {
+            width: auto;
+            min-width: 30px;
+            left: -8px;
+        }
+
+        &-tail {
+            border-top: 1px solid $border;
+            top: 7px;
+            left: 0;
+            bottom: initial;
+            bottom: unset;
+            right: 0;
+        }
+    }
+}

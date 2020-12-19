@@ -1,0 +1,345 @@
+$prefix-cls: #{$prefix}-input;
+$prefix-cls-inputnumber: #{$prefix}-inputnumber;
+$prefix-cls-textarea: #{$prefix}-textarea;
+
+%y-input {
+    margin: 0;
+    padding: 0 6px;
+    color: $content;
+    height: inherit;
+    width: 100%;
+    vertical-align: middle;
+    border-radius: 4px;
+    border: 1px solid $border;
+    box-sizing: border-box;
+    outline: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.#{$prefix-cls}-wrapper,
+.#{$prefix-cls-textarea}-wrapper,
+.#{$prefix-cls-inputnumber}-wrapper {
+    font-size: 12px;
+    height: 32px;
+    line-height: normal;
+    border: none;
+    border-collapse: separate;
+    box-sizing: border-box;
+}
+
+.#{$prefix-cls-textarea}-wrapper {
+    height: initial;
+    height: auto;
+}
+
+.#{$prefix-cls}-multiple {
+    height: auto;
+    height: initial;
+    min-height: 32px;
+    cursor: text;
+
+    .#{$prefix-cls} {
+        height: 100%;
+    }
+}
+
+.#{$prefix-cls}-taginput {
+    margin: 0;
+    padding: 2px 6px;
+    color: $content;
+    height: inherit;
+    width: 62px;
+    min-width: 62px;
+    vertical-align: middle;
+    border: none;
+    box-sizing: border-box;
+    outline: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.#{$prefix-cls}-tag {
+    vertical-align: middle;
+    display: inline-block;
+    margin: 2px 3px;
+    padding: 3px 6px;
+    border: 1px solid $border;
+    border-radius: 3px;
+    background-color: $back;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        border: 1px solid $primary;
+        color: $primary;
+    }
+
+    .#{$prefix-cls}-empty {
+        margin-left: 8px;
+    }
+}
+
+.#{$prefix-cls}-file {
+    cursor: pointer;
+}
+
+.#{$prefix-cls-inputnumber}::-webkit-inner-spin-button {
+    display: none;
+}
+
+@each $key in $prefix-cls, $prefix-cls-textarea, $prefix-cls-inputnumber {
+    .#{$key}-disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: $disabled;
+    }
+
+    .#{$key}-readonly {
+        cursor: not-allowed;
+        pointer-events: none;
+
+        .#{$key}-tag,
+        [data-type-icon] {
+            cursor: pointer;
+            pointer-events: initial;
+        }
+    }
+    .#{$key}-inner {
+        vertical-align: middle;
+        position: relative;
+        z-index: 0;
+        display: table;
+        width: 100%;
+        height: inherit;
+        min-height: inherit;
+    }
+
+    .#{$key}-append {
+        @extend %y-input;
+        text-align: center;
+        background-color: $back;
+        padding: 0;
+        display: table-cell;
+        width: auto;
+        width: initial;
+        border-right-width: 1px;
+        border-left: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .#{$key}-prepend {
+        @extend %y-input;
+        text-align: center;
+        background-color: $back;
+        padding: 0;
+        border-right-width: 0;
+        display: table-cell;
+        width: auto;
+        width: initial;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .#{$key} {
+        @extend %y-input;
+        width: inherit;
+        display: table-cell;
+        background-image: none;
+        min-height: 28px;
+
+        &:focus {
+            box-shadow: 0 0 6px -1px $primary;
+            border-color: $primary;
+        }
+
+        &:hover {
+            border-color: $primary;
+        }
+
+        .#{$key}-active {
+            box-shadow: 0 0 6px -1px $primary;
+            border-color: $primary;
+        }
+    }
+
+    .#{$key}-with-prepend {
+        .#{$key} {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    .#{$key}-with-append {
+        .#{$key} {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    .#{$key}-with-prepend,
+    .#{$key}-with-append {
+        width: 100%;
+        display: table !important;
+
+        .#{$key}-prepend,
+        .#{$key}-append {
+            section[class*="-wrapper"] {
+                height: 100%;
+
+                aside[class$="-prepend"],
+                aside[class$="-append"] {
+                    border: none !important;
+                }
+
+                input[data-form="input"],
+                div[data-form="input"] {
+                    border-top: none !important;
+                    border-bottom: none !important;
+                }
+            }
+        }
+    }
+}
+
+.#{$prefix-cls}-iconwraper,
+.#{$prefix-cls-textarea}-iconwraper {
+    position: absolute;
+    z-index: 10;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%); // background-color: $white;
+    box-sizing: border-box;
+    height: auto;
+    height: initial;
+
+    &[data-type-icon="prefix"] {
+        right: unset;
+        right: initial;
+        left: 1px;
+    }
+}
+
+// .#{$prefix-cls}-disabled {
+//     cursor: not-allowed;
+//     pointer-events: none;
+//     background-color: $disabled;
+// }
+// .#{$prefix-cls}-readonly {
+//     cursor: not-allowed;
+//     pointer-events: none;
+//     .#{$prefix-cls}-tag {
+//         cursor: pointer;
+//         pointer-events: initial;
+//     }
+// }
+
+.#{$prefix-cls}-icon,
+.#{$prefix-cls-textarea}-icon {
+    padding: 0 8px;
+}
+
+.#{$prefix-cls}-drop {
+    width: 100%;
+    min-height: 41px;
+}
+
+.#{$prefix-cls-inputnumber}-icon {
+    position: absolute;
+    z-index: 10;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%); // background-color: $white;
+    box-sizing: border-box;
+    height: auto;
+    height: initial;
+    margin: 1px 0;
+    border-top: 0;
+    border-bottom: 0;
+    padding: 0 5px;
+    width: 22px;
+    overflow: hidden;
+    cursor: pointer;
+
+    & > * {
+        display: block;
+        height: 13px;
+    }
+
+    &[data-type-icon="suffix"] {
+        border-left: 1px solid $border;
+    }
+
+    &[data-type-icon="prefix"] {
+        border-right: 1px solid $border;
+        right: unset;
+        right: initial;
+        left: 1px;
+    }
+}
+
+.#{$prefix-cls}-opttip {
+    padding: 6px 16px;
+}
+
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        .#{$prefix-cls}-tag {
+            &:hover {
+                border: 1px solid $value;
+                color: $value;
+            }
+        }
+
+        .#{$prefix-cls} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+
+            &:hover {
+                border-color: $value;
+            }
+        }
+
+        .#{$prefix-cls}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
+        }
+    }
+
+    .#{$prefix-cls-inputnumber}-#{$key} {
+        .#{$prefix-cls-inputnumber} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+
+            &:hover {
+                border-color: $value;
+            }
+        }
+
+        .#{$prefix-cls-inputnumber}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
+        }
+    }
+
+    .#{$prefix-cls-textarea}-#{$key} {
+        .#{$prefix-cls-textarea} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+
+            &:hover {
+                border-color: $value;
+            }
+        }
+
+        .#{$prefix-cls-textarea}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
+        }
+    }
+}

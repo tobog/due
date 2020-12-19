@@ -1,0 +1,82 @@
+$prefix-cls: #{$prefix}-upload;
+$prefix-cls-list: #{$prefix}-uploadlist;
+
+.#{$prefix-cls} {
+    &-wrapper {
+        display: inline-block;
+        color: $content;
+    }
+
+    & {
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border-radius: 3px;
+        cursor: pointer;
+        outline: none;
+    }
+
+    &-input {
+        display: none !important;
+    }
+
+    &-drag {
+        border: 1px dashed $border;
+
+        &:hover {
+            border-color: $primary;
+        }
+    }
+
+    &list {
+        padding-top: 10px;
+
+        &-file {
+            padding: 6px 8px 7px;
+            border-top: 1px dashed $border;
+            overflow: hidden;
+
+            // &:first-child {
+            //     border-top: 1px dashed $border;
+            // }
+        }
+
+        &-content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            white-space: nowrap;
+
+            &>.#{$prefix}-icons {
+                margin: 0 3px;
+            }
+        }
+
+        &-status {
+            justify-content: space-between;
+        }
+
+        &-bar {
+            width: 100%;
+            flex-grow: 2;
+            flex-shrink: 2;
+        }
+
+        &-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: auto;
+            padding-right: 8px;
+        }
+
+        &-data {
+            flex: none;
+            padding-right: 3px;
+        }
+    }
+
+    &-file-error &-title {
+        color: $error;
+    }
+
+}

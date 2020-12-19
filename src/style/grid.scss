@@ -1,0 +1,128 @@
+$prefix-cls-row:#{$prefix}-row;
+$prefix-cls-col:#{$prefix}-col;
+
+.#{$prefix-cls-row} {
+    margin: 0;
+    zoom: 1;
+    display: block;
+
+    &::after,
+    &::before {
+        content: "";
+        clear: both;
+        visibility: hidden;
+        font-size: 0;
+        height: 0;
+        width: 0;
+        zoom: 0;
+        display: table;
+    }
+
+    &-flex {
+        display: flex !important;
+        justify-content: flex-start;
+        // align-items: flex-start;
+        align-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    &-top {
+        align-items: flex-start;
+    }
+
+    &-middle {
+        align-items: center;
+    }
+
+    &-bottom {
+        align-items: flex-end;
+    }
+
+    &-stretch {
+        align-items: stretch;
+    }
+
+    &-start {
+        justify-content: flex-start;
+    }
+
+    &-center {
+        justify-content: center;
+    }
+
+    &-end {
+        justify-content: flex-end;
+    }
+
+    &-space-around {
+        justify-content: space-around;
+    }
+
+    &-space-between {
+        justify-content: space-between;
+    }
+}
+
+
+.#{$prefix-cls-col} {
+    float: left;
+    position: relative;
+    box-sizing: border-box;
+    flex: none;
+
+    &-0 {
+        width: 0;
+        display: none !important;
+    }
+}
+
+@mixin display($type:'') {
+    @each $display in none inline inline-block block flex inline-flex {
+        .#{$prefix}-d#{$type}-#{$display} {
+            display: #{$display} !important;
+        }
+    }
+}
+
+@mixin bootstrap($type:'') {
+    @for $i from 0 through 24 {
+        $per: $i/24*100%;
+
+        .#{$prefix}-col#{$type}-order-#{$i} {
+            order: $i
+        }
+
+        .#{$prefix}-col#{$type}-#{$i} {
+            width: $per;
+            // flex: 0 0 $per;
+        }
+
+        .#{$prefix}-col#{$type}-offset-#{$i} {
+            margin-left: $per;
+        }
+
+        .#{$prefix}-col#{$type}-pull-#{$i} {
+            right: $per;
+        }
+
+        .#{$prefix}-col#{$type}-push-#{$i} {
+            left: $per;
+        }
+    }
+
+    .#{$prefix}-col#{$type}-0 {
+        width: 0;
+        display: none !important;
+    }
+}
+
+@include display();
+@include bootstrap();
+
+@each $type,
+$media in $media-map {
+    @media #{$media} {
+        @include display(-#{$type});
+        @include bootstrap(-#{$type});
+    }
+}

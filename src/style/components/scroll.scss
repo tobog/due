@@ -1,0 +1,24 @@
+$prefix-cls: #{$prefix}-scroll;
+
+.#{$prefix-cls} {
+    overflow: auto;
+    height: 300px;
+
+    &-loading {
+        display: flex;
+        justify-content: center;
+        height: 0;
+        align-items: center;
+        position: relative;
+        transform: scale(0);
+        transition: opacity .3s, transform .5s, height .5s;
+        overflow: hidden;
+        max-width: 100%;
+
+        &-active {
+            height: 60px;
+            transform: scale(1);
+        }
+    }
+
+}

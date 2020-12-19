@@ -1,0 +1,181 @@
+@mixin slide-motion($className, $keyframeName) {
+    @include make-motion($className, $keyframeName);
+
+    .#{$className}-enter-active,
+    .#{$className}-appear {
+        opacity: 0;
+        animation-timing-function: linear;
+    }
+
+    .#{$className}-leave-active {
+        animation-timing-function: linear;
+    }
+}
+
+@include slide-motion(slide-both, uiSlideBoth);
+@include slide-motion(transition-drop, uiTransitionDrop);
+@include slide-motion(slide-up, uiSlideUp);
+@include slide-motion(slide-down, uiSlideDown);
+@include slide-motion(slide-left, uiSlideLeft);
+@include slide-motion(slide-right, uiSlideRight);
+
+@keyframes uiSlideBothIn {
+    0% {
+        opacity: 0;
+        height: 0;
+    }
+
+    100% {
+        opacity: 1;
+        height: 80px;
+    }
+}
+
+@keyframes uiSlideBothOut {
+    0% {
+        opacity: 1;
+        height: 80px;
+    }
+
+    100% {
+        opacity: 0;
+        height: 0;
+    }
+}
+
+
+@keyframes uiTransitionDropIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes uiTransitionDropOut {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+}
+
+@keyframes uiSlideUpIn {
+    0% {
+        opacity: 0;
+        transform-origin: 0% 0%;
+        transform: scaleY(.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 0% 0%;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes uiSlideUpOut {
+    0% {
+        opacity: 1;
+        transform-origin: 0% 0%;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform-origin: 0% 0%;
+        transform: scaleY(.8);
+    }
+}
+
+@keyframes uiSlideDownIn {
+    0% {
+        opacity: 0;
+        transform-origin: 100% 100%;
+        transform: scaleY(.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 100% 100%;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes uiSlideDownOut {
+    0% {
+        opacity: 1;
+        transform-origin: 100% 100%;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform-origin: 100% 100%;
+        transform: scaleY(.8);
+    }
+}
+
+@keyframes uiSlideLeftIn {
+    0% {
+        opacity: 0;
+        transform-origin: 0% 0%;
+        transform: scaleX(.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 0% 0%;
+        transform: scaleX(1);
+    }
+}
+
+@keyframes uiSlideLeftOut {
+    0% {
+        opacity: 1;
+        transform-origin: 0% 0%;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform-origin: 0% 0%;
+        transform: scaleX(.8);
+    }
+}
+
+@keyframes uiSlideRightIn {
+    0% {
+        opacity: 0;
+        transform-origin: 100% 0%;
+        transform: scaleX(.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 100% 0%;
+        transform: scaleX(1);
+    }
+}
+
+@keyframes uiSlideRightOut {
+    0% {
+        opacity: 1;
+        transform-origin: 100% 0%;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform-origin: 100% 0%;
+        transform: scaleX(.8);
+    }
+}

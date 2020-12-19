@@ -1,0 +1,269 @@
+$prefix-cls: #{$prefix}-date;
+$prefix-cls-picter: #{$prefix}-datepicter;
+$prefix-cls-day: #{$prefix}-dateday;
+$prefix-cls-time: #{$prefix}-datetimes;
+
+.#{$prefix-cls} {
+    max-width: 250px;
+    min-width: 240px;
+    white-space: normal;
+    border: 1px solid $border;
+    min-height: 270px;
+    display: inline-flex;
+    flex-direction: column;
+    user-select: none;
+
+    &-content {
+        margin: 0 10px;
+        flex: auto;
+    }
+
+    &header {
+        flex: none;
+        width: 100%;
+        padding: 0 6px;
+        min-height: 36px;
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid $divider;
+
+        span {
+            cursor: pointer;
+        }
+
+        &-title:hover {
+            color: $primary;
+        }
+
+        &-base {
+            color: $sub-content;
+
+            &>span {
+                padding: 0 3px;
+
+                &:hover {
+                    color: $primary;
+                }
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-picter} {
+    &-drop-wrapper {
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-start;
+        .#{$prefix-cls-picter}-date:nth-of-type(2){
+            border-left: 0;;
+        }
+    }
+
+    &-aside {
+        background-color: $back;
+        min-width: 90px;
+        flex: none;
+        border: 1px solid $border;
+        border-right: 0;
+    }
+
+    &-shortcut {
+        padding: 9px 16px;
+        cursor: pointer;
+        // overflow: hidden;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
+
+        &:hover {
+            color: #fff;
+            background-color: $primary;
+        }
+    }
+
+    &-footer {
+        padding: 6px 8px;
+        overflow: hidden;
+        border: 1px solid $border;
+        border-top: 0;
+    }
+}
+
+// cell
+.#{$prefix-cls} {
+    &-cell {
+        width: 33.33%;
+        box-sizing: border-box;
+        line-height: 28px;
+        padding: 8px 12px;
+        display: inline-block;
+        text-align: center;
+        margin-bottom: 2px;
+        cursor: pointer;
+
+        &>em {
+            display: block;
+            border-radius: 3px;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-weight: normal;
+            border: 1px solid transparent;
+
+            &:hover {
+                background-color: $hover;
+            }
+        }
+
+        &-range {
+
+            &,
+            em {
+                background-color: $hover;
+            }
+        }
+
+        &#{&}-selected {
+            &>em {
+                background-color: $primary;
+                color: #fff;
+            }
+        }
+
+        &#{&}-focus>em {
+            border: 1px solid $primary; // box-shadow: 0 0 1px $primary;
+            animation: #{$prefix-cls}-cell 1.2s infinite ease-in-out;
+        }
+
+        &#{&}-disabled {
+            cursor: not-allowed;
+            color: #fff;
+
+            &>em {
+                background-color: $disabled;
+            }
+        }
+
+        &-now>em {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                border: 3px solid $primary;
+                border-radius: 100%;
+                right: 1px;
+                top: 1px;
+            }
+
+        }
+
+        &-now#{&}-selected>em::before {
+            border-color: #fff;
+        }
+
+    }
+
+}
+
+
+@keyframes #{$prefix-cls}-cell {
+    from {
+        box-shadow: 0 0 3px $primary;
+    }
+
+    50% {
+        box-shadow: 0 0 12px $dark-primary;
+    }
+
+    to {
+        box-shadow: 0 0 3px $primary;
+    }
+}
+
+
+
+
+// .#{$prefix-cls}-footer {
+//     border-top: 1px solid $divider;
+//     padding: 8px;
+//     overflow: hidden;
+//     position: absolute;
+//     bottom: 0;
+//     width: 100%;
+// }
+
+.#{$prefix-cls-day} {
+    &[data-week='true'] {
+        .#{$prefix-cls-day}-cell {
+            width: 12.5%;
+        }
+    }
+
+    &-cell {
+        line-height: 24px;
+        width: 14.27%;
+        padding: 2px;
+
+        &-pre,
+        &-next {
+            color: $disabled;
+
+            &>em:hover {
+                background-color: transparent;
+            }
+        }
+
+        &-range {
+            background-color: $light-primary //#e1f0fe;
+        }
+    }
+}
+
+
+
+.#{$prefix-cls-time} {
+    line-height: 2;
+    overflow: hidden;
+    height: 100%;
+    text-align: center;
+    margin: 0;
+    padding-top: 0;
+    cursor: pointer;
+
+    &>header {
+        line-height: 35px;
+        border-bottom: 1px solid $divider;
+    }
+
+    &-list {
+        float: left;
+        width: 33.33%;
+        height: 100%;
+        max-height: 216px;
+        overflow: hidden;
+    }
+
+    &-cell {
+        border-radius: 3px;
+
+        &:hover {
+            background-color: $back;
+        }
+
+        &-focus {
+            border: 1px solid $light-primary;
+        }
+
+        &-selected {
+            color: $primary;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        &-disabled {
+            background-color: $disabled;
+            cursor: not-allowed;
+        }
+    }
+}

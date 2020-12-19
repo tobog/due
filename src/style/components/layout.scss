@@ -1,0 +1,45 @@
+$prefix-cls: #{$prefix}-layout;
+// $prefix-cls-header: #{$prefix}-layout-header;
+
+.#{$prefix-cls} {
+    display: flex;
+    flex-direction: column !important;
+    width: 100%;
+
+    &-header {
+        width: 100%;
+        flex: none;
+        height: 64px;
+
+        &-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1223;
+        }
+    }
+
+    &-main {
+        width: 100%;
+        flex: 1 0 auto;
+        display: flex;
+    }
+
+    &-content {
+        flex: 1 0 auto;
+    }
+
+    &-slider {
+        flex: none;
+        width: 200px;
+        &-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 116;
+            overflow: auto;
+        }
+    }
+}

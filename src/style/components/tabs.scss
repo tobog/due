@@ -1,0 +1,231 @@
+$prefix-cls: #{$prefix}-tabs;
+$prefix-cls-pane: #{$prefix}-tabpane;
+
+
+.#{$prefix-cls} {
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+
+    &-bar {
+        border-bottom: 1px solid $border;
+        margin-bottom: 12px;
+    }
+
+    &-nav-extra {
+        padding-left: 5px;
+        float: right;
+    }
+
+    &-nav-wrapper {
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: -2px;
+
+        &:focus {
+            outline: none;
+
+            .#{$prefix-cls}-tab-focused {
+                border-color: $primary;
+            }
+        }
+    }
+
+
+
+    &-nav-more {
+        flex: none;
+        width: 32px;
+        text-align: center;
+        // position: absolute;
+        line-height: 32px;
+        cursor: pointer;
+        font-size: 16px;
+        // &[data-type=pre] {
+        //     left: 0;
+        // }
+
+        &[data-type=next] {
+            order: 100;
+        }
+    }
+
+    &-nav-scroll {
+        overflow: hidden;
+        white-space: nowrap;
+        flex: auto;
+        max-width: 100%;
+        margin-bottom: -2px;
+    }
+
+    &-ink-bar {
+        height: 2px;
+        box-sizing: border-box;
+        background-color: $primary;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+        transition: transform .3s ease-in-out;
+        transform-origin: 0 0;
+    }
+
+    &-nav {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        position: relative;
+        align-items: center;
+        margin-bottom: 2px;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    &-tab {
+        flex: none;
+        display: flex;
+        min-width: 30px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+        transition: color .3s ease-in-out;
+
+        &:hover,
+        &:active,
+        &-active {
+            color: $primary;
+
+            .#{$prefix-cls}-close {
+                width: 18px;
+                margin-right: -6px;
+                // width: initial;
+            }
+        }
+
+        &-disabled {
+            pointer-events: none;
+            cursor: default;
+            color: $disabled;
+        }
+
+        &>.#{$prefix-cls}-icon {
+            flex: none;
+            font-size: 1.4em;
+            margin-right: 2px;
+        }
+
+    }
+
+    &-close {
+        flex: none;
+        font-size: 1.4em;
+        margin-left: 2px;
+        transition: all 0.3s ease-in-out;
+        width: 0;
+        overflow: hidden;
+
+        &:hover {
+            font-weight: bold;
+        }
+    }
+
+    &-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        width: 100%;
+
+        &-adaptive .#{$prefix-cls-pane}:not(.#{$prefix-cls-pane}-active) {
+            height: 1px !important;
+            overflow: hidden;
+        }
+
+        &-animated {
+            will-change: transform;
+            transition: transform .3s ease-in-out;
+        }
+
+    }
+
+    // card style
+
+    &-card>&-bar &-ink-bar {
+        display: none !important;
+    }
+
+    &-card>&-bar &-tab {
+        margin: 0 4px 0 0;
+        line-height: 32px;
+        padding: 0 12px;
+        border: 1px solid $border;
+        border-radius: 3px 3px 0 0;
+        transition: all 0.3s ease-in-out;
+        background: $back;
+    }
+
+    &-card>&-bar &-tab-active {
+        background: #fff;
+        transform: translateZ(0);
+        border-bottom-color: transparent !important;
+    }
+
+    &-card>&-bar &-nav-wrapper {
+        margin-bottom: -1px;
+    }
+
+}
+
+.#{$prefix-cls}-content {
+    .#{$prefix-cls-pane} {
+        flex: none;
+        width: 100%;
+        transition: opacity .3s;
+        opacity: 1;
+        outline: none;
+        visibility: hidden;
+
+        &-active {
+            height: initial;
+            height: auto;
+            visibility: visible;
+        }
+    }
+}
+
+
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        &>.#{$prefix-cls}-bar {
+            .#{$prefix-cls}-nav-wrapper {
+                &:focus {
+                    .#{$prefix-cls}-tab-focused {
+                        border-color: $value;
+                    }
+                }
+            }
+
+            .#{$prefix-cls}-ink-bar {
+                background-color: $value;
+            }
+
+            .#{$prefix-cls}-tab {
+
+                &:hover,
+                &:active,
+                &-active {
+                    color: $value;
+                }
+            }
+        }
+
+    }
+}

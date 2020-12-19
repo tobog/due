@@ -1,0 +1,25 @@
+// config
+$prefix-cls: #{$prefix}-icons;
+.#{$prefix-cls} {
+    display: inline-block;
+    font-family: #{$prefix};
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+@import 'iconslist';
+@each $key,$val in $iconslist {
+    .#{$prefix-cls}-#{$key} {
+        &::before {
+            content: $val;
+        }
+    }
+}

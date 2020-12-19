@@ -1,0 +1,103 @@
+$prefix-cls: #{$prefix}-formitem;
+
+.#{$prefix-cls} {
+    margin-bottom: 22px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
+    &-vertical-center {
+        align-items: center;
+    }
+
+    &-vertical-start {
+        align-items: flex-start;
+    }
+
+    &-vertical-end {
+        align-items: flex-end;
+    }
+
+    &-vertical-baseline {
+        align-items: baseline;
+    }
+
+    &-vertical-stretch {
+        align-items: stretch;
+    }
+
+    &#{&}-nowrap {
+        flex-wrap: nowrap;
+    }
+
+    &-inline {
+        display: inline-flex !important;
+    }
+
+    &-content {
+        flex: auto
+    }
+
+    &-label {
+        display: inline-block;
+        flex: none;
+        color: $content;
+        line-height: 1;
+        word-break: break-all;
+        padding: 5px 3px 5px 1px;
+        border: none;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    &-required {
+        .#{$prefix-cls}-label::before {
+            content: '*';
+            margin-right: 3px;
+            color: $error;
+            vertical-align: middle;
+            transform: translateY(2px);
+            display: inline-block;
+        }
+    }
+
+
+    &-tip {
+        &-wrap {
+            position: relative !important; // display: block;
+            z-index: 0;
+            height: 0 !important;
+            max-height: 0 !important;
+            overflow: visible !important;
+        }
+
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding-top: 5px;
+        color: $sub-content;
+        line-height: 1;
+        word-break: break-all;
+    }
+
+    &-error {
+        .#{$prefix-cls}-tip {
+            color: $error;
+        }
+
+        [data-form=select],
+        [data-form=textarea],
+        [data-form=number],
+        [data-form=input] {
+            box-shadow: 0 0 0 2px $error-shadow !important;
+            border-color: $error !important;
+
+            &:not([disabled]) {
+                border-color: $error !important;
+            }
+        }
+    }
+}
