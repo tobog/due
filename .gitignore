@@ -3,7 +3,6 @@
 .DS_Store
 node/
 node_modules/
-dist/
 .history/
 #public/
 npm-debug.log*
@@ -24,7 +23,6 @@ selenium-debug.log
 *.iml
 *.js.map
 demo.local/*
-
 
 # local env files
 .env.local
