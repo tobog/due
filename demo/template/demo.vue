@@ -21,6 +21,12 @@
         border-bottom: 1px solid #ccc;
         min-height: 20vh;
     }
+
+    .demo-code pre {
+        white-space: pre-wrap;
+        margin: 0;
+    }
+
     .demo-table {
         width: 100%;
     }
@@ -60,11 +66,11 @@
                 </div>
             </vCol>
         </vRow>
-        <!-- <div span="24" class="demo-code">
-            <pre v-highlight>
+        <div class="demo-code">
+            <pre>
 				<code v-text="getFormatCode" class="html"></code>
 			</pre>
-        </div> -->
+        </div>
         <div class="demo-props-table">
             <h2 class="demo-header">Props & Events</h2>
             <vTable :columns="getColumns" :data="config" class="demo-table" border stripe></vTable>
@@ -124,14 +130,15 @@ export default {
         },
     },
     computed: {
-        // getFormatCode() {
-        //     return (this.code || "").replace(/\s{5,}/g, function() {
-        //         const reg = arguments[0],
-        //             leng = reg.length
-        //         // console.log(arguments, leng)
-        //         return `\n${reg.slice(leng > 18 ? 20 : 6)}`
-        //     })
-        // },
+        getFormatCode() {
+            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`);
+            return code.replace(/\s{5,}/g, function() {
+                const reg = arguments[0],
+                    leng = reg.length;
+                // console.log(arguments, leng)
+                return `\n${reg.slice(leng > 18 ? 20 : 6)}`;
+            });
+        },
         getColumns() {
             return [
                 {
@@ -160,6 +167,15 @@ export default {
                 //     key: "options",
                 // },
             ];
+        },
+    },
+    methods: {
+        getCodeString(val = {}) {
+            try {
+                return JSON.stringify(val);
+            } catch (error) {
+                return val;
+            }
         },
     },
 };

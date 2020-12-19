@@ -1,19 +1,26 @@
 <template>
-    <a :class="[_tobogPrefix_]" :href="href" :data-target="target" @click.prevent="goAnchor" :title="title">
+    <a
+        :class="[_tobogPrefix_]"
+        :href="href"
+        :data-selector="selector"
+        @click.prevent="goAnchor"
+        :title="title"
+        v-bind="$attrs"
+    >
         <slot>{{ title }}</slot>
     </a>
 </template>
 <script>
-import { scrollIntoView } from '../../utils/dom';
+import { scrollIntoView, getElement } from "../../utils/dom";
 export default {
-    name: 'Anchor',
+    name: "Anchor",
     props: {
         href: String,
         title: String,
-        target: String,
+        selector: String,
         position: {
             type: [Number, Boolean, String],
-            default: 'start',
+            default: "start",
         },
     },
     // data() {
@@ -25,7 +32,7 @@ export default {
     methods: {
         initGoAnchor() {
             setTimeout(() => {
-                const data = (sessionStorage[`${this.__$cssPrefix__}_Anchor_Target`] || '').split('@@@');
+                const data = (sessionStorage[`${this.__$cssPrefix__}AnchorTarget`] || "").split("=@=");
                 if (!data[1]) data[1] = this.position;
                 this.gotTargetAnchor(...data);
             });
@@ -33,28 +40,28 @@ export default {
         goAnchor() {
             const href = this.href;
             if (href) {
-                this.$emit('on-select', href);
-                if (this.target) {
-                    sessionStorage[`${this.__$cssPrefix__}_Anchor_Target`] = `${this.target}@@@${this.position}`;
+                this.$emit("on-jump", href);
+                if (this.selector) {
+                    sessionStorage[`${this.__$cssPrefix__}AnchorTarget`] = `${this.selector}=@=${this.position}`;
                 }
                 if (this.$router) {
                     this.$router.push(href);
                 } else {
-                    window.location.href = href;
+                    window.open(href, this.$attrs.target || "_self");
                 }
                 return;
             }
-            this.gotTargetAnchor(this.target, this.position);
+            this.gotTargetAnchor(this.selector, this.position);
         },
-        gotTargetAnchor(target, position) {
-            if (target) {
-                target =
-                    document.querySelector(target) ||
-                    document.querySelector(`#${target}`) ||
-                    document.querySelector(`.${target}`);
-                scrollIntoView(target, position);
+        gotTargetAnchor(selector, position) {
+            if (selector) {
+                selector = getElement(selector);
+                selector &&
+                    scrollIntoView(selector, { position }, () => {
+                        this.$emit("on-scroll", selector);
+                    });
             }
-            sessionStorage.removeItem(`${this.__$cssPrefix__}_Anchor_Target`);
+            sessionStorage.removeItem(`${this.__$cssPrefix__}AnchorTarget`);
         },
     },
 };

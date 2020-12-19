@@ -1,102 +1,109 @@
+<style lang="scss"></style>
+
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Anchor 锚点)</h2>
-			<h4 class="padding-top-10">用于跳转到页面指定位置</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<div v-if="show">
-				<vAnchor v-bind="formData"></vAnchor>
-				<vAnchor target="#Anchor">USER</vAnchor>
-			</div>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable
-				id="Anchor"
-				:columns="getTableColumns"
-				:data="compProps"
-				class="demo-table"
-				border
-				stripe
-			></vTable>
-		</vCol>
-	</vRow>
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
+            <h2>代码示例 (Anchor 锚点)</h2>
+            <h4 class="padding-top-10">用于跳转到页面指定位置</h4>
+        </template>
+        <template v-slot="config">
+            <div>
+                <vAnchor v-bind="config">
+                    跳转到其他页面的特定元素
+                </vAnchor>
+            </div>
+            <div>
+                <vAnchor v-bind="config" href="">
+                    本页面滚动特定元素
+                </vAnchor>
+            </div>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-	data() {
-		return {
-			formData: {}
-		};
-	},
-
-	computed: {
-		getBase() {
-			return [
-				{
-					label: "锚点链接",
-					key: "href",
-					tag: "vInput",
-				},
-				{
-					label: "文字内容",
-					key: "title",
-					tag: "vInput",
-					default: 'test Anchor'
-				},
-				{
-					label: "非href时，锚点选择器",
-					key: "target",
-					tag: "vInput",
-				},
-			];
-		},
-		getCode() {
-			return `<Anchor v-bind="${this.getCodeString(this.formData)}"></Anchor>
-				    <Anchor target="#Anchor">USER</Anchor>`;
-		},
-		compProps() {
-			return [
-				{
-					explain: "锚点链接",
-					prop: "href",
-					type: "String",
-					default: "-"
-				},
-				{
-					explain: "文字内容",
-					prop: "title",
-					type: "String",
-					default: '-'
-				},
-				{
-					explain: "非href时，锚点选择器",
-					prop: "target",
-					type: "String",
-					default: '-'
-				},
-				{
-					explain: "自定义文字内容",
-					prop: "slot",
-					type: "VNode",
-					default: '-'
-				},
-			];
-		}
-	}
+    data() {
+        return {};
+    },
+    computed: {
+        getCode() {
+            return `<Anchor v-bind=CODE></Anchor>
+				    <Anchor selector="#Anchor">USER</Anchor>`;
+        },
+        getConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "锚点链接",
+                    key: "href",
+                    tag: "vInput",
+                    demoDefault: "/alert",
+                    explain: "跳转的锚点链接",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "文字内容",
+                    key: "title",
+                    tag: "vInput",
+                    demoDefault: "test Anchor",
+                    explain: "文字内容",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "锚点选择器",
+                    key: "selector",
+                    tag: "vInput",
+                    demoDefault: ".demo-table",
+                    explain: "非href时，锚点选择器",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "元素显示位置",
+                    key: "position",
+                    tag: "vInput",
+                    demoDefault: "start",
+                    explain: "目标元素元素显示位置,可选：center，start(true),end(false),或者数字",
+                    dataType: "String,Number,Boolean",
+                    default: "start",
+                    options: ["start", "center", "end"],
+                },
+                {
+                    label: "文字内容",
+                    key: "slot:default",
+                    explain: "自定义文字内容",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "事件",
+                    key: "on-jump",
+                    explain: "跳转时触发",
+                    dataType: "Function:Event",
+                    default: "href",
+                },
+                {
+                    label: "事件",
+                    key: "on-scroll",
+                    explain: "滚动时触发",
+                    dataType: "Function:Event",
+                    default: "selector",
+                },
+                {
+                    label: "继承a标签的属性",
+                    key: "$attrs",
+                    explain: "继承a标签的属性",
+                    dataType: "any",
+                    default: "-",
+                },
+            ];
+        },
+    },
 };
 </script>

@@ -1,12 +1,13 @@
 $prefix-cls: #{$prefix}-anchor;
 
 .#{$prefix-cls} {
+    @include baseStyle;
+    background-color: initial;
     padding: 6px 0;
     margin: 0;
-    display: block;
+    display: inline-block;
     position: relative;
-    transition: all .3s;
-    color: $title;
+    transition: all .3s linear;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

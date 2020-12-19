@@ -5,7 +5,6 @@ import router from "./router"
 import mixin from "./mixin"
 // Vue.use(Highlight);
 Vue.use(API, {compPrefix: "v"})
-Vue.use({...API}, {reset: true})
 Vue.mixin(mixin)
 const vm = new Vue({
     el: "#app",

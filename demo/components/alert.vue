@@ -7,15 +7,16 @@
             <h4 class="padding-top-10">静态地呈现一些警告信息，可手动关闭</h4>
         </template>
         <template v-slot="config">
-            <Alert v-bind="config">
+            <vAlert v-bind="config">
                 Alert offsetBottom
                 <div slot="desc">
                     Content of prompt. Content of prompt. Content of prompt. Content of prompt.
                 </div>
-            </Alert>
-            <Alert v-bind="config">
+            </vAlert>
+            <vAlert v-bind="config">
                 Alert offsetBottom
-            </Alert>
+            </vAlert>
+            <vAnchor v-show="false"></vAnchor>
         </template>
     </Demo>
 </template>
@@ -70,9 +71,20 @@ export default {
                 },
                 {
                     showConfig: true,
+                    label: "icon对齐方式",
+                    key: "align",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "icon 对齐方式(仅对有desc的设置)，可选值为：start, center, end",
+                    dataType: "String",
+                    default: "-",
+                    options: ["start", "center", "end"],
+                },
+                {
+                    showConfig: true,
                     label: "类型",
                     key: "type",
-                    tag: "Select",
+                    tag: "vSelect",
                     demoDefault: "info",
                     explain: "警告提示样式，可选值为：success, info, warning, error,loading,或者自定义icon",
                     dataType: "String",
@@ -83,7 +95,7 @@ export default {
                     showConfig: true,
                     label: "自定义颜色",
                     key: "color",
-                    tag: "Input",
+                    tag: "vInput",
                     demoDefault: "",
                     explain: "自定义颜色",
                     dataType: "String",
@@ -93,7 +105,7 @@ export default {
                     showConfig: true,
                     label: "描述",
                     key: "desc",
-                    tag: "Textarea",
+                    tag: "vTextarea",
                     demoDefault: "",
                     explain: "描述",
                     dataType: "String",
