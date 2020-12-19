@@ -113,11 +113,12 @@ export default {
             styleCode: `
                 :root {
                     --title: #fff;
-                    --content: #c6c9cf;
+                    --content: #e6e6e6;
                     --sub-content: #777; // 待优化
                     --disable-content: #56565a;
                     --globalBack:#151518;
                     --border:gray;
+                    --back: #151518;
             }`,
         };
     },

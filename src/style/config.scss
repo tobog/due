@@ -27,7 +27,7 @@
     //     --hover: #ebf7ff;
     //     --transparent: transparent;
 
-    //     --back: #f8f8f9;
+    --back: #f8f8f9;
     //     --darkback: rgba(41, 42, 48, 0.9);
     //     --mask: rgba(55, 55, 55, 0.6);
     //     --white: $white;
@@ -64,7 +64,7 @@ $border:var(--border, #dcdee2) !default !global;
 // $hover:var(--hover, #ebf7ff) !default !global;
 // $transparent:var(--transparent, transparent) !default !global;
 
-// $back:var(--back, #f8f8f9) !default !global;
+$back:var(--back, #f8f8f9) !default !global;
 // $darkback:var(--darkback, rgba(41, 42, 48, 0.9)) !default !global;
 // $mask:var(--mask, rgba(55, 55, 55, 0.6)) !default !global;
 // $white:var(--white, #fff) !default !global;
@@ -103,7 +103,7 @@ $divider: #e8eaec !default !global;
 $hover: #ebf7ff !default !global;
 $transparent: transparent !default !global;
 
-$back: #f8f8f9 !default !global;
+// $back: #f8f8f9 !default !global;
 $darkback: rgba(41, 42, 48, 0.9) !default !global;
 $mask: rgba(55, 55, 55, 0.6) !default !global;
 $white: #fff !default !global;
