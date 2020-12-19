@@ -1,130 +1,145 @@
-<style lang="scss" scoped>
-.demo-split {
-	height: 200px;
-	border: 1px solid #ccc;
-}
-</style>
-<template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Split 面板分割)</h2>
-			<h4 class="padding-top-10">可将一片区域，分割为可以拖拽调整宽度或高度的两部分区域。</h4>
-		</vCol>
-		<vCol lg="24" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="24" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vSplit v-model="val" v-bind="formData" class="demo-split">
-					<div>1</div>
-					<vSplit slot="split" vertical>
-						<div>2</div>
-						<vSplit v-model="val1" slot="split">
-							<div>3</div>
-							<div slot="split">Right Pane</div>
-						</vSplit>
-					</vSplit>
-				</vSplit>
-				{{ val }}
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
-</template>
 
+<template>
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example" v-if="attrs.show">
+			<div style="padding:20px 0;">视图：</div>
+			<vSplit v-model="value" style="height:300px;border:1px solid #ddd" mode="vertical">
+				<div slot="first" class="demo-split-pane">1
+					<br>
+				</div>
+				<vSplit slot="last" mode="vertical">
+					<vSplit v-model="value1" slot="first">
+						<div slot="first" class="demo-split-pane">2
+							<br>
+						</div>
+						<div slot="last" class="demo-split-pane">Right Pane</div>
+					</vSplit>
+					<div slot="last" class="demo-split-pane">3</div>
+				</vSplit>
+			</vSplit>
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
+</template>
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: 30,
-			val1: 20
+			value: 50,
+			value1: 20,
+			loading: false,
+			switchs: {
+				show: true,
+				disabled: false,
+				gpu: true,
+			},
+			selects: {
+				mode: 'horizontal'
+			},
+			options: {
+				mode: ['horizontal', 'vertical']
+			},
+			inputs: {
+				min: 0,
+				max: 100,
+			},
 		};
 	},
-	methods: {},
+
 	computed: {
-		getCode() {
-			return `<vSplit v-model="val" v-bind="${this.getCodeString(this.formData)}" class="demo-split">
-						<div>1</div>
-						<vSplit slot="split" vertical>
-							<div>2</div>
-							<vSplit v-model="val1" slot="split">
-								<div>3</div>
-								<div slot="split">Right Pane</div>
-							</vSplit>
-						</vSplit>
-					</vSplit>`;
+
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		getBase() {
-			return [
-				{
-					label: "最小值",
-					key: "min",
-					tag: "vInputNumber",
-					default: 0
-				},
-				{
-					label: "最大值",
-					key: "max",
-					tag: "vInputNumber",
-					default: 100
-				},
-				{
-					label: "垂直分割",
-					key: "vertical",
-					tag: "vSwitch",
-					default: false
-				}
-			];
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+				sortable: true,
+			},
+			]
 		},
-		compProps() {
+		data() {
 			return [
-				{
-					explain: "垂直分割",
-					prop: "vertical",
-					type: "Boolean",
-					default: false
-				},
-				{
-					explain: "最小值",
-					prop: "min",
-					type: "Number",
-					default: 0
-				},
-				{
-					explain: "最大值",
-					prop: "max",
-					type: "Number",
-					default: 100
-				},
-				{
-					prop: "on-change",
-					explain: "在滑动过程中不会触发",
-					type: "Function:Event",
-					default: "-"
-				},
-				{
-					prop: "on-move",
-					explain:
-						"滑动条数据变化时触发，返回当前的选值，在滑动过程中实时触发",
-					type: "Function:Event",
-					default: "-"
-				}
-			];
+			{
+				prop: "value",
+				explain: "指定选中项目的 value 值，可以使用 v-model 双向绑定数据。单选时只接受 String 或 Number，多选时只接受 Array",
+				type: "String | Number | Array",
+				default: '-'
+			},
+			{
+				prop: "mode",
+				explain: "mode:'horizontal', 'vertical'",
+				type: "String",
+				default: 'horizontal'
+			},
+			{
+				prop: "max",
+				explain: "max",
+				type: "Number, String",
+				default: 100
+			},
+			{
+				prop: "slot:first",
+				explain: "slot",
+				type: "VNode",
+				default: '-'
+			},
+			{
+				prop: "slot:last",
+				explain: "slot",
+				type: "VNode",
+				default: '-'
+			},
+			{
+				prop: "slot:trigger",
+				explain: "slot",
+				type: "VNode",
+				default: '-'
+			},
+			{
+				prop: "on-move-start/on-move-end/on-moving",
+				explain: "事件",
+				type: "	Function:axis=>{}",
+				default: "-"
+			},
+			]
 		}
-	}
+	},
 };
 </script>
+
+

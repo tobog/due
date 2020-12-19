@@ -1,47 +1,53 @@
 
+
+
 <template>
-	<section tabindex="-1" :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+	<section
+		:class="_tobogPrefix_"
+		:data-vview-module="$options.name"
+		@mouseenter.stop="handleVisible(true,'hover')"
+		@mouseleave.stop="handleVisible(false,'hover')"
+		@click="handleVisible(!visible,'click')"
+		v-click-outside="{callback:hide,reference:($refs.popper||{}).$el}"
+	>
 		<slot></slot>
 		<template v-if="ready">
 			<Popper
+				v-show="getVisible"
+				ref="popper"
 				:gpu="gpu"
 				:reference="getReference"
 				:placement="placement"
 				:offset="offset"
 				:transfer="transfer"
-				:always="always"
-				:delay="delay"
 				:class="popperClasses"
 				:style="popperStyle"
-				:trigger="trigger"
 				@on-visible-change="handleVisible"
 			>
-				<slot name="content">
-					{{content}}
-				</slot>
+				<slot name="content"><div v-html="content"></div></slot>
 			</Popper>
 		</template>
 	</section>
 </template>
 <script>
 import Popper from '../base/popper';
-
+import ClickOutside from '../../directives/click-outside';
 export default {
 	name: 'Tooltip',
 	components: { Popper },
+	directives: {
+		ClickOutside,
+	},
 	props: {
-		trigger: {
-			type: String,
-			default: 'click',
-		},//'hover,click'
-		gpu: {
-			type: Boolean,
-			default: true,
-		},
+		trigger: String,//'hover,click'
 		transfer: Boolean,
 		disabled: Boolean,
 		content: String,
-		always: Boolean,
+		gpu: Boolean,
+		always: {
+			type: Boolean,
+			default: undefined,
+		},
 		popperStyle: [String, Object],
 		popperClass: [String, Array],
 		theme: {
@@ -49,21 +55,24 @@ export default {
 			default: 'dark',
 		},
 		delay: {
-			type: Number,
-			default: 0
+			type: [String, Number],
+			default: 200
 		},
 		offset: {
 			type: [String, Number],
-			default: 10
+			default: 5
 		},
 		placement: {
 			type: String,
 			default: "top-center"
 		},
 		reference: HTMLElement,
+
 	},
+
 	data() {
 		return {
+			visible: this.always,
 			ready: false,
 		}
 	},
@@ -71,15 +80,12 @@ export default {
 		this.ready = true;
 	},
 	computed: {
+		getVisible() {
+			if (this.always !== undefined) return this.always;
+			return this.visible
+		},
 		popperClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				this.popperClass,
-				`${_tobogPrefix_}-drop`,
-				{
-					[`${_tobogPrefix_}-${this.theme}`]: !!this.theme
-				}
-			];
+			return [`${this._tobogPrefix_}-drop`,`${this._tobogPrefix_}-${this.theme}`, this.popperClass];
 		},
 		getReference() {
 			if (!this.ready) return;
@@ -88,9 +94,20 @@ export default {
 		},
 	},
 	methods: {
-		handleVisible(...args) {
-			this.$emit('on-visible-change', ...args)
-		}
+		hide(status) {
+			if (status) this.handleVisible(false);
+		},
+		handleVisible(visible, trigger) {
+			if ((this.trigger === 'click' && trigger === 'hover') || (this.trigger !== 'click' && trigger === 'click')) return;
+			clearTimeout(this.__timeout);
+			if (this.disabled || (trigger === 'popper' && this.trigger === 'click')) return;
+			if (this.always !== undefined) return this.visible = this.always;
+			this.__timeout = setTimeout(() => {
+				this.visible = visible;
+				this.__timeout = null;
+				this.$emit('on-visible-change', visible);
+			}, this.delay);
+		},
 	},
 };
 </script>

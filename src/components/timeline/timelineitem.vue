@@ -20,6 +20,11 @@ export default {
 		},
 		color: String
 	},
+	data() {
+		return {
+
+		};
+	},
 	computed: {
 		headClasses() {
 			const _tobogPrefix_ = this._tobogPrefix_;

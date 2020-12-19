@@ -1,206 +1,126 @@
 
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Modal 对话框)</h2>
-			<h4 class="padding-top-10">
-				<div>模态对话框，在浮层中显示，引导用户进行相关操作。</div>
-				<div>Modal提供了两种用法，普通组件使用和封装好的简洁实例调用。</div>
-			</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vButton @click="val=!val">toggle</vButton>
-				<vButton @click="handleModal('info')">info</vButton>
-				<vButton @click="handleModal('success')">success</vButton>
-				<vButton @click="handleModal('confirm')">confirm</vButton>
-				<vButton @click="handleModal('default')">default</vButton>
-				<vButton @click="handleModal('warning')">warning</vButton>
-				<vButton @click="handleModal('error')">error</vButton>
-				<vButton @click="handleModal('destroy')">destroy</vButton>
-				<vModal v-bind="formData" v-model="val">destroy</vModal>
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">通过直接调用以下方法来使用组件：</h2>
-			<div class="color-warn padding-5">this.$Modal.default(props, on )</div>
-			<div class="color-warn padding-5">this.$Modal.info(props, on)</div>
-			<div class="color-warn padding-5">this.$Modal.success(props, on)</div>
-			<div class="color-warn padding-5">this.$Modal.warning(props, on)</div>
-			<div class="color-warn padding-5">this.$Modal.error(props, on)</div>
-			<div class="color-warn padding-5">this.$Modal.loading(immediate)</div>
-			<div class="color-warn padding-5">this.$Modal.config(config,isVmOptions)</div>
-			<div class="color-warn padding-5">this.$Modal.destroy(name)</div>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example">
+			<vButton @click="createModal('info')">info</vButton>
+			<vButton @click="createModal('success')">success</vButton>
+			<vButton @click="createModal('confirm')">confirm</vButton>
+			<vButton @click="createModal('default')">default</vButton>
+			<vButton @click="createModal('warning')">single</vButton>
+			<vButton @click="createModal('error')">error</vButton>
+			<vButton @click="createModal('destroy')">destroy</vButton>
+			<vModal v-model="open" v-bind="attrs">
+				<p slot="header" style="color:#f60;text-align:center">
+					<vIcon type="information"></vIcon>
+					<span>Delete confirmation</span>
+				</p>
+				<div style="text-align:center;height:600px">
+					<p>After this task is deleted, the downstream 10 tasks will not be implemented.</p>
+					<p>Will you delete it?</p>
+				</div>
+				<div slot="footer">
+					<vButton type="error" size="small">Delete</vButton>
+				</div>
+			</vModal>
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: false,
+			open: true,
+			switchs: {
+				maskable: false,
+				showHeader: true,
+				showFooter: true,
+				closable: true,
+				transfer: true,
+				dragable: true,
+				fullscreen: true,
+				fixed:true
+			},
+			selects: {
+				type: 'modal',
+				fullElement: 'modal',
+			},
+			options: {
+				type: ['modal', 'drawer'],
+				fullElement: ['modal', 'wrap'],
+			},
+			inputs: {
+				delay: 6,
+				content: "message",
+				name: "",
+				title: "title",
+				width: 520,
+				styles:{
+					height:'300px'
+				}
+			},
 		};
+
+	},
+	methods: {
+		createModal(type) {
+			this.$VModal[type]({
+				render(h){return h('vSwitch',"name")},
+                title: "title",
+                ...this.attrs
+			})
+		}
 	},
 	computed: {
-		getCode() {
-			return `<vButton @click="handleModal('info')">info</vButton>
-					<vButton @click="handleModal('success')">success</vButton>
-					<vButton @click="handleModal('confirm')">confirm</vButton>
-					<vButton @click="handleModal('default')">default</vButton>
-					<vButton @click="handleModal('warning')">single</vButton>
-					<vButton @click="handleModal('error')">error</vButton>
-					<vButton @click="handleModal('destroy')">destroy</vButton>
-					<vModal v-bind="${this.getCodeString(this.formData)}" v-model="val">destroy</vModal>
-					<vButton @click="val=!val">toggle</vButton>
-					<script>
-					function handleModal(type) {
-						this.$VModal[type](this.formData)
-					}
-					\<\/script>
-					`;
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		getBase() {
-			return [
-				{
-					label: "显示标题",
-					key: "showHeader",
-					tag: "vSwitch",
-					default: true,
-				},
-				{
-					label: "显示尾部",
-					key: "showFooter",
-					tag: "vSwitch",
-					default: true,
-				},
-				{
-					label: "遮罩",
-					key: "maskable",
-					tag: "vSwitch",
-					default: false,
-				},
-				{
-					label: "关闭按钮",
-					key: "closable",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "置于body内",
-					key: "transfer",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "拖拽移动",
-					key: "dragable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "全屏",
-					key: "fullscreen",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "定位",
-					key: "fixed",
-					tag: "vSwitch",
-					default: false
-				},
-
-				{
-					label: "是否异步操作",
-					key: "async",
-					tag: "vSwitch",
-					default: false,
-				},
-				{
-					label: "敏捷模式",
-					key: "prompt",
-					tag: "vSelect",
-					default: '',
-					options: ['info', 'confirm', 'success', 'warning', 'error', 'default']
-				},
-				{
-					label: "模态类型",
-					key: "type",
-					tag: "vSelect",
-					default: "modal",
-					options: ['modal', 'drawer']
-				},
-				{
-					label: "全屏元素",
-					key: "fullElement",
-					tag: "vSelect",
-					default: "modal",
-					options: ['modal', 'wrap']
-				},
-				{
-					label: "对话框标题",
-					key: "title",
-					tag: "vInput",
-					default: "message",
-				},
-				{
-					label: "延迟关闭",
-					key: "delay",
-					tag: "vInputNumber",
-					default: 0,
-				},
-				{
-					label: "对话框宽度",
-					key: "width",
-					tag: "vInputNumber",
-					default: 520,
-				},
-				{
-					label: "modal的样式",
-					key: "modalStyle",
-					tag: "vTextarea",
-					default: '',
-				},
-				{
-					label: "内容",
-					key: "content",
-					tag: "vTextarea",
-					default: "message",
-				},
-
-			];
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+			},
+			]
 		},
-		compProps() {
+		data() {
 			return [
 				{
 					prop: 'name',
 					explain: '对话框name，用于js调用',
 					type: 'String',
-					default: '-',
-				},
-				{
-					prop: 'value',
-					explain: '对话框是否显示，可使用 v-model 双向绑定数据。',
-					type: 'Boolean',
 					default: '-',
 				},
 				{
@@ -210,14 +130,8 @@ export default {
 					default: '520',
 				},
 				{
-					prop: 'position',
-					explain: '自定义位置:[top, right, bottom, left]',
-					type: 'Array:[top, right, bottom, left]',
-					default: '',
-				},
-				{
-					prop: 'modalStyle',
-					explain: '自定义对话框的样式',
+					prop: 'styles',
+					explain: '对话框styles',
 					type: 'Object, String',
 					default: '-',
 				},
@@ -231,20 +145,9 @@ export default {
 					prop: 'fixed',
 					explain: '定位头尾',
 					type: 'Boolean',
-					default: 'false',
+					default: '-',
 				},
-				{
-					explain: "关闭按钮",
-					prop: "closable",
-					type: "Boolean",
-					default: 'true'
-				},
-				{
-					explain: "是否可以拖拽移动",
-					prop: "dragable",
-					type: "Boolean",
-					default: 'false'
-				},
+				
 				{
 					prop: 'icon',
 					explain: '图标',
@@ -287,7 +190,7 @@ export default {
 					prop: 'transfer',
 					explain: '是否将弹层放置于 body 内',
 					type: 'Boolean',
-					default: false,
+					default: 'false',
 				}, {
 					prop: 'showHeader',
 					explain: '显示底部Header',
@@ -300,69 +203,27 @@ export default {
 					default: 'true',
 				}, {
 					prop: 'delay',
-					explain: '延迟关闭',
-					type: 'Number',
-					default: '0',
-				},
-				{
-					explain: "自定义定位,仅在type=modal：[top,right,bottom,left]",
-					prop: "position",
-					type: "Array",
+					explain: '演出关闭',
+					type: 'Boolean',
 					default: '-',
 				},
 				{
-					prop: 'slot:title',
-					explain: '自定义页头',
+					prop: 'slot:title/slot/slot:footer/slot:close',
+					explain: 'slot',
 					type: 'VNode',
 					default: '-',
 				},
 				{
-					prop: 'slot:footer',
-					explain: '自定义页脚内容',
-					type: 'VNode',
+					prop: 'delay',
+					explain: '演出关闭',
+					type: 'Boolean',
 					default: '-',
 				},
 				{
-					prop: 'slot:close',
-					explain: '自定义右上角关闭内容',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'slot:default',
-					explain: '自定义主体内容',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'on-fullscreenchange',
-					explain: '全屏事件',
-					type: 'Function:Event',
-					default: '(boolean)=>{}',
-				},
-				{
-					prop: 'on-cancel',
-					explain: '点击取消的回调',
-					type: 'Function:Event',
-					default: '(name)=>{}',
-				},
-				{
-					prop: 'on-after-close',
-					explain: '在关闭之后触发',
-					type: 'Function:Event',
-					default: '(name)=>{}',
-				},
-				{
-					prop: 'on-confirm',
-					explain: '	点击确定的回调',
-					type: 'Function:Event',
-					default: '(name)=>{}',
-				},
-				{
-					prop: 'on-visible-change',
-					explain: '显示状态发生变化时触发',
+					prop: 'input/on-confirm/on-visible-change/on-cancel',
+					explain: '事件',
 					type: 'Function:val=>{}',
-					default: '(val,name)=>{}',
+					default: '-',
 				},
 				{
 					prop: 'on-after-close',
@@ -371,23 +232,12 @@ export default {
 					default: '-',
 				},
 				{
-					prop: 'JS:default|info|success|warning|error|config|destroy',
+					prop: 'default|info|success|warning|error|config|destroy',
 					explain: '通过直接调用以下方法来使用组件',
 					type: 'Function:(options,on)=>{}',
 					default: 'options',
 				},
-				{
-					prop: 'JS:render',
-					explain: '事件',
-					type: 'Function',
-					default: '-',
-				}
-			];
-		}
-	},
-	methods: {
-		handleModal(type) {
-			this.$VModal[type](this.formData)
+			]
 		}
 	},
 };

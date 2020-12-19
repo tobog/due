@@ -1,82 +1,69 @@
 
 <template>
-	<section :class="classes" :data-vue-module="$options.name">
+	<section :class="_tobogPrefix_" :data-vview-module="$options.name">
 		<slot></slot>
 	</section>
 </template>
 <script>
 export default {
-	name: "Collapse",
+	name: 'Collapse',
 	props: {
-		multiple: {
+		single: {
 			type: Boolean,
-			default: false
+			default: true
 		},
-		value: [Array, String, Number],
-		strict: Boolean,
-		simple: Boolean,
+		value: {
+			type: [Array, String, Number]
+		},
+		strict: Boolean
 	},
 	data() {
 		return {
-			model: this.value
+			model: this.value,
 		};
 	},
 	mounted() {
 		this.setActive();
 	},
-	computed: {
-		classes() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-simple`]: this.simple
-				}
-			]
-		},
-	},
 	methods: {
 		setActive() {
-			const value =
-				Array.isArray(this.model) ? this.model : [this.model];
+			const value = this.model instanceof Array ? this.model : [this.model];
 			const strict = this.strict;
 			this.$children.forEach((child, index) => {
-				let name = child.nameUid;
-				if (!name && name != "0") name = child.index = index;
-				child.isActive = value.some(function (val) {
-					return strict ? val === name : val == name;
-				});
+				const name = child.nameUid;
+				child.isActive = (value.findIndex(function (val) {
+					return strict ? val === name : val == name
+				})) > -1;
 			});
 		},
 		toggle(data) {
 			const name = data.name;
-			let value = Array.isArray(this.model) ? this.model : [this.model];
-			if (this.multiple) {
+			let value = this.model instanceof Array ? this.model : [this.model];
+			if (this.single) {
+				value = data.isActive ? [] : [name];
+			} else {
 				const strict = this.strict;
 				const nameIndex = value.findIndex(function (val) {
-					return strict ? val === name : val == name;
+					return strict ? val === name : val == name
 				});
 				if (nameIndex > -1) {
 					value.splice(nameIndex, 1);
 				} else {
 					value.push(name);
 				}
-			} else {
-				value = data.isActive ? [] : [name];
 			}
 			this.model = value;
-			this.$emit("input", value);
-			this.$emit("on-change", value);
+			this.$emit('input', value);
+			this.$emit('on-change', value);
 		}
 	},
 	watch: {
 		value(val) {
-			if (val === this.model) return;
 			this.model = val;
 		},
 		model(val) {
 			this.setActive();
-		}
+		},
 	}
 };
 </script>

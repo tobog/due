@@ -1,325 +1,279 @@
-$prefix-cls-number: #{$prefix}-number;
+$prefix-cls: #{$prefix}-input;
+$prefix-cls-inputnumber: #{$prefix}-inputnumber;
 $prefix-cls-textarea: #{$prefix}-textarea;
-$prefix-cls: #{$prefix}-inputdrop;
 
-%input {
+%y-input {
     margin: 0;
     padding: 0 6px;
-    outline: none !important;
-    box-sizing: border-box;
-    border-radius: 3px;
+    color: $content;
+    height: inherit;
+    width: 100%;
+    vertical-align: middle;
+    border-radius: 4px;
     border: 1px solid $border;
+    box-sizing: border-box;
+    outline: 0;
     transition: all 0.3s ease-in-out;
 }
 
-.#{$prefix-cls}-drop {
-    display: inline-block;
-    width: auto;
-    min-height: 36px;
-    outline: none !important;
+.#{$prefix-cls}-wrapper,
+.#{$prefix-cls-textarea}-wrapper,
+.#{$prefix-cls-inputnumber}-wrapper {
+    font-size: 12px;
+    height: 32px;
+    line-height: normal;
+    border: none;
+    border-collapse: separate;
+    box-sizing: border-box;
 }
 
-.#{$prefix-cls}-wrapper,
-.#{$prefix-cls-number}-wrapper,
 .#{$prefix-cls-textarea}-wrapper {
-    display: flex !important;
-    width: 100%;
+    height: auto;
+}
+
+.#{$prefix-cls}-multiple {
+    height: initial;
     min-height: 32px;
+    cursor: text;
+
+    .#{$prefix-cls} {
+        height: 100%;
+    }
+}
+
+.#{$prefix-cls}-taginput {
+    margin: 0;
+    padding: 2px 6px;
     color: $content;
-    outline: none !important;
+    height: inherit;
+    width: 62px;
+    min-width: 62px;
+    vertical-align: middle;
     border: none;
     box-sizing: border-box;
-    justify-content: flex-start;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    &>*{
-        background-color:#fff;
-    }
+    outline: 0;
+    transition: all 0.3s ease-in-out;
 }
 
-.#{$prefix-cls}-prepend,
-.#{$prefix-cls}-append,
-.#{$prefix-cls-number}-prepend,
-.#{$prefix-cls-number}-append,
-.#{$prefix-cls-textarea}-prepend,
-.#{$prefix-cls-textarea}-append {
-    @extend %input;
-    display: inline-flex;
-    background-color: $back;
-    align-items: center;
-    flex: none;
-}
-
-.#{$prefix-cls}-append,
-.#{$prefix-cls-number}-append,
-.#{$prefix-cls-textarea}-append {
-    border-left: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.#{$prefix-cls}-prepend,
-.#{$prefix-cls-number}-prepend,
-.#{$prefix-cls-textarea}-prepend {
-    border-right: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.#{$prefix-cls}-inner,
-.#{$prefix-cls-number}-inner,
-.#{$prefix-cls-textarea}-inner {
-    display: flex;
-    width: 100%;
-    margin: 0;
-    justify-content: space-between;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    flex: auto;
+.#{$prefix-cls}-tag {
+    vertical-align: middle;
+    display: inline-block;
+    margin: 2px 3px;
+    padding: 3px 6px;
     border: 1px solid $border;
-    padding-top: 1px;
-    padding-bottom: 1px;
-    // position: relative;
-    // z-index:1;
-    min-height: inherit;
+    border-radius: 3px;
+    background-color: $back;
+    overflow: hidden;
+    cursor: pointer;
 
     &:hover {
-        border-color: $primary;
+        border: 1px solid $primary;
+        color: $primary;
     }
 
-    &:focus {
-        box-shadow: 0 0 6px 0 $primary;
-        border-color: $primary;
+    .#{$prefix-cls}-empty {
+        margin-left: 8px;
     }
 }
 
-.#{$prefix-cls}-radius-left,
-.#{$prefix-cls-number}-radius-left,
-.#{$prefix-cls-textarea}-radius-left {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+.#{$prefix-cls}-file {
+    cursor: pointer;
 }
 
-.#{$prefix-cls}-radius-right,
-.#{$prefix-cls-number}-radius-right,
-.#{$prefix-cls-textarea}-radius-right {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+.#{$prefix-cls-inputnumber}::-webkit-inner-spin-button {
+    display: none;
 }
 
-.#{$prefix-cls}-inner.#{$prefix-cls}-active,
-.#{$prefix-cls-number}-inner.#{$prefix-cls-number}-active,
-.#{$prefix-cls-textarea}-inner.#{$prefix-cls-textarea}-active {
-    box-shadow: 0 0 6px 0 $primary;
-    border-color: $primary;
-}
-
-.#{$prefix-cls},
-.#{$prefix-cls-number},
-.#{$prefix-cls-textarea} {
-    & {
-        @extend %input;
-        border: none !important;
-        box-shadow: none !important;
-        flex: auto !important;
-        max-height: 100%;
-        max-width: calc(100% - 2px);
-        min-width: 0;
-        margin: 0 1px;
-        line-height: normal;
-        width: 30px;
-    }
-
-    &-prefix,
-    &-suffix,
-    &-icon {
-        display: inline-flex;
-        align-items: center;
-        padding: 0 6px;
-        flex: none;
-    }
-
-    &-readonly {
-        cursor: not-allowed !important;
+@each $key in $prefix-cls, $prefix-cls-textarea, $prefix-cls-inputnumber {
+    .#{$key}-disabled {
+        cursor: not-allowed;
         pointer-events: none;
+        background-color: $disabled;
     }
 
-    &-disabled {
-        cursor: not-allowed !important;
+    .#{$key}-readonly {
+        cursor: not-allowed;
         pointer-events: none;
-        &>*{
-            background-color: $disabled;
-        }
-    }
 
-    &-clear {
-        &icon {
-            display: none;
-        }
-
-        &:hover>&icon {
-            display: inline-flex;
-        }
-
-        &:hover>.#{$prefix-cls}-arrow {
-            display: none;
-        }
-    }
-}
-
-.#{$prefix-cls}-clear:hover>.#{$prefix-cls}-suffix,
-.#{$prefix-cls-textarea}-clear:hover>.#{$prefix-cls-textarea}-suffix {
-    display: none
-}
-
-.#{$prefix-cls-textarea}-clear {
-    position: relative;
-
-    &icon {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        height: auto;
-        transform: translateY(-50%);
-    }
-}
-
-
-.#{$prefix-cls} {
-    &-ellipsis &-tags {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-shrink: 1;
-        justify-content: flex-start;
-
-        &:hover {
-            .#{$prefix-cls}-tag {
-                flex-shrink: 1;
-                flex-grow: 0;
-                max-width: 20%;
-                min-width: 39px;
-            }
-        }
-    }
-
-    &-ellipsis &-tag {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        max-width: 70%;
-        position: relative;
-        padding-right: 20px;
-        transition: all 0.2s ease-in-out;
-
-        &>.#{$prefix-cls}-tag-clear {
-            position: absolute;
-            right: 3px;
-            top: 50%;
-            transform: translateY(calc(-50% + 1px));
-        }
-    }
-
-    &-arrow {
-        padding: 0 6px;
-    }
-
-    &-arrow::before {
-        transition: transform 0.2s;
-    }
-
-    &-open {
-        .#{$prefix-cls}-arrow::before {
-            transform: rotate(180deg);
-        }
-    }
-
-    &-tip {
-        padding: 6px 16px;
-    }
-
-    &-file {
-        cursor: pointer;
-    }
-
-
-    &-tags {
-        cursor: text;
-        display: flex;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        align-content: center;
-        max-width: 100%;
-        flex: auto;
-
-        .#{$prefix-cls} {
-            border: none !important;
-            align-self: stretch;
-            max-width: 80%;
-            flex-shrink: 2;
-        }
-    }
-
-    &-tag {
-        margin: 2px;
-        padding: 3px 6px;
-        border: 1px solid $border;
-        border-radius: 3px;
-        background-color: $back;
-        overflow: hidden;
-        word-break: break-all;
-        cursor: pointer;
-        max-width: 100%;
-        align-self: center;
-        flex: none;
-
-        &:hover {
-            border: 1px solid $primary;
-            color: $primary;
-        }
-
-        &-clear {
-            margin-left: 3px;
-            margin-top: -2px;
-        }
-
-    }
-
-    &-file {
-        display: none !important;
-    }
-
-
-    &-readonly {
-        .#{$prefix-cls}-suffix {
+        .#{$key}-tag,
+        [data-type-icon] {
             cursor: pointer;
             pointer-events: initial;
         }
     }
+    .#{$key}-inner {
+        vertical-align: middle;
+        position: relative;
+        z-index: 0;
+        display: table;
+        width: 100%;
+        height: inherit;
+        min-height: inherit;
+    }
 
-    &-drop {
-        width: auto;
-        min-height: 41px;
-        outline: none !important;
+    .#{$key}-append {
+        @extend %y-input;
+        text-align: center;
+        background-color: $back;
+        padding: 0;
+        display: table-cell;
+        width: initial;
+        border-right-width: 1px;
+        border-left: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .#{$key}-prepend {
+        @extend %y-input;
+        text-align: center;
+        background-color: $back;
+        padding: 0;
+        border-right-width: 0;
+        display: table-cell;
+        width: initial;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .#{$key} {
+        @extend %y-input;
+        width: inherit;
+        display: table-cell;
+        background-image: none;
+        min-height: 28px;
+
+        &:focus {
+            box-shadow: 0 0 6px -1px $primary;
+            border-color: $primary;
+        }
+
+        &:hover {
+            border-color: $primary;
+        }
+
+        .#{$key}-active {
+            box-shadow: 0 0 6px -1px $primary;
+            border-color: $primary;
+        }
+    }
+
+    .#{$key}-with-prepend {
+        .#{$key} {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    .#{$key}-with-append {
+        .#{$key} {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    .#{$key}-with-prepend,
+    .#{$key}-with-append {
+        width: 100%;
+        display: table !important;
+
+        .#{$key}-prepend,
+        .#{$key}-append {
+            section[class*="-wrapper"] {
+                height: 100%;
+
+                aside[class$="-prepend"],
+                aside[class$="-append"] {
+                    border: none !important;
+                }
+
+                input[data-form="input"],
+                div[data-form="input"] {
+                    border-top: none !important;
+                    border-bottom: none !important;
+                }
+            }
+        }
     }
 }
 
-.#{$prefix-cls-number}-suffix {
+.#{$prefix-cls}-iconwraper,
+.#{$prefix-cls-textarea}-iconwraper {
+    position: absolute;
+    z-index: 10;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%); // background-color: $white;
+    box-sizing: border-box;
+    height: initial;
 
-    flex-direction: column;
-    justify-content: center;
-    border-left: 1px solid $border;
-
-    &>.#{$prefix}-icons:hover {
-        color: $primary
+    &[data-type-icon="prefix"] {
+        right: initial;
+        left: 1px;
     }
 }
 
+// .#{$prefix-cls}-disabled {
+//     cursor: not-allowed;
+//     pointer-events: none;
+//     background-color: $disabled;
+// }
+// .#{$prefix-cls}-readonly {
+//     cursor: not-allowed;
+//     pointer-events: none;
+//     .#{$prefix-cls}-tag {
+//         cursor: pointer;
+//         pointer-events: initial;
+//     }
+// }
 
+.#{$prefix-cls}-icon,
+.#{$prefix-cls-textarea}-icon {
+    padding: 0 8px;
+}
 
-@each $key,
-$value in $colors-map {
+.#{$prefix-cls}-drop {
+    width: 100%;
+    min-height: 41px;
+}
+
+.#{$prefix-cls-inputnumber}-icon {
+    position: absolute;
+    z-index: 10;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%); // background-color: $white;
+    box-sizing: border-box;
+    height: initial;
+    margin: 1px 0;
+    border-top: 0;
+    border-bottom: 0;
+    padding: 0 5px;
+    width: 22px;
+    overflow: hidden;
+    cursor: pointer;
+
+    & > * {
+        display: block;
+        height: 13px;
+    }
+
+    &[data-type-icon="suffix"] {
+        border-left: 1px solid $border;
+    }
+
+    &[data-type-icon="prefix"] {
+        border-right: 1px solid $border;
+        right: initial;
+        left: 1px;
+    }
+}
+
+.#{$prefix-cls}-opttip {
+    padding: 6px 16px;
+}
+
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
         .#{$prefix-cls}-tag {
             &:hover {
@@ -328,81 +282,56 @@ $value in $colors-map {
             }
         }
 
-        .#{$prefix-cls}-inner {
+        .#{$prefix-cls} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+
             &:hover {
                 border-color: $value;
             }
+        }
 
-            &:focus,
-            &.#{$prefix-cls}-active {
-                box-shadow: 0 0 6px 0 $value;
-                border-color: $value;
-            }
-
+        .#{$prefix-cls}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
         }
     }
 
-    .#{$prefix-cls-number}-#{$key} {
-        .#{$prefix-cls-number}-inner {
-            &:hover {
+    .#{$prefix-cls-inputnumber}-#{$key} {
+        .#{$prefix-cls-inputnumber} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
                 border-color: $value;
             }
 
-            &:focus,
-            &.#{$prefix-cls-number}-active {
-                box-shadow: 0 0 6px 0 $value;
+            &:hover {
                 border-color: $value;
             }
         }
 
-        .#{$prefix-cls-number}-suffix {
-            &>.#{$prefix}-icons:hover {
-                color: $value
-            }
+        .#{$prefix-cls-inputnumber}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
         }
     }
 
     .#{$prefix-cls-textarea}-#{$key} {
-        .#{$prefix-cls-textarea}-inner {
+        .#{$prefix-cls-textarea} {
+            &:focus {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+
             &:hover {
                 border-color: $value;
             }
-
-            &:focus,
-            &.#{$prefix-cls-textarea}-active {
-                box-shadow: 0 0 6px 0 $value;
-                border-color: $value;
-            }
         }
-    }
 
-}
-
-
-.#{$prefix-cls-textarea}-wrapper {
-    height: auto;
-}
-
-.#{$prefix-cls-textarea} {
-    &-inner {
-        overflow: hidden;
-    }
-
-    & {
-        padding: 4px 7px;
-        overflow: hidden;
-    }
-}
-
-.#{$prefix-cls-number}::-webkit-inner-spin-button {
-    display: none;
-}
-
-.#{$prefix-cls-number}-suffix {
-
-    .#{$prefix}-icons[data-min],
-    .#{$prefix}-icons[data-max] {
-        color: $disabled !important;
-        cursor: not-allowed;
+        .#{$prefix-cls-textarea}-active {
+            box-shadow: 0 0 6px -1px $value;
+            border-color: $value;
+        }
     }
 }

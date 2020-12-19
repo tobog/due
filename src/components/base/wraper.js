@@ -1,3 +1,4 @@
+import { type } from "os";
 
 const WraperInstance = function(comp,properties={},mount){
     if(!comp) return;
@@ -21,10 +22,7 @@ const WraperInstance = function(comp,properties={},mount){
         component.$destroy();
         try {
             document.body.removeChild(element);
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log(error);
-        }
+        } catch (error) {};
         Instance=component=element=null;
     };
     return component

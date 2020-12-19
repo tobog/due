@@ -2,48 +2,50 @@
 
 
 <template>
-	<header :class="[_tobogPrefix_]" v-if="!isTimes">
-		<span
-			v-if="isYear||isMonth"
-			:class="[_tobogPrefix_+'-base']"
-			@click="handlePreNext({year:calendar.year-(isMonth?1:10)},'pre')"
-		>
-			<Icons type="ios-arrow-back"></Icons>
-			<Icons type="ios-arrow-back"></Icons>
-		</span>
-		<aside v-if="isDay" :class="[_tobogPrefix_+'-base']">
-			<span @click="handlePreNext({year:calendar.year-1},'pre')">
-				<Icons type="ios-arrow-back"></Icons>
-				<Icons type="ios-arrow-back"></Icons>
-			</span>
-			<span style="margin-left:12px;" @click="handleMonth(calendar.month-1,'pre')">
-				<Icons type="ios-arrow-back"></Icons>
-			</span>
-		</aside>
-		<aside :class="[_tobogPrefix_+'-title']">
-			<span @click="handleClick('','year')">{{calendar.year}}{{langs('datepicker.year','年')}}</span>
+	<header :class="_tobogPrefix_" v-if="status!=='times'">
+		<aside :class="_tobogPrefix_+'-title'">
+			<span @click="handleClick('','year')">{{calendar.year}}{{langs('year','年')}}</span>
 			<span
-				v-if="isDay"
+				v-if="status==='day'"
 				@click="handleClick('','month')"
-			>{{langs('datepicker.month',calendar.month+'月',{month:calendar.month})}}</span>
+			>{{langs('month',calendar.month+'月',{month:calendar.month})}}</span>
 		</aside>
-		<span
-			v-if="isYear||isMonth"
-			:class="[_tobogPrefix_+'-base']"
-			@click="handlePreNext({year:calendar.year+(isMonth?1:10)},'next')"
-		>
-			<Icons type="ios-arrow-forward"></Icons>
-			<Icons type="ios-arrow-forward"></Icons>
-		</span>
-		<aside v-if="isDay" :class="[_tobogPrefix_+'-base']">
-			<span style="margin-right:12px;" @click="handleMonth(calendar.month+1,'next')">
+		<template v-if="status==='year'||status==='month'">
+			<span
+				:class="_tobogPrefix_+'-base'"
+				@click="handlePreNext({year:calendar.year-(status==='month'?1:10)},'pre')"
+			>
+				<Icons type="ios-arrow-back"></Icons>
+				<Icons type="ios-arrow-back"></Icons>
+			</span>
+			<span
+				:class="[_tobogPrefix_+'-base',_tobogPrefix_+'-right']"
+				@click="handlePreNext({year:calendar.year+(status==='month'?1:10)},'next')"
+			>
+				<Icons type="ios-arrow-forward"></Icons>
 				<Icons type="ios-arrow-forward"></Icons>
 			</span>
-			<span @click="handlePreNext({year:calendar.year+1},'next')">
-				<Icons type="ios-arrow-forward"></Icons>
-				<Icons type="ios-arrow-forward"></Icons>
-			</span>
-		</aside>
+		</template>
+		<template v-if="status==='day'">
+			<aside :class="_tobogPrefix_+'-base'">
+				<span @click="handlePreNext({year:calendar.year-1},'pre')">
+					<Icons type="ios-arrow-back"></Icons>
+					<Icons type="ios-arrow-back"></Icons>
+				</span>
+				<span style="margin-left:12px;" @click="handleMonth(calendar.month-1,'pre')">
+					<Icons type="ios-arrow-back"></Icons>
+				</span>
+			</aside>
+			<aside :class="[_tobogPrefix_+'-base',_tobogPrefix_+'-right']">
+				<span style="margin-right:12px;" @click="handleMonth(calendar.month+1,'next')">
+					<Icons type="ios-arrow-forward"></Icons>
+				</span>
+				<span @click="handlePreNext({year:calendar.year+1},'next')">
+					<Icons type="ios-arrow-forward"></Icons>
+					<Icons type="ios-arrow-forward"></Icons>
+				</span>
+			</aside>
+		</template>
 	</header>
 </template>
 

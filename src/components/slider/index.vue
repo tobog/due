@@ -1,260 +1,218 @@
 
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name" @click="handleClickPercent">
-		<span :class="[_tobogPrefix_+'-bar-left']" :style="getLeftStyle" ref="leftBar">
-			<span
-				:class="[_tobogPrefix_+'-btn']"
-				ref="leftBtn"
-				@click.stop
-				:data-status="showTipStatus==='left'"
-			>
-				<span :class="[_tobogPrefix_+'-btn-inner']"></span>
-				<span v-if="showTip" :class="[_tobogPrefix_+'-tip']">{{tipFormat(model[0])}}</span>
+	<transition>
+		<div :class="classes" :data-vview-module="$options.name">
+			<span v-if="isRange" :class="_tobogPrefix_+'-bar'" :style="getRightStyle">
+				<Tooltip :gpu="gpu" :always="type==='right'" placement="top-center" :reference="$refs.right">
+					<span
+						ref="right"
+						:class="_tobogPrefix_+'-icon'"
+						@mouseover.stop="handleHover('right')"
+						:style="handleIconStyle('right')"
+					></span>
+					<div slot="content">{{tipFormat(rightVal)}}</div>
+				</Tooltip>
 			</span>
-		</span>
-		<span v-if="isRange" :class="[_tobogPrefix_+'-bar-right']" :style="getRightStyle" ref="rightBar">
-			<span
-				:class="[_tobogPrefix_+'-btn']"
-				ref="rightBtn"
-				@click.stop
-				:data-status="showTipStatus==='right'"
-			>
-				<span :class="[_tobogPrefix_+'-btn-inner']"></span>
-				<span v-if="showTip" :class="[_tobogPrefix_+'-tip']">{{tipFormat(model[1])}}</span>
+			<span :class="_tobogPrefix_+'-bar '+ _tobogPrefix_+'-bar-left'" :style="getLeftStyle">
+				<Tooltip :gpu="gpu" :always="type==='left'" placement="top-center" :reference="$refs.left">
+					<span
+						tabindex="0"
+						ref="left"
+						:class="_tobogPrefix_+'-icon'"
+						@mouseover.stop="handleHover('left')"
+						:style="handleIconStyle('left')"
+					></span>
+					<div slot="content">{{tipFormat(leftVal)}}</div>
+				</Tooltip>
 			</span>
-		</span>
-		<template v-if="getStops">
-			<span
-				v-for="index of getStops"
-				:key="index"
-				:style="handleSpotStyle(index)"
-				:class="[_tobogPrefix_+'-spot']"
-			></span>
-		</template>
-		<input type="hidden" v-if="name||name=='0'" :value="model" :name="name" />
-	</section>
+			
+			<input
+				v-show="isRange&&type==='right'"
+				:disabled="disabled"
+				:class="_tobogPrefix_+'-input'"
+				type="range"
+				:step="step"
+				:min="min"
+				:max="max"
+				v-model="rightVal"
+				@mouseover.stop="handleHover('right')"
+				@change="handleChange"
+				@mouseout.stop="handleHover('')"
+			>
+			<input
+				v-show="type==='left'"
+				:disabled="disabled"
+				:class="_tobogPrefix_+'-input'"
+				type="range"
+				:step="step"
+				:min="min"
+				:max="max"
+				v-model="leftVal"
+				@change="handleChange"
+				@mouseover.stop="handleHover('left')"
+				@mouseout.stop="handleHover('')"
+			>
+			<slot></slot>
+			<input type="hidden" :value="values" :name="name">
+			<template v-if="isRange">
+				<span
+					@mouseover.stop="handleHover('right')"
+					:class="_tobogPrefix_+'-mask'"
+					:style="{left:percent.right+'%',right:0,zIndex:type==='left'?60:''}"
+				></span>
+				<span
+					@mouseover.stop="handleHover('left')"
+					:class="_tobogPrefix_+'-mask'"
+					:style="{right:(100-percent.left)+'%',zIndex:type==='right'?60:''}"
+				></span>
+			</template>
+		</div>
+	</transition>
 </template>
 
 <script>
-import { DragMove } from '../../utils/dom';
-import { unit, validVal, parseNumber } from '../../utils/tool';
-import Offset from '../../utils/offset';
-import emitter from '../../utils/emitter';
+import Tooltip from '../tooltip/index';
+
 export default {
 	name: 'Slider',
-	mixins: [emitter],
+	components: { Tooltip },
 	props: {
-		name: String,
+		name: [String, Number],
 		value: {
-			type: [Number, Array],
+			type: [Number, String, Array],
 			default: 0,
 		},
 		min: {
-			type: Number,
+			type: [Number, String],
 			default: 0,
 		},
 		max: {
-			type: Number,
+			type: [Number, String],
 			default: 100,
 		},
 		step: {
-			type: Number,
-			default: 0,
+			type: [Number, String],
+			default: 1,
 		},
+		disabled: Boolean,
 		tipFormat: {
 			type: Function,
 			default(val, type) {
 				return val;
 			},
 		},
-		disabled: Boolean,
-		readonly: Boolean,
-		showTip: Boolean,//['hover', 'always', 'never']
-		theme: String,
+		gpu: Boolean,
 	},
 	data() {
 		return {
-			percentLeft: 0,
-			percentRight: 0,
-			model: [0],
-			showTipStatus: '',
+			leftVal: 0,
+			rightVal: 0,
+			type: '',
+			isRange: this.value instanceof Array,
+			percent: {
+				left: 0,
+				right: 0,
+			},
 		};
 	},
-	mounted() {
-		this.$nextTick(() => {
-			this.dragMove();
-			this.handleDispatch('on-change', this.getModel);
-		})
-	},
 	computed: {
-		wrapClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
+		getRightStyle() {
+			return { width: this.percent.right + '%' }
+		},
+		getLeftStyle() {
+			return { width: this.percent.left + '%' }
+		},
+		classes() {
+			const _tobogPrefix_ = this._tobogPrefix_,
+				type = this.type,
+				disabled = this.disabled,
+				isRange = this.isRange;
 			return [
 				_tobogPrefix_,
 				{
-					[`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
-					[`${_tobogPrefix_}-disabled`]: this.disabled,
-					[`${_tobogPrefix_}-readonly`]: this.readonly,
-					[`${_tobogPrefix_}-range`]: this.isRange,
+					[`${_tobogPrefix_}-${type}`]: !!type,
+					[`${_tobogPrefix_}-disabled`]: disabled,
+					[`${_tobogPrefix_}-range`]: isRange,
 				},
 			];
 		},
-		getModel() {
-			return this.isRange ? this.model : this.model[0]
-		},
-		isRange() {
-			return Array.isArray(this.value)
-		},
-		getLeftStyle() {
-			return {
-				width: unit(this.percentLeft, '%')
-			}
-		},
-		getRightStyle() {
-			return {
-				left: unit(this.percentRight, '%')
-			}
-		},
-
-		getStops() {
-			const step = parseNumber(this.step);
-			let value;
-			if (step) {
-				value = parseInt((this.max - this.min) / step);
-			}
-			return value <= 100 && value >= 1 ? value : false
-		},
+		values() {
+			return this.isRange ? [this.leftVal, this.rightVal] : this.leftVal;
+		}
 	},
 	methods: {
-		dragMove() {
-			const { leftBar, rightBar, leftBtn, rightBtn } = this.$refs;
-			if (!this._leftBarDragMove && leftBar && leftBtn) {
-				this._leftBarDragMove = new DragMove(leftBtn, { props: ['offsetLeft'] }, this.handleLeftPos);
-			}
-			if (this.isRange && !this._rightBarDragMove && rightBar && rightBtn) {
-				this._rightBarDragMove = new DragMove(rightBar, { props: ['offsetLeft'] }, this.handleRightPos);
-			}
+		handleChange(event) {
+			this.$emit('on-change', this.values, event)
 		},
-		handleLeftPos(obj) {
-			if (this.disabled || this.readonly) return;
-			this.showTipStatus = 'left';
-			if (obj.cancel) {
-				this.showTipStatus = '';
-				this.handleChange();
-				return;
+		handleHover(type) {
+			this.type = type;
+		},
+		handleIconStyle(type) {
+			const style = {};
+			let percent = this.percent[type] || 0;
+			if (percent >= 100) {
+				percent = 100;
+				style.right = 0;
+			} else if (percent <= 0) {
+				style.right = 'initial';
+				style.left = 0;
+			} else if (percent <= 50) {
+				style.right = 'initial';
+				style.left = "100%";
 			}
-			const { data, distance, element } = obj;
-			const percent = this.pipe(data.offsetLeft + element.offsetWidth + distance[0]);
-			if (percent - this.percentRight > 0) this.percentRight = percent;
-			this.percentLeft = percent;
-			this.updateModel();
 
-		},
-		handleRightPos(obj) {
-			if (this.disabled || this.readonly) return;
-			this.showTipStatus = 'right';
-			if (obj.cancel) {
-				this.showTipStatus = '';
-				this.handleChange();
-				return;
+			if (this.type === type) {
+				style.transform = "translateY(-50%) scale(1.5)"
+				style.zIndex = 0
+				if (this.leftVal === this.rightVal) style.zIndex = 100;
 			}
-			const { data, distance } = obj;
-			const percent = this.pipe(data.offsetLeft + distance[0]);
-			if (percent - this.percentLeft < 0) this.percentLeft = percent;
-			this.percentRight = percent;
-			this.updateModel();
+			return style;
 		},
-		handleClickPercent(event) {
-			if (this.disabled || this.readonly) return;
-			const { clientX } = event,
-				{ left } = Offset.boundingClientRect(this.$el),
-				pos = clientX - left;
-			const percent = this.pipe(pos);
-			if (this.isRange && this.percentLeft - percent < 0) {
-				if(2*percent-this.percentLeft-this.percentRight>0){
-					this.percentRight = percent;
-				}else{
-					this.percentLeft = percent;
-				}
-			} else {
-				this.percentLeft = percent;
-			}
-			this.updateModel();
+		handlePercent(value = 0) {
+			const min = parseFloat(this.min || 0),
+				max = parseFloat(this.max || 0);
+			return parseFloat((value - min) / (max - min) * 100);
 		},
-		pipe(percent) {
-			percent = this.pipePercent(percent);
-			percent = this.pipeMaxMin(percent);
-			percent = this.pipeSpotPercent(percent);
-			return percent.toFixed(3)
-		},
-		pipePercent(value = 0) {
-			const { offsetWidth } = this.$el;
-			return value / offsetWidth * 100;
-		},
-		pipeMaxMin(percent) {
-			if (percent > 100) percent = 100;
-			if (percent < 0) percent = 0;
-			return percent;
-		},
-		handleSpotStyle(index) {
-			const total = this.getStops;
-			return {
-				left: (100 / total) * index + '%'
-			}
-		},
-		pipeSpotPercent(percent) {
-			const total = this.getStops;
-			if (!total) return percent;
-			const per = 100 / total;
-			return Math.round(percent / per) * per;
-		},
-		updatePercent() {
-			const [leftVal, rightVal] = this.model;
-			const percentTotal = 100 / (this.max - this.min);
-			this.percentLeft = validVal(leftVal) ? ((leftVal - this.min) * percentTotal) : 0;
-			this.percentRight = validVal(rightVal) ? ((rightVal - this.min) * percentTotal) : 0;
-		},
-		updateModel() {
-			const rate = (this.max - this.min) / 100;
-			this.$set(this.model, 0, rate * this.percentLeft + this.min)
-			this.$set(this.model, 1, rate * this.percentRight + this.min)
-			// this.model[0] = rate * this.percentLeft + this.min;
-			// this.model[1] = rate * this.percentRight + this.min;
-		},
-		handleChange() {
-			this.$nextTick(() => {
-				this.$emit('on-change', this.getModel);
-			})
-		},
-		handleDispatch(type, val) {
-			if (this.__parentComponent__) {
-				this.__parentComponent__.$emit(...arguments)
-			} else {
-				this.__parentComponent__ = this.dispatch('FormItem', ...arguments)
-			}
-		},
+
 	},
+
 	watch: {
-		model(val, old) {
-			val = this.getModel;
-			this.$emit('input', val);
-			// this.$emit('on-change', val);
-			this.handleDispatch('on-change', val);
+		leftVal(val, old) {
+			val = parseFloat(val || 0);
+			this.percent.left = this.handlePercent(val);
+			if (this.isRange) {
+				if (val > this.rightVal) {
+					this.rightVal = val;
+				}
+				this.$emit('input', [val, this.rightVal]);
+			} else {
+				this.$emit('input', val);
+			}
+		},
+		rightVal(val, old) {
+			val = parseFloat(val || 0);
+			this.percent.right = this.handlePercent(val);
+			if (this.isRange) {
+				if (val < this.leftVal) {
+					this.leftVal = val;
+				}
+				this.$emit('input', [this.leftVal, val]);
+			} else {
+				this.$emit('input', val);
+			}
 		},
 		value: {
 			deep: true,
 			immediate: true,
 			handler(val, old) {
-				if (!this.isRange) val = [val]
-				if (val[0] == this.model[0] && val[1] == this.model[1]) return;
-				this.model = val;
-				this.updatePercent();
+				if (this.isRange) {
+					this.leftVal = val[0] || 0;
+					this.rightVal = val[1] || 0;
+				} else {
+					this.leftVal = val || 0;
+				}
 			},
 		},
 	},
-	beforeDestroy() {
-		this._leftBarDragMove && this._leftBarDragMove.destroy();
-		this._rightBarDragMove && this._rightBarDragMove.destroy();
-	}
 };
 </script>

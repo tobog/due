@@ -1,53 +1,73 @@
 
 
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name">
-		<aside v-if="prepend" ref="prepend" :class="[_tobogPrefix_ + '-prepend']">
-			<slot name="prepend"></slot>
+	<section :class="wrapClasses" :data-vview-module="$options.name">
+		<aside v-if="prepend" :class="_tobogPrefix_ + '-prepend'" :style="handlePendWidth('prepend')">
+			<div ref="prepend" style="display:inline-block">
+				<slot name="prepend"></slot>
+			</div>
 		</aside>
-		<div :class="innerClasses" data-form="textarea" tabindex="1" @focusin="handleFocus">
-			<span v-if="showPrefix" :class="[_tobogPrefix_ + '-prefix']">
+		<div :class="innerClasses" @mouseover="clearStatus=true" @mouseleave="clearStatus=false">
+			<span v-if="showprefix" :class="iconWrapClass" data-type-icon="prefix" ref="prefix">
 				<slot name="prefix">
-					<Icons :type="prefix" center />
+					<Icons :type="prefix" :class="iconClass" center />
 				</slot>
 			</span>
+			<span
+				v-if="showsuffix"
+				:class="iconWrapClass"
+				@click.stop="handleIconClick"
+				data-type-icon="suffix"
+				ref="suffix"
+			>
+				<slot name="suffix">
+					<Icons :type="suffix" center :class="iconClass" />
+				</slot>
+			</span>
+			<Icons
+				v-show="isClearable"
+				:class="iconClasses"
+				type="close"
+				center
+				@click.native.stop="handleClear"
+			/>
 			<textarea
+				v-show="ready"
 				ref="input"
+				data-form="textarea"
+				style="padding:10px;"
 				v-model="model"
 				:name="name"
 				:class="_tobogPrefix_"
+				:style="handleInputStyle()"
 				:disabled="disabled"
 				:readonly="readonly"
 				@change="handleChange"
 				@blur="handleBlur"
 				@focus="handleFocus"
-				@keydown="handleKeyCode"
+				@keydown.enter="handleKeyEnter"
 				@paste="handleChange"
 				:rows="rows"
 				:cols="cols"
 				v-bind="$attrs"
 			/>
-			<Icons
-				v-if="isClearable"
-				:class="clearClass"
-				type="close"
-				center
-				@click.native.stop="handleClear"
-			/>
 		</div>
-		<aside v-if="append" :class="[_tobogPrefix_ + '-append']">
-			<slot name="append"></slot>
+		<aside v-if="append" :class="_tobogPrefix_ + '-append'" :style="handlePendWidth('append')">
+			<div ref="append" style="display:inline-block">
+				<slot name="append"></slot>
+			</div>
 		</aside>
 	</section>
 </template>
 
 <script>
 import Icons from '../icons/index';
-import mixin from './mixin';
+import Emitter from '../../utils/emitter';
+import mixin from './mixin'
 export default {
 	name: 'Textarea',
 	inheritAttrs: false,
-	mixins: [mixin],
+	mixins: [Emitter, mixin],
 	components: {
 		Icons,
 	},
@@ -62,14 +82,6 @@ export default {
 			default: 28,
 		},
 	},
-	data() {
-		return {
-			model: this.value
-		}
-	},
-	mounted() {
-		this.handleDispatch('on-change', this.model);
-	},
 	methods: {
 		handleClear() {
 			this.model = '';
@@ -79,22 +91,16 @@ export default {
 			this.$emit('on-change', this.model, event);
 		},
 		handleFocus(event) {
-			this.isActive = true;
-			if (this._isFocused) return;
-			this._isFocused = false;
 			this.$emit('on-focus', this.model, event);
 		},
-		handleKeyCode(event) {
-			this.$emit('on-keydown', this.model, event);
-			if (event.keyCode == 13) {
-				this.$emit('on-enter', this.model, event);
-			}
+		handleKeyEnter(event) {
+			this.$emit('on-enter', this.model, event);
 		},
 		handleBlur(event) {
-			this.isActive = this._isFocused = false;
-			this.$emit('on-blur', this.model, event);
 			this.handleDispatch('on-validate', this.model);
+			this.$emit('on-blur', this.model, event);
 		},
+
 	},
 	watch: {
 		value: {

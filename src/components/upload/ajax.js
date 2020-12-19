@@ -37,17 +37,13 @@ export default function upload(option) {
         formData = new FormData(),
         headers = option.headers || {},
         url = option.action,
-        params = option.data,
-        { file, chunck } = option.fileInfo || {};
+        params = option.data;
     if (params) {
         Object.keys(params).map(key => {
             formData.append(key, params[key]);
         });
     }
-    if (chunck !== undefined) {
-        formData.append('chunck', chunck);
-    }
-    formData.append(option.filename, file);
+    formData.append(option.filename, option.file);
 
     xhr.onerror = function (e) {
         option.onError(e);
@@ -56,10 +52,16 @@ export default function upload(option) {
 
     if (xhr.upload) {
         xhr.upload.onprogress = function (e) {
+            // if (e.total > 0) {
+            //     e.percent = e.loaded / e.total * 100;
+            // }
             option.onProgress(e);
         };
     } else {
         xhr.onprogress = function (e) {
+            // if (e.lengthComputable && e.total > 0) {
+            //     e.percent = e.loaded / e.total * 100;
+            // }
             option.onProgress(e);
         };
     }

@@ -1,57 +1,41 @@
 $prefix-cls: #{$prefix}-icons;
+.#{$prefix-cls}-vertical-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
 
-.#{$prefix-cls} {
-    &-center {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
+.#{$prefix-cls}-success:before {
+    content: "\F170";
+}
+
+.#{$prefix-cls}-info:before {
+    content: "\F202";
+}
+
+.#{$prefix-cls}-warning:before {
+    content: "\F108";
+}
+
+.#{$prefix-cls}-error:before {
+    content: "\F177";
+}
+
+@keyframes icon-loop {
+    0% {
+        transform:translateY(-50%) rotate(0)
     }
-
-    &-httpicon {
-        overflow: hidden;
-    }
-
-    &-img {
-        max-height: 100%;
-        max-width: 100%;
-        border: none;
-        width: 100%;
-    }
-
-    &-success:before {
-        content: "\F170";
-    }
-
-    &-info:before {
-        content: "\F202";
-    }
-
-    &-warning:before {
-        content: "\F108";
-    }
-
-    &-error:before {
-        content: "\F177";
-    }
-
-    &-loading {
-        transform-origin: center center 0;
-        animation: $prefix-cls 1s linear infinite;
-
-        &:before {
-            content: "\F45B";
-        }
+    100% {
+        transform:translateY(-50%) rotate(360deg)
     }
 }
 
-
-@keyframes #{$prefix-cls} {
-    0% {
-        transform: rotate(0)
-    }
-
-    100% {
-        transform: rotate(360deg)
+.#{$prefix-cls}-loading {
+    transform-origin: center center 0;
+    animation: icon-loop 1s linear infinite;
+    color: $primary;
+    &:before {
+        content: "\F45B";
     }
 }

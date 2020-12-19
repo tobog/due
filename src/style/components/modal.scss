@@ -1,5 +1,4 @@
 $prefix-cls: #{$prefix}-modal;
-
 %fixed {
     position: fixed;
     overflow: auto;
@@ -10,112 +9,119 @@ $prefix-cls: #{$prefix}-modal;
     z-index: 9999;
 }
 
+.#{$prefix-cls}-wrap {
+    @extend %fixed;
+}
+
+.#{$prefix-cls}-mask {
+    @extend %fixed;
+    background-color: $mask;
+    height: 100%;
+    overflow-x: hidden;
+}
 
 .#{$prefix-cls} {
+    margin: 0 auto;
     position: relative;
     z-index: 0;
-    background-color: #fff;
+    top: 100px;
+    background-color: $white;
     border-radius: 6px;
     background-clip: padding-box;
-    margin: auto;
-    min-width: 320px;
-    display: flex;
-    flex-direction: column;
+}
 
-    &-wrapper {
-        @extend %fixed;
-        display: flex;
-        align-items: center;
-    }
+.#{$prefix-cls}-drawer {
+    top: 0;
+    right: 0;
+    margin: 0 0 0 auto;
+    bottom: 0;
+    height: 100%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
 
-    &-mask {
-        background-color: $mask;
-        height: 100vh;
-        overflow-x: auto;
-    }
-
-    &-drawer {
-        margin: 0 0 auto auto !important;
-        min-height: 100vh;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-
-    &-fixed>& {
-        max-height: 100%;
-
-        .#{$prefix-cls}-body {
-            max-height: 100%;
-            overflow: auto;
+.#{$prefix-cls}-icons {
+    position: absolute;
+    right: 3px;
+    top: 7px;
+    overflow: hidden;
+    padding: 0 6px;
+    color: $sub-content;
+    cursor: pointer;
+    &>* {
+        float: right;
+        &:hover {
+            color: $content;
+            font-weight: bold;
         }
     }
+}
 
-    &-icons {
-        display: flex;
-        align-items: center;
-        position: absolute;
-        right: 3px;
-        top: 6px;
-        z-index: 10;
-        overflow: hidden;
-        font-size: 1.2em;
+.#{$prefix-cls}-full {
+    display: block;
+    margin-top: 2px;
+}
 
-        &>.#{$prefix}-icons {
-            &:hover {
-                color: $content;
-                font-weight: bold;
-            }
-        }
-    }
+.#{$prefix-cls}-exit {
+    display: none;
+    margin-top: 2px;
+}
 
-    &-full {
-        display: block;
-    }
-
-    &-exit {
+.#{$prefix-cls}-wrap[data-fullscreen='1'],
+.#{$prefix-cls}[data-fullscreen='1'] {
+    .#{$prefix-cls}-full {
         display: none;
     }
-
-    &[data-fullscreen='1'],
-    &-wrapper[data-fullscreen='1'] {
-        .#{$prefix-cls}-full {
-            display: none;
-        }
-
-        .#{$prefix-cls}-exit {
-            display: block;
-        }
+    .#{$prefix-cls}-exit {
+        display: block;
     }
-
-    &-header {
-        padding: 12px;
-        font-size: 1.17em;
-        color: $title;
-        font-weight: bold;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        border-bottom: 1px solid $divider;
-        flex: none;
-
-        &>.#{$prefix}-icons {
-            margin-right: 5px;
-        }
-    }
-
-    &-body {
-        padding: 6px 12px;
-        flex: auto;
-    }
-
-    &-footer {
-        flex: none;
-        border-top: 1px solid $divider;
-        padding: 6px 12px;
-        text-align: right;
-    }
-
 }
+
+
+.#{$prefix-cls}-header {
+    padding: 12px;
+    font-size: 14px;
+    color: $title;
+    font-weight: 900;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-bottom: 1px solid $divider;
+}
+
+.#{$prefix-cls}-body {
+    padding: 6px 12px;
+    // line-height: 1.5;
+}
+
+.#{$prefix-cls}-footer {
+    border-top: 1px solid $divider;
+    padding: 6px 12px;
+    text-align: right;
+}
+
+.#{$prefix-cls}-icon {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+// .#{$prefix-cls}-icon-info {
+//     color: $primary;
+// }
+
+// .#{$prefix-cls}-icon-success {
+//     color: $success;
+// }
+
+// .#{$prefix-cls}-icon-warning,
+// .#{$prefix-cls}-icon-confirm {
+//     color: $warning;
+// }
+
+// .#{$prefix-cls}-icon-error {
+//     color: $error;
+// }
+
 
 @each $key,
 $value in $colors-map {

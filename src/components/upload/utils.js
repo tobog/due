@@ -1,7 +1,5 @@
 export const formatRate = function (speed = 0) {
-     if (speed > 1073741824) {
-        speed = (speed / 1073741824).toFixed(2) + 'G';
-    } else if (speed > 1048576) {
+    if (speed > 1048576) {
         speed = (speed / 1048576).toFixed(1) + 'M';
     } else if (speed > 1024) {
         speed = parseInt(speed / 1024) + 'K';
@@ -22,8 +20,8 @@ export const formatTime = function (time = 0) {
     return time;
 };
 
-export const formatFile = function (name) {
-    const format = name.split('.').pop().toLowerCase() || '';
+export const formatFile = function (file) {
+    const format = file.name.split('.').pop().toLowerCase() || '';
     let type = 'document';
     if (['gif', 'jpg', 'jpeg', 'png', 'bmp', 'webp'].indexOf(format) > -1) {
         type = 'image';

@@ -16,17 +16,15 @@ function getInstance() {
 }
 
 function notice(type, options = {}, single = false) {
-    if (typeof options === 'string') options = { content: options };
-    const {
-        content = '',
+    if (typeof options === 'string') options = { content: options || '' };
+    const { content = '',
         closable = true,
-        onClose,
+        onClose = function () { },
         render,
         duration = 5,
         name,
         style,
         className,
-        maskable,
         ghost = true } = options,
         instance = getInstance();
 
@@ -37,10 +35,9 @@ function notice(type, options = {}, single = false) {
         type: "message",
         name,
         duration,
-        maskable,
         render: function (h) {
             const renderVnode = typeof render === 'function' ? render(h) : content || render;
-            return <Alert type={type} ghost={ghost} showIcon>
+            return <Alert type={type} ghost={ghost} showIcon style='margin-bottom:0'>
                 {renderVnode}
             </Alert>
         },
@@ -70,10 +67,9 @@ export default {
     loading(options, single) {
         return notice('loading', options, single);
     },
-    config(config, isVmOptions) {
-        if (isVmOptions) {
+    config(config, isvmOptions) {
+        if (isvmOptions) {
             vmOptions = config;
-            return;
         } else {
             Config = config;
         }

@@ -1,101 +1,94 @@
-<style lang="scss" scoped>
-</style>
-<template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Radio 单选框)</h2>
-			<h4 class="padding-top-10">基本组件-单选框。主要用于一组可选项单项选择，或者单独用于切换到选中状态。</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vRadio v-model="value" v-bind="formData" true-value="2">Radio</vRadio>
-				<vRadio v-model="value" v-bind="formData" true-value="3">Radio1</vRadio>
-				<vRadio v-model="value" v-bind="formData" true-value="5">Radio2</vRadio>
-				<vRadio v-model="value" v-bind="formData" true-value="6" size="auto">
-					<vButton slot="content" slot-scope="{isChecked}" :theme="isChecked?'primary':'default'">active</vButton>
-				</vRadio>
-			</section>
-			{{value}}
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
-</template>
 
+<template>
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example" v-if="attrs.show">
+			<div style="padding:10px 0;">视图：</div>
+			<vRadio v-model="value" v-bind="attrs" true-value="2">Radio</vRadio>
+			<vRadio v-model="value" v-bind="attrs" true-value="3">Radio1</vRadio>
+			<vRadio v-model="value" v-bind="attrs" true-value="5">Radio2</vRadio>
+			<vRadio v-model="value" v-bind="attrs" true-value="6" size='auto'>
+				<vButton
+                    slot='content'
+                    slot-scope="{active}"
+                    :theme="active?'primary':'default'"
+                >active</vButton>
+			</vRadio>
+			{{value}}
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
+</template>
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			value: '',
+			value:'',
+			switchs: {
+				show:true,
+				disabled: true,
+				strict: false,
+			},
+			selects: {
+		
+			},
+			options: {
+			
+			},
+			inputs: {
+				label: 20,
+				size: 30,
+			},
 		};
 	},
+
 	computed: {
-		getCode() {
-			return `<vRadio v-model="value" v-bind="${this.getCodeString(this.formData)}" true-value="2">Radio</vRadio>
-					<vRadio v-model="value" v-bind="${this.getCodeString(this.formData)}" true-value="3">Radio1</vRadio>
-					<vRadio v-model="value" v-bind="${this.getCodeString(this.formData)}" true-value="5">Radio2</vRadio>
-					<vRadio v-model="value" v-bind="${this.getCodeString(this.formData)}" true-value="6" size="auto">
-						<vButton slot="content" slot-scope="{isChecked}" :theme="isChecked?'primary':'default'">active</vButton>
-					</vRadio>`;
+		style() {
+			return this.switchs.vertical ? 'height:300px;vertical-align:top;' : null
 		},
-		getBase() {
-			return [
-				{
-					label: "禁用",
-					key: "disabled",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "只读",
-					key: "readonly",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "严格相等",
-					key: "strict",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "尺寸",
-					key: "size",
-					tag: "vInput",
-					default: '',
-				},
-				{
-					label: "主题",
-					key: "theme",
-					tag: "vSelect",
-					default: '',
-					options: this.getThemes
-				},
-				{
-					label: "标签",
-					key: "label",
-					tag: "vTextarea",
-					default: ''
-				},
-			];
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		compProps() {
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+			},
+			]
+		},
+		data() {
 			return [{
 				prop: "value",
 				explain: "可以使用 v-model 双向绑定数据",
@@ -104,21 +97,15 @@ export default {
 			},
 			{
 				prop: "trueValue",
-				explain: "选中时的值",
+				explain: "trueValue",
 				type: "String, Number, Boolean",
 				default: "true"
 			},
 			{
 				prop: "falseValue",
-				explain: "没有选中时的值，",
+				explain: "falseValue",
 				type: "String, Number, Boolean",
-				default: "-"
-			},
-			{
-				prop: "name",
-				explain: "表单name",
-				type: "String",
-				default: "-"
+				default: "false"
 			},
 			{
 				prop: "label",
@@ -133,35 +120,25 @@ export default {
 				default: "false"
 			},
 			{
-				prop: "readonly",
-				explain: "只读",
-				type: "Boolean",
-				default: "false"
-			},
-			{
 				prop: "strict",
 				explain: "严格相等",
 				type: "Boolean",
-				default: "false"
+				default: "true"
 			},
 			{
 				prop: "size",
-				explain: "单选框的尺寸，large、small、default，number,auto",
+				explain: "单选框的尺寸，large、small、default，number",
 				type: "String, Number",
-				default: "default"
+				default: "-"
 			},
-			{
-				explain: "主题颜色可选值为 gray、primary、dashed、text、info、success、warning、error",
-				prop: "theme",
-				type: "String",
-				default: "",
-			},
+			
 			{
 				prop: "on-change",
 				explain: "事件",
 				type: "Function： (val,event)=>{}",
 				default: '-'
 			},
+
 			{
 				prop: "slot：content",
 				explain: "自定义显示状态内容",
@@ -176,6 +153,7 @@ export default {
 			},
 			]
 		}
-	}
+	},
 };
 </script>
+

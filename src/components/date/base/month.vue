@@ -2,7 +2,7 @@
 <template>
 	<section :class="wrapClasses">
 		<span :class="getCellCls(cell)" v-for="cell in cells" @click="handleClick(cell,'day')">
-			<em>{{langs('datepicker.month',cell.date.month+'月',{month:cell.date.month})}}</em>
+			<em>{{langs('month',cell.date.month+'月',{month:cell.date.month})}}</em>
 		</span>
 	</section>
 </template>

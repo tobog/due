@@ -1,111 +1,147 @@
 $prefix-cls: #{$prefix}-progress;
-
 .#{$prefix-cls} {
+    width: 100%;
+    font-size: 12px;
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    visibility: hidden;
+}
 
-    &-wrapper {
-        display: flex;
-        align-items: center;
-         position: relative;
+.#{$prefix-cls}-ready {
+    visibility: visible;
+}
+
+.#{$prefix-cls}-wrap {
+    display: inline-block;
+    width: inherit;
+}
+
+.#{$prefix-cls}-tip {
+    .#{$prefix-cls}-wrap {
+        padding-right: 16%;
+        margin-right: -16%;
     }
+}
 
-    & {
-        display: flex;
-        background-color: $back;
-        border-radius: 9999px;
-        flex: auto;
+.#{$prefix-cls}-inner {
+    display: inline-block;
+    width: inherit;
+    background-color: $back;
+    border-radius: 99999px;
+}
+
+.#{$prefix-cls}-text {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+    // text-align: right;
+    vertical-align: super;
+}
+
+.#{$prefix-cls}-bar {
+    display: inline-block;
+    background-color: $info;
+    transition: all 0.6s ease-in-out;
+    position: relative;
+    z-index: 0;
+    vertical-align: text-top;
+    &:first-of-type {
+        border-top-left-radius: inherit;
+        border-bottom-left-radius: inherit;
     }
-
-    &-bar {
-        background-color: $info;
-        transition: all 0.6s ease-in-out;
-        max-width: 100%;
-        position: relative;
-        border-radius: inherit;
-        overflow: visible;
+    &:last-of-type {
+        border-top-right-radius: inherit;
+        border-bottom-right-radius: inherit;
     }
+}
 
-    &-text {
-        flex: none;
-        padding: 0 5px;
-        font-size: $subFont;
-        white-space: nowrap;
+.#{$prefix-cls}-inner-progress {
+    display: inline-block;
+    vertical-align: bottom;
+    position: relative;
+    z-index: 0;
+    left: 0;
+    .#{$prefix-cls}-wrap {
+        padding-right: initial;
+        margin-right: initial;
     }
-
-    &-inside &-text,
-    &-inside-center &-text {
-        color: #fff;
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
+    .#{$prefix-cls}-text {
+        display: none;
     }
-
-    &-center &-text {
-        color: $content;
-        position: absolute;
-        top: 50%;
-        right: 50%;
-        transform: translate(-50%, -50%, );
+    .#{$prefix-cls}-bar {
+        &:first-of-type {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
     }
+}
 
-    &-inside-center &-text {
-        right: 50%;
-        transform: translate(50%, -50%);
+.#{$prefix-cls}-success {
+    .#{$prefix-cls}-bar {
+        background-color: $success;
     }
-
-
-    &-success {
+    .#{$prefix-cls}-text {
         color: $success;
-
-        .#{$prefix-cls}-bar {
-            background-color: $success;
-        }
     }
+}
 
-    &-error {
+.#{$prefix-cls}-error {
+    .#{$prefix-cls}-bar {
+        background-color: $error;
+    }
+    .#{$prefix-cls}-text {
         color: $error;
+    }
+}
 
-        .#{$prefix-cls}-bar {
-            background-color: $error;
+.#{$prefix-cls}-active .#{$prefix-cls}-bar {
+    background-size: 40px 40px;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 75%, transparent);
+    animation: #{$prefix-cls}-active 2s linear infinite;
+}
+
+.#{$prefix-cls}-vertical {
+    &,
+    .#{$prefix-cls}-wrap,
+    .#{$prefix-cls}-inner {
+        height: 100%;
+        width: auto;
+    }
+    .#{$prefix-cls}-inner {
+        //底部显示
+        text-align: right;
+        &:after {
+            content: '';
+            height: 100%;
+        }
+        &:after,
+        &>* {
+            display: inline-block;
+            vertical-align: bottom;
         }
     }
-
-    &-active &-bar {
-        background-size: 40px 40px;
-        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 75%, transparent);
-        animation: #{$prefix-cls}-active 2s linear infinite;
+    .#{$prefix-cls}-bar {
+        &:first-of-type {
+            border-bottom-left-radius: inherit;
+            border-bottom-right-radius: inherit;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        &:last-of-type {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: inherit;
+            border-top-right-radius: inherit;
+        }
     }
-
-    &-vertical {
-        display: inline-flex;
-        align-items: center;
-
-        .#{$prefix-cls} {
-            width: auto;
-            height: 100%;
-            flex-direction: column-reverse;
-
-            &-text {
-                position: relative;
+    .#{$prefix-cls}-inner-progress {
+        .#{$prefix-cls}-bar {
+            &:first-of-type {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
             }
         }
-
-        &.#{$prefix-cls}-center .#{$prefix-cls}-text,
-        &.#{$prefix-cls}-inside .#{$prefix-cls}-text,
-        &.#{$prefix-cls}-inside-center .#{$prefix-cls}-text {
-            position: relative;
-            top: 0;
-            left: 100%;
-            right: initial;
-            right: unset;
-            transform: translate(0);
-            color: $content;
-        }
-
-        &.#{$prefix-cls}-center .#{$prefix-cls}-text {
-            left: 0;
-        }
-
     }
 }
 
@@ -113,30 +149,129 @@ $prefix-cls: #{$prefix}-progress;
     0% {
         background-position: 0;
     }
-
     100% {
         background-position: 40px;
     }
 }
 
-// @keyframes #{$prefix-cls}-active {
-//     0% {
-//         opacity: .3;
-//         width: 0;
-//     }
-//     100% {
-//         opacity: 0;
-//         width: 100%;
-//     }
-// }
+$prefix-cls-item: #{$prefix}-progressitem;
+.#{$prefix-cls-item} {
+    width: 100%;
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    background-color: $back;
+    border-radius: 99999px;
+}
 
-// @keyframes #{$prefix-cls}-active {
-//     0% {
-//         opacity: .3;
-//         height: 0;
-//     }
-//     100% {
-//         opacity: 0;
-//         height: 100%;
-//     }
-// }
+.#{$prefix-cls-item}-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: $content;
+}
+
+.#{$prefix-cls-item}-bar {
+    display: inline-block;
+    background-color: $info;
+    transition: all 0.6s ease-in-out;
+    width: inherit;
+    height: inherit;
+    border-radius: inherit;
+    position: relative;
+    z-index: 0;
+    vertical-align: text-top;
+}
+
+.#{$prefix-cls-item}-success {
+    .#{$prefix-cls-item}-bar {
+        background-color: $success;
+    }
+}
+
+.#{$prefix-cls-item}-error {
+    .#{$prefix-cls-item}-bar {
+        background-color: $error;
+    }
+}
+
+.#{$prefix-cls-item}-active .#{$prefix-cls-item}-bar {
+    background-size: 40px 40px;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 75%, transparent);
+    animation: #{$prefix-cls}-active 2s linear infinite;
+}
+
+.#{$prefix-cls-item}-vertical {
+    width: auto;
+    .#{$prefix-cls-item}-text {
+        left: 100%;
+        transform: translate(50%, -50%);
+    }
+    &:after {
+        content: '';
+        height: 100%;
+        display: inline-block;
+        vertical-align: bottom;
+    }
+    .#{$prefix-cls-item}-bar {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
+
+$prefix-cls-group: #{$prefix}-progressgroup;
+.#{$prefix-cls-group} {
+    width: 100%;
+    background-color: $back;
+    border-radius: 99999px;
+    display: inline-block;
+    position: relative;
+    z-index: 0;
+    .#{$prefix-cls-item}-bar {
+        width: 100%;
+        border-radius: 0;
+    }
+    .#{$prefix-cls-item} {
+        &:last-of-type {
+            .#{$prefix-cls-item}-bar {
+                border-top-right-radius: inherit;
+                border-bottom-right-radius: inherit;
+            }
+        }
+        &:first-of-type {
+            .#{$prefix-cls-item}-bar {
+                border-top-left-radius: inherit;
+                border-bottom-left-radius: inherit;
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-group}-vertical {
+    height: 100%;
+    width: auto;
+    .#{$prefix-cls-item} {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+    .#{$prefix-cls-item}-bar {
+        height: 100%;
+    }
+    .#{$prefix-cls-item} {
+        &:first-of-type {
+            .#{$prefix-cls-item}-bar {
+                border-radius: 0;
+            }
+        }
+        &:last-of-type {
+            .#{$prefix-cls-item}-bar {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                border-top-left-radius: inherit;
+                border-top-right-radius: inherit;
+            }
+        }
+    }
+}

@@ -1,53 +1,63 @@
 
 
 <template>
-	<transition-group
-		:class="[_tobogPrefix_]"
-		name="transition-drop"
-		tag="ul"
-		appear
-		:data-vue-module="$options.name"
-	>
-		<li v-for="fileInfo in data" :key="fileInfo.uid" :class="fileCls(fileInfo)">
-			<div :class="[_tobogPrefix_ + '-content',_tobogPrefix_ + '-status']">
-				<span :class="[_tobogPrefix_ + '-title']" :title="fileInfo.name">
-					<Icons :type="formatFile(fileInfo.name)" center size="1.2em" />
-					{{fileInfo.name}}
+	<keep-alive>
+		<transition-group
+			:class="_tobogPrefix_"
+			name="transition-drop"
+			tag="ul"
+			appear
+			:data-vview-module="$options.name"
+		>
+			<li v-for="filesInfo in files" :key="filesInfo.uid" :class="fileCls(filesInfo)">
+				<span
+					:class="_tobogPrefix_ + '-title'"
+					@click.native.stop="handlePreview(filesInfo)"
+					:title="filesInfo.name"
+				>
+					<Icons :type="formatFile(filesInfo)" />
+					{{filesInfo.name}}
 				</span>
-				<span :class="[_tobogPrefix_ + '-data']">
-					<span v-show="fileInfo.remainTime&&fileInfo.status ==1">{{handleProgressText(fileInfo)}}</span>
-					<span v-show="fileInfo.status ==2">{{langs('upload.complete','已完成')}}</span>
-					<span v-show="fileInfo.status ==-1">{{langs('upload.fail','失败')}}</span>
-				</span>
-			</div>
-			<div :class="[_tobogPrefix_ + '-content']">
-				<Progress
-					active
-					:class="[_tobogPrefix_ + '-bar']"
-					:percent="fileInfo.percent"
-					:status="handleStatus(fileInfo.status)"
+				<Icons type="close" @click.native="handleRemove(filesInfo)" />
+				<Icons
+					v-if="filesInfo.status === 'ready'||filesInfo.status === 'fail'"
+					type="pause"
+					@click.native="handleManual(filesInfo)"
 				/>
-				<Icons v-if="fileInfo.status==1" type="pause" @click.native="handleCancel(fileInfo)" />
-				<Icons v-if="fileInfo.status <1" type="play" @click.native="handleManual(fileInfo)" />
-				<Icons type="close" @click.native="handleRemove(fileInfo)" />
-			</div>
-		</li>
-	</transition-group>
+				<Icons
+					v-if="filesInfo.status === 'uploading'"
+					type="play"
+					@click.native="handleManual(filesInfo)"
+				/>
+				<span
+					v-show="filesInfo.time&&filesInfo.status === 'uploading'"
+				>{{handleProgressText(filesInfo)}}</span>
+				<span v-show="filesInfo.status === 'success'">{{langs('complete','已完成')}}</span>
+				<span v-show="filesInfo.status === 'fail'">{{langs('fail','失败')}}</span>
+				<transition name="transition-drop" appear>
+					<Progress
+						active
+						:stroke-width="8"
+						:percent="parsePercent(filesInfo.percent)"
+						:status="handleStatus(filesInfo.status)"
+					/>
+				</transition>
+			</li>
+		</transition-group>
+	</keep-alive>
 </template>
 <script>
 import Progress from '../progress/index';
 import Icons from '../icons/index';
 import { formatRate, formatTime, formatFile } from './utils';
-import langMinix from '../../mixins/lang'
 export default {
 	name: 'UploadList',
-	mixins: [langMinix],
 	components: {
 		Progress,
 		Icons,
 	},
 	props: {
-		data: {
+		files: {
 			type: Array,
 			default() {
 				return [];
@@ -58,39 +68,50 @@ export default {
 		formatRate,
 		formatTime,
 		formatFile,
-		fileCls(fileInfo) {
+		langs(key, defaultVal, val = {}) {
+			if (typeof this.$t !== 'function') return defaultVal;
+			key = `${this.__$langPrefix__}.upload.${key}`;
+			key = (this.__$langMap__ && this.__$langMap__[key]) ? this.__$langMap__[key] : key;
+			const value = this.$t(key, val)
+			return key === value ? defaultVal : value;
+		},
+		fileCls(filesInfo) {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
 				`${_tobogPrefix_}-file`,
 				{
-					[`${_tobogPrefix_}-file-error`]: fileInfo.status === 'fail',
-					[`${_tobogPrefix_}-file-uploading`]: fileInfo.status === 'uploading',
+					[`${_tobogPrefix_}-file-error`]: filesInfo.status === 'fail',
+					[`${_tobogPrefix_}-file-uploading`]: filesInfo.status === 'uploading',
 				},
 			];
 		},
-		handleManual(fileInfo) {
-			if (fileInfo.status < 1) this.$parent.manualUpload(fileInfo.uid);
+		handleManual(filesInfo) {
+			if (filesInfo.status === 'ready' || filesInfo.status === 'fail') this.$emit('on-file-manual', filesInfo);
 		},
-		// handlePreview(fileInfo) {
-		// 	this.$parent.handlePreview(fileInfo);
-		// },
-		handleCancel(fileInfo) {
-			this.$parent.handleCancel(fileInfo);
+		handlePreview(filesInfo) {
+			this.$emit('on-file-preview', filesInfo);
 		},
-		handleRemove(fileInfo) {
-			this.$parent.handleRemove(fileInfo);
+		handleRemove(filesInfo) {
+			this.$emit('on-file-remove', filesInfo);
 		},
 		handleStatus(status) {
-			if (status == 2) return 'success';
-			if (status == -1) return 'error';
+			if (status === 'success') {
+				return 'success';
+			}
+			if (status === 'fail') {
+				return 'wrong';
+			}
 			return 'default';
 		},
-		handleProgressText(fileInfo) {
-			let { speed, size, remainTime, percent = 0 } = fileInfo;
-			remainTime = this.formatTime(remainTime);
+		parsePercent(val) {
+			return parseInt(val || 0, 10);
+		},
+		handleProgressText(filesInfo) {
+			let { speed, size, time } = filesInfo;
+			time = this.formatTime(time);
 			speed = this.formatRate(speed);
 			size = this.formatRate(size);
-			return `${speed}/s - ${percent}%/${size} - ${this.langs('upload.residue', '剩余')} ${remainTime}`
+			return `${speed}/s - ${size} ${this.langs('residue', '剩余')}${time}`
 		},
 	},
 };

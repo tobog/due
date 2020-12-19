@@ -9,9 +9,9 @@
     }
 }
 
-@include fade-motion(fade, uiFade);
+@include fade-motion(fade, ivuFade);
 
-@keyframes uiFadeIn {
+@keyframes ivuFadeIn {
     0% {
         opacity: 0;
     }
@@ -20,7 +20,7 @@
     }
 }
 
-@keyframes uiFadeOut {
+@keyframes ivuFadeOut {
     0% {
         opacity: 1;
     }

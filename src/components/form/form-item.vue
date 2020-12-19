@@ -1,26 +1,23 @@
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name">
-		<div
-			v-if="showLabel"
-			ref="label"
-			:style="labelStyles"
-			:class="[_tobogPrefix_ + '-label']"
-		>
-			<slot name="label">{{ label }}</slot>
-		</div>
-		<div :class="[_tobogPrefix_ + '-content']">
+	<section :class="classes" :data-vview-module="$options.name">
+		<aside :style="labelStyles" :class="[_tobogPrefix_ + '-label-wrapper']" ref="label">
+			<label v-if="showLabel" :for="forUid" :class="_tobogPrefix_ + '-label'">
+				<slot name="label">{{ label }}</slot>
+			</label>
+		</aside>
+		<div :style="contentStyles()" :class="[_tobogPrefix_ + '-content']" :id="forUid" v-if="ready">
 			<slot></slot>
-			<div v-if="error||tip" :class="[_tobogPrefix_ + '-tip-wrap']">
-				<div :class="[_tobogPrefix_ + '-tip']" v-html="error||tip"></div>
-			</div>
 		</div>
+		<footer :style="contentStyles()" :class="[_tobogPrefix_ + '-tipwrap']" v-if="error||tip">
+			<div :class="tipClasses" v-html="error||tip"></div>
+		</footer>
 	</section>
 </template>
 
 <script>
 import AsyncValidator from 'async-validator';
 import { findComponentUpward } from '../../utils/findComponent';
-import { debounce, unit, validVal } from '../../utils/tool';
+import { debounce } from '../../utils/tool';
 export default {
 	name: 'FormItem',
 	props: {
@@ -32,7 +29,6 @@ export default {
 		label: String,
 		inline: Boolean,
 		align: String,
-		vertical: String,
 		value: {
 			default: undefined
 		},
@@ -40,6 +36,8 @@ export default {
 	data() {
 		return {
 			error: '',
+			ready: false,
+			forUid: 'FormItem' + this._uid,
 		};
 	},
 	created() {
@@ -51,47 +49,65 @@ export default {
 			this.$on('on-change', this.handleChange);
 		}
 	},
+	mounted() {
+		this.ready = true;
+	},
 	computed: {
 		showLabel() {
 			const width = this.getLabelWidth;
-			return width != '0' && (validVal(this.label) || !!this.$slots.label)
+			return width != '0' && (this.label !== undefined || !!this.$slots.label)
 		},
-		wrapClasses() {
+		classes() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
 				_tobogPrefix_,
+				'vview-clearfix',
 				{
 					[`${_tobogPrefix_}-required`]: this.isRequired,
-					[`${_tobogPrefix_}-vertical-${this.vertical}`]: !!this.vertical,
 					[`${_tobogPrefix_}-error`]: !!this.error,
 					[`${_tobogPrefix_}-inline`]: this.inline || this.Form.inline,
-					[`${_tobogPrefix_}-nowrap`]: validVal(this.getLabelWidth),
+				},
+			];
+		},
+		tipClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [
+				`${_tobogPrefix_}-tip`,
+				{
+					[`${_tobogPrefix_}-error-tip`]: !!this.error,
 				},
 			];
 		},
 		getLabelWidth() {
-			const labelWidth = this.labelWidth;
-			return validVal(labelWidth) ? labelWidth : this.Form.labelWidth
+			const ready = this.ready, labelWidth = this.labelWidth;
+			return (labelWidth !== undefined && labelWidth !== "") ? labelWidth : this.Form.labelWidth
 		},
 		labelStyles() {
+			if (!this.ready) return;
 			let width = this.getLabelWidth,
 				align = this.align || this.Form.align;
 			if (width === 'auto') {
 				return {
 					textAlign: align || 'right',
-				}
+				};
 			}
-			if (validVal(width)) {
+			if (width !== undefined && width !== "") {
 				return {
-					width: unit(width),
+					width: `${width}px`,
 					textAlign: align || 'right',
-				}
+
+				};
 			}
 			return {
-				width: '100%',
+				lineHeight: "normal",
+				height: 'unset',
+				float: 'unset',
+				display: 'block',
+				padding: '3px',
 				textAlign: align || 'left',
 			}
 		},
+
 		isRequired() {
 			if (!this.prop) return false;
 			let isRequired = this.required;
@@ -110,6 +126,18 @@ export default {
 	},
 
 	methods: {
+		contentStyles() {
+			if (!this.ready) return;
+			let width = this.getLabelWidth;
+			if (width == '0') return { display: 'block' }
+			if (width === 'auto') {
+				return { marginLeft: (this.$refs.label || {}).offsetWidth + 1 + 'px' };
+			}
+			if (width !== undefined && width !== "") {
+				return { marginLeft: `${width}px` };
+			}
+			return { display: 'block' };
+		},
 		handleChange(val) {
 			this.__validate__ = true;
 			this.getValue(val);

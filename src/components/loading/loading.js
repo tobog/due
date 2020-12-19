@@ -6,9 +6,9 @@ Loading.newInstance = function (props = {}, vmOptions = {}) {
         mixins: [vmOptions],
         render(h) {
             const attrs = Object.assign({ loading: true, transfer: true, __pattern: 'js' }, props)
-            let render = attrs.render,vNode;
-            delete attrs.render;
-            if (typeof vNode === 'function') vNode = render(h, attrs)
+            let vNode = attrs.render;
+            attrs.render = undefined;
+            if (typeof vNode === 'function') vNode = vNode(h, attrs)
             return h(Loading, { attrs }, vNode ? [vNode] : undefined)
         }
     }),
@@ -16,8 +16,9 @@ Loading.newInstance = function (props = {}, vmOptions = {}) {
         el = component.$el,
         child = Instance.$children[0];
     document.body.appendChild(el);
+
     return {
-        name: child.name||child._uid,
+        uid: child._uid,
         show() {
             child.visible = true;
         },
@@ -30,9 +31,7 @@ Loading.newInstance = function (props = {}, vmOptions = {}) {
                 component.$destroy();
                 try {
                     document.body.removeChild(el);
-                } catch (error) {
-                    // console.log(error)
-                }
+                } catch (error) {};
                 Instance = component = el = child = null;
             }, 300);
         },

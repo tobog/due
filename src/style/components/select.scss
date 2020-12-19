@@ -1,0 +1,183 @@
+$prefix-cls: #{$prefix}-select;
+
+.#{$prefix-cls}-wrapper {
+    font-size: 12px;
+    height: 32px;
+    width: 100%;
+    line-height: 1.5;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    background-color: $white;
+    color: $content;
+}
+
+.#{$prefix-cls}-disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: $disabled;
+}
+
+.#{$prefix-cls}-readonly {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    .#{$prefix-cls}-tag {
+        cursor: pointer;
+        pointer-events: initial;
+    }
+}
+
+// .#{$prefix-cls}-readonly {
+//     // &.#{$prefix-cls}-inner,
+//     // .#{$prefix-cls}-tag,
+//     // [data-type-icon] {
+//     //     cursor: pointer;
+//     //     pointer-events: initial;
+//     // }
+//     .#{$prefix-cls}{
+//         cursor: not-allowed;
+//         pointer-events: none;
+//     }
+// }
+// .#{$prefix-cls}-disabled {
+//     background-color: $disabled;
+// }
+
+.#{$prefix-cls}-inner {
+    display: inline-table;
+    vertical-align: middle;
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%; // padding-right: 30px;
+    border-radius: 4px;
+    padding-right: 26px;
+    border: 1px solid $border;
+    background-color: inherit;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        border-color: $primary;
+    }
+
+    &.#{$prefix-cls}-active {
+        box-shadow: 0 0 6px -1px $primary;
+        border-color: $primary;
+    }
+}
+
+.#{$prefix-cls} {
+    margin: 0;
+    padding: 6px;
+    width: 100%;
+    height: 100%;
+    min-height: 28px;
+    min-width: 32px;
+    display: inline-block;
+    vertical-align: middle;
+    background-image: none;
+    outline: none;
+    border: none;
+    border-radius: inherit;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+.#{$prefix-cls}-multiple {
+    min-height: 32px;
+    height: inherit;
+
+    .#{$prefix-cls} {
+        width: 62px;
+        height: auto;
+    }
+}
+
+.#{$prefix-cls}-tag {
+    vertical-align: middle;
+    display: inline-block;
+    margin: 2px 3px;
+    padding: 3px 6px;
+    border: 1px solid $border;
+    border-radius: 3px;
+    background-color: $back;
+    overflow: hidden;
+    word-break: break-all;
+    cursor: pointer;
+
+    &:hover {
+        border: 1px solid $primary;
+        color: $primary;
+    }
+}
+
+.#{$prefix-cls}-empty {
+    margin-left: 8px;
+    vertical-align: text-bottom;
+}
+
+.#{$prefix-cls}-icon {
+    font-size: 14px;
+    position: absolute;
+    z-index: 10;
+    right: 2px;
+    top: 2px;
+    bottom: 2px;
+    height: initial;
+    padding: 0 6px;
+    background-color: inherit;
+
+    &::before {
+        transition: all 0.3s ease-in-out;
+    }
+}
+
+.#{$prefix-cls}-arrow-active {
+    transform-origin: center center;
+
+    &::before {
+        transform: rotate(180deg);
+    }
+}
+
+.#{$prefix-cls}-drop {
+    border: 1px solid $border;
+    width: 100%;
+    min-height: 41px;
+}
+
+.#{$prefix-cls}-loading {
+    text-align: center;
+    color: $sub-content;
+    padding: 3px 0;
+}
+
+.#{$prefix-cls}-opttip {
+    padding: 6px 16px;
+}
+
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        .#{$prefix-cls}-tag {
+            &:hover {
+                border: 1px solid $value;
+                color: $value;
+            }
+        }
+
+        .#{$prefix-cls}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &.#{$prefix-cls}-active {
+                box-shadow: 0 0 6px -1px $value;
+                border-color: $value;
+            }
+        }
+    }
+}

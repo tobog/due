@@ -1,25 +1,24 @@
-// import { deepCopy } from '../../../utils/tool';
-const convertColumnOrder = (columns, layoutFixed) => {
+import { deepCopy } from '../../../utils/tool';
+const convertColumnOrder = (columns) => {
     const left = [], center = [], right = [];
     columns.forEach((column) => {
         if (!column || column.width === 0 || column.width === '0') return;
         if (column.fixed && column.fixed === 'left') {
             left.push(column);
         } else if (column.fixed && column.fixed === 'right') {
-            right.push(column);
+            right.unshift(column);
         } else {
             center.push(column);
         }
     });
-    if (layoutFixed) right.reverse();
     return left.concat(center).concat(right);
 };
 
 export { convertColumnOrder };
 
 const getAllColumns = (cols, forTableHead = false) => {
-    const  result = [];
-    cols.forEach((column) => {
+    const columns = deepCopy(cols), result = [];
+    columns.forEach((column) => {
         if (!column || column.width === 0 || column.width === '0') return;
         if (column.children) {
             if (forTableHead) result.push(column);
@@ -33,9 +32,9 @@ const getAllColumns = (cols, forTableHead = false) => {
 
 export { getAllColumns };
 
-const convertToRows = (columns, layoutFixed) => {
+const convertToRows = (columns) => {
     let maxLevel = 1;
-    const originColumns = convertColumnOrder(columns, layoutFixed),
+    const originColumns = deepCopy(convertColumnOrder(columns)),
         traverse = (column, parent) => {
             if (column.width === 0 || column.width === '0') return;
             if (parent) {

@@ -23,12 +23,9 @@ selenium-debug.log
 *.sln
 *.iml
 *.js.map
-demo.local/*
-
 
 # local env files
 .env.local
 .env.*.local
-
-
+_src/*
 

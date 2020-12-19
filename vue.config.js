@@ -1,7 +1,4 @@
 const NODE_ENV = process.env.NODE_ENV;
-// const isPord = NODE_ENV === 'production';
-const isDev = NODE_ENV === 'development';
-const isDemo = NODE_ENV === 'demo';
 
 const config = {
     development: {
@@ -15,16 +12,12 @@ const config = {
     demo: {
         demo: {
             entry: "./demo/main.js",
-            chunks: ['chunk-vendors', 'chunk-common', 'demo'],
-            template: 'public/index.html',
-            filename: 'index.html',
+            chunks: ['chunk-vendors', 'chunk-common']
         }
     },
 }
-if (isDemo) process.env.NODE_ENV = "production";
 module.exports = {
     assetsDir: "./static",
-    publicPath: "./",
     lintOnSave: false,
     runtimeCompiler: true,
     devServer: {
@@ -38,14 +31,7 @@ module.exports = {
     configureWebpack: {
         performance: {
             hints: false
-        },
-        devtool: isDev ? 'eval-source-map' : 'none'
-
+        }
     },
-    chainWebpack: config => {
-        // 移除 prefetch 插件
-        config.plugins.delete('prefetch')
-        // 移除 preload 插件
-        config.plugins.delete('preload');
-    }
+
 }

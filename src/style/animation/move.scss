@@ -1,29 +1,25 @@
 @mixin move-motion($className, $keyframeName) {
     @include make-motion($className, $keyframeName);
-
     .#{$className}-enter-active,
     .#{$className}-appear {
         opacity: 0;
         animation-timing-function: ease-in-out;
     }
-
     .#{$className}-leave-active {
         animation-timing-function: ease-in-out;
     }
 }
 
-@include move-motion(move-up, uiMoveUp);
-@include move-motion(move-down, uiMoveDown);
-@include move-motion(move-left, uiMoveLeft);
-@include move-motion(move-right, uiMoveRight);
-
-@keyframes uiMoveDownIn {
+@include move-motion(move-up, vvMoveUp);
+@include move-motion(move-down, vvMoveDown);
+@include move-motion(move-left, vvMoveLeft);
+@include move-motion(move-right, vvMoveRight);
+@keyframes vvMoveDownIn {
     0% {
         transform-origin: 0 0;
         transform: translateY(100%);
         opacity: 0;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateY(0%);
@@ -31,13 +27,12 @@
     }
 }
 
-@keyframes uiMoveDownOut {
+@keyframes vvMoveDownOut {
     0% {
         transform-origin: 0 0;
         transform: translateY(0%);
         opacity: 1;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateY(100%);
@@ -45,13 +40,12 @@
     }
 }
 
-@keyframes uiMoveLeftIn {
+@keyframes vvMoveLeftIn {
     0% {
         transform-origin: 0 0;
         transform: translateX(-100%);
         opacity: 0;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateX(0%);
@@ -59,13 +53,12 @@
     }
 }
 
-@keyframes uiMoveLeftOut {
+@keyframes vvMoveLeftOut {
     0% {
         transform-origin: 0 0;
         transform: translateX(0%);
         opacity: 1;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateX(-100%);
@@ -73,13 +66,12 @@
     }
 }
 
-@keyframes uiMoveRightIn {
+@keyframes vvMoveRightIn {
     0% {
         opacity: 0;
         transform-origin: 0 0;
         transform: translateX(100%);
     }
-
     100% {
         opacity: 1;
         transform-origin: 0 0;
@@ -87,13 +79,12 @@
     }
 }
 
-@keyframes uiMoveRightOut {
+@keyframes vvMoveRightOut {
     0% {
         transform-origin: 0 0;
         transform: translateX(0%);
         opacity: 1;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateX(100%);
@@ -101,13 +92,12 @@
     }
 }
 
-@keyframes uiMoveUpIn {
+@keyframes vvMoveUpIn {
     0% {
         transform-origin: center 0;
         transform: translateY(-100%);
         opacity: 0;
     }
-
     100% {
         transform-origin: center 0;
         transform: translateY(0%);
@@ -115,13 +105,12 @@
     }
 }
 
-@keyframes uiMoveUpOut {
+@keyframes vvMoveUpOut {
     0% {
         transform-origin: center 0;
         transform: translateY(0%);
         opacity: 1;
     }
-
     100% {
         transform-origin: 0 0;
         transform: translateY(-100%);
@@ -129,39 +118,35 @@
     }
 }
 
-@include move-motion(move-notice, uiMoveNotice);
-
-@keyframes uiMoveNoticeIn {
+@include move-motion(move-notice, vvMoveNotice);
+@keyframes vvMoveNoticeIn {
     0% {
         opacity: 0;
         transform-origin: 0 0;
-        transform: translate(100%, 50%) scaleY(0.5);
+        transform: translateX(100%) scaleY(0.5);
     }
-
     100% {
         opacity: 1;
         transform-origin: 0 0;
-        transform: translate(0, 0) scaleY(1);
+        transform: translateX(0%) scaleY(1);
     }
 }
 
-@keyframes uiMoveNoticeOut {
+@keyframes vvMoveNoticeOut {
     0% {
         transform-origin: 0 0;
-        transform: translate(0, 0) scaleY(1);
+        transform: translateX(0%) scaleY(1);
         opacity: 1;
     }
-
     70% {
         transform-origin: 0 0;
-        transform: translate(100%, -20%) scaleY(1);
+        transform: translateX(100%) scaleY(1);
         height: auto;
         opacity: 0;
     }
-
     100% {
         transform-origin: 0 0;
-        transform: translate(100%, -50%) scaleY(0.5);
+        transform: translateX(100%) scaleY(0.5);
         height: 0;
         margin-bottom: 0;
         opacity: 0;

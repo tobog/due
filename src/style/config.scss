@@ -1,5 +1,5 @@
 // 前缀配置
-$prefix:'ui' !default !global;
+$prefix:'vview' !default !global;
 // 颜色配置
 $primary:#2d8cf0 !default !global;
 $confirm:#2d8cf0 !default !global;
@@ -33,11 +33,6 @@ $font-000:#000;
 $font-label:#495060;
 // 颜色配置
 $colors-map:(confirm:$primary, success:$success, primary:$primary, warning:$warning, error:$error, info:$info, danger:$danger);
-// 字体
-$fontBase:12px;
-$subFont:12px;
-// media
-$media-map:(xs:(max-width:768px), sm:(min-width:768px), md:(min-width:992px), lg:(min-width:1200px));
 
 .#{$prefix}-clearfix {
 

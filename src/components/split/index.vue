@@ -1,66 +1,66 @@
 
 
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name">
-		<div :style="getFirstStyle" :class="[_tobogPrefix_+'-first']">
-			<slot></slot>
-		</div>
-		<div :style="getSplitStyle" ref="split" :class="[_tobogPrefix_+'-split']">
-			<slot name="split"></slot>
-		</div>
-		<span :class="[_tobogPrefix_+'-trigger']" ref="trigger" :style="getTriggerStyle">
-			<slot name="trigger">
-				<i v-once v-for="index in 6" :key="index" :class="[_tobogPrefix_+'-trigger-bar']"></i>
-			</slot>
-		</span>
+	<section :class="wrapClasses" :data-vview-module="$options.name" v-show="show">
+		<aside :style="handleStyle('first')">
+			<slot name="first"></slot>
+		</aside>
+		<aside :style="handleStyle('last')" ref="last">
+			<slot name="last"></slot>
+		</aside>
+		<slot name="trigger" :handleSplit="handleSplit" :value="curValue">
+			<aside v-drag-move="handleSplit" :class="_tobogPrefix_+'-trigger'" :style="triggerStyle"></aside>
+		</slot>
 	</section>
 </template>
 
 <script>
-import { DragMove, getStyles } from '../../utils/dom';
-import { unit, validVal, parseNumber } from '../../utils/tool';
+import DragMove from '../../directives/drag-move';
+import { getStyles } from '../../utils/dom';
 export default {
 	name: 'Split',
+	directives: {
+		DragMove,
+	},
 	props: {
 		value: {
 			type: Number,
 			default: 50,
 		},
-		vertical: {
-			type: Boolean,
-			// default: 'horizontal' //horizontal ,vertical
+		mode: {
+			type: String,
+			default: 'horizontal' //horizontal ,vertical
 		},
 		min: {
-			type: Number,
+			type: [String, Number],
 			default: 0
 		},
 		max: {
-			type: Number,
+			type: [String, Number],
 			default: 100
 		}
 	},
 	data() {
 		return {
-			percentValue: this.value,
-			ready: false,
-			moving: false
+			curValue: this.value,
+			show: false,
+			run: false,
 		};
 	},
 	mounted() {
-		this.$nextTick(() => {
-			this.ready = true;
-			this.dragMove();
-		})
+		this.show = true;
+		this.handleOffset();
 	},
 	watch: {
 		value: {
 			immediate: true,
 			handler(val) {
-				if (this.percentValue === val) return;
-				this.percentValue = this.pipeMaxMin(val);
+				if (val > this.max) val = this.max;
+				if (val < this.min) val = this.min;
+				this.curValue = val;
 			}
 		},
-		percentValue(val) {
+		curValue(val) {
 			this.$emit('input', val);
 			this.$emit('on-change', val);
 		}
@@ -71,71 +71,114 @@ export default {
 			return [
 				_tobogPrefix_,
 				{
-					[`${_tobogPrefix_}-vertical`]: this.vertical,
-					[`${_tobogPrefix_}-moving`]: this.moving,
+					[`${_tobogPrefix_}-run`]: this.run,
+					[`${_tobogPrefix_}-vertical`]: this.isVertical,
 				}
 			]
 		},
-		getFirstStyle() {
-			const percent = 100 - this.percentValue + '%';
-			return this.vertical ? { bottom: percent } : { right: percent }
+		isVertical() {
+			return this.mode === 'vertical'
 		},
-		getSplitStyle() {
-			const ready = this.ready;
-			const percent = this.percentValue + this.getTriggerPercent() + '%';
-			return this.vertical ? { top: percent } : { left: percent }
-		},
-		getTriggerStyle() {
-			const percent = this.percentValue + '%';
-			return this.vertical ? { top: percent } : { left: percent }
-		},
-	},
-	methods: {
-		dragMove() {
-			const ele = this.$refs.trigger;
-			this._DragMove = ele && new DragMove(ele, { props: ['offsetLeft', 'offsetTop'] }, this.handleOffset);
-		},
-		handleOffset(obj) {
-			if (obj.cancel) {
-				this.moving = false;
-				return;
+		boxSize() {
+			if (!this.show) return { height: 1, width: 1 }
+			const curValue = this.curValue;
+			console.dir(this.$el.lastElementChild)
+			return {
+				width: this.$el.clientWidth,
+				height: this.$el.clientHeight
 			}
-			this.moving = true;
-			const { data, distance } = obj;
-			let percent = this.pipePercent(this.vertical ? data.offsetTop + distance[1] : data.offsetLeft + distance[0]);
-			percent = this.pipeMaxMin(percent);
-			this.percentValue = percent;
-			this.$emit('on-move', percent);
+			// return {
+			// 	width: parseFloat(getStyle(this.$el, 'width')),
+			// 	height: parseFloat(getStyle(this.$el, 'height'))
+			// }
 		},
-		pipePercent(val) {
-			const { layout } = this.getBaseSize();
-			return val / layout * 100
-		},
-		pipeMaxMin(value) {
-			const max = Math.min(this.max - this.getTriggerPercent(), 100),
-				min = Math.max(this.min, 0);
-			if (value > max) value = max;
-			if (value < min) value = min;
-			return value.toFixed(3) / 1
-		},
-		getBaseSize() {
-			const { trigger } = this.$refs, ele = this.$el;
-			return this.vertical ?
-				{
-					layout: ele && ele.clientHeight || 1,
-					trigger: trigger && trigger.offsetHeight || 0,
-				} : {
-					layout: ele && ele.clientWidth || 1,
-					trigger: trigger && trigger.offsetWidth || 0,
+		triggerStyle() {
+			if (this.isVertical) {
+				return {
+					top: this.curValue + '%',
+					bottom: 'initial'
 				}
+			} else {
+				return {
+					left: this.curValue + '%',
+					right: 'initial'
+				}
+			}
 		},
-		getTriggerPercent() {
-			const { layout, trigger } = this.getBaseSize();
-			return trigger / layout * 100;
+		triggerSize() {
+			if (!this.show) return { height: 1, width: 1 };
+			const styles=getStyles(this.$el.lastElementChild);
+			return {
+				width: parseFloat(styles.width),
+				height: parseFloat(styles.height)
+			}
+		},
+		triggerOffset() {
+			if (!this.show) return 0;
+			if (this.isVertical) {
+				return this.triggerSize.height / this.boxSize.height * 100
+			} else {
+				return this.triggerSize.width / this.boxSize.width * 100
+			}
 		}
 	},
-	beforeDestroy() {
-		this._DragMove && this._DragMove.destroy();
+	methods: {
+		handleOffset() {
+			const lastRef = this.$refs.last;
+			if (this.isVertical) {
+				lastRef.style.paddingTop = this.triggerSize.height + 'px'
+			} else {
+				lastRef.style.paddingLeft = this.triggerSize.width + 'px'
+			}
+		},
+		handleStyle(type) {
+			if (this.isVertical) {
+				if (type === 'first') {
+					return {
+						bottom: 100 - this.curValue + '%'
+					}
+				} else {
+					return {
+						top: this.curValue + '%'
+					}
+				}
+			} else {
+				if (type === 'first') {
+					return {
+						right: 100 - this.curValue + '%'
+					}
+				} else {
+					return {
+						left: this.curValue + '%'
+					}
+				}
+			}
+		},
+		handleSplit(axis) {
+			const { relative, run } = axis,
+				boxSize = this.boxSize;
+			this.run = run;
+			console.log(relative, run)
+			if (!this.__startUp) {
+				this.__startUp = true;
+				this.$emit('on-move-start', axis);
+			}
+			if (!run) {
+				this.__startUp = false;
+				this.$emit('on-move-end', axis);
+				return;
+			}
+			if (this.isVertical) {
+				this.curValue += relative[1] * 100 / boxSize.height;
+			} else {
+				this.curValue += relative[0] * 100 / boxSize.width;
+			}
+			const max = Math.min(this.max - this.triggerOffset, 100),
+				min = Math.max(this.min, 0);
+			if (this.curValue > max) this.curValue = max;
+			if (this.curValue < min) this.curValue = min;
+			this.$emit('on-moving', axis);
+		}
 	}
 };
 </script>

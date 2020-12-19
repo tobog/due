@@ -1,29 +1,24 @@
 $prefix-cls: #{$prefix}-bread;
 $prefix-cls-breaditem: #{$prefix}-breaditem;
-
 .#{$prefix-cls} {
     color: $content;
     overflow: hidden;
-    font-size: $fontBase;
+    font-size: 14px;
 }
 
-.#{$prefix-cls-breaditem} {
-    &-link {
-        color: inherit;
-
-        &:hover {
-            color: $primary;
-        }
-
+.#{$prefix-cls-breaditem}-link {
+    color: inherit;
+    &:hover {
+        color: $primary;
     }
+}
 
-    &-sep {
-        margin: 0 6px;
-        color: $sub-content;
-    }
+.#{$prefix-cls-breaditem}-sep {
+    margin: 0 6px;
+    color: $sub-content;
+}
 
-    &-item:last-child {
-        font-weight: 700;
-        color: $title;
-    }
+.#{$prefix-cls-breaditem}-item:last-child {
+    font-weight: 700;
+    color: $title;
 }

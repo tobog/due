@@ -1,391 +1,247 @@
 
-<template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Select 选择器&继承Input 组件所有属性)</h2>
-			<h4 class="padding-top-10">
-				<div>使用模拟的增强下拉选择器来代替浏览器原生的选择器。</div>
-				<div>选择器支持单选、多选、搜索，以及键盘快捷操作。</div>
-				<div>继承Input 组件除type和suffix的所有属性</div>
-			</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vSelect class="margin-bottom-20" v-bind="formData" v-model="val">
-					<div slot="prepend">http://</div>
-					<span slot="append">.com</span>
-				</vSelect>
-				<vSelect :options="options" class="margin-bottom-20" prefix v-bind="formData" v-model="val1"></vSelect>
-				<vSelect class="margin-bottom-20" v-model="val2" v-bind="formData">
-					<span slot="prepend">http://</span>
-					<vSelect v-model="val4" slot="append" theme="primary"></vSelect>
-				</vSelect>
-				<div class="padding-15">{{val}}-{{val1}}-{{val2}}-{{val3}}</div>
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Option组件：Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compOptProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
-</template>
 
+
+
+<template>
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example" v-if="attrs.show">
+			<div style="padding:10px 0;">视图：</div>
+			<vSelect v-model="val" v-bind="attrs" style="margin-bottom:30px;">
+				<vOption v-for="index in count" :value="index" :key="index">{{index+'ba'}}</vOption>
+			</vSelect>
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
+</template>
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: '',
-			val1: '',
-			val2: '',
-			val3: '',
-			val4: '',
-			options:null
+			val: 3,
+			count: 20,
+			switchs: {
+				show: true,
+				disabled: false,
+				multiple: false,
+				clearable: false,
+				filterable: true,
+				transfer: true,
+				readonly: false,
+				strict: true,
+				value: false,
+				search: false,
+				autoClose: true,
+			},
+			selects: {
+
+			},
+			options: {
+
+			},
+			inputs: {
+				label: 20,
+				dropStyle: "",
+			},
 		};
 	},
-	created(){
-		var options = [];
-		for (let index = 0; index < 100; index++) {
-			options.push({
-				value: index + 1,
-				label: index,
-			})
+	methods: {
+		loading() {
+			this.count += 10;
 		}
-		this.options=options;
 	},
 	computed: {
-		getCode() {
-			return `<vSelect class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val">
-					<div slot="prepend">http://</div>
-						<span slot="append">.com</span>
-					</vSelect>
-					<vSelect class="margin-bottom-20"  prefix  v-bind="${this.getCodeString(this.formData)}" v-model="val1">
-						<vOption value="primary"></vOption>
-						<vOption value="ghost"></vOption>
-						<vOption value="dashed"></vOption>
-						<vOption value="text"></vOption>
-						<vOption value="info"></vOption>
-						<vOption value="success"></vOption>
-						<vOption value="success"></vOption>
-					</vSelect>
-					<vSelect class="margin-bottom-20" v-model="val2" v-bind="${this.getCodeString(this.formData)}">
-						<span slot="prepend">http://</span>
-						<vSelect v-model="val4" slot="append" theme="primary"></vSelect>
-					</vSelect>`;
+		style() {
+			return this.switchs.vertical ? 'height:300px;vertical-align:top;' : null
 		},
-		getBase() {
-			return [
-				{
-					label: "禁用状态",
-					key: "disabled",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "清空按钮",
-					key: "clearable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "Drop置body下",
-					key: "transfer",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "远程搜索",
-					key: "search",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "过滤",
-					key: "filterable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "自动关闭",
-					key: "autoClose",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "多选",
-					key: "multiple",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "只读",
-					key: "readonly",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "键盘操作",
-					key: "keyModal",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "头部图标",
-					key: "prefix",
-					tag: "vSelect",
-					default: 'person',
-					options: this.iconslist
-				},
-				{
-					label: "主题",
-					key: "theme",
-					tag: "vSelect",
-					default: '',
-					options: this.getThemes
-				},
-				{
-					label: "无数据提示",
-					key: "tip",
-					tag: "vSelect",
-					default: '暂无数据'
-				},
-			];
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		compProps() {
-			return [
-				{
-					prop: 'multipleKey',
-					explain: '当mutiple=true下,渲染的取值key，type=file时默认multipleKey=name',
-					type: 'String',
-					default: '-',
-				},
-				{
-					prop: 'name',
-					explain: '表单name',
-					type: 'String',
-					default: '',
-				},
-				{
-					prop: 'value',
-					explain: '绑定的值，可使用 v-model 双向绑定',
-					type: 'String|Number|Array',
-					default: '',
-				},
-				{
-					prop: '$attrs',
-					explain: '继承$attrs',
-					type: 'object',
-					default: '-',
-				},
-				{
-					prop: 'disabled',
-					explain: '是否禁用',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'readonly',
-					explain: '只读',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'clearable',
-					explain: '是否显示清空按钮',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'filterable',
-					explain: '是否支持搜索',
-					type: 'Boolean',
-					default: 'true',
-				},
-				{
-					prop: 'autoClose',
-					explain: '非多选下自动关闭',
-					type: 'Boolean',
-					default: 'true',
-				},
-				{
-					prop: 'multiple',
-					explain: '是否支持多选',
-					type: 'Boolean',
-					default: 'true',
-				},
-				{
-					explain: "主题：button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
-					prop: "theme",
-					type: "String",
-					default: '',
-				},
-				{
-					prop: 'dropStyle',
-					explain: '给浮层添加额外的 Style 名称',
-					type: 'Object, String',
-					default: '',
-				},
-				{
-					prop: 'tip',
-					explain: '文字提示',
-					type: 'String',
-					default: '暂无数据',
-				},
-				{
-					prop: 'keyModal',
-					explain: '是否键盘操作',
-					type: 'Boolean',
-					default: 'true',
-				},
-				{
-					prop: 'prefix|slot:prefix',
-					explain: '输入框头部图标',
-					type: 'String|VNode',
-					default: '-',
-				},
-				{
-					prop: 'search',
-					explain: '否显示为搜索型输入框',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'slots:prepend',
-					explain: '输入框外头部组件',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'slots:append',
-					explain: '输入框外尾部组件',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'on-change',
-					explain: '数据改变时触发事件',
-					type: 'Function:(val,__attachData)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-attach',
-					explain: '数据改变时触发事件,获取附属数据',
-					type: 'Function:(val,__attachData)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-icon-click',
-					explain: '点击图标时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-focus',
-					explain: '输入框聚焦时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-blur',
-					explain: '输入框失去焦点时触事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-enter',
-					explain: '按下回车键时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-visible-change',
-					explain: 'Drop下拉变化触发事件',
-					type: 'Function:val=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-search',
-					explain: '点击搜索或按下回车键时触发事件：search',
-					type: 'Function:val=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-remove-item',
-					explain: '点击清空按钮时触发事件：search',
-					type: 'Function:(val,index)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-clear',
-					explain: '点击清除触发事件',
-					type: 'Function',
-					default: '-',
-				},
-			];
-		},
-		compOptProps() {
-			return [
-				{
-					prop: 'Option:value',
-					explain: '绑定的value',
-					type: 'String, Number',
-					default: '-',
-				},
-				{
-					prop: 'Option:label',
-					explain: '显示的label',
-					type: 'String, Number',
-					default: '-',
-				},
-				{
-					prop: 'Option:disabled',
-					explain: '禁用',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'Option:strict',
-					explain: '严格匹配value',
-					type: 'Boolean',
-					default: '-',
-				},
-				{
-					prop: 'Option:theme',
-					explain: '主题，未定义继承触发Select Input的theme',
-					type: 'String',
-					default: '-',
-				},
-				{
-					prop: 'Option:attach',
-					explain: '附属数据，触发Select Input 的on-attach事件',
-					type: 'Any',
-					default: '-',
-				},
-				{
-					prop: 'Option:slot:defalut',
-					explain: '自定义显示',
-					type: 'VNode',
-					default: '-',
-				}
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+			},
 			]
 		},
-	}
+		data() {
+			return [{
+				prop: "name",
+				explain: "input name",
+				type: "String",
+				default: "-"
+			},
+			{
+				prop: "value",
+				explain: "指定选中项目的 value 值，可以使用 v-model 双向绑定数据。单选时只接受 String 或 Number，多选时只接受 Array",
+				type: "String | Number | Array",
+				default: '-'
+			},
+			{
+				prop: "multiple",
+				explain: "是否支持多选",
+				type: "Boolean",
+				default: false
+			},
+			{
+				prop: "disabled",
+				explain: "是否禁用",
+				type: "Boolean",
+				default: false
+			},
+			{
+				prop: "clearable",
+				explain: "是否可以清空选项，只在单选时有效",
+				type: "Boolean",
+				default: "false"
+			},
+			{
+				prop: "filterable",
+				explain: "是否支持搜索",
+				type: "Boolean",
+				default: "false"
+			},
+			{
+				prop: "search",
+				explain: "是否使用远程搜索",
+				type: "Boolean",
+				default: "false"
+			},
+			{
+				prop: "on-search",
+				explain: "远程搜索的事件",
+				type: "	Function:valtext,model=>{}",
+				default: "-"
+			},
+			{
+				prop: "$attrs",
+				explain: "input继承$attrs",
+				type: "object",
+				default: "-"
+			},
+			{
+				prop: "transfer",
+				explain: "是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果",
+				type: "Boolean",
+				default: false
+			},
+			{
+				prop: "strict",
+				explain: "strict模式",
+				type: "Boolean",
+				default: "true"
+			},
+			{
+				prop: "readonly",
+				explain: "readonly",
+				type: "Boolean",
+				default: "false"
+			},
+			{
+				prop: "autoClose",
+				explain: "auto Close",
+				type: "Boolean",
+				default: "true"
+			},
+			{
+				prop: "dropStyle",
+				explain: "drop Style",
+				type: "Object",
+				default: "-"
+			},
+
+			{
+				prop: "on-scroll-loading",
+				explain: "事件",
+				type: "Function： (this.model, this.valueText, event)=>{}",
+				default: '-'
+			},
+			{
+				prop: "on-match",
+				explain: "事件",
+				type: "Function： (bool)=>{}",
+				default: '-'
+			},
+			{
+				prop: "on-blur/on-focus/on-change/on-enter",
+				explain: "事件",
+				type: "Function： (this.model, this.valueText, event)=>{}",
+				default: '-'
+			},
+			{
+				prop: "on-visible-change",
+				explain: "visible事件",
+				type: "Function： (val)=>{}",
+				default: '-'
+			},
+			{
+				prop: "slot",
+				explain: "Option内容",
+				type: "VNode",
+				default: "-"
+			},
+			{
+				prop: 'on-change',
+				explain: '-',
+				type: 'Function:event',
+				default: '-',
+			},
+			{
+				prop: "value",
+				explain: "Option:value",
+				type: "-",
+				default: "-"
+			}, {
+				prop: "label",
+				explain: "Option:label",
+				type: "-",
+				default: "-"
+			}, {
+				prop: "disabled",
+				explain: "Option:disabled",
+				type: "Boolean",
+				default: "-"
+			}, {
+				prop: "strict",
+				explain: "Option:strict",
+				type: "Boolean",
+				default: "-"
+			},
+			]
+		}
+	},
 };
 </script>
+

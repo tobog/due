@@ -25,16 +25,14 @@ Modal.newInstance = function (properties = {}, on = {},vmOptions={}) {
     document.body.appendChild(element);
     return {
         component: child,
-        name: child.name||child._uid,
+        uid: child.name,
         destroy() {
             child.visible=false;
             setTimeout(() => {
                 component.$destroy();
                 try {
                     document.body.removeChild(element);
-                } catch (error) {
-                    // console.log(error)
-                }
+                } catch (error) {};
                 Instance =component=child=element= null;
             }, 360);
         },

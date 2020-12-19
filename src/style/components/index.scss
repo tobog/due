@@ -1,27 +1,30 @@
-@import 'layout';
 @import 'button';
 @import 'checkbox';
 @import 'circle';
 @import 'dropdown';
+@import 'forms';
 @import 'formItem';
 @import 'icons';
 @import 'input';
 @import 'loading-bar';
 @import 'loading';
+@import 'message';
 @import 'modal';
 
+@import 'notification';
 @import 'noticebase';
+@import 'notice';
 
 @import 'option';
 @import 'popper';
 @import 'progress';
 @import 'radio';
 @import 'rate';
+@import 'select';
 @import 'sort';
 @import 'steps';
 @import 'switchs';
 @import 'table';
-
 @import 'tooltip';
 
 @import 'upload';
@@ -37,18 +40,6 @@
 @import 'split';
 @import 'transfer';
 @import 'carousel';
-@import 'scroll';
-@import 'cascader';
-
-// @import 'tailor';
-@import 'card';
-@import 'menu';
-@import 'timeline';
 @import 'tag';
 @import 'avatar';
-@import 'tabs';
-
-
-//其他
-@import 'affix';
-@import 'anchor';
+@import 'timeline';

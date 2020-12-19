@@ -1,18 +1,17 @@
 <template>
-	<span :class="[_tobogPrefix_]" :data-vue-module="$options.name">
-		<slot></slot>
-		<span v-if="showLabel" :class="labelClasses" :style="labelOffset">
+	<section :class="[_tobogPrefix_]" :data-vview-module="$options.name">
+		<slot />
+		<span v-if="visible" :class="labelClasses" :style="labelOffset">
 			<slot name="label">{{ format(label,overLabel) }}</slot>
 		</span>
-	</span>
+	</section>
 </template>
 
 <script>
-import { parseNumber, unit, validVal } from '../../utils/tool';
 export default {
 	name: 'Badge',
 	props: {
-		label: Number,
+		label: [Number, String],
 		offset: Array,
 		type: String, //success、primary、default、error、warning、info
 		progress: Boolean,
@@ -20,14 +19,14 @@ export default {
 			type: Number,
 			default: 99
 		},
-		showLabel: {
+		visible: {
 			type: Boolean,
 			default: true,
 		},
 		format: {
 			type: Function,
 			default(label, overLabel) {
-				return parseNumber(label) >= parseNumber(overLabel) ? `${overLabel}+` : label;
+				return parseInt(label) >= parseInt(overLabel) ? `${overLabel}+` : label;
 			}
 		}
 	},
@@ -45,18 +44,17 @@ export default {
 			];
 		},
 		labelOffset() {
-			if (!Array.isArray(this.offset)) return;
-			const offset = this.offset,
+			const offset = this.offset || [],
 				style = {};
-			if (validVal(offset[0])) style.top = unit(offset[0], 'px');
-			if (validVal(offset[1])) style.right = unit(offset[1], 'px');
+			if (offset[0]) style.top = offset[0];
+			if (offset[1]) style.right = offset[1];
 			return style;
 		},
 		labelSlot() {
-			return this.label || this.$slots.label;
+			return this.label !== undefined || this.$slots.label !== undefined;
 		},
 		defaultSlot() {
-			return !this.$slots.default;
+			return this.$slots.default === undefined;
 		},
 	}
 };

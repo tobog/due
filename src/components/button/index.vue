@@ -46,9 +46,9 @@ export default {
 			// default: 'default',
 			type: String,
 		},
-		type:{
+		type: {
 			type: String,
-			default:'button',
+			default: 'button'
 		},
 		shape: String,
 		icon: String,
@@ -60,7 +60,7 @@ export default {
 	computed: {
 		getTag() {
 			const { to, href, tag = 'button' } = this.$attrs;
-			if (to) return this.$router ? 'router-link' : 'a';
+			if (to && this.$router) return 'router-link';
 			if (href) return 'a';
 			return tag;
 		},

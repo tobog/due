@@ -1,156 +1,77 @@
 $prefix-cls: #{$prefix}-popper;
-
 .#{$prefix-cls} {
-    display: none;
+    display: block;
     visibility: visible;
     position: absolute;
     z-index: 1060;
-    width: auto;
-    color: #fff;
+    width: auto !important;
+    color: $white;
     min-height: 34px;
     padding: 6px 12px;
     text-align: left;
     background-color: $darkback;
     box-shadow: 0 0 3px $darkback;
-    border-radius: 3px;
+    border-radius: 4px;
     white-space: normal;
-    // max-width: 100%;
-    outline: none !important;
-    box-sizing: border-box !important;
-    max-width: calc(100vw - 12px);
 
-    // &-gpu {
-    //     max-width: 100vw;
-    // }
-
-    &-arrow {
-        width: 0;
-        height: 0;
-        border: 4px solid $darkback;
-        border-top-color: transparent !important;
-        border-left-color: transparent !important;
-        position: absolute;
-        // z-index: 1;
-
-    }
 }
 
+.#{$prefix-cls}-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 4px solid $darkback;
+    border-top-color: transparent !important;
+    border-left-color: transparent !important;
+    position: absolute;
+   
+}
 
-
-.#{$prefix-cls} {
-    &[data-placement^='top'] .#{$prefix-cls}-arrow {
+.#{$prefix-cls}-arrow {
+    &[x-placement^='top'] {
         bottom: -3px;
-        transform: translateX(-50%) rotate(45deg);
-        left: 9px;
+        transform: rotate(45deg);
+        left: 6px;
     }
-
-    &[data-placement='top-center'] .#{$prefix-cls}-arrow {
+    &[x-placement='top-center'] {
         left: 50%;
-        // transform: translateX(-50%) rotate(45deg)
+        transform: translateX(-50%) rotate(45deg)
     }
-
-    &[data-placement^='bottom'] .#{$prefix-cls}-arrow {
+    &[x-placement^='bottom'] {
         top: -3px;
-        left: 9px;
+        left: 6px;
+        transform: rotate(-135deg);
+    }
+    &[x-placement='bottom-center'] {
+        left: 50%;
         transform: translateX(-50%) rotate(-135deg);
     }
-
-    &[data-placement='bottom-center'] .#{$prefix-cls}-arrow {
-        left: 50%;
-        // transform: translateX(-50%) rotate(-135deg);
-    }
-
-    &[data-placement^='left'] .#{$prefix-cls}-arrow {
-        top: 9px;
-        transform: translateY(-50%) rotate(-45deg);
+    &[x-placement^='left'] {
+        top: 6px;
+        transform: rotate(-45deg);
         right: -3px;
     }
-
-    &[data-placement='left-center'] .#{$prefix-cls}-arrow {
+    &[x-placement='left-center'] {
         top: 50%;
-        // transform: translateY(-50%) rotate(-45deg);
+        transform: translateY(-50%) rotate(-45deg);
     }
-
-    &[data-placement^='right'] .#{$prefix-cls}-arrow {
-        top: 9px;
-        transform: translateY(-50%) rotate(135deg);
+    &[x-placement^='right'] {
+        top: 6px;
+        transform: rotate(135deg);
         left: -3px;
     }
-
-    &[data-placement='right-center'] .#{$prefix-cls}-arrow {
+    &[x-placement='right-center'] {
         top: 50%;
-        // transform: translateY(-50%) rotate(135deg);
+        transform: translateY(-50%) rotate(135deg);
     }
-
-    &[data-placement='left-bottom'] .#{$prefix-cls}-arrow,
-    &[data-placement='right-bottom'] .#{$prefix-cls}-arrow {
-        bottom: 9px;
-        top: unset;
+    &[x-placement='left-bottom'],
+    &[x-placement='right-bottom'] {
+        bottom: 6px;
         top: initial;
     }
-
-    &[data-placement='top-right'] .#{$prefix-cls}-arrow,
-    &[data-placement='bottom-right'] .#{$prefix-cls}-arrow {
-        left: unset;
+    &[x-placement='top-right'],
+    &[x-placement='bottom-right'] {
         left: initial;
-        right: 9px;
+        right: 6px;
     }
 }
-
-// .#{$prefix-cls}-arrow {
-//     &[data-placement^='top'] {
-//         bottom: -3px;
-//         transform: rotate(45deg);
-//         left: 6px;
-//     }
-
-//     &[data-placement='top-center'] {
-//         left: 50%;
-//         transform: translateX(-50%) rotate(45deg)
-//     }
-
-//     &[data-placement^='bottom'] {
-//         top: -3px;
-//         left: 6px;
-//         transform: rotate(-135deg);
-//     }
-
-//     &[data-placement='bottom-center'] {
-//         left: 50%;
-//         transform: translateX(-50%) rotate(-135deg);
-//     }
-
-//     &[data-placement^='left'] {
-//         top: 6px;
-//         transform: rotate(-45deg);
-//         right: -3px;
-//     }
-
-//     &[data-placement='left-center'] {
-//         top: 50%;
-//         transform: translateY(-50%) rotate(-45deg);
-//     }
-
-//     &[data-placement^='right'] {
-//         top: 6px;
-//         transform: rotate(135deg);
-//         left: -3px;
-//     }
-
-//     &[data-placement='right-center'] {
-//         top: 50%;
-//         transform: translateY(-50%) rotate(135deg);
-//     }
-
-//     &[data-placement='left-bottom'],
-//     &[data-placement='right-bottom'] {
-//         bottom: 6px;
-//         top: initial;
-//     }
-
-//     &[data-placement='top-right'],
-//     &[data-placement='bottom-right'] {
-//         left: initial;
-//         right: 6px;
-//     }
-// }

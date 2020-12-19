@@ -1,22 +1,7 @@
 
 import { getAllColumns, convertToRows, convertColumnOrder } from './utils/columns';
-import { unit, deepCopy } from '../../utils/tool';
-import { getScrollBarSize, EventListener, ScrollSync, AnimationFrame, getStyles } from "../../utils/dom";
-import Thead from "./thead";
-import Summary from "./summary";
-import Tbody from "./tbody";
-import Tooltip from "../tooltip/index";
-import langMinix from '../../mixins/lang';
-import Colgroups from "./colgroups";
+import { deepCopy } from '../../utils/tool';
 export default {
-    mixins: [langMinix],
-    components: {
-        Thead,
-        Tbody,
-        Tooltip,
-        Summary,
-        Colgroups
-    },
     props: {
         data: {
             type: Array,
@@ -37,14 +22,10 @@ export default {
             default: false,
         },
         border: {
-            type: String,
-            // default: 'vertical',
+            type: Boolean,
+            default: false,
         },
-        size: {
-            type: String,
-            // default: 'vertical',
-        },
-        showHeader: {
+        showThead: {
             type: Boolean,
             default: true,
         },
@@ -56,351 +37,218 @@ export default {
             type: Boolean,
             default: false,
         },
+        loading: {
+            type: Boolean,
+            default: false,
+        },
         ellipsis: {
             type: Boolean,
             default: false,
         },
-        fixHeader: {
-            type: Boolean,
-            default: false,
+        size: {
+            type: [String, Number],
+            // default: 'default',
         },
         noDataText: {
             type: String,
-            // default: '暂时没有相关数据',
             default: undefined,
+            // default: '暂时没有相关数据',
         },
+        column: Object,
         performance: {
             type: String,
             default: 'normal',//normal,auto,middle,high
         },
         multiExpand: Boolean,
-        baseLength: {
+        // delay: {
+        //     type: Boolean,
+        //     default: false,
+        // },
+        length: {
             type: Number,
             default: 12
-        },
-        showSummary: Boolean,
-        isLayoutAuto: Boolean,
-        fixSummary: Boolean,
-        loadData: Function,
-        sumText: {
-            type: String,
-            // default: "合计"
-            default: undefined
         }
+        // multiSort: Boolean,
+        // multiFilter: Boolean,
     },
     data() {
         return {
-            ready: false,
-            actionData: [],
+            actionData: this.makeActionData(),
             rebuildData: [],
             resultData: [],
-            cloneColumns: [],
-            columnRows: [],
+            cloneColumns: this.makeColumns(),
+            columnRows: this.makeColumnRows(),
             cloneData: [],
             columnStatus: {
                 sort: {},
                 filter: {},
                 check: {},
             },
-            sizeLength: 0,
-            scrollBarWidth: [0, 0],//[x,y]
-            translate: 0,
-            bodySize: [],
+            sizelength: 0,
             translateList: [],
-            layoutFixed: false,
-            summarySize: [0, 0],
-            tooltip: {
-                show: false
-            },
         };
     },
     created() {
-        this.cloneColumns = this.makeColumns();
-        this.columnRows = this.makeColumnRows();
-        this.actionData = this.makeActionData();
         this.cloneData = this.resultData = this.makeData();
         this.init();
         this.rebuildData = this.getSizeData;
     },
-    mounted() {
-        // this.ready = true;
-        this.initSizes();
-        this.setScrollSync();
-        EventListener.on(window, 'resize', this.initSizes)
-    },
-    activated() {
-        this.initSizes();
-        EventListener.on(window, 'resize', this.initSizes)
-    },
-    deactivated() {
-        EventListener.off(window, 'resize', this.initSizes)
-    },
     computed: {
-        isLayoutFixed() {
-            return (this.isFixHead && this.showHeader) || this.isFixed;
-        },
-        wrapClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            return [
-                `${_tobogPrefix_}-wrapper`,
-                {
-                    [`${_tobogPrefix_}-${this.size}`]: !!this.size,
-                    [`${_tobogPrefix_}-ready`]: this.ready,
-                    [`${_tobogPrefix_}-stripe`]: this.stripe,
-                    [`${_tobogPrefix_}-hover`]: this.hover,
-                    [`${_tobogPrefix_}-${this.border}`]: !!this.border,
-                    [`${_tobogPrefix_}-ellipsis`]: this.ellipsis,
-                    [`${_tobogPrefix_}-layout-auto`]: this.isLayoutAuto && !this.isLayoutFixed,
-                    [`${_tobogPrefix_}-fix-summary`]: this.isFixSummary,
-                    [`${_tobogPrefix_}-fix-header`]: this.isFixHead && this.showHeader,
-                }
-            ];
-        },
+
         getSizeData() {
+            console.log(this.sizelength, this.getContentLen)
             if (this.initPerformance === 'middle') return this.resultData.slice(0, this.getContentLen);
-            if (this.initPerformance === 'high') return this.resultData.slice(this.sizeLength, this.getContentLen);
+            if (this.initPerformance === 'high') return this.resultData.slice(this.sizelength, this.getContentLen);
             return this.resultData;
         },
-        getResultLen() {
-            return this.getSizeData.length
-        },
-        isFixHead() {
-            return this.fixHeader && parseFloat(this.height) > 0
-        },
         wrapStyles() {
-            const height = unit(this.height, 'px');
-            if (height) return { height };
+            const style = {},
+                height = this.height,
+                width = this.width;
+            if (height) style.height = `${height}px`;
+            if (width) style.width = `${width}px`;
+            return style;
         },
-        getDataLen() {
+        getLength() {
             return this.resultData.length
         },
         getContentLen() {
-            return this.sizeLength + this._baseLength
-        },
-        isPerformance() {
-            return (this.initPerformance === 'middle' || this.initPerformance === 'high') && (this.getContentLen - this.sizeLength) < this.getDataLen
+            return this.sizelength + this._sizelength
         },
         getTotalTranslate() {
-            return this.translateList.reduce(function (acc, cur) {
+            return this.translateList.reduce(function (acc, cur, index, arr) {
                 return acc + cur
             }, 0)
+        },
+        isPerformance() {
+            return (this.initPerformance === 'middle' || this.initPerformance === 'high') && this.getContentLen < this.getLength
         },
         initPerformance() {
             const performance = this.performance;
             if (performance === 'auto') {
-                const length = this.getDataLen;
+                const length = this.getLength;
                 if (length < 200) return 'normal';
                 if (length < 500) return 'middle';
                 return 'high';
             }
             return performance;
         },
-        normalColumns() {
-            return this.isColumnRows ? this.columnRows : [this.cloneColumns];
-        },
-        isFixed() {
-            return this.isLeftFixed || this.isRightFixed
-        },
-        isLeftFixed() {
-            return this.cloneColumns.some(col => col.fixed === "left");
-        },
-        isRightFixed() {
-            return this.cloneColumns.some(col => col.fixed === "right");
-        },
-        isFixSummary() {
-            return this.fixSummary && this.showSummary && parseFloat(this.height) > 0 && this.getResultLen
-        },
-        isInnerSummary() {
-            return this.showSummary && (!parseFloat(this.height) > 0) && this.getResultLen
-        },
-        isColumnRows() {
-            return this.columnRows.length > 1;
-        },
-        summaryData() {
-            if (!this.showSummary) return {};
-            let sums = {};
-            if (this.summaryMethod) {
-                sums = this.summaryMethod({ columns: this.cloneColumns, data: this.rebuildData });
-            } else {
-                this.cloneColumns.forEach((column, index) => {
-                    const key = column.key;
-                    if (index === 0) {
-                        sums[key] = {
-                            key: column.key,
-                            value: this.getSummaryText
-                        };
-                        return;
-                    }
-                    const values = this.rebuildData.map(item => Number(item[column.key]));
-                    const precisions = [];
-                    let notNumber = true;
-                    values.forEach(value => {
-                        if (!isNaN(value)) {
-                            notNumber = false;
-                            let decimal = ('' + value).split('.')[1];
-                            precisions.push(decimal ? decimal.length : 0);
-                        }
-                    });
-                    const precision = Math.max.apply(null, precisions);
-                    if (!notNumber) {
-                        const currentValue = values.reduce((prev, curr) => {
-                            const value = Number(curr);
-                            if (!isNaN(value)) {
-                                return parseFloat((prev + curr).toFixed(Math.min(precision, 20)));
-                            } else {
-                                return prev;
-                            }
-                        }, 0);
-                        sums[key] = {
-                            key: column.key,
-                            value: currentValue
-                        };
-                    } else {
-                        sums[key] = {
-                            key: column.key,
-                            value: ''
-                        };
-                    }
-                });
-            }
-            return sums;
-        },
         getNoDataText() {
-            if (this.noDataText === undefined) return this.langs('table.noDataText', '暂时没有相关数据');
+            if (this.noDataText === undefined) return this.langs('noDataText', '暂时没有相关数据');
             return this.noDataText
-        },
-        getSummaryText() {
-            if (this.sumText === undefined) return this.langs('table.sumText', '合计');
-            return this.sumText
         },
     },
     methods: {
-        _handleSize(dom, diffVal = 0) {
-            const domStyle = getStyles(dom) || {};
-            const width = parseFloat(domStyle.width);
-            const height = parseFloat(domStyle.height);
-            const { clientHeight, offsetWidth } = dom;
-            return [
-                isNaN(width) ? offsetWidth : width,
-                isNaN(height)
-                    ? clientHeight
-                    : clientHeight - height > 4
-                        ? clientHeight + diffVal
-                        : height
-            ];
-        },
-        setSplitWidth(column, width) {
-            this.$set(column, 'width', width);
-            this.initSizes();
-            this.$emit('on-split-moving', width, column.width, column);
-        },
-        setSrollSize() {
-            const val = getScrollBarSize();
-            // console.log(this.bodySize)
-            this.scrollBarWidth = [
-                this.bodySize[2] - this.bodySize[0] > 1 ? val : 0,
-                this.bodySize[3] - this.bodySize[1] > 1 ? val : 0,
-            ];
-        },
-        // 初始化数据
-        makeData(data) {
-            return (data || this.data).map(function (row, index) {
-                row = { ...row };
-                row._index = index;
-                return row;
-            });
-        },
-        copyColumns() {
-            this.__columns__ = deepCopy(this.columns)
-        },
-        makeColumns() {
-            this.copyColumns();
-            const allColumns = convertColumnOrder(getAllColumns(this.__columns__), this.layoutFixed);
-            allColumns.forEach(function (column, index) {
-                if (column.key === undefined) column.key = index;
-                column._index = index;
-                column._hasExpand = typeof column.renderExpand === 'function';
-            });
-            return allColumns;
-        },
-        makeColumnRows() {
-            return convertToRows(this.__columns__, this.layoutFixed);
-        },
-        makeActionData(data) {
-            const actionData = {};
-            (data || this.data || []).forEach(function (row, index) {
-                const newRow = {};
-                newRow._isHover = !!row._hover;
-                newRow._isHighlight = !!row._highlight;
-                newRow._isExpanded = !!row._expanded;
-                newRow._index = index;
-                newRow._isShowChildren = !!row._isShowChildren;
-                newRow._childDeep = row._childDeep || 0;
-                actionData[index] = newRow;
-            });
-            return actionData;
+        langs(key, defaultVal, val = {}) {
+            if (typeof this.$t !== 'function') return defaultVal;
+            key = `${this.__$langPrefix__}.table.${key}`;
+            key = (this.__$langMap__ && this.__$langMap__[key]) ? this.__$langMap__[key] : key;
+            const value = this.$t(key, val);
+            return key === value ? defaultVal : value;
         },
         // common
         init() {
-            const size = parseInt(this.baseLength);
-            this._baseLength = (isNaN(size) ? 16 : size) + 10;
+            const size = parseInt(this.length), { leftFixedTbody, rightFixedTbody, body } = this.$refs;
+            this._sizelength = (isNaN(size) ? 16 : size) + 10;
+            if (body) body.scrollTop = 0;
+            if (this.isLeftFixed && leftFixedTbody) leftFixedTbody.scrollTop = 0;
+            if (this.isRightFixed && rightFixedTbody) rightFixedTbody.scrollTop = 0;
             this._performance = false;
             this._preScrollTop = 0;
             this.translateList = [];
             this.columnStatus.check = {};
+            // this.performanceStatus = this.initPerformance;
         },
-        handlePerformance(event) {//scroll current target
-            const target = event.currentTarget;
+
+        handleSplit(index, axis) {
+            const column = this.cloneColumns[index], { relative, run } = axis;
+            this.$el.style.userSelect = run ? "none" : "";
+            column._width = (column._width || column.width || 0) + relative[0];
+        },
+        toggleExpand(_index) {
+            const data = this.actionData[_index],
+                status = !data._isExpanded;
+            if (!this.multiExpand) {
+                for (let i in this.actionData) {
+                    this.actionData[i]._isExpanded = false;
+                }
+            }
+            this.actionData[_index]._isExpanded = status;
+            this.$emit('on-expand', JSON.parse(JSON.stringify(this.cloneData[_index])), status);
+        },
+        handleBodyScroll(event) {
+            const { scrollLeft, scrollTop } = event.target,
+                { leftFixedTbody, rightFixedTbody, head } = this.$refs;
+            if (this.showThead && head) head.scrollLeft = scrollLeft;
+            if (this.isLeftFixed && leftFixedTbody)
+                leftFixedTbody.scrollTop = scrollTop;
+            if (this.isRightFixed && rightFixedTbody)
+                rightFixedTbody.scrollTop = scrollTop;
+            this.handlePerformance(event);
+        },
+        handleMousePerformance(event) {
             if (!this.isPerformance) return;
-            const { scrollTop, clientHeight, scrollHeight } = target;
+            const wheelDelta = event.wheelDelta,
+                detail = event.detail,
+                target = event.currentTarget,
+                scrollHeight = target.scrollHeight,
+                clientHeight = target.clientHeight;
+            if (scrollHeight - clientHeight > 1) return;
+            let deltaY = 0;
+            if (wheelDelta) {
+                deltaY = -wheelDelta;
+            } else if (detail) {
+                deltaY = detail * 40;
+            }
+            if (deltaY > 0) {
+                this.sizelength += 5;
+                this.rebuildData = this.getSizeData;
+            }
+        },
+        handlePerformance(event) {
+            if (!this.isPerformance) return;
+            const target = event.target,
+                { scrollTop, clientHeight, scrollHeight } = target;
             const direction = (scrollTop - this._preScrollTop) > 0,
-                translate = this.getTotalTranslate,
-                edageHeight = 100;
+                translate = this.getTotalTranslate;
             this._preScrollTop = scrollTop;
-            if (scrollTop < edageHeight) {
+            if (scrollTop < 100) {
                 if (this._performance) return;
                 this._performance = true;
-                this.sizeLength = this._preScrollTop = 0;
+                this.sizelength = this._preScrollTop = 0;
                 this.translateList = [];
-                this.updateSync(target);
+                this.rebuildData = this.getSizeData;
+                console.log(scrollTop, 'scrollTop')
                 return;
             }
-
-            if (!direction && scrollTop && translate && (scrollTop < translate + edageHeight)) {
+            if (!direction && scrollTop && translate && (scrollTop < translate + 100)) {
                 this.handleScrollUp(scrollTop);
-                this.updateSync(target);
-            } else if (direction && (clientHeight + scrollTop + 60 > scrollHeight)) {
+                this.rebuildData = this.getSizeData;
+            } else if (direction && (clientHeight + scrollTop + 100 > scrollHeight)) {
                 if (this._performance) return;
                 this._performance = true;
                 this.handleScrollDown();
-                // this.updateSync(target);
-                this._scrollTopSync && this._scrollTopSync.sync(target)
+                this.rebuildData = this.getSizeData;
             } else {
                 this._performance = false
             }
         },
-        updateSync(target) {
-            this.rebuildData = this.getSizeData;
-            this.initSizes();
-            this.$nextTick(() => {
-                this._scrollTopSync && this._scrollTopSync.sync(target)
-            })
-        },
         handleScrollDown() {
-            this.sizeLength += 5;
+            this.sizelength += 5;
             if (this.initPerformance === 'middle') {
-                if (this.getContentLen > this.getDataLen) this.sizeLength = this.getDataLen;
+                if (this.getContentLen > this.getLength) this.sizelength = this.getLength;
                 return
             }
             let height = 0;
-            const body = this.$refs.body;
-            const trList = body.querySelector("table>tbody").children;
+            const table = this.$refs.tbody;
+            const trList = table.querySelector("tbody").children;
             for (let index = 0; index < 5; index++) {
                 height += trList[index].clientHeight || 0;
             }
             this.translateList.push(height);
         },
         handleScrollUp(scrollTop = 0) {
+            console.log(this.initPerformance, 'middle')
             if (this.initPerformance === 'middle') return;
             let height = 0, i = 0;
             for (let index = 0, len = this.translateList.length; index < len; index++) {
@@ -413,88 +261,70 @@ export default {
                 }
                 i = index;
             }
-            this.sizeLength = i * 5;
+            this.sizelength = i * 5;
             this.translateList = this.translateList.slice(0, i);
-        },
-        setScrollSync() {
-            this.$nextTick(() => {
-                AnimationFrame.requestFrame(() => {
-                    const {
-                        rightScroll,
-                        leftScroll,
-                        body,
-                        headScroll,
-                        summaryScroll
-                    } = this.$refs;
-                    const scrollTopEle = [],
-                        scrollLeftEle = [];
-                    if (rightScroll) scrollTopEle.push(rightScroll);
-                    if (leftScroll) scrollTopEle.push(leftScroll);
-                    if (headScroll) scrollLeftEle.push(headScroll);
-                    if (summaryScroll) scrollLeftEle.push(summaryScroll);
-                    // console.log(summaryScroll)
-                    if (body) {
-                        scrollTopEle.push(body);
-                        scrollLeftEle.push(body);
-                    }
-                    if ((this.isRightFixed || this.isLeftFixed) && scrollTopEle.length > 1) {
-                        if (this._scrollTopSync) {
-                            this._scrollTopSync.update(scrollTopEle);
-                        } else {
-                            this._scrollTopSync = new ScrollSync(scrollTopEle, {
-                                isScrollTop: true,
-                                throttle: null
-                            });
-                        }
-                    }
-                    if ((this.isFixHead || this.fixSummary) && scrollLeftEle.length > 1) {
-                        if (this._scrollLeftSync) {
-                            this._scrollLeftSync.update(scrollLeftEle);
-                        } else {
-                            this._scrollLeftSync = new ScrollSync(scrollLeftEle, { throttle: null });
-                        }
-                    }
-                })
-            });
+
         },
         clickCurrentRow(_index, isdb) {
             if (!this.highlightRow) return;
-            const actionData = this.actionData[_index];
+            const actionData = this.actionData[_index], row = JSON.parse(JSON.stringify(this.cloneData[_index]));
             actionData._isHighlight = !actionData._isHighlight;
-            this.$emit(isdb ? 'on-row-dbclick' : 'on-row-click', { ...this.cloneData[_index] }, _index);
+            this.$emit(isdb ? 'on-row-dbclick' : 'on-row-click', row, _index);
         },
-        handleMouseIn(_index) {
-            if (!this.hover) return;
-            const actionData = this.actionData[_index];
-            if (!actionData._isHover) actionData._isHover = true;
-            this.$emit(
-                "on-row-hover",
-                { ...this.cloneData[_index] },
-                _index,
-                true
-            );
-        },
-        handleMouseOut(_index) {
-            if (!this.hover) return;
-            this.actionData[_index]._isHover = false;
-            this.$emit(
-                "on-row-hover",
-                { ...this.cloneData[_index] },
-                _index,
-                false
-            );
-        },
+        // 初始化数据
 
+        makeData() {
+            const data = deepCopy(this.data) || [];
+            data.forEach(function (row, index) {
+                row._index = index;
+            });
+            return data;
+        },
+        makeColumns() {
+            const allColumns = convertColumnOrder(getAllColumns(this.columns));
+            const columns = [], colSpanMap = [];
+            allColumns.forEach(function (column, index) {
+                const colsSpan = column.colsSpan;
+                column._index = index;
+                column._width = column.width;
+                column._hasExpand = typeof column.renderExpand === 'function';
+                columns.push(column);
+                if (colsSpan instanceof Array && colsSpan.length > 0) {
+                    colsSpan.forEach(function (item) {
+                        colSpanMap.push({
+                            ...item,
+                            index,
+                        })
+                    })
+                }
+            });
+            this.colSpanMap = colSpanMap;
+            return columns;
+        },
+        makeColumnRows() {
+            return convertToRows(this.columns);
+        },
+        makeActionData() {
+            const data = {};
+            (this.data || []).forEach(function (row, index) {
+                const newRow = {};
+                newRow._isHover = !!row._hover;
+                newRow._isHighlight = !!row._highlight;
+                newRow._isExpanded = !!row._expanded;
+                newRow._index = index;
+                data[index] = newRow;
+            });
+            return data;
+        },
         // 用于一些额外的功能函数
         // columnStatus
         handleColumnStatus(type, a, b, c, d) {
-            console.log(type, a, b, c, d)
             if (type === "sort") {
                 this.sortChange(a, b);
                 return;
             }
             if (type === "check") {
-                if (c === "selectAll") {
+                if (c === "checkAll") {
                     this.handleCheckAll(a, b);
                 } else {
                     this.handleCheckChange(a, b, d);
@@ -517,17 +347,17 @@ export default {
                 });
                 this.$set(check, key, indexs);
                 this.$emit(
-                    "on-select-change",
+                    "on-check-change",
                     JSON.parse(JSON.stringify(this.resultData)),
                     checkVals,
-                    { key, status: true, type: "selectAll" }
+                    { key, status: true, type: "checkAll" }
                 );
             } else {
                 this.$set(check, key, []);
-                this.$emit("on-select-change", [], [], {
+                this.$emit("on-check-change", [], [], {
                     key,
                     status: false,
-                    type: "selectAll"
+                    type: "checkAll"
                 });
             }
         },
@@ -570,19 +400,20 @@ export default {
             });
             this.$set(check, key, indexs);
             this.$emit(
-                "on-select-change",
+                "on-check-change",
                 JSON.parse(JSON.stringify(rows)),
                 checkVals,
                 {
                     key,
                     status,
                     value: curval,
-                    type: "select",
+                    type: "check",
                     index,
                 }
             );
         },
         sortChange(sort, column) {
+            // this.columnStatus.check = {};
             const sortStatus = this.columnStatus.sort,
                 { key, multi, sync } = column,
                 multiSort = multi === true || (multi || {}).sort;
@@ -611,9 +442,12 @@ export default {
                     });
                 }
             });
-            this.resetbuildData(resultData);
+            this.init();
+            this.resultData = resultData;
+            this.rebuildData = this.getSizeData;
         },
         filterChange(val, column) {
+            // this.columnStatus.check = {};
             const filterStatus = this.columnStatus.filter,
                 { key, multi, sync } = column,
                 multiFilter = multi === true || (multi || {}).filter;
@@ -641,105 +475,9 @@ export default {
                     });
                 }
             });
-            this.resetbuildData(resultData);
-        },
-        resetbuildData(resultData) {
             this.init();
             this.resultData = resultData;
             this.rebuildData = this.getSizeData;
-            this.initSizes();
-        },
-        toggleExpand(_index) {
-            const data = this.actionData[_index],
-                status = !data._isExpanded;
-            if (!this.multiExpand) {
-                for (let i in this.actionData) {
-                    this.actionData[i]._isExpanded = false;
-                }
-            }
-            this.actionData[_index]._isExpanded = status;
-            this.$emit('on-expand', { ...this.cloneData[_index] }, status);
-            this.initSizes();
-        },
-        async toggleTree(index) {
-            let row = this.cloneData[index];
-            if (this.actionData[index]._isShowChildren) {
-                let i = 0, status = true;
-                this.cloneData.slice(index + 1).forEach((item) => {
-                    if (!status) return;
-                    if (item._isChild) {
-                        i++
-                    } else {
-                        status = false;
-                    }
-                })
-                row._isShowChildren = false;
-                this.cloneData.splice(index + 1, i);
-            } else {
-                console.log(this.loadData, row);
-                if (typeof this.loadData === 'function') {
-                    let result = await this.loadData(row);
-                    if (Array.isArray(result)) {
-                        this.$set(row, 'children', result);
-                    }
-                }
-                row._isShowChildren = true;
-                this.cloneData.splice(index + 1, 0, ...row.children.map(child => {
-                    return {
-                        ...child,
-                        _childDeep: this.actionData[index]._childDeep + 1,
-                        _isChild: true,
-                    }
-                }));
-            }
-            this.actionData = this.makeActionData(this.cloneData);
-            this.cloneData = this.resultData = this.makeData(this.cloneData);
-            this.rebuildData = this.getSizeData;
-            this.initSizes();
         }
-    },
-    watch: {
-        columns: {
-            handler() {
-                this.cloneColumns = this.makeColumns();
-                this.columnRows = this.makeColumnRows();
-                this.initSizes();
-                this.setScrollSync();
-            },
-            deep: true
-        },
-        data: {
-            handler() {
-                this.init();
-                this.actionData = this.makeActionData();
-                this.cloneData = this.resultData = this.makeData();
-                this.rebuildData = this.getSizeData;
-                this.initSizes();
-            },
-            deep: true
-        },
-        height() {
-            this.initSizes();
-        },
-        ellipsis() {
-            this.initSizes();
-        },
-        showHeader() {
-            this.initSizes();
-        },
-        fixHeader() {
-            this.initSizes();
-        },
-        fixSummary() {
-            this.initSizes();
-        },
-        size() {
-            this.initSizes();
-        }
-    },
-    beforeDestroy() {
-        EventListener.off(window, 'resize', this.initSizes);
-        this._scrollTopSync && this._scrollTopSync.destroy();
-        this._scrollLeftSync && this._scrollLeftSync.destroy();
-    },
+    }
 };

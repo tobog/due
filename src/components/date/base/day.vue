@@ -26,8 +26,8 @@ export default {
 	mixins: [mixins],
 	computed: {
 		handleWeeks() {
-			const weeks = this.weeks || ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-			if (this.showWeek) weeks.unshift('');
+			const weeks = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+			if (this.showWeek) weeks.unshift('')
 			return weeks;
 		},
 		cells() {

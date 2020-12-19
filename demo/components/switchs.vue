@@ -1,246 +1,153 @@
-<style lang="scss" scoped>
-</style>
+
+
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Switch 开关)</h2>
-			<h4 class="padding-top-10">在两种状态间切换时用到的开关选择器。</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example" v-if="attrs.show">
+			<div style="padding:20px 0;">视图：</div>
+			<vSwitch v-bind="attrs" v-model="val">
 				<span slot="open">开</span>
 				<span slot="close">关</span>
 			</vSwitch>
-			<section v-if="show">
-				<vSwitch v-bind="formData" v-model="val">
-					<span slot="open">开</span>
-					<span slot="close">关</span>
-				</vSwitch>
-				<vSwitch v-model="val" v-bind="formData">
-					<vIcon type="checkmark" slot="open"></vIcon>
-					<vIcon type="close" slot="close"></vIcon>
-				</vSwitch>
-				<vSwitch v-model="val" loading v-bind="formData">
-					<vIcon type="checkmark" slot="open"></vIcon>
-					<vIcon type="close" slot="close"></vIcon>
-				</vSwitch>
-				{{ val }}
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+			<vSwitch v-model="val">
+				<vIcon type="md-checkmark" slot="open"></vIcon>
+				<vIcon type="md-close" slot="close"></vIcon>
+			</vSwitch>
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: false
+			val: [],
+			count: 20,
+			switchs: {
+				show: true,
+				disabled: false,
+
+				strict: true,
+				size: 30,
+			},
+			selects: {
+
+			},
+			options: {
+
+			},
+			inputs: {
+				size: 50,
+				trueValue: true,
+				falseValue: false,
+			},
 		};
 	},
-	methods: {},
+
 	computed: {
-		getCode() {
-			return `<vSwitch v-bind="${this.getCodeString(this.formData)}" v-model="val">
-							<span slot="open">开</span>
-							<span slot="close">关</span>
-						</vSwitch>
-						<vSwitch v-model="val" v-bind="${this.getCodeString(this.formData)}">
-							<vIcon type="checkmark" slot="open"></vIcon>
-							<vIcon type="close" slot="close"></vIcon>
-						</vSwitch>
-						<vSwitch v-model="val" loading v-bind="${this.getCodeString(this.formData)}">
-							<vIcon type="checkmark" slot="open"></vIcon>
-							<vIcon type="close" slot="close"></vIcon>
-						</vSwitch>`;
-		},
-		getBase() {
-			return [
-				{
-					label: "禁用",
-					key: "disabled",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "只读",
-					key: "readonly",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "严格相等",
-					key: "strict",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "加载中",
-					key: "loading",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "打开状态",
-					key: "trueValue",
-					tag: "vInput",
-					default: true
-				},
-				{
-					label: "关闭状态",
-					key: "falseValue",
-					tag: "vInput",
-					default: false
-				},
 
-				{
-					label: "尺寸",
-					key: "size",
-					tag: "vInputNumber",
-					default: ""
-				},
-				{
-					label: "关闭的背景色",
-					key: "falseColor",
-					tag: "vInput",
-					default: "",
-					props: {
-						type: "color"
-					}
-				},
-				{
-					label: "打开的背景色",
-					key: "trueColor",
-					tag: "vInput",
-					default: "",
-					props: {
-						type: "color"
-					}
-				},
-
-				{
-					label: "主题",
-					key: "theme",
-					tag: "vSelect",
-					default: "",
-					options: this.getThemes
-				}
-			];
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		compProps() {
-			return [
-				{
-					prop: "name",
-					explain: "input的name,用于隐藏域",
-					type: "String",
-					default: "-"
-				},
-				{
-					prop: "value",
-					explain: "指定当前是否选中，可以使用 v-model 双向绑定数据",
-					type: "Boolean",
-					default: "false"
-				},
-				{
-					prop: "disabled",
-					explain: "禁用开关",
-					type: "Boolean",
-					default: "false"
-				},
-				{
-					prop: "readonly",
-					explain: "只读",
-					type: "Boolean",
-					default: "false"
-				},
-				{
-					prop: "loading",
-					explain: "加载中的开关",
-					type: "Boolean",
-					default: "false"
-				},
-				{
-					prop: "trueValue",
-					explain: "指定选中时的值",
-					type: "Any",
-					default: "true"
-				},
-				{
-					prop: "falseValue",
-					explain: "指定没有选中时的值",
-					type: "Any",
-					default: "false"
-				},
-				{
-					prop: "trueColor",
-					explain: "指定选中时的背景色",
-					type: "Any",
-					default: "true"
-				},
-				{
-					prop: "falseColor",
-					explain: "指定没有选中时的背景色",
-					type: "Any",
-					default: "false"
-				},
-				{
-					prop: "strict",
-					explain: "严格模式",
-					type: "Boolean",
-					default: "false"
-				},
-				{
-					prop: "size",
-					explain: "单选框的尺寸，large、small、default，number,auto",
-					type: "String, Number",
-					default: "default"
-				},
-				{
-					explain:
-						"主题颜色可选值为 gray、primary、dashed、text、info、success、warning、error",
-					prop: "theme",
-					type: "String",
-					default: ""
-				},
-				{
-					prop: "slot:open",
-					explain: "指定选中时文本",
-					type: "VNODE:slot",
-					default: "-"
-				},
-				{
-					prop: "slot:close",
-					explain: "指定没有选中时文本",
-					type: "VNODE:slot",
-					default: "-"
-				},
-				{
-					prop: "on-change",
-					explain: "开关变化时触发，返回当前的状态",
-					type: "Function:Event",
-					default: "-"
-				},
-				{
-					prop: "beforeChange",
-					explain: "返回 Promise 可以阻止切换",
-					type: "Function:val=>{}",
-					default: "-"
-				}
-			];
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+				sortable: true,
+			},
+			]
+		},
+		data() {
+			return [{
+				prop: 'name',
+				explain: 'input的name,用于隐藏域',
+				type: 'String',
+				default: '-',
+			},
+			{
+				prop: 'value',
+				explain: '指定当前是否选中，可以使用 v-model 双向绑定数据',
+				type: 'Boolean',
+				default: 'false',
+			},
+			{
+				prop: 'disabled',
+				explain: '禁用开关',
+				type: 'Boolean',
+				default: 'false',
+			},
+			{
+				prop: 'trueValue',
+				explain: '指定选中时的值',
+				type: 'Any',
+				default: 'true',
+			},
+			{
+				prop: 'falseValue',
+				explain: '指定没有选中时的值',
+				type: 'Any',
+				default: 'false',
+			},
+			{
+				prop: 'strict',
+				explain: '严格模式',
+				type: 'Boolean',
+				default: 'true',
+			},
+			{
+				prop: 'slot:open',
+				explain: '指定选中时文本',
+				type: 'VNODE:slot',
+				default: '-',
+			},
+			{
+				prop: 'slot:close',
+				explain: '指定没有选中时文本',
+				type: 'VNODE:slot',
+				default: '-',
+			},
+			{
+				prop: 'on-change',
+				explain: 'on-change',
+				type: 'Function:val=>{}',
+				default: '-',
+			},
+
+			]
 		}
-	}
+	},
 };
 </script>
+

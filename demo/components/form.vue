@@ -1,249 +1,200 @@
-
-<style lang="scss">
-</style>
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Form 表单)</h2>
-			<h4 class="padding-top-10">具有数据收集、校验和提交功能的表单，包含复选框、单选框、输入框、下拉选择框等元素。</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vForm>
-					<vFormItem v-bind="formData" label="rules">
-						<vTextarea v-model="formData.rules" />
-					</vFormItem>
-					<vFormItem v-bind="formData" label="labelWidth" required prop="labelWidth">
-						<vInput v-model="formData.labelWidth" />
-					</vFormItem>
-					<vFormItem v-bind="formData" label="labelWidth">
-						<vInput v-model="formData.labelWidth" />
-					</vFormItem>
-				</vForm>
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+    <main style="padding:20px 0;" class="examples-main clearfix">
+        <vForm class="example" vertical>
+            <div style="padding:10px 0;">参数：</div>
+            <vFormItem
+                v-for="(item,key) of switchs"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vSwitch v-model="switchs[key]" />
+            </vFormItem>
+            <vFormItem
+                v-for="(item,key) of selects"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vSelect v-model="selects[key]" transfer>
+                    <vOption
+                        v-for="(val,index) of options[key]"
+                        :value='val'
+                        :key="index"></vOption>
+                </vSelect>
+            </vFormItem>
+            <vFormItem
+                v-for="(item,key) of inputs"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vInput v-model="inputs[key]">
+                </vInput>
+            </vFormItem>
+        </vForm>
+        <section class="example">
+            <vForm  ref="vForm">
+                <vFormItem v-bind="attrs" label="rules">
+                    <vInput v-model="attrs.rules" type="textarea" />
+                </vFormItem>
+                <vFormItem v-bind="attrs" label="labelWidth">
+                    <vInput v-model="attrs.labelWidth" type="number" />
+                </vFormItem>
+                <vFormItem v-bind="attrs" label="inline">
+                    <vSwitch v-model="attrs.inline"></vSwitch>
+                </vFormItem>
+            </vForm>
+        </section>
+        <h2 class="title">Props & Events #</h2>
+        <vTable
+            :columns='columns'
+            :data="data"
+            style="width:100%"
+            border
+            stripe></vTable>
+    </main>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
-	data() {
-		return {
-			value: "",
-			formItem: {},
-		};
-	},
-	computed: {
-		getCode() {
-			return `<vForm>
-						<vFormItem v-bind="formData" label="rules">
-							<vTextarea v-model="formData.rules" />
-						</vFormItem>
-						<vFormItem v-bind="formData" label="labelWidth" required>
-							<vInput v-model="formData.labelWidth" />
-						</vFormItem>
-						<vFormItem v-bind="formData" label="labelWidth">
-							<vInput v-model="formData.labelWidth" />
-						</vFormItem>
-					</vForm>
-							`;
-		},
-		getBase() {
-			return [
-				{
-					label: "行内表单",
-					key: "inline",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "错误定位",
-					key: "errorInview",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "label垂直对齐位",
-					key: "vertical",
-					tag: "vSelect",
-					default: "center",
-					options: ['center','start','end','baseline','stretch']
-				},
-				{
-					label: "标签的宽度",
-					key: "labelWidth",
-					tag: "vInputNumber",
-					// default: ''
-				},
-			];
-		},
-		compProps() {
-			return [
-				{
-					prop: 'rules',
-					explain: '表单验证规则，具体配置查看 async-validator',
-					type: 'Object',
-					default: '-',
-				},
-				{
-					prop: 'labelWidth',
-					explain: '表单域标签的宽度，所有的 FormItem 都会继承 Form 组件的 label-width 的值',
-					type: 'Number|String',
-					default: '',
-				},
-				{
-					prop: 'inline',
-					explain: '是否开启行内表单模式',
-					type: 'Boolean',
-					default: false,
-				},
-				{
-					prop: 'errorInview',
-					explain: '错误自动定位显示',
-					type: 'Boolean',
-					default: true,
-				},
-				{
-					prop: 'resetValidate',
-					explain: '清除所有子表单验证消息',
-					type: 'Function',
-					default: '()=>{}',
-				},
-				{
-					prop: 'validate',
-					explain: '验证所有表单验证',
-					type: 'Function:Promise',
-					default: '(cb)=>{}',
-				},
-				{
-					prop: 'validateField',
-					explain: '验证单一表单字段',
-					type: 'Function',
-					default: '(prop, cb)=>{}',
-				},
-				{
-					prop: 'on-submit',
-					explain: 'submit 提交',
-					type: 'event',
-					default: '-',
-				},
-				{
-					prop: 'slot:default',
-					explain: '提供子表单项目',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:inline',
-					explain: 'FormItem: 是否开启行内表单模式',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'FormItem:tip',
-					explain: 'FormItem:提示',
-					type: 'String|html',
-					default: 'tip',
-				},
-				{
-					prop: 'FormItem:rules',
-					explain: 'FormItem: 表单的验证规则',
-					type: 'Array',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:prop',
-					explain: 'FormItem:表单name，提供验证',
-					type: 'Array',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:labelWidth',
-					explain: 'FormItem:表单域标签的的宽度',
-					type: 'Number|String',
-					default: '',
-				},
-				{
-					prop: 'FormItem:label',
-					explain: 'FormItem:标签文本',
-					type: 'String',
-					default: '',
-				},
-				{
-					prop: 'FormItem:align',
-					explain: 'FormItem:标签文本位置:right,center,left',
-					type: 'String',
-					default: '',
-				},
-				{
-					prop: 'FormItem:vertical',
-					explain: 'FormItem:标签文本垂直对齐位置:center,start,end,baseline,stretch',
-					type: 'String',
-					default: 'center',
-				},
-				{
-					prop: 'FormItem:required',
-					explain: 'FormItem:是否必填，如不设置，则会根据校验规则自动生成',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'FormItem:slot:label',
-					explain: 'FormItem:自定义label',
-					type: 'VNode',
-					default: 'prop:label',
-				},
-				{
-					prop: 'FormItem:slot:default',
-					explain: 'FormItem:提供子表单项目',
-					type: 'VNode:slot',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:slot:default',
-					explain: 'FormItem:提供子表单项目',
-					type: 'VNode:slot',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:value',
-					explain: '自定义传入验证数据',
-					type: 'Any',
-					default: '-',
-				},
-				{
-					prop: 'FormItem:resetValidate',
-					explain: '清除表单验证消息',
-					type: 'Function',
-					default: '()=>{}',
-				},
+    data() {
+        return {
+            value: '',
+            switchs: {
+                inline: true,
+                required: false,
+            },
+            selects: {
+               
+            },
+            options: {
+               
+            },
+            inputs: {
+				labelWidth: 100,
+				label:"",
+				tip:"tip",
+				prop:"prop"
+            },
+        };
+    },
+    mounted() {
+       
+    },
+    computed: {
+        attrs() {
+            return {
+                ...this.selects,
+                ...this.switchs,
+                ...this.inputs,
+            }
+        },
+        columns() {
+            return [{
+                    title: '属性/事件/方法',
+                    key: 'prop',
+                },
+                {
+                    title: '说明',
+                    key: 'explain',
+                    width: '50%'
+                },
+                {
+                    title: '类型',
+                    key: 'type',
+                },
+                {
+                    title: '默认值/参数/返回值',
+                    key: 'default',
+                },
+            ]
+        },
+        data() {
+            return [{
+                    prop: 'rules',
+                    explain: 'form 表单的验证规则',
+                    type: 'Array',
+                    default: '-',
+                },
+                {
+                    prop: 'labelWidth',
+                    explain: 'label宽度',
+                    type: 'Number|String',
+                    default: '',
+                },
+                {
+                    prop: 'inline',
+                    explain: '表单inline',
+                    type: 'Boolean',
+                    default: 'false',
+                },
+                {
+                    prop: 'slot：default',
+                    explain: '提供子表单项目',
+                    type: 'VNode：slot',
+                    default: '-',
+                },
+                {
+                    prop: 'resetValidate',
+                    explain: '清除所有子表单验证消息',
+                    type: 'Function:value',
+                    default: 'value',
+                },
+                {
+                    prop: 'validate',
+                    explain: '验证所有表单验证',
+                    type: 'Function:Promise',
+                    default: 'valid',
+                },
+                {
+                    prop: 'validateField',
+                    explain: '验证单一表单',
+                    type: 'Function:',
+                    default: 'prop',
+                },
 
-				{
-					prop: 'FormItem:validate',
-					explain: '验证表单验证',
-					type: 'Function:Promise',
-					default: '(val,cb)=>{}',
-				},
-			];
-		}
-	}
+                {
+                    prop: 'rules',
+                    explain: 'FormItem: 表单的验证规则',
+                    type: 'Array',
+                    default: '-',
+                },
+                {
+                    prop: 'prop',
+                    explain: 'FormItem:表单name',
+                    type: 'Array',
+                    default: '-',
+                },
+                {
+                    prop: 'labelWidth',
+                    explain: 'FormItem:label宽度',
+                    type: 'Number|String',
+                    default: '',
+                },
+                {
+                    prop: 'label',
+                    explain: 'FormItem:label',
+                    type: 'String',
+                    default: '',
+                },
+                {
+                    prop: 'required',
+                    explain: 'FormItem:required',
+                    type: 'Boolean',
+                    default: 'false',
+                },
+                {
+                    prop: 'slot：label',
+                    explain: 'FormItem:required',
+                    type: 'VNode：slot',
+                    default: 'label',
+                },
+                {
+                    prop: 'slot：default',
+                    explain: 'FormItem:提供子表单项目',
+                    type: 'VNode：slot',
+                    default: '-',
+                },
+            ]
+        }
+    },
 };
 </script>

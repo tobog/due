@@ -30,8 +30,8 @@ button.#{$prefix-cls} {
     -webkit-appearance: initial;
     -webkit-appearance: unset;
     margin: 0;
-    padding: 5px 15px 6px;
-    font-size: $fontBase;
+    padding: 5px 15px 7px;
+    font-size: 12px;
     line-height: normal;
     border-radius: 3px;
     border: 1px solid transparent;
@@ -52,8 +52,8 @@ button.#{$prefix-cls} {
     &,
     &-text,
     &-dashed {
-        @include btn-base($content, #fff, $border);
-        @include btn-active($primary, #fff, $primary);
+        @include btn-base($content, $white, $border);
+        @include btn-active($primary, $white, $primary);
     }
 
     &-dashed {
@@ -68,8 +68,8 @@ button.#{$prefix-cls} {
     @each $key,
     $value in $colors-map {
         &-#{$key} {
-            @include btn-base(#fff, $value, $value);
-            @include btn-active(#fff, $value, $value);
+            @include btn-base($white, $value, $value);
+            @include btn-active($white, $value, $value);
 
             &.#{$prefix-cls}-ghost {
                 color: $value;
@@ -88,8 +88,7 @@ button.#{$prefix-cls} {
 
     &-size {
         &-small {
-            padding: 5px 10px 6px;
-            font-size: $subFont;
+            padding: 5px 7px;
         }
 
         &-large {

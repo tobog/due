@@ -1,7 +1,10 @@
 <template>
-	<div :data-vue-module="$options.name" :class="classes" @click="handleClick">
-		<slot></slot>
-	</div>
+    <div
+        :data-vview-module='$options.name'
+        :class="classes"
+        @click="handleClick">
+        <slot></slot>
+    </div>
 </template>
 <script>
 import {
@@ -10,7 +13,9 @@ import {
 export default {
     name: 'DropdownItem',
     props: {
-        name: [String, Number],
+        name: {
+            type: [String, Number]
+        },
         disabled: {
             type: Boolean,
             default: false
@@ -24,19 +29,14 @@ export default {
             default: false
         }
     },
-    beforeCreate() {
-        this._dropdown_ = findComponentUpward(this, 'Dropdown');
-    },
     mounted() {
-        if (this.selected) {
-            this.handleClick();
-        }
+        this.Dropdown = findComponentUpward(this, 'Dropdown');
     },
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
-                _tobogPrefix_,
+               _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-selected`]: this.selected,
@@ -47,9 +47,8 @@ export default {
     },
     methods: {
         handleClick() {
-            if (this.disabled && this._dropdown_) this._dropdown_._cancelClose_ = true;
-            if (this.disabled || !this._dropdown_) return;
-            this._dropdown_.$emit('on-select', this.name, this.$el.innerHTML);
+            if (this.disabled || !this.Dropdown) return;
+            this.Dropdown.$emit('on-change', this.name);
         }
     },
 

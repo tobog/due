@@ -1,619 +1,538 @@
 
 <template>
-	<section :class="wrapClasses" :style="wrapStyles">
-		<div :class="[_tobogPrefix_]" ref="tables">
-			<!-- fixed thead -->
+	<div :class="wrapClasses" :style="wrapStyles">
+		<div :class="_tobogPrefix_">
 			<div
-				v-if="isFixHead && showHeader"
-				:class="[_tobogPrefix_ + '-fixed-thead']"
-				:style="{ paddingRight: scrollBarWidth[1] + 4 + 'px' }"
+				v-if="showThead"
+				ref="head"
+				:class="[_tobogPrefix_+'-thead']"
+				:style="headStyle"
 			>
-				<div
-					:class="[_tobogPrefix_ + '-fixed-wrapper']"
-					ref="headScroll"
-				>
-					<table
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
-						<Thead
-							fixed="top"
-							:prefix="_tobogPrefix_"
-							:cellsSize="headCellsSize"
-							:columns="normalColumns"
-							:action-data="actionData"
-							:column-status="columnStatus"
-							:data-length="getResultLen"
-							@on-column-status="handleColumnStatus"
-						></Thead>
-					</table>
-				</div>
-			</div>
-			<!-- fixed thead -->
-			<!-- Tbody -->
-			<div
-				:class="[_tobogPrefix_ + '-body']"
-				ref="body"
-				@scroll="handlePerformance"
-			>
-				<table
-					cellspacing="0"
-					cellpadding="0"
-					border="0"
-					ref="table"
-					:style="tablePerformanceStyle"
-					:class="[_tobogPrefix_ + '-table']"
-				>
-					<Colgroups
-						v-if="!showHeader"
-						:columns="bodyTdSize"
-					></Colgroups>
+				<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+					<Colgroups :columns="cloneColumns"></Colgroups>
 					<Thead
-						v-if="showHeader"
-						ref="thead"
 						:prefix="_tobogPrefix_"
-						:columns="normalColumns"
+						:columns="cloneColumns"
+						:column-rows="columnRows"
 						:action-data="actionData"
 						:column-status="columnStatus"
-						:data-length="getResultLen"
+						:data-length="getLength"
 						@on-column-status="handleColumnStatus"
+						@on-split-moving="handleSplit"
 					></Thead>
+				</table>
+			</div>
+			<div
+				:class="_tobogPrefix_+'-tbody'"
+				v-show="getLength"
+				:style="bodyStyle"
+				ref="body"
+				@scroll="handleBodyScroll"
+				@mousewheel.stop="handleMousePerformance"
+				@DOMMouseScrollx.stop="handleMousePerformance"
+			>
+				<table cellspacing="0" cellpadding="0" border="0" :style="tableMainStyle" ref="tbody">
+					<Colgroups :columns="cloneColumns"></Colgroups>
 					<Tbody
-						ref="tbody"
 						:prefix="_tobogPrefix_"
 						:columns="cloneColumns"
 						:data="rebuildData"
+						:size="size"
 						:action-data="actionData"
 						:column-status="columnStatus"
 						@on-column-status="handleColumnStatus"
 					></Tbody>
-					<Summary
-						v-if="showSummary && getResultLen"
-						ref="summary"
-						:prefix="_tobogPrefix_"
-						:columns="cloneColumns"
-						:class="[_tobogPrefix_ + '-summary-body']"
-						:data="summaryData"
-					></Summary>
-				</table>
-				<div
-					v-if="!getResultLen"
-					:class="[_tobogPrefix_ + '-tip']"
-					:style="getNoDataHeight"
-				>
-					<slot name="tip">{{ getNoDataText }}</slot>
-				</div>
-			</div>
-			<!-- Tbody -->
-			<!-- fixSummary -->
-			<div
-				v-if="isFixSummary"
-				ref="summaryScroll"
-				:class="[_tobogPrefix_ + '-summary']"
-				:style="getSummaryStyle"
-			>
-				<table
-					cellspacing="0"
-					cellpadding="0"
-					border="0"
-					:class="[_tobogPrefix_ + '-table']"
-				>
-					<Summary
-						:prefix="_tobogPrefix_"
-						:fixedSize="summaryTdSize"
-						:columns="cloneColumns"
-						:class="[_tobogPrefix_ + '-summary-body']"
-						:data="summaryData"
-					></Summary>
 				</table>
 			</div>
-			<!-- fixSummary -->
-			<!-- left fixed -->
 			<div
-				v-if="isLeftFixed && leftFixedSize"
-				:class="[_tobogPrefix_ + '-left-fixed']"
+				v-if="isLeftFixed"
+				:class="_tobogPrefix_+'-left-fixed'"
+				:style="fixedTableStyle('left')"
 			>
-				<div
-					:class="[_tobogPrefix_ + '-left-fixed-head']"
-					v-if="isFixHead && showHeader"
-					:style="fixedHeadStyle"
-				>
-					<table
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
+				<div v-if="showThead" :class="_tobogPrefix_+'-thead-fixed'">
+					<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+						<Colgroups :columns="cloneColumns"></Colgroups>
 						<Thead
 							fixed="left"
 							:prefix="_tobogPrefix_"
-							:columns="leftFixedColumnRows"
-							:cellsSize="headCellsSize"
+							:columns="cloneColumns"
+							:column-rows="columnRows"
 							:action-data="actionData"
 							:column-status="columnStatus"
-							:data-length="getResultLen"
+							:data-length="getLength"
 							@on-column-status="handleColumnStatus"
 						></Thead>
 					</table>
 				</div>
 				<div
-					:class="[_tobogPrefix_ + '-left-fixed-wrapper']"
-					:style="hidenLeftScroll"
+					v-if="getLength"
+					:class="_tobogPrefix_+'-tbody-fixed'"
+					:style="fixedBodyStyle"
+					ref="leftFixedTbody"
+					@mousewheel.stop="handleMouseWheel"
+					@DOMMouseScroll.stop="handleMouseWheel"
 				>
-					<div
-						v-if="getResultLen"
-						ref="leftScroll"
-						:class="[_tobogPrefix_ + '-fixed-wrapper']"
-						:style="leftFixedBodyStyle"
-					>
-						<table
-							cellspacing="0"
-							cellpadding="0"
-							border="0"
-							:style="tablePerformanceStyle"
-							:class="[_tobogPrefix_ + '-table']"
-						>
-							<Thead
-								v-if="!isFixHead && showHeader"
-								fixed="left"
-								:prefix="_tobogPrefix_"
-								:columns="leftFixedColumnRows"
-								:cellsSize="headCellsSize"
-								:action-data="actionData"
-								:column-status="columnStatus"
-								:data-length="getResultLen"
-								@on-column-status="handleColumnStatus"
-							></Thead>
-							<Tbody
-								v-if="getResultLen"
-								fixed="left"
-								:isFixed="isFixed"
-								:fixedSize="leftFixedSize"
-								:prefix="_tobogPrefix_"
-								:columns="leftFixedColumns"
-								:data="rebuildData"
-								:action-data="actionData"
-								:column-status="columnStatus"
-								@on-column-status="handleColumnStatus"
-							></Tbody>
-							<Summary
-								fixed="left"
-								v-if="isInnerSummary"
-								:prefix="_tobogPrefix_"
-								:class="[_tobogPrefix_ + '-summary-body']"
-								:columns="leftFixedColumns"
-								:data="summaryData"
-							></Summary>
-						</table>
-					</div>
-				</div>
-				<div
-					v-if="isFixSummary"
-					:class="[_tobogPrefix_ + '-summary']"
-				>
-					<table
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
-						<Summary
-							:prefix="_tobogPrefix_"
-							:fixedSize="summaryTdSize"
-							:columns="leftFixedColumns"
-							:class="[_tobogPrefix_ + '-summary-body']"
-							:data="summaryData"
-						></Summary>
-					</table>
-				</div>
-			</div>
-			<!-- left fixed -->
-			<!-- right fixed -->
-			<div
-				v-if="isRightFixed && rightFixedSize"
-				:class="[_tobogPrefix_ + '-right-fixed']"
-			>
-				<div
-					:class="[_tobogPrefix_ + '-right-fixed-head']"
-					v-if="isFixHead && showHeader"
-					:style="rightFixedHeadStyle"
-				>
-					<table
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
-						<Thead
-							fixed="right"
-							:prefix="_tobogPrefix_"
-							:columns="rightFixedColumnRows"
-							:cellsSize="headCellsSize"
-							:rightIndex="getRightIndex"
-							:action-data="actionData"
-							:column-status="columnStatus"
-							:data-length="getResultLen"
-							@on-column-status="handleColumnStatus"
-						></Thead>
-					</table>
-				</div>
-				<div
-					v-if="getResultLen"
-					ref="rightScroll"
-					:style="rightFixedBodyStyle"
-					:class="[_tobogPrefix_ + '-fixed-wrapper']"
-				>
-					<table
-						:style="tablePerformanceStyle"
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
-						<Thead
-							v-if="!isFixHead && showHeader"
-							fixed="right"
-							:prefix="_tobogPrefix_"
-							:columns="rightFixedColumnRows"
-							:cellsSize="headCellsSize"
-							:rightIndex="getRightIndex"
-							:action-data="actionData"
-							:column-status="columnStatus"
-							:data-length="getResultLen"
-							@on-column-status="handleColumnStatus"
-						></Thead>
+					<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+						<Colgroups :columns="cloneColumns"></Colgroups>
 						<Tbody
-							v-if="getResultLen"
-							fixed="right"
-							:isFixed="isFixed"
-							:fixedSize="rightFixedSize"
+							fixed="left"
 							:prefix="_tobogPrefix_"
-							:columns="rightFixedColumns"
+							:columns="cloneColumns"
 							:data="rebuildData"
+							:size="size"
 							:action-data="actionData"
 							:column-status="columnStatus"
 							@on-column-status="handleColumnStatus"
 						></Tbody>
-						<Summary
-							v-if="isInnerSummary"
-							fixed="right"
-							:prefix="_tobogPrefix_"
-							:class="[_tobogPrefix_ + '-summary-body']"
-							:columns="rightFixedColumns"
-							:data="summaryData"
-						></Summary>
-					</table>
-				</div>
-				<div
-					v-if="isFixSummary"
-					:class="[_tobogPrefix_ + '-summary']"
-					:style="getSummaryStyle"
-				>
-					<table
-						cellspacing="0"
-						cellpadding="0"
-						border="0"
-						:class="[_tobogPrefix_ + '-table']"
-					>
-						<Summary
-							:prefix="_tobogPrefix_"
-							:fixedSize="rightFixedSummarySize"
-							:columns="rightFixedColumns"
-							:class="[_tobogPrefix_ + '-summary-body']"
-							:data="summaryData"
-						></Summary>
 					</table>
 				</div>
 			</div>
-			<!-- right fixed -->
-		</div>
-		<Tooltip
-			:reference="tooltip.reference"
-			always
-			gpu
-			placement="top-center"
-			offset="10"
-			v-if="tooltip.show"
-		>
 			<div
-				:class="[_tobogPrefix_ + '-tooltip']"
-				slot="content"
-				v-html="tooltip.content"
-			></div>
-		</Tooltip>
-	</section>
+				v-if="isRightFixed"
+				:class="[_tobogPrefix_+'-right-fixed']"
+				:style="fixedTableStyle('right')"
+			>
+				<div v-if="showThead" :class="[_tobogPrefix_+'-thead-fixed']">
+					<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+						<Colgroups :columns="rightFixedColumns"></Colgroups>
+						<Thead
+							fixed="right"
+							:prefix="_tobogPrefix_"
+							:columns="rightFixedColumns"
+							:column-rows="rightFixedColumnRows"
+							:action-data="actionData"
+							:column-status="columnStatus"
+							:data-length="getLength"
+							@on-column-status="handleColumnStatus"
+						></Thead>
+					</table>
+				</div>
+				<div
+					v-if="getLength"
+					:class="[_tobogPrefix_+'-tbody-fixed']"
+					:style="fixedBodyStyle"
+					ref="rightFixedTbody"
+					@mousewheel.stop="handleMouseWheel"
+					@DOMMouseScroll.stop="handleMouseWheel"
+				>
+					<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+						<Colgroups :columns="rightFixedColumns"></Colgroups>
+						<Tbody
+							fixed="right"
+							:prefix="_tobogPrefix_"
+							:columns="rightFixedColumns"
+							:data="rebuildData"
+							:size="size"
+							:action-data="actionData"
+							:column-status="columnStatus"
+							@on-column-status="handleColumnStatus"
+						></Tbody>
+					</table>
+				</div>
+			</div>
+			<div
+				v-show="!getLength"
+				:class="_tobogPrefix_ + '-tip'"
+				:style="bodyStyle"
+				@scroll="handleBodyScroll"
+			>
+				<table cellspacing="0" cellpadding="0" border="0" :style="tableStyle">
+					<tbody>
+						<tr>
+							<td :style="{'height':bodyStyle.height}" style="text-align:center;" v-html="getNoDataText"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<Loading v-if="loading" fix size="large" loading>
+			<slot name="loading"></slot>
+		</Loading>
+	</div>
 </template>
 
 <script>
-	import Mixin from "./mixin";
-	import { getStyles, EventListener, AnimationFrame } from "../../utils/dom";
-	export default {
-		name: "Table",
-		mixins: [Mixin],
-		data() {
-			return {
-				ready: false,
-				translate: 0,
-				headCellsSize: {},
-				headSize: [0, 0],
-				bodySize: [0, 0, 0],
-				summaryTdSize: {},
-				leftFixedSize: {},
-				rightFixedSize: {},
-				bodyTdSize: [],
-				tooltip: {
-					show: false
+import Loading from "../loading/loading.vue";
+import Thead from "./thead";
+import Tbody from "./tbody";
+import Colgroups from "./colgroups";
+import Mixin from "./mixin";
+import { getStyle, getScrollBarSize, ObserverDomSize } from "../../utils/dom";
+export default {
+	name: "Table",
+	mixins: [Mixin],
+	components: {
+		Thead,
+		Tbody,
+		Loading,
+		Colgroups
+	},
+	// props: {
+	// 	data: {
+	// 		type: Array,
+	// 		default() {
+	// 			return [];
+	// 		},
+	// 	},
+	// 	columns: {
+	// 		type: Array,
+	// 		default() {
+	// 			return [];
+	// 		},
+	// 	},
+	// 	width: {
+	// 		type: Number,
+	// 	},
+	// 	height: {
+	// 		type: Number,
+	// 	},
+	// 	stripe: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	border: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	showThead: {
+	// 		type: Boolean,
+	// 		default: true,
+	// 	},
+	// 	highlightRow: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	hover: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	loading: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	ellipsis: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// 	size: {
+	// 		type: [String, Number],
+	// 		// default: 'default',
+	// 	},
+	// 	noDataText: {
+	// 		type: String,
+	// 		default: '暂时没有相关数据',
+	// 	},
+	// 	column: Object,
+	// 	performance: Boolean,
+	// 	length: {
+	// 		type: Number,
+	// 		default: 24
+	// 	}
+	// 	// multiSort: Boolean,
+	// 	// multiFilter: Boolean,
+	// },
+	data() {
+		return {
+			ready: false,
+			tableWidth: 0,
+			// actionData: this.makeActionData(),
+			// rebuildData: [],
+			// cloneColumns: this.makeColumns(),
+			// columnRows: this.makeColumnRows(),
+			bodyHeight: 0,
+			tbodyRealHeight: 0,
+			bodyRealWidth: 0,
+			scrollBarWidth: getScrollBarSize(),
+			// showVerticalScrollBar: false,
+			// showHorizontalScrollBar: false,
+			// cloneData: this.makeData(),
+			// sizelength: 0,
+			// columnStatus: {
+			// 	sort: {},
+			// 	filter: {},
+			// 	check: {},
+			// }
+			translate: 0
+		};
+	},
+	mounted() {
+		this.$nextTick(() => (this.ready = true));
+		this.__observerDomSize = ObserverDomSize();
+		this.__timeInit = setTimeout(() => {
+			// console.log("mounted handleResize");
+			this.handleResize();
+			console.log('this.__observerDomSize')
+			this.__observerDomSize.addResizeListener(
+				this.$el,
+				this.handleResize
+			);
+			this.__timeInit = null;
+		}, 0);
+	},
+	activated() {
+		// clearTimeout(this.__timeInit);
+		this.__timeInit = setTimeout(() => {
+			// console.log("activated handleResize");
+			this.handleResize();
+			this.__observerDomSize.reset(this.$el)
+			// this.__observerDomSize.addResizeListener(
+			// 	this.$el,
+			// 	this.handleResize
+			// );
+			console.log('activated')
+			this.__timeInit = null;
+		}, 0);
+	},
+	// deactivated() {
+	// 	// console.log('deactivated')
+	// 	// this.__observerDomSize.removeResizeListener(
+	// 	// 	this.$el,
+	// 	// 	this.handleResize
+	// 	// );
+	// },
+	beforeDestroy() {
+		// console.log('beforeDestroy')
+		this.__observerDomSize.removeResizeListener(
+			this.$el,
+			this.handleResize
+		);
+	},
+	computed: {
+		wrapClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [
+				`${_tobogPrefix_}-wrapper`,
+				{
+					[`${_tobogPrefix_}-hide`]: !this.ready,
+					[`${_tobogPrefix_}-stripe`]: this.stripe,
+					[`${_tobogPrefix_}-border`]: this.border,
+					[`${_tobogPrefix_}-ellipsis`]: this.ellipsis
 				}
-			};
+			];
 		},
-		computed: {
-			getNoDataHeight() {
-				const height = parseFloat("0" + this.height);
-				if (height <= 0) return;
-				return {
-					height:
-						(this.bodySize[1] || height) - this.headSize[1] - 16 + "px"
-				};
-			},
-			tablePerformanceStyle() {
-				if (!this.isPerformance) return;
-				const translate = this.getTotalTranslate;
-				if (translate > 0)
-					return {
-						transform: `translateY(${translate}px)`
-					};
-			},
-			rightFixedBodyStyle() {
-				const height = this.isFixHead
-					? this.bodySize[1] - this.headSize[1]
-					: this.bodySize[1];
-
-				return {
-					maxHeight: height + "px",
-					width: this.getRightWidth + this.scrollBarWidth[1] + "px",
-					paddingBottom: this.summarySize[1] + "px"
-				};
-			},
-			leftFixedBodyStyle() {
-				const height = this.isFixHead
-					? this.bodySize[1] - this.headSize[1]
-					: this.bodySize[1];
-				// console.log(this.scrollBarWidth[1])
-				return {
-					maxHeight: height + "px",
-					width: this.getLeftWidth + this.scrollBarWidth[1] + 1 + "px",
-					paddingBottom: this.summarySize[1] + "px"
-				};
-			},
-			fixedTopStyle() {
-				return {
-					width: this.bodySize[0] + "px"
-				};
-			},
-			fixedHeadStyle() {
-				return {
-					height: this.headSize[1] + "px"
-				};
-			},
-			rightFixedHeadStyle() {
-				return {
-					height: this.headSize[1] + "px",
-					paddingRight: this.scrollBarWidth[1] + "px"
-				};
-			},
-			getRightIndex() {
-				const rightLen = this.rightFixedColumnRows.map(arr => arr.length);
-				return this.normalColumns.map(
-					(arr, index) => arr.length - (rightLen[index] || 0)
-				);
-			},
-			leftFixedColumns() {
-				return this.cloneColumns.filter(col => col.fixed === "left");
-			},
-			rightFixedColumns() {
-				return this.cloneColumns.filter(col => col.fixed === "right");
-			},
-			leftFixedColumnRows() {
-				if (this.isColumnRows) {
-					return this.columnRows.map(arr => {
-						return arr.filter(col => col.fixed === "left");
-					});
+		headStyle() {
+			const bodyHeight = this.bodyHeight;
+			return bodyHeight != 0 && bodyHeight < this.tbodyRealHeight
+				? {
+						marginRight: `${this.scrollBarWidth}px`
+				  }
+				: null;
+		},
+		bodyStyle() {
+			return this.bodyHeight != 0
+				? { height: `${this.bodyHeight}px` }
+				: {};
+		},
+		tableMainStyle(){
+			const translate=this.getTotalTranslate,
+			style={	...this.tableStyle};
+			if(translate>0) style.transform=`translateY(${translate}px)`
+			return style;
+		},
+		tableStyle() {
+			let style = {},
+				bodyHeight = this.bodyHeight,
+				tableWidth = this.tableWidth;
+			if (tableWidth != 0) {
+				let width = "";
+				if (bodyHeight == 0) {
+					width = tableWidth;
 				} else {
-					return [this.leftFixedColumns];
-				}
-			},
-			rightFixedColumnRows() {
-				if (this.isColumnRows) {
-					return this.columnRows.map(arr => {
-						return arr.filter(col => col.fixed === "right");
-					});
-				} else {
-					return [this.rightFixedColumns];
-				}
-			},
-			rightFixedSummarySize() {
-				let summaryTdSize = {},
-					index = 0;
-				for (let key in this.summaryTdSize) {
-					const val = this.summaryTdSize[key];
-					if (val[2] === "right") {
-						summaryTdSize[`${0}/${index++}`] = val;
+					if (bodyHeight > this.tbodyRealHeight) {
+						width = tableWidth;
+					} else {
+						width = tableWidth - this.scrollBarWidth;
 					}
 				}
-				return summaryTdSize;
-			},
-			hidenLeftScroll() {
-				return {
-					width: this.getLeftWidth + 0.8 + "px"
-				};
-			},
-			getLeftWidth() {
-				const fixedSize = this.leftFixedSize;
-				const totalWidth = Object.keys(fixedSize).reduce(
-					(total, cur, index, arr) => {
-						if (cur.indexOf("0") == 0) {
-							return total + fixedSize[cur][0];
-						}
-						return total;
-					},
-					0
-				);
-				return totalWidth;
-			},
-			getRightWidth() {
-				const fixedSize = this.rightFixedSize;
-				const totalWidth = Object.keys(fixedSize).reduce(
-					(total, cur, index, arr) => {
-						if (cur.indexOf("0") == 0) {
-							return total + fixedSize[cur][0];
-						}
-						return total;
-					},
-					0
-				);
-				return totalWidth;
-			},
-			getSummaryStyle() {
-				if (!this.fixSummary || !this.showSummary) return;
-				const style = {};
-				if (this.scrollBarWidth[0])
-					style.bottom = this.scrollBarWidth[0] + "px";
-				if (this.scrollBarWidth[1])
-					style.right = this.scrollBarWidth[1] + "px";
-				return style;
+				style.maxWidth = `${width}px`;
 			}
+			return style;
 		},
-		methods: {
-			initSizes() {
-				this.$nextTick(() => {
-					this.getDefaultWidth();
-					AnimationFrame.requestFrame(() => {
-						this.getBodySizes();
-						this.getBodyCellHeight();
-						this.getSummarySize();
-					});
-				});
-			},
-			getBodySizes() {
-				const { body, thead } = this.$refs;
-				const theadEle = thead && thead.$el;
-				if (this.isLayoutFixed) {
-					const rowNodes =
-						(theadEle && theadEle.querySelectorAll("tr")) || [];
-					const headCellsSize = {};
-					rowNodes.forEach((row, rowIndex) => {
-						const children = [...row.children];
-						children.forEach((cell, colIndex) => {
-							headCellsSize[
-								`${rowIndex}/${colIndex}`
-							] = this._handleSize(cell);
-						});
-					});
-					this.headCellsSize = headCellsSize;
-				}
-				this.headSize = (theadEle && this._handleSize(theadEle, 0.8)) || [];
-				this.bodySize = [
-					body.clientWidth,
-					body.clientHeight,
-					body.scrollWidth,
-					body.scrollHeight
-				];
-				this.setSrollSize();
-				this.ready = true;
-			},
-			getBodyCellHeight() {
-				if (!this.isFixed) return;
-				const tbody = this.$refs.tbody,
-					tbodyEle = tbody.$el,
-					_tobogPrefix_ = this._tobogPrefix_,
-					rowNodes = tbodyEle.querySelectorAll(`tr.${_tobogPrefix_}-row`),
-					leftFixedSize = {},
-					rightFixedSize = {},
-					isLeftFixed = this.isLeftFixed,
-					isRightFixed = this.isRightFixed,
-					leftLength = this.leftFixedColumns.length,
-					rightLength = this.rightFixedColumns.length;
-				rowNodes.forEach((row, rowIndex) => {
-					const children = [...row.children],
-						leftChildren = isLeftFixed
-							? children.slice(0, leftLength)
-							: [],
-						rightChildren = isRightFixed
-							? children.slice(children.length - rightLength)
-							: [];
-					leftChildren.forEach((cell, colIndex) => {
-						leftFixedSize[`${rowIndex}/${colIndex}`] = this._handleSize(
-							cell,
-							0.8
-						);
-					});
-					// console.log(leftFixedSize)
-					rightChildren.forEach((cell, colIndex) => {
-						rightFixedSize[
-							`${rowIndex}/${colIndex}`
-						] = this._handleSize(cell, 0.8);
-					});
-					const nextEle = row.nextElementSibling;
-					if (
-						nextEle &&
-						nextEle.classList.contains(`${_tobogPrefix_}-expanded-row`)
-					) {
-						const expandSize = this._handleSize(nextEle);
-						expandSize[1] = expandSize[1] - 1;
-						leftFixedSize[`${rowIndex}/${0}`] &&
-							leftFixedSize[`${rowIndex}/${0}`].push(expandSize);
-						rightFixedSize[`${rowIndex}/${0}`] &&
-							rightFixedSize[`${rowIndex}/${0}`].push(expandSize);
-						// console.log(leftFixedSize);
-					}
-				});
-
-				this.leftFixedSize = leftFixedSize;
-				this.rightFixedSize = rightFixedSize;
-			},
-			getDefaultWidth() {
-				if (this.showHeader) return;
-				this.bodyTdSize = this.cloneColumns.map(cell => {
-					return { width: cell.width, fixed: cell.fixed };
-				}, 0);
-			},
-			getSummarySize() {
-				if (this.fixSummary && this.showSummary && this.getResultLen) {
-					const summary = this.$refs.summary;
-					const summaryTdSize = {};
-					if (!summary) return;
-					if(this.isFixSummary) this.summarySize = this._handleSize(summary.$el);
-					const tr = summary.$el.querySelector("tr");
-					tr.children.forEach((cell, colIndex) => {
-						summaryTdSize[`${0}/${colIndex}`] = this._handleSize(
-							cell,
-							0.8
-						);
-						const dataFixed = cell.dataset.fixed;
-						if (dataFixed)
-							summaryTdSize[`${0}/${colIndex}`].push(dataFixed);
-					});
-					this.summaryTdSize = summaryTdSize;
-					// console.log(summaryTdSize);
-				}
+		fixedBodyStyle() {
+			let style = {},
+				bodyHeight = this.bodyHeight,
+				height = bodyHeight - this.scrollBarWidth - 1;
+			if (bodyHeight !== 0) {
+				style.height =
+					this.bodyRealWidth < this.tableWidth
+						? `${height}px`
+						: `${bodyHeight}px`;
 			}
+			return style;
+		},
+		rightFixedColumns() {
+			return [...this.cloneColumns].reverse();
+		},
+		rightFixedColumnRows() {
+			return this.columnRows.map(arr => {
+				return [...arr].reverse();
+			});
+		},
+		isLeftFixed() {
+			return this.cloneColumns.some(col => col.fixed === "left");
+		},
+		isRightFixed() {
+			return this.cloneColumns.some(col => col.fixed === "right");
 		}
-		// watch: {
-		// 	data: {
-		// 		deep: true,
-		// 		handler() {
-		// 			this.init();
-		// 			this.actionData = this.makeActionData();
-		// 			this.cloneData = this.resultData = this.makeData();
-		// 			this.rebuildData = this.getSizeData;
-		// 			this.initSizes();
-		// 			// this.setScrollSync();
-		// 		},
+	},
+	methods: {
+		handleMouseIn(_index) {
+			if (!this.hover) return;
+			const actionData = this.actionData[_index];
+			if (!actionData._isHover) actionData._isHover = true;
+			this.$emit(
+				"on-row-hover",
+				JSON.parse(JSON.stringify(this.cloneData[_index])),
+				_index,
+				true
+			);
+		},
+		handleMouseOut(_index) {
+			if (!this.hover) return;
+			this.actionData[_index]._isHover = false;
+			this.$emit(
+				"on-row-hover",
+				JSON.parse(JSON.stringify(this.cloneData[_index])),
+				_index,
+				false
+			);
+		},
+		handleMouseWheel(event) {
+			const wheelDelta = event.wheelDelta,
+				detail = event.detail,
+				$body = this.$refs.body,
+				scropTopMax = $body.scrollHeight - $body.clientHeight;
+			if (scropTopMax > 0) event.preventDefault();
+			let deltaY = 0;
+			if (wheelDelta) {
+				deltaY = -wheelDelta;
+			} else if (detail) {
+				deltaY = detail * 40;
+			}
+			let scrollTop = $body.scrollTop + deltaY / 5;
+			if (scrollTop <= 0) {
+				scrollTop = 0;
+			} else if (scrollTop > scropTopMax) {
+				scrollTop = scropTopMax;
+			}
+			$body.scrollTop = scrollTop;
+			
+		},
+		
 
-		// 	},
-		// }
-	};
+		fixedTableStyle(fixedType = "left") {
+			let style = {};
+			let width = 0;
+			this.cloneColumns.forEach(col => {
+				if (col.fixed && col.fixed === fixedType) width += col._width;
+			});
+			style.width = `${width}px`;
+			if (
+				fixedType === "right" &&
+				this.bodyHeight &&
+				this.bodyHeight < this.tbodyRealHeight
+			) {
+				style["margin-right"] = `${this.scrollBarWidth + 1}px`;
+			}
+			return style;
+		},
+		fixedThead() {
+			if (this.height) {
+				this.$nextTick(() => {
+					const headHeight = parseInt(0 + getStyle(this.$refs.head, "height")) || 0;
+					this.bodyHeight = this.height - headHeight;
+				});
+			} else {
+				this.bodyHeight = this.performance==='auto'?500:0;
+			}
+		},
+		handleResize() {
+			let isResponsive = false,
+				_getStyle = getStyle;
+			this.fixedThead();
+			this.$nextTick(() => {
+				let tableWidth = 0;
+				this.cloneColumns.forEach(cell => {
+					let { width, minWidth = 60 } = cell;
+					if (!width) isResponsive = true;
+					cell._width = width || "";
+					if (`${width}`.indexOf("%") > 0) {
+						width = 0;
+						isResponsive = true;
+					}
+					tableWidth += width || minWidth || 0;
+				});
+				if (isResponsive) {
+					const realWidth =
+						this.$el.firstElementChild.offsetWidth + 0;
+					tableWidth =
+						tableWidth > realWidth ? tableWidth  : realWidth ; //safari 会返回auto 要转化数字类型
+				}
+				this.tableWidth = tableWidth-1;
+				this.$nextTick(() => {
+					const Refs = this.$refs;
+					if (!Refs.tbody) return;
+					this.fixedThead();
+					this.tbodyRealHeight = Refs.tbody.offsetHeight;
+					this.bodyRealWidth = Refs.body.offsetWidth;
+					if (this.data.length) {
+						const $bobyTr = Refs.tbody.querySelector("tbody>tr");
+						if (!$bobyTr) return;
+						const $td = $bobyTr.children,
+							cloneColumns = this.cloneColumns,
+							length = cloneColumns.length;
+						for (let i = 0; i < length; i++) {
+							let key = i,
+								column = cloneColumns[key],
+								width = column.width,
+								_width = parseInt(
+									0 + _getStyle($td[key], "width")
+								);
+							if (width === undefined || width === "") {
+								let minWidth = column.minWidth || 0,
+									maxWidth = column.maxWidth;
+								_width = _width < minWidth ? minWidth : _width;
+								if (maxWidth)
+									_width =
+										_width < maxWidth ? _width : maxWidth;
+								column._width = _width;
+							} else if (width != 0) {
+								if (`${width}`.indexOf("%") > 0)
+									return (column._width = width);
+								column._width = _width < width ? width : _width;
+							}
+						}
+					}
+				});
+			});
+		}
+	},
+	watch: {
+		columns: {
+			handler() {
+				// console.log("columns handleResize");
+				this.cloneColumns = this.makeColumns();
+				this.columnRows = this.makeColumnRows();
+				this.handleResize();
+			},
+			deep: true
+		},
+		data: {
+			handler() {
+				// console.log("data handleResize");
+				this.init();
+				this.actionData = this.makeActionData();
+				this.cloneData = this.resultData = this.makeData();
+				this.rebuildData = this.getSizeData;
+				this.handleResize();
+			},
+			deep: true
+		},
+		height() {
+			// console.log("height handleResize");
+			this.handleResize();
+		}
+	}
+};
 </script>
 

@@ -11,9 +11,9 @@
     }
 }
 
-@include ease-motion(ease, uiEase);
+@include ease-motion(ease, ivuEase);
 
-@keyframes uiEaseIn {
+@keyframes ivuEaseIn {
     0% {
         opacity: 0;
         transform: scale(0.9);
@@ -24,7 +24,7 @@
     }
 }
 
-@keyframes uiEaseOut {
+@keyframes ivuEaseOut {
     0% {
         opacity: 1;
         transform: scale(1);

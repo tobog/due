@@ -1,37 +1,37 @@
 
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name" tabindex="1" @click="toggle">
-		<slot name="prefix"></slot>
-		<slot name="content" :isChecked="isChecked">
-			<span :class="[_tobogPrefix_ + '-inner']" :style="getSizeStyle"></span>
-		</slot>
-		<span v-if="showLabel" :class="[_tobogPrefix_ + '-label']">
+	<section :class="wrapClasses" :data-vview-module="$options.name">
+		<slot name="left"></slot>
+		<div :class="radioClasses" :style="handleStyle">
+			<slot name="content" :active="checked">
+				<span :class="_tobogPrefix_+'-inner'"></span>
+			</slot>
+			<input
+				type="radio"
+				ref="radio"
+				:class="_tobogPrefix_+'-input'"
+				:disabled="disabled"
+				:readonly="readonly"
+				:value="trueValue"
+				:id="forUid"
+				@change="handleChange"
+				v-model="model"
+				v-bind="$attrs"
+			>
+		</div>
+		<label v-if="showLabel" :for="forUid" :class="labelClasses">
 			<slot>{{ label }}</slot>
-		</span>
-		<input
-			type="radio"
-			ref="radio"
-			:class="[_tobogPrefix_+'-input']"
-			:disabled="disabled"
-			:readonly="readonly"
-			:value="trueValue"
-			:name="name"
-			@change="handleChange"
-			v-model="model"
-			v-bind="$attrs"
-		/>
+		</label>
 	</section>
 </template>
 
 <script>
 import emitter from '../../utils/emitter';
-import { unit, validVal } from '../../utils/tool'
 export default {
 	name: 'Radio',
 	inheritAttrs: false,
 	mixins: [emitter],
 	props: {
-		name: String,
 		value: {
 			type: [String, Number, Boolean],
 			default: false
@@ -40,8 +40,11 @@ export default {
 			type: [String, Number, Boolean],
 			default: true
 		},
-		// falseValue: [String, Number, Boolean],
-		label: String,
+		falseValue: {
+			type: [String, Number, Boolean],
+			default: false
+		},
+		label: [String, Number],
 		disabled: {
 			type: Boolean,
 			default: false
@@ -52,17 +55,17 @@ export default {
 		},
 		strict: {
 			type: Boolean,
-			default: false
+			default: true
 		},
 		size: {
 			type: [String, Number],
-			// default: "default"
-		},
-		theme: String,
+			// default: 14
+		}
 	},
 	data() {
 		return {
 			model: this.value,
+			forUid: 'Radio' + this._uid,
 		};
 	},
 	created() {
@@ -72,80 +75,81 @@ export default {
 		value: {
 			deep: true,
 			handler(val) {
-				if (val === this.model) return;
 				this.model = val;
 			},
 		},
 		model: {
 			deep: true,
 			handler(val) {
-				// this.$emit('input', val);
 				this.handleDispatch('on-change', val);
 				this.handleDispatch('on-validate', val);
+				this.$emit('input', val);
 			},
 		}
 	},
 	computed: {
-		showLabel() {
-			return this.$slots.default || validVal(this.label);
+		isReadonly() {
+			return this.disabled || this.readonly
 		},
-		isChecked() {
+		showLabel() {
+			return this.$slots.default || (this.label !== undefined && this.label !== '')
+		},
+		checked() {
 			return this.strict ? this.model === this.trueValue : this.model == this.trueValue;
 		},
-		getSizeStyle() {
-			let size = this.size || 14,
-				result;
+		handleStyle() {
+			let size = this.size, result;
 			switch (size) {
-				case "small":
-					size = 12;
-					break;
-				case "default":
-					size = 14;
-					break;
-				case "large":
-					size = 16;
-					break;
-				case "auto":
-					size = "";
-					break;
+				case 'small': size = 12; break;
+				case '':
+				case 'default': size = 14; break;
+				case 'large': size = 16; break;
+				case 'auto': size = false; break;
+				default: size = 16; break;
 			}
-			result = unit(size, 'px');
-			return size
-				? {
-					width: result,
-					height: result,
-				}
-				: null;
+			result = `${size}px`;
+			return size ? {
+				width: result,
+				height: result,
+			} : null
 		},
 		wrapClasses() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
+				`${_tobogPrefix_}-wrap`,
+				{
+					[`${_tobogPrefix_}-disabled`]: this.disabled,
+				},
+			];
+		},
+		labelClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [
+				_tobogPrefix_ + '-slot',
+				{
+					[`${_tobogPrefix_}-readonly`]: this.readonly,
+				}]
+		},
+		radioClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [
 				_tobogPrefix_,
 				{
-					[`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
-					[`${_tobogPrefix_}-checked`]: this.isChecked,
+					[`${_tobogPrefix_}-checked`]: this.checked,
 					[`${_tobogPrefix_}-readonly`]: this.readonly,
-					[`${_tobogPrefix_}-disabled`]: this.disabled
-				}
+				},
 			];
 		},
 	},
 	methods: {
-		toggle() {
-			if (this.disabled || this.readonly) return;
-			this.$refs.radio.click();
-		},
 		handleChange(event) {
-			// console.log(this.model, 'this.model')
-			this.$emit("input", this.model);
-			this.$emit("on-change", this.model, event);
-			this.handleDispatch("on-validate", this.model);
+			this.$emit('on-change', this.model, event);
 		},
-		handleDispatch(...args) {
-			if (this.__parentComponent__) {
-				this.__parentComponent__.$emit(...args)
+		handleDispatch(type, val) {
+			if (this.__formItemComponent__) {
+				this.__formItemComponent__.$emit(...arguments)
 			} else {
-				this.__parentComponent__ = this.dispatch('FormItem', ...args)
+				this.__formItemComponent__ = this.dispatch('FormItem', ...arguments)
 			}
 		},
 	},

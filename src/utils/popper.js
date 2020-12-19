@@ -1,11 +1,12 @@
-import { getStyle, EventListener, HoverOut, ClickOut } from "./dom";
-import { throttle } from "./tool";
+import { getStyle, EventListener } from "./dom";
+import { typeOf, throttle } from "./tool";
 import Offset from "./offset";
 
 function setStyle(element, styles = {}) {
     const is_numeric = function is_numeric(n) {
         return n !== "" && !isNaN(parseFloat(n)) && isFinite(n);
     };
+
     Object.keys(styles).forEach(function (prop) {
         var unit = "";
         if (["width", "height", "top", "right", "bottom", "left"].indexOf(prop) !== -1 && is_numeric(styles[prop])) {
@@ -23,94 +24,36 @@ export default class Popper {
             offset: 5,
             positionElement: null,
             responsive: true,
-            trigger: 'click',
-            always: false,
-            throttle: 140,
-            delay: 0,
-        }
+            animationframe: 160,
+            ...options
+        };
+        this.update = throttle(this._update.bind(this), this._options.animationframe || 160,true);
         this._scrollNodes = [];
-        this._showHide = this._handleShowHide.bind(this)
-        this._setConfig(reference, popper, options);
-        this._throttleUpdate = throttle(this._update.bind(this), this._options.throttle, true);
-
+        this._merge(reference, popper, options);
     }
-    _getEles() {
-        const eles = [];
-        if (this._reference) eles.push(this._reference);
-        if (this._popper) eles.push(this._popper);
-        return eles;
-    }
-    _onHoverClick() {
-        const trigger = this._options.trigger;
-        const eles = this._getEles();
-        if (!eles.length) return;
-        if (trigger === 'click') {
-            this._clickInstance = this._clickInstance ? this._clickInstance.update(eles) : new ClickOut(eles, this._showHide)
-        }
-        if (trigger === 'hover') {
-            this._hoverInstance = this._hoverInstance ? this._hoverInstance.update(eles) : new HoverOut(eles, this._showHide)
-        }
-    }
-    _handleShowHide(bool, event) {
-        const { trigger, always } = this._options;
-        if (always) {
-            this.toggle(true);
-            return;
-        }
-        if (bool) {
-            this.toggle(false);
-            return
-        }
-        if (trigger === 'click' && event.type === 'click') {
-            if (this._popper.contains(event.target)) {
-                this.toggle(true);
-                return
-            }
-            this.toggle();
-            return;
-        }
-        if (trigger === 'hover') {
-            this.toggle(true)
-        }
-    }
-    _setConfig(reference, popper, options = {}) {
-        this._options = Object.assign(this._options, options);
-        const placement = this._options.placement;
-        if (typeof placement === 'string') {
-            this._options.placement = placement.split('-');
-        }
-        if (popper instanceof HTMLElement && this._popper !== popper) {
-            this._popper = popper;
-        }
-        if (reference instanceof HTMLElement && this._reference !== reference) {
-            this._off();
-            this._reference = reference;
-            this._onHoverClick();
-        }
+    _merge(reference, popper, options = {}) {
+        this._reference = reference || this._reference;
+        this._popper = popper || this._popper;
+        this._options = Object.assign({}, this._options, options);
         if (this._options.transfer) this._options.positionElement = document.body;
-        if (!(this._options.boundaryElement instanceof HTMLElement)) this._options.boundaryElement = null;
+        if (!/html/i.test(typeOf(this._options.boundaryElement))) this._options.boundaryElement = null;
     }
     _on() {
         this._listener = true;
-        EventListener.on(window, "resize", this._throttleUpdate);
         this._scrollNodes.forEach(function (node) {
-            EventListener.on(node, "scroll", this._throttleUpdate);
+            EventListener.on(node, "resize,scroll", this.update);
         }, this);
     }
     _off() {
-        EventListener.off(window, "resize", this._throttleUpdate);
         this._scrollNodes.forEach(function (node) {
-            EventListener.off(node, "scroll", this._throttleUpdate);
+            EventListener.off(node, "resize,scroll", this.update);
         }, this);
-        this._scrollNodes = [];
         this._listener = false;
     }
-    _getOnchange(...args) {
-        const change = this._options.onchange;
-        if (typeof change !== 'function') return;
-        change.call(this, ...args);
+    mounted(reference, popper, options) {
+        this._merge(reference, popper, options);
+        return this;
     }
-
     //用于替换好保留位置
     _repalceComment() {
         // if (!this._popper) return;
@@ -125,15 +68,13 @@ export default class Popper {
         }
         if (!transfer && parent === positionElement && this._homeComment) {
             this._initParent.replaceChild(this._popper, this._homeComment);
-            this._homeComment = null;
         }
     }
     _performance(event) {//防止抖动
         this._offsetParent = this._options.positionElement || this._popper.offsetParent || this._offsetParent;
-        const { height = '', width = '', top = 0 } = Offset.boundingClientRect(this._popper);
-        if (height + top < -120) return true;
         if ((!event || !event.target) && this._offsetParent) {
-            const { top, left, right, bottom, offsetTop, offsetLeft } = this._preRefOffset || {}, reference = Offset.boundingClientRect(this._reference);
+            const { top, left, right, bottom,offsetTop,offsetLeft } = this._preRefOffset || {}, reference = Offset.boundingClientRect(this._reference);
+            const { height = '', width = '' } = Offset.boundingClientRect(this._popper);
             const prePopper = height + '&' + width;
             // console.log(reference,prePopper,{top, left, right, bottom,offsetTop,offsetLeft})
             if (
@@ -144,130 +85,52 @@ export default class Popper {
                 offsetTop === reference.offsetTop &&
                 offsetLeft === reference.offsetLeft &&
                 prePopper === this._prePopper
-            ) {
+                ) {
+                // this._preRefOffset = reference;
                 return true;
             }
-            this._parentOverflow = this._offsetParent.style.overflow || "";
-            this._offsetParent.style.overflow = "visible";//hidden 在body下有滚动时窗口大小会变化
-            this._resetPopperStyle({ top: -1000 });
+            this._parentstyle = this._offsetParent.style.overflow || "";
+            this._offsetParent.style.overflow = "visible";
             this._preRefOffset = reference;
             this._prePopper = prePopper;
-            // alert(JSON.stringify(Offset.boundingClientRect(this._popper)))
+            this._popper.style.top=0;
         }
-        if (event && event.type === 'resize') this._listener = false;
-
     }
-    //回流
-    // _reflow() {
-    //     return this._reference.offsetHeight && this._popper.offsetHeight && this._options.offetWidth;
-    // }
-    _resetPopperStyle(style = {}) {
-        let _popper = this._popper,
-            initPopperWidth = _popper.dataset._initPopperWidth_;
-        if (initPopperWidth === undefined) {
-            initPopperWidth = _popper.dataset._initPopperWidth_ = _popper.style.width || "";
-        }
-        setStyle(_popper, { width: initPopperWidth, top: 0, opacity: 0, ...style, ...(this._options.style || {}) });
-    }
-    _isDisplayNone() {
-        return /^none/i.test(getStyle(this._popper, 'display') || '');
-    }
-    async _update(event) {
-        if (this._running || !this._reference || !this._popper) return;
-        const displayNone = this._isDisplayNone();
-        if (!displayNone) this._repalceComment();
-        // console.log('popper running before')
-        if (displayNone || this._performance(event)) return;
-        this._running = true;
-        // console.log('popper running')
-        await new Promise((resolve,reject)=>resolve());//阻塞更新视图后获取位置
+    _update(event) {
+        if (!this._reference || !this._popper) return;
+        const displayNone = (getStyle(this._popper, 'display') || '').toLowerCase()==='none';
+        if (displayNone|| this._performance(event)) return;
+        console.log('_update')
         let data = {
-            placement: this._options.placement,
             reference: Offset.getOffsetRect(this._reference, this._offsetParent),
+            placement: this._options.placement.split("-"),
             popper: Offset.boundingClientRect(this._popper)
         };
         data = this.placementOverflow(data);
         data = this.placementOffset(data);
-        // console.log(data.popper)
         data = this.offset(data);
-        await this.applyStyle(data);
-        const popper = Offset.boundingClientRect(this._popper);
-        // console.log(popper, 'popper2', data.popper.height < popper.height)
-        if (data.popper.height < popper.height || data.popper.width > popper.width) {
-            data.popper = popper;
-            // data = this.placementOverflow(data);
-            data = this.placementOffset(data);
-            data = this.offset(data);
-            await this.applyStyle(data);
-        }
+        this._repalceComment();
+        this.applyStyle(data);
         if (!this._listener) {
-            this._off();
             this._scrollNodes = data.reference.scrollNodes;
             this._on();
         }
-        this._running = false;
-    }
-    _delayUpdate() {
-        const delay = this._options.delay || 0,
-            style = this._popper.style;
-        if (delay > 0) {
-            clearTimeout(this.__delayTimeout);
-            this.__delayTimeout = setTimeout(() => {
-                style.display = 'inline-block';
-                this._update();
-                this.__delayTimeout = null;
-            }, delay);
-            return
-        }
-        style.display = 'inline-block';
-        this._update();
-    }
-    toggle(bool) {
-        const style = this._popper.style,
-            displayNone = this._isDisplayNone();
-        clearTimeout(this.__delayTimeout);
-        if (bool === undefined) {
-            if (displayNone) {
-                this._delayUpdate();
-                return;
-            }
-            style.display = 'none';
-            this._getOnchange('on-change-hide');
-            return
-        }
-        if (displayNone && (bool === true || bool === 'show')) {
-            this._delayUpdate();
-            return
-        }
-        if (!displayNone && (bool === false || bool === 'hide')) {
-            style.display = 'none';
-            this._getOnchange('on-change-hide');
-        }
-    }
-    update(reference, popper, options) {
-        this._setConfig(reference, popper, options);
-        this._throttleUpdate();
         return this;
     }
     destroy() {
         const popper = this._popper;
-        this._clickInstance && this._clickInstance.destroy();
-        this._hoverInstance && this._hoverInstance.destroy();
         if (!popper) return;
-        const style = popper.style,
-            { positionElement, transfer } = this._options;
-        style.display = "none";
-        style.position = style.left = style.top = style.transform = "";
+        popper.style.display = "none";
+        popper.style.left = "";
+        popper.style.position = "";
+        popper.style.top = "";
+        popper.style.transform = "";
         this._off();
-        clearTimeout(this.__delayTimeout)
-        this.__delayTimeout = null;
-        if (positionElement && transfer) {
+        if(this._options.positionElement&&this._options.transfer){
             try {
-                this._homeComment = null;
-                positionElement.removeChild(popper);
-                this._initParent.removeChild(this._homeComment);
+                this._options.positionElement.removeChild(popper);
             } catch (error) {
-                // console.log(error)
+                
             }
         }
         return this;
@@ -289,26 +152,26 @@ export default class Popper {
     placementOverflow(data) {
         let basePlacement = data.placement[0] || "bottom", //left,right,top,bottom
             shiftPlacement = data.placement[1], //left,right,top,bottom
-            offset = this._options.offset / 1 + 2;
+            offset = (this._options.offset || 0) + 2;
         if (!this._options.responsive) {
             if ((basePlacement === "left" || basePlacement === "right") && (!shiftPlacement || shiftPlacement === basePlacement)) shiftPlacement = "top";
             data.placement = [basePlacement, shiftPlacement];
             return data;
         }
-        let boundaries = this._boundaries = this.getBoundaries(this._options.boundaryElement),
+        let boundaries = this.getBoundaries(this._options.boundaryElement),
             // popper = data.popper,
             referenceRect = data.reference.rect,
             popperRect = data.popper,
             basePosition = {
-                top: referenceRect.top - popperRect.height - offset >= boundaries.top,
-                bottom: referenceRect.bottom + popperRect.height + offset <= boundaries.bottom,
-                left: referenceRect.left - popperRect.width - offset >= boundaries.left && referenceRect.top + popperRect.height + offset <= boundaries.bottom,
-                right: referenceRect.right + popperRect.width + offset <= boundaries.right && referenceRect.top + popperRect.height + offset <= boundaries.bottom
+                top: referenceRect.top - popperRect.height - offset > boundaries.top,
+                bottom: referenceRect.bottom + popperRect.height + offset < boundaries.bottom,
+                left: referenceRect.left - popperRect.width - offset > boundaries.left && referenceRect.top + popperRect.height + offset < boundaries.bottom,
+                right: referenceRect.right + popperRect.width + offset < boundaries.right && referenceRect.top + popperRect.height + offset < boundaries.bottom
             },
             shiftPosition = {
                 left: referenceRect.left + popperRect.width < boundaries.right,
                 right: referenceRect.right - popperRect.width > boundaries.left,
-                center: referenceRect.right + popperRect.width / 2 <= boundaries.right && referenceRect.left - popperRect.width / 2 >= boundaries.left
+                center: true
             },
             sortOffset = null;
         switch (basePlacement) {
@@ -337,15 +200,14 @@ export default class Popper {
             const shift = ["left", "right"].find(function (key) {
                 return this[key];
             }, shiftPosition);
-            // shiftPlacement = shift || shiftPlacement || "left";
-            shiftPlacement = shift || "fix";
+            shiftPlacement = shift || shiftPlacement || "left";
         }
         if ((basePlacement === "left" || basePlacement === "right") && (!shiftPlacement || shiftPlacement === basePlacement)) shiftPlacement = "top";
         data.placement = [basePlacement, shiftPlacement];
         return data;
     }
     offset(data) {
-        let offset = this._options.offset / 1,
+        let offset = this._options.offset,
             placement = data.placement[0];
         if (placement === "left") {
             data.left -= offset;
@@ -371,9 +233,6 @@ export default class Popper {
             center = (popperRect.width - referenceRect.width) / 2,
             centerAlign = (popperRect.height - referenceRect.height) / 2,
             right = referenceRect.width - popperRect.width,
-            boundariesRight = this._boundaries.right - referenceRect.right,
-            isLeftZero = shiftPlacement === 'fix' && referenceRect.left <= boundariesRight,
-            isArrow = popperRect.width - referenceRect.width > 0,
             shiftOffsets = {
                 left: {
                     top: {
@@ -431,7 +290,6 @@ export default class Popper {
                     left: {
                         top: reference.top - popperRect.height,
                         left: reference.left,
-                        arrow: isArrow ? referenceRect.width / 2 : 0,
                         rect: {
                             top: referenceRect.top - popperRect.height,
                             left: referenceRect.left
@@ -440,7 +298,6 @@ export default class Popper {
                     right: {
                         top: reference.top - popperRect.height,
                         left: reference.left + right,
-                        arrow: isArrow ? (popperRect.width - referenceRect.width / 2) : 0,
                         rect: {
                             top: referenceRect.top - popperRect.height,
                             left: referenceRect.left + right
@@ -452,15 +309,6 @@ export default class Popper {
                         rect: {
                             top: referenceRect.top - popperRect.height,
                             left: referenceRect.left - center
-                        }
-                    },
-                    fix: {
-                        top: reference.top - popperRect.height,
-                        left: isLeftZero ? 0 : boundariesRight + referenceRect.right - popperRect.width,
-                        arrow: isLeftZero ? (reference.left + referenceRect.width / 2) : (popperRect.width - boundariesRight - referenceRect.width / 2),
-                        rect: {
-                            top: referenceRect.top - popperRect.height,
-                            left: isLeftZero ? 0 : boundariesRight,
                         }
                     }
                 },
@@ -468,7 +316,6 @@ export default class Popper {
                     left: {
                         top: reference.top + referenceRect.height,
                         left: reference.left,
-                        arrow: isArrow ? referenceRect.width / 2 : 0,
                         rect: {
                             top: referenceRect.top + referenceRect.height,
                             left: referenceRect.left
@@ -477,7 +324,6 @@ export default class Popper {
                     right: {
                         top: reference.top + referenceRect.height,
                         left: reference.left + right,
-                        arrow: isArrow ? (popperRect.width - referenceRect.width / 2) : 0,
                         rect: {
                             top: referenceRect.top + referenceRect.height,
                             left: referenceRect.left + right
@@ -489,15 +335,6 @@ export default class Popper {
                         rect: {
                             top: referenceRect.top + referenceRect.height,
                             left: referenceRect.left - center
-                        }
-                    },
-                    fix: {
-                        top: reference.top + referenceRect.height,
-                        left: isLeftZero ? 0 : boundariesRight + referenceRect.right - popperRect.width,
-                        arrow: isLeftZero ? (reference.left + referenceRect.width / 2) : (popperRect.width - boundariesRight - referenceRect.width / 2),
-                        rect: {
-                            top: referenceRect.top + referenceRect.height,
-                            left: isLeftZero ? 0 : boundariesRight,
                         }
                     }
                 },
@@ -528,32 +365,24 @@ export default class Popper {
                     }
                 }
             };
-        let pos = shiftOffsets[basePlacement][shiftPlacement];
-        if (!pos) {
-            pos = shiftOffsets[basePlacement]['left'];
-            data.placement[1] = 'left';
-        }
-        // console.log(pos, JSON.stringify(data.popper), JSON.stringify(data.reference.rect))
-        return { ...data, ...pos };
+        return { ...data, ...shiftOffsets[basePlacement][shiftPlacement] };
     }
-    async applyStyle(data) {
-        const { left, top, placement, arrow, popper } = data,
+    applyStyle(data) {
+        const { left, top, placement } = data,
             { style = {}, callback, responsive = true, gpu } = this._options,
             styles = Object.assign(
                 {
-                    display: "inline-block",
-                    opacity: '',
+                    display: "block",
                     position: "absolute",
                     zIndex: 3221,
                     transformOrigin: placement[0] === "top" ? "center bottom" : "",
-                    width: this._popper.dataset._initPopperWidth_ || popper.width,
+                    // transition: "top 0.1s,bottom 0.1s,height 0.2s"
                 },
                 style
             );
         if (placement[0] === "fix") {
             styles.position = "fixed";
         }
-        // alert(JSON.stringify({left, top, placement}))
         if (responsive) {
             if (gpu) {
                 styles.transform = "translate3d(" + left + "px, " + top + "px, 0)";
@@ -563,23 +392,13 @@ export default class Popper {
                 styles.left = left;
                 styles.top = top;
             }
-            this._getOnchange('on-change-before', styles, data)
+            this._popper.dataset["Xplacement"] = placement.join("-");
             setStyle(this._popper, styles);
             if (this._offsetParent) {
-                this._offsetParent.style.overflow = this._parentOverflow;
-            }
-            const [childArrow] = this._popper.children,
-                placementString = placement.join("-");
-            this._popper.dataset["placement"] = placementString;
-            if (childArrow && childArrow.dataset.arrow) {
-                childArrow.dataset.placement = arrow > 0 ? placementString : ''
-                childArrow.style.left = arrow > 0 ? (arrow + 'px') : ''
+                this._offsetParent.style.overflow = this._parentstyle;
             }
         }
-        this._getOnchange('on-change-after', styles, data)
-        if (typeof callback === "function") {
-            return await callback(data, this._popper, this._reference);
-        }
-
+        if (typeof callback === "function")
+            callback(data, this._popper, this._reference);
     }
 }

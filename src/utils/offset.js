@@ -70,48 +70,4 @@ export default class Offset {
         }
         return { top: top + boundaryNode.scrollTop - boundaryNode.clientTop, left: left + boundaryNode.scrollLeft - boundaryNode.clientLeft, rect, scrollNodes }
     }
-    // static getOffsetRect(node, boundaryNode) {
-    //     let left = 0, top = 0, scrollNodes = [window], curNode = node, preNode = node;
-    //     while (curNode && !(/html/i.test(curNode.tagName))) {
-    //         const offsetParent = preNode.offsetParent||document.body, isScrollNode = isScroll(curNode);// preNode.offsetParent||document.body 针对fixed 定位无offsetParent
-    //         if (isScrollNode) scrollNodes.push(curNode);
-    //         if (curNode === offsetParent) {
-    //             const rect = Offset.getRelativeOffsetRect(preNode, curNode),
-    //                 sameNode = boundaryNode === curNode;
-    //             top += rect.top;
-    //             left += rect.left;
-    //             if (isScrollNode && sameNode) {
-    //                 left += curNode.scrollLeft
-    //                 top += curNode.scrollTop
-    //             }
-    //             if (!boundaryNode || sameNode) break;
-    //             preNode = curNode;
-    //         }
-    //         curNode = curNode.parentNode;
-    //     }
-    //     return { left, top, rect: Offset.boundingClientRect(node), scrollNodes }
-    // }
-    // static getOffseWrap(node, boundaryNode = null) {
-    //     let left = 0, top = 0, scrollNodes = [window], curNode = node, preNode = node;
-    //     while (node && curNode && !(/html/i.test(curNode.tagName))) {
-    //         const offsetParent = preNode.offsetParent;
-    //         if (isScroll(curNode)) {
-    //             scrollNodes.push(curNode)
-    //         }
-    //         if (curNode === offsetParent) {
-    //             left += preNode.offsetLeft + offsetParent.clientLeft;
-    //             top += preNode.offsetTop + offsetParent.clientTop;
-    //             preNode = curNode;
-    //             if (!boundaryNode || boundaryNode === curNode) break;
-    //         }
-    //         curNode = curNode.parentNode;
-    //     }
-    //     return { left, top, rect: Offset.boundingClientRect(node), scrollNodes }
-    // }
-
 }
-
-
-
-
-

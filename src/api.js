@@ -1,3 +1,4 @@
+// global.prefix = 'vview-'
 import "./style/index.scss";
 import Components from "./components/index";
 import directives from "./directives/index";
@@ -6,9 +7,9 @@ import utils from "./utils/index";
 const install = function (Vue, options = {}) {
     if (install.installed) return;
     global.__VUE__ = Vue;
-    const cssPrefix = options.cssPrefix || 'ui';
-    const langPrefix = options.langPrefix || cssPrefix;
-    const compPrefix = options.compPrefix || '';
+    const cssPrefix = options.cssPrefix || 'vview';
+    const langPrefix = options.langPrefix || 'global';
+    const compPrefix = options.compPrefix || 'v';
     const compPrefixUpper = compPrefix.toUpperCase();
     const langMap = options.langMap;
     Vue.prototype.__$cssPrefix__ = cssPrefix;

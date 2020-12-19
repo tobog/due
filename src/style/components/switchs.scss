@@ -1,113 +1,59 @@
 $prefix-cls: #{$prefix}-switchs;
-
 .#{$prefix-cls} {
-    font-size: $fontBase;
+    font-size: 12px;
     display: inline-block;
-    width: 44px;
-    height: 22px;
+    width: 48px;
+    height: 24px;
     line-height: 1.5;
     vertical-align: middle;
-    border-radius: 9999px;
-    border: 1px solid transparent;
+    border-radius: 99999px;
+    border: 1px solid $border;
     background-color: $border;
     position: relative;
     z-index: 0;
     cursor: pointer;
     user-select: none;
     transition: all 0.3s ease-in-out;
-    color: #fff;
-
-    &-inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        padding: 0 6px;
-    }
-
-    &::after,&:before {
-        content: '';
-        width: 46%;
-        height: 92%;
-        border-radius: inherit;
-        background-color: #fff;
-        position: absolute;
-        left: 2%;
-        top: 4%;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-    }
-
-    &:before {
-        display: none;
-        width: 40%;
-        height: 80%;
-        background-color: transparent;
-        left: 5%;
-        top: 10%;
-        z-index: 6;
-        border: 1px solid transparent;
-        border-right-color: $primary;
-        animation:#{$prefix-cls}-loading 1s linear infinite;
-    }
-
-
-    &-loading {
-        opacity: 0.6;
-
-        &::before {
-            display: block;
-        }
-    }
-
-    &-checked {
-        // border-color: $primary;
-        background-color: $primary;
-
-        &::after {
-            left: 52%;
-        }
-
-        &:before {
-            left: 55%;
-        }
-    }
-
-    &-readonly {
-        cursor: not-allowed;
-        background-color: $disabled;
-        // border-color: $disabled;
-    }
-
-    &-disabled {
-        cursor: not-allowed;
-        background-color: $disabled !important;
-        // border-color: $disabled;
-    }
-
 }
 
-@keyframes #{$prefix-cls}-loading {
-    form {
-        transform: rotate(0);
-    }
-
-    to {
-        transform: rotate(360deg);
+.#{$prefix-cls}-inner {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: $white;
+    overflow: hidden;
+    padding: 0 6px;
+    &>*:first-child {
+        float: left;
     }
 }
 
-@each $key,
-$value in $colors-map {
-    .#{$prefix-cls}-#{$key} {
-        &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) {
-            // border-color: $value;
-            background-color: $value;
-        }
-        &::before{
-            border-right-color: $value;
-        }
-    }
+.#{$prefix-cls}::after {
+    content: '';
+    width: 48%;
+    height: 96%;
+    border-radius: 99999px;
+    background-color: $white;
+    position: absolute;
+    left: 1%;
+    top: 2%;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.#{$prefix-cls}-checked {
+    border-color: $primary;
+    background-color: $primary;
+}
+
+.#{$prefix-cls}-checked:after {
+    left: 51%;
+}
+
+.#{$prefix-cls}-disabled {
+    cursor: not-allowed;
+    background: $disabled;
+    border-color: $disabled;
 }

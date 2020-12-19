@@ -1,66 +1,64 @@
 
 <template>
-	<section :class="[_tobogPrefix_]">
-		<div :style="styles" :class="innerClasses"></div>
-	</section>
+    <transition name="fade" appear>
+        <div :class="_tobogPrefix_" v-show="visible">
+			<slot :percent="percent"><div :class="innerClasses" :style="styles"></div></slot>
+        </div>
+    </transition>
 </template>
 <script>
-import { unit } from "../../utils/tool";
 export default {
 	name: "LoadingBar",
 	props: {
 		color: {
 			type: String,
-			default: "success"
+			// default: 'success'
 		},
 		failColor: {
 			type: String,
-			default: "error"
+			// default: 'error'
 		},
 		height: {
 			type: Number,
-			default: 3
-		}
+			default: 2
+		},
 		// config: Object
 	},
 	data() {
 		return {
 			percent: 0,
-			status: "",
+			status: '',
 			visible: true,
-			...this.$attrs
+			...this.$attrs,
+			// ...this.config
 		};
 	},
 	computed: {
-		styles() {
-			return {
-				backgroundColor: this.getColor,
-				height: this.getHeight,
-				width: this.getPercent
-			};
-		},
-		getPercent() {
-			return unit(this.percent, "%");
-		},
-		getColor() {
-			if (this.failColor && this.status === "error") {
-				return this.failColor;
-			}
-			return this.color;
-		},
 		innerClasses() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
 				`${_tobogPrefix_}-inner`,
 				{
-					[`${_tobogPrefix_}-error`]: this.status === "error",
-					[`${_tobogPrefix_}-success`]: this.status === "success"
-				}
+					[`${_tobogPrefix_}-inner-error`]: this.status === 'error',
+					[`${_tobogPrefix_}-inner-success`]: this.status === 'success',
+				},
 			];
 		},
-		getHeight() {
-			return unit(this.height);
+		styles() {
+			let style = {
+				width: `${this.percent}%`,
+				height: `${this.height}px`
+			};
+
+			if (this.color && this.status === 'success') {
+				style.backgroundColor = this.color;
+			}
+
+			if (this.failColor && this.status === 'error') {
+				style.backgroundColor = this.failColor;
+			}
+			return style;
 		}
-	}
+	},
 };
 </script>

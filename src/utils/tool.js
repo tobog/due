@@ -9,8 +9,8 @@ export function unit(val, unit = "px") {
     return val == size ? `${size}${unit}` : val;
 }
 
-export function validVal(val) {//非'',null undefined,false,true
-    return !!val || val === 0
+export function validVal(val) {//非'',null undefined
+    return !!val || val == '0'
 }
 export function parseNumber(val) {
     val = parseFloat(val);
@@ -36,7 +36,7 @@ export function typeOf(data) {
     const type = toString.call(data);
     return map[type] || type.replace(/\[+|\]+|s+/gi, "").toLowerCase();
 }
-//节流
+
 export function throttle(fn, wait = 1200, immediate) {
     if (typeof fn !== 'function') throw "argument[0] must be the function";
     const useRAF = (!wait && wait !== 0 && typeof window.requestAnimationFrame === 'function')
@@ -75,14 +75,14 @@ export function throttle(fn, wait = 1200, immediate) {
         last = 0;
     }
     return throttle;
-}
-// 防抖
+};
+
 export function debounce(fn, wait = 200, immediate) {
     if (typeof fn !== 'function') throw "argument[0] must be the function";
     let timeout = null;
-    const debounce = function (...args) {
+    const debounce = function () {
+        const context = this, args = arguments;
         clearTimeout(timeout);
-        const context = this;
         if (immediate && !timeout) fn.apply(context, args);
         timeout = setTimeout(function () {
             if (!immediate) fn.apply(context, args);
@@ -142,14 +142,3 @@ export function firstUpperCase(str = "") {
 export function trim(str = '') {
     return str.replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
 }
-
-
-
-
-
-
-
-
-
-
-

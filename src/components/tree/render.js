@@ -3,11 +3,13 @@ export default {
     functional: true,
     props: {
         render: Function,
-        parent: Object,
+        data: Object,
         node: Object,
+        tag: String
     },
     render: (h, ctx) => {
-        const { render, parent, node } = ctx.props;
-        return render.call(ctx.parent, h, { parent, node, ctx });
+        const { render, data, node, tag } = ctx.props;
+        if (typeof render === 'function') return render(h, { data, node, ctx });
+        return h((tag || 'div'), { ...ctx.data, on: { ...ctx.listeners, ...ctx.data.nativeOn } }, ctx.children)
     }
 };

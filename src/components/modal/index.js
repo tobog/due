@@ -4,14 +4,14 @@ let Instances = {}, Config, vmOptions;
 
 function getInstance(props = {}, on = {}) {
     const instance = Modal.newInstance(Object.assign({}, Config, props), on, vmOptions),
-        name = instance.name;
-    if (Instances[name]) Instances[name].destroy(name);
-    Instances[name] = instance;
-    return name;
+        uid = instance.uid;
+    if(Instances[uid]) Instances[uid].destroy(uid);
+    Instances[uid] = instance;
+    return uid;
 }
 
-Modal.config = function (config, isVmOptions) {
-    if (isVmOptions) {
+Modal.config = function (config, isvmOptions) {
+    if (isvmOptions) {
         vmOptions = config
     } else {
         Config = config;
@@ -53,9 +53,9 @@ Modal.error = function (props = {}, on = {}) {
     return getInstance(props, on);
 };
 
-Modal.get = function (name = "") {
-    const instance = Instances[name];
-    if (name === '' || !instance) return;
+Modal.get = function (name="") {
+    const instance=Instances[name];
+    if(name===''||!instance) return;
     return instance.component
 };
 

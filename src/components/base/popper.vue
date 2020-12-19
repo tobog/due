@@ -1,25 +1,34 @@
 
 <template>
-	<transition name="fade" appear :data-vue-module="$options.name">
-		<section ref="popper" :class="[_tobogPrefix_]">
-			<span :class="[_tobogPrefix_ + '-arrow']" data-arrow="arrow"></span>
+	<transition name="fade" appear :data-vview-module="$options.name">
+		<section
+			ref="popper"
+			:class="_tobogPrefix_"
+			:x-placement="placementinner"
+			v-offset-dom="{reference:getReference,options}"
+			@mouseenter.stop="handleVisible(true)"
+			@mouseleave.stop="handleVisible(false)"
+		>
+			<span :class="_tobogPrefix_ + '-arrow'" :x-placement="placementinner"></span>
 			<slot>{{ content }}</slot>
 		</section>
 	</transition>
 </template>
 <script>
 
-import Popper from '../../utils/popper';
+import OffsetDom from '../../directives/offset-dom';
+
+
 export default {
 	name: 'Popper',
+	directives: { OffsetDom },
 	props: {
 		reference: [String, HTMLElement],
 		placement: {
-			type: String,//top,left,bottom,right,center，fix
+			type: String,//top,left,bottom,right,center
 			default: 'bottom-left',
 		},
 		content: {
-			type: String,
 			default: '',
 		},
 		transfer: {
@@ -30,80 +39,38 @@ export default {
 			type: [String, Number],
 			default: 5
 		},
-		delay: Number,
-		gpu: {
-			type: Boolean,
-			default: true,
-		},
-		trigger: {
-			type: String,
-			default: 'click',//click hover,other
-		},
-		always: Boolean,
-		responsive: {
-			type: Boolean,
-			default: true,
-		}
+		gpu: Boolean,
 	},
-	mounted() {
-		this.initPopper();
+	data() {
+		return {
+			placementinner: this.placement,
+		};
 	},
 	computed: {
-		wrapClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-gpu`]: this.gpu
-				}
-			]
-		},
 		getReference() {
 			if (this.reference instanceof HTMLElement) return this.reference;
 			return (this.$parent.$refs || {})[this.reference];
 		},
 		options() {
 			return {
+				callback: this.handlePosition,
 				placement: this.placement,
 				offset: this.offset,
 				gpu: this.gpu,
 				transfer: this.transfer,
-				trigger: this.trigger,
-				always: this.always,
-				delay: this.delay,
-				onchange: this.handleChange,
-				responsive: this.responsive
 			}
 		},
 	},
-	watch: {
-		options() {
-			this.updatePopper()
-		},
-		getReference() {
-			this.updatePopper()
-		},
-	},
 	methods: {
-		initPopper() {
-			this.$nextTick(() => {
-				if (this._Popper) return;
-				this._Popper = new Popper(this.getReference, this.$el, this.options);
-				if (this.always) {
-					this._Popper.toggle(true);
-				}
-			})
+		handlePosition(data, el, ref) {
+			const popper = this.$refs.popper,
+				reference = this.getReference;
+			if (!popper || !reference) return;
+			this.placementinner = data.placement.join('-');
 		},
-		handleChange(...args) {
-			this.$emit('on-visible-change', ...args)
-		},
-		updatePopper() {
-			if (!this._isMounted) return
-			this._Popper && this._Popper.update(this.getReference, this.$el, this.options)
+		handleVisible(visible) {
+			this.$emit('on-visible-change', visible, 'popper');
 		},
 	},
-	beforeDestroy() {
-		this._Popper && this._Popper.destroy();
-	}
 };
 </script>

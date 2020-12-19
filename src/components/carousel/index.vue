@@ -1,41 +1,44 @@
 <template>
-	<section :class="wrapClasses" @mouseleave="playControl" @mouseenter="pause">
-		<div :class="[_tobogPrefix_+'outer']">
-			<div :class="[_tobogPrefix_ + '-list']" @mouseup="handelMouseup" @mousedown="handleMousedown">
+	<div :class="_tobogPrefix_">
+		<button type="button" :class="arrowClasses" data-left @click="arrowEvent(-1)">
+			<Icons type="ios-arrow-back"></Icons>
+		</button>
+		<button type="button" :class="arrowClasses" data-right @click="arrowEvent(1)">
+			<Icons type="ios-arrow-forward"></Icons>
+		</button>
+		<div :class="[_tobogPrefix_ + '-list']">
+			<div :class="[_tobogPrefix_ + '-item']" :style="itemStyles" ref="originTrack">
 				<slot></slot>
+				<div v-if="loop" ref="copyitem" :class="[_tobogPrefix_ + '-item']" :style="copyItemStyles"></div>
 			</div>
 		</div>
-		<template v-if="arrow" v-once>
-			<span :class="arrowClasses" data-left @click="play(false)" ref="arrowLeft">
-				<Icons type="ios-arrow-back"></Icons>
-			</span>
-			<span :class="arrowClasses" data-right @click="play(true)" ref="arrowRight">
-				<Icons type="ios-arrow-forward"></Icons>
-			</span>
-		</template>
-		<aside v-if="dots&&childLen" :class="dotsClasses">
-			<span
-				v-for="index in childLen"
-				:key="index"
-				:class="[_tobogPrefix_ + '-dot']"
-				:data-radius="radiusDot"
-				@click="slide('click', index)"
-				@mouseenter="slide('hover', index)"
-			></span>
-		</aside>
-	</section>
+
+		<ul :class="dotsClasses">
+			<template v-for="index in childrenList.length">
+				<li
+					:class="handleDotActive(index)"
+					@click="dotsEvent('click', index - 1)"
+					@mouseenter="dotsEvent('hover', index - 1)"
+				>
+					<button type="button" :data-radius="radiusDot"></button>
+				</li>
+			</template>
+		</ul>
+	</div>
 </template>
 <script>
-import Icons from "../icons/index";
-import Carousel from "../../utils/carousel";
-
+import Icons from '../icons/index';
+import { EventListener, getStyle } from '../../utils/dom';
 export default {
-	name: "Carousel",
+	name: 'Carousel',
 	components: { Icons },
 	props: {
-		value: {
-			type: Number,
-			default: 0
+		arrow: {
+			type: String,
+			default: 'hover',
+			// validator (value) {
+			//     return oneOf(value, ['hover', 'always', 'never']);
+			// }
 		},
 		reverse: {
 			type: Boolean,
@@ -45,24 +48,21 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		speed: {
+			type: Number,
+			default: 3000
+		},
 		loop: {
 			type: Boolean,
 			default: true
 		},
-		interval: {
-			type: Number,
-			default: 1000
-		},
-		arrow: {
+		easing: {
 			type: String,
-			default: "always"
-			// validator (value) {
-			//     return oneOf(value, ['hover', 'always', 'never']);
-			// }
+			default: 'ease'
 		},
 		dots: {
 			type: String,
-			default: "inside"
+			default: 'inside',
 			// validator (value) {
 			//     return oneOf(value, ['inside', 'outside', 'none']);
 			// }
@@ -73,65 +73,60 @@ export default {
 		},
 		trigger: {
 			type: String,
-			default: "click"
+			default: 'click',
 			// validator (value) {
 			//     return oneOf(value, ['click', 'hover']);
 			// }
 		},
-		modal: {
-			type: String,
-			default: 'carousel',//carousel,fade
+		value: {
+			type: Number,
+			default: 0
 		},
-		// slidesToShow: 3,
-		// slidesToScroll: 3,
-		// responsive: [
-		// 	{
-		// 		breakpoint: 1024,
-		// 		settings: {
-		// 			slidesToShow: 3,
-		// 			slidesToScroll: 3,
-		// 			infinite: true,
-		// 			dots: true
-		// 		}
-		// 	},
-		// ]
+		// height: {
+		// 	type: [String, Number],
+		// 	default: 'auto',
+		// 	// validator (value) {
+		// 	//     return value === 'auto' || Object.prototype.toString.call(value) === '[object Number]';
+		// 	// }
+		// }
 	},
 	data() {
 		return {
-			childLen: 0,
-			model: this.value,
+			childrenList: [],
+			currentIndex: this.value,
+			trackIndex: this.value,
+			animation: true
 		};
 	},
-	mounted() {
-		this.init();
-	},
 	computed: {
-		getConfig() {
+		getItemSize() {
+			let index = this.trackIndex;
+			if (this.loop && index >= this.getLength - 1) {
+				index = 0;
+			}
+			return (this.childrenList[index] || {}).getHeight;
+		},
+		itemStyles() {
+			const length = this.getLength, width = length * 100,
+				percent = this.getPercent * this.trackIndex, animation = this.animation;
 			return {
-				reverse: this.reverse,
-				loop: this.loop,
-				interval: this.interval,
-				autoplay: this.autoplay,
-				speed: this.speed,
-				prefix: this._tobogPrefix_,
+				width: `${width}%`,
+				height: this.getItemSize,
+				transition: animation ? `transform 500ms ${this.easing}` : 'none',
+				transform: `translate3d(-${percent}%, 0px, 0px)`,
 			};
 		},
-		wrapClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-fade`]: this.modal === 'fade',
-				}
-			];
+		copyItemStyles() {
+			return {
+				width: this.getPercent + '%',
+				height: (this.childrenList[0] || {}).getHeight,
+			};
 		},
 		arrowClasses() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
 				`${_tobogPrefix_}-arrow`,
-				{
-					[`${_tobogPrefix_}-arrow-${this.arrow}`]: !!this.arrow
-				}
+				`${_tobogPrefix_}-arrow-${this.arrow}`
 			];
 		},
 		dotsClasses() {
@@ -140,73 +135,121 @@ export default {
 				`${_tobogPrefix_}-dots`,
 				`${_tobogPrefix_}-dots-${this.dots}`
 			];
+		},
+		getLength() {
+			const length = this.childrenList.length || 0;
+			if (this.loop) return length + 1;
+			return length;
+		},
+		getPercent() {
+			return 100 / this.getLength;
 		}
 	},
-
 	methods: {
-		init() {
+		initCopyDom() {
+			if (!this.loop) return;
 			this.$nextTick(() => {
-				this._Carousel = new Carousel(this.$el, this.getConfig, (that, index) => {
-					const childLen = that._children.length,
-						oldValue = this.model;
-					if (childLen != this.childLen) this.childLen = childLen;
-					if (index != oldValue) {
-						this.model = index;
-						this.$emit('input', index);
-						this.$emit('on-change', index, oldValue);
-					}
-				});
-				this._Carousel.slide(this.modal);
+				const length = this.getLength;
+				if (length < 2) return;
+				this.$refs.copyitem.innerHTML = this.childrenList[0].$el.innerHTML;
 			});
 		},
-		play(isPre) {
-			this._Carousel.step(isPre);
-		},
-		playControl() {
-			this._Carousel.play();
-		},
-		pause() {
-			this._Carousel.pause();
-		},
-		slide(event, index) {
-			if (event === this.trigger) {
-				this._Carousel.slide(index - 1);
-			}
-		},
-		handelMouseup(e) {
-			const xAxis = e.clientX - this._xAxis;
-			console.log(xAxis)
-			if (xAxis > 60) {
-				this.play(true)
-			}
-			if (xAxis < -60) {
-				this.play(false)
-			}
-			this._xAxis = 0;
-		},
-		handleMousedown(e) {
-			this._xAxis = e.clientX
-		},
 		// use when slot changed
-		updateConfig() {
+		updateChildren() {
 			this.$nextTick(() => {
-				this._Carousel && this._Carousel.update(this.getConfig);
-			})
-		}
+				let index = 1;
+				this.childrenList = [];
+				this.$children.forEach((child) => {
+					if (child.$options.name === 'CarouselItem') {
+						child.index = index++;
+						this.childrenList.push(child)
+					}
+				});
+				const percent = this.getPercent + '%';
+				this.childrenList.forEach((child) => {
+					child.width = percent;
+					// child.height = typeof this.height === 'number' ? `${this.height}px` : this.height;
+				});
+			});
+		},
+		updateIndex(index) {
+			this.trackIndex = index;
+			this.currentIndex = (!this.loop && this.getLength - 1 <= index) ? 0 : index;
+		},
+		changeOffset(offset) {
+			const length = this.getLength,
+				loop = this.loop,
+				oldIndex = this.trackIndex;
+			let index = oldIndex + offset;
+			if (loop && offset > 0 && index >= length) {
+				this.animation = false;
+				this.trackIndex = 0;
+				index = 1;
+			}
+			if (loop && offset < 0 && index < 0) {
+				this.animation = false;
+				this.trackIndex = length - 1;
+				index = length - 2;
+			}
+			if (!this.loop) index = index % length;
+			setTimeout(() => {
+				this.animation = true;
+				this.updateIndex(index);
+				this.$emit('on-change', oldIndex, this.currentIndex);
+				this.$emit('input', this.currentIndex);
+			}, 0);
+		},
+		arrowEvent(offset) {
+			this.setAutoplay();
+			this.changeOffset(offset);
+		},
+		dotsEvent(event, index) {
+			let curIndex = this.trackIndex;
+			if (event === this.trigger && curIndex !== index) {
+				this.updateIndex(index);
+				this.$emit('input', index);
+				this.setAutoplay();
+			}
+		},
+		setAutoplay() {
+			clearTimeout(this.timer);
+			if (this.autoplay) {
+				const timeout = () => {
+					this.timer = setTimeout(() => {
+						this.changeOffset(this.reverse ? -1 : 1);
+						timeout();
+					}, this.speed)
+				};
+				timeout();
+			}
+		},
+		handleDotActive(index) {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [{
+				[`${_tobogPrefix_}-active`]: index - 1 === this.currentIndex
+			}]
+		},
+
+
 	},
 	watch: {
-		getConfig() {
-			this.updateConfig();
+		autoplay() {
+			this.setAutoplay();
+		},
+		speed() {
+			this.setAutoplay();
 		},
 		value(val) {
-			if (val != this.model) {
-				this.model = val;
-				this._Carousel && this._Carousel.slide(val);
-			}
-		},
+			if (val == 0 && this.trackIndex == this.getLength - 1) return;
+			this.updateIndex(val);
+			this.setAutoplay();
+		}
+	},
+	mounted() {
+		this.setAutoplay();
 	},
 	beforeDestroy() {
-		this._Carousel && this._Carousel.destroy();
+		clearTimeout(this.timer);
 	}
 };
 </script>

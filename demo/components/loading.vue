@@ -1,100 +1,119 @@
 
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Loading 加载中)</h2>
-			<h4 class="padding-top-10">当区块正在获取数据中时可使用，适当的等待动画可以提升用户体验。</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vLoading v-bind="formData" style="height:200px;border:1px solid #ccc">
-					<div slot="label">title</div>
-				</vLoading>
-				<vButton @click="handleLoading('show')">show</vButton>
-				<vButton @click="handleLoading('init')">init</vButton>
-				<vButton @click="handleLoading('destroy')">destroy</vButton>
-				<vButton @click="handleLoading('hide')">hide</vButton>
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+    <main style="padding:20px 0;" class="examples-main clearfix">
+        <vForm class="example" vertical>
+            <div style="padding:10px 0;">参数：</div>
+            <vFormItem
+                v-for="(item,key) of switchs"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vSwitch v-model="switchs[key]" />
+            </vFormItem>
+            <vFormItem
+                v-for="(item,key) of selects"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vSelect v-model="selects[key]" transfer>
+                    <vOption
+                        v-for="(val,index) of options[key]"
+                        :value='val'
+                        :key="index"></vOption>
+                </vSelect>
+            </vFormItem>
+            <vFormItem
+                v-for="(item,key) of inputs"
+                :key="key"
+                label-width="100"
+                :label="key">
+                <vInput v-model="inputs[key]">
+                </vInput>
+            </vFormItem>
+        </vForm>
+        <section class="example">
+            <vLoading v-bind="attrs">
+				<div slot="label">title</div>
+			</vLoading>
+        </section>
+        <h2 class="title">Props & Events #</h2>
+        <vTable
+            :columns='columns'
+            :data="data"
+            style="width:100%"
+            border
+            stripe></vTable>
+    </main>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
 			val: '',
+			val1: '',
+			switchs: {
+				loading: true,
+				fullscreen: true,
+				fix: false,
+				transfer: false,
+				closable: true
+			},
+			selects: {
+
+			},
+			options: {
+
+			},
+			inputs: {
+
+			},
 		};
 	},
+	mounted() {
+		this.id = this.$VLoading.init({
+			render(h) {
+				return "<div>title</div>"
+			}
+		})
+		console.log(this.id)
+
+		setTimeout(() => {
+			this.$VLoading.hide(this.id);
+		}, 5000)
+		setTimeout(() => {
+			this.$VLoading.show(this.id);
+		}, 10000)
+	},
 	computed: {
-		getCode() {
-			return `<vLoading v-bind="formData">
-						<div slot="label">title</div>
-					</vLoading>
-					<vButton @click="handleLoading('show')">show</vButton>
-					<vButton @click="handleLoading('init')">init</vButton>
-					<vButton @click="handleLoading('destroy')">destroy</vButton>
-					<vButton @click="handleLoading('hide')">hide</vButton>`;
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
 		},
-		getBase() {
-			return [
-				{
-					label: "是否固定",
-					key: "fix",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "全局覆盖",
-					key: "transfer",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "全屏",
-					key: "fullscreen",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "显示loading",
-					key: "loading",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "可关闭",
-					key: "closable",
-					tag: "vSwitch",
-					default: true
-				},
-				{
-					label: "延迟时间",
-					key: "delay",
-					tag: "vInputNumber",
-					// default: ""
-				},
-			];
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+			},
+			]
 		},
-		compProps() {
+		data() {
 			return [
 				{
 					prop: 'fix',
@@ -104,53 +123,37 @@ export default {
 				},
 				{
 					prop: 'transfer',
-					explain: '位于body下全局覆盖',
+					explain: '位于body下',
 					type: 'Boolean',
-					default: '-',
+					default: '',
 				},
 				{
 					prop: 'fullscreen',
-					explain: '是否可以全屏',
+					explain: 'fullscreen',
 					type: 'Boolean',
 					default: '-',
 				},
 				{
 					prop: 'loading',
-					explain: '是否显示loading',
+					explain: 'loading',
 					type: 'Boolean',
 					default: '-',
 				},
 				{
 					prop: 'closable',
-					explain: '是否可关闭',
+					explain: 'closable',
 					type: 'Boolean',
-					default: 'true',
-				},
-				{
-					prop: 'on-fullscreenchange',
-					explain: '全屏事件',
-					type: 'Event',
-					default: '(val)=>{}',
-				},
-				{
-					prop: 'on-close',
-					explain: '关闭事件',
-					type: 'Event',
-					default: '()=>{}',
-				},
-				{
-					prop: 'config|init|hide|show|destroy|get',
-					explain: '通过this.$VLoading：js直接调用以下方法来使用组件,提供name处理特定loading',
-					type: 'Function:options=》Instances.name默认vue._uid',
 					default: '-',
 				},
-			];
+				{
+					prop: 'config|init|hide|show|destroy',
+					explain: '通过直接调用以下方法来使用组件',
+					type: 'Function:options',
+					default: 'options',
+				},
+			]
 		}
-	},
-	methods: {
-		handleLoading(type) {
-			this.$VLoading[type]()
-		},
 	},
 };
 </script>
+

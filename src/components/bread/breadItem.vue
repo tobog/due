@@ -1,12 +1,14 @@
 
 
 <template>
-	<span :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+	<span :class="_tobogPrefix_" :data-vview-module="$options.name">
 		<component :is="getTag" v-bind="$attrs" :class="innerClasses">
 			<slot></slot>
 		</component>
-		<span v-if="showSep" :class="sepClasses">
-			<slot name="sep">{{separator}}</slot>
+		<span v-if="visible" :class="sepClasses">
+			<slot name="sep">
+				<span v-html="separator"></span>
+			</slot>
 		</span>
 	</span>
 </template>
@@ -16,14 +18,12 @@ export default {
 	name: 'BreadItem',
 	inheritAttrs: false,
 	props: {
-		sep: String,
-		// to: String,
-		// href: String,
+		sep: String
 	},
 	data() {
 		return {
 			separator: this.sep,
-			showSep: true
+			visible: true
 		};
 	},
 	created() {
@@ -32,12 +32,11 @@ export default {
 	computed: {
 		innerClasses() {
 			const { to, href } = this.$attrs;
-			const type = (to || href) ? 'link' : 'item';
-			return `${this._tobogPrefix_}-${type}`
+			return `${this._tobogPrefix_}-${(to || href) ? 'link' : 'item'}`
 		},
 		getTag() {
 			const { to, href, tag = 'span' } = this.$attrs;
-			if (to) return this.$router ? 'router-link' : 'a';
+			if (to) return 'router-link';
 			if (href) return 'a';
 			return tag;
 		},

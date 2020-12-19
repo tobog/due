@@ -1,82 +1,67 @@
-$prefix-cls: #{$prefix}-upload;
-$prefix-cls-list: #{$prefix}-uploadlist;
-
-.#{$prefix-cls} {
-    &-wrapper {
-        display: inline-block;
-        color: $content;
+$prefix-cls: #{$prefix}-uploadlist;
+// .#{$prefix-cls}-remove {
+//     padding: 0 5px;
+//     transition: all 0.3s ease;
+//     visibility: hidden;
+//     cursor: pointer;
+// }
+.#{$prefix-cls}-file {
+    padding: 4px;
+    color: $content;
+    transition: all 0.3s ease-in-out;
+    border-top: 1px dashed $border;
+    border-radius: 4px;
+    overflow: hidden;
+    &:first-child {
+        border-top: none;
+        margin-top: 10px;
     }
-
-    & {
+    &:hover {
+        box-shadow: 0 0 9px -1px $primary; // .#{$prefix-cls}-remove {
+        //     visibility: visible;
+        // }
+    }
+    &>* {
+        float: right;
+        color: $sub-content;
+        padding: 0 3px;
+    }
+    &>.#{$prefix-cls}-title {
+        color: inherit;
+        float: left;
+        padding-bottom: 2px;
+        max-width: 60%;
         overflow: hidden;
-        transition: all 0.3s ease;
-        border-radius: 3px;
-        cursor: pointer;
-        outline: none;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transition: all 0.3s ease-in-out;
     }
+}
 
-    &-input {
-        display: none !important;
-    }
-
-    &-drag {
-        border: 1px dashed $border;
-
-        &:hover {
-            border-color: $primary;
-        }
-    }
-
-    &list {
-        padding-top: 10px;
-
-        &-file {
-            padding: 6px 8px 7px;
-            border-top: 1px dashed $border;
-            overflow: hidden;
-
-            // &:first-child {
-            //     border-top: 1px dashed $border;
-            // }
-        }
-
-        &-content {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            width: 100%;
-            white-space: nowrap;
-
-            &>.#{$prefix}-icons {
-                margin: 0 3px;
-            }
-        }
-
-        &-status {
-            justify-content: space-between;
-        }
-
-        &-bar {
-            width: 100%;
-            flex-grow: 2;
-            flex-shrink: 2;
-        }
-
-        &-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: auto;
-            padding-right: 8px;
-        }
-
-        &-data {
-            flex: none;
-            padding-right: 3px;
-        }
-    }
-
-    &-file-error &-title {
+.#{$prefix-cls}-file-error {
+    &>*,
+    .#{$prefix-cls}-title {
         color: $error;
     }
+}
 
+$prefix-cls: #{$prefix}-upload;
+.#{$prefix-cls}-outer {
+    display: inline-block;
+}
+
+.#{$prefix-cls} {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    border: 1px dashed transparent;
+    cursor: pointer;
+    outline: none;
+}
+
+.#{$prefix-cls}-drag {
+    border-color: $border;
+    &:hover {
+        border-color: $primary;
+    }
 }

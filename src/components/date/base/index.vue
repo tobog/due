@@ -1,9 +1,9 @@
 <template>
-	<section :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+	<section :class="_tobogPrefix_" :data-vview-module="$options.name">
 		<Header :status="status" :calendar="initCalendar" @on-selected="selected" />
 		<component
 			v-if="status!=='times'"
-			:class="[_tobogPrefix_+'-content']"
+			:class="_tobogPrefix_+'-content'"
 			:key="status"
 			:prefix="status"
 			:multiple="multiple"
@@ -18,7 +18,6 @@
 			:foucsDate="foucsDate"
 			:showWeek="showWeek"
 			:format="format"
-			:weeks="weeks"
 			@on-selected="selected"
 			@on-range-change="handleRangeChange"
 		/>
@@ -26,7 +25,7 @@
 			v-else
 			:visible="visible"
 			:format="format"
-			:class="[_tobogPrefix_+'-content']"
+			:class="_tobogPrefix_+'-content'"
 			:key="status"
 			:is="componentId"
 			:sectionMethod="sectionMethod"
@@ -77,8 +76,7 @@ export default {
 		startDate: [Number, Date, String],
 		sectionMethod: Function,
 		visible: Boolean,
-		showWeek: Boolean,
-		weeks: Array,
+		showWeek: Boolean
 	},
 	data() {
 		return {
@@ -105,6 +103,7 @@ export default {
 			deep: true,
 			handler(val, old) {
 				this.dates = this.valueParse;
+				console.log(this)
 				if (old === undefined && !val && !this._isMounted) return;
 				if (val !== old) this.confirm();
 			}
@@ -194,7 +193,7 @@ export default {
 				return [];
 			}
 			if (type === 'string') {
-				value = value.split(',').filter(val => !!val);
+				value = value.split(',');
 			} else if (type === 'date') {
 				return [Dates.parseObj(value)]; //?
 			}
@@ -362,18 +361,18 @@ export default {
 		},
 		selected(cell, next) {
 			let status = this.status,
-				isEnd = status === this.endState,
+				end = status === this.endState,
 				isTimes = status === 'times',
 				multiple = this.multiple,
 				dates = this.dates,
 				invalidStatus = !this.getValidStatus[next];
-			if (cell && cell.date) {// 有日期数据
+			if (cell && cell.date) {
 				let date = {
 					...this.initCalendar,
 					...cell.date
 				};
 				this.$set(this.$data, 'calendar', date);
-				if (isTimes && !isEnd) {//选择时分秒但不是结束
+				if (isTimes && !end) {
 					this.$set(this.$data, 'foucsDate', date);
 					if (dates.length == 0) {
 						this.$set(this.dates, 0, this.range ? [date] : date);
@@ -384,10 +383,10 @@ export default {
 						if (item) item = Object.assign(item, date);
 					}
 					this.$nextTick(() => {
-						this.confirm(false);
+						this.confirm(isTimes ? next === 'times' : end);
 					});
 				}
-				if ((next || isTimes) && isEnd) {//结束选择
+				if ((next || isTimes) && end) {
 					const isKeyEnter = cell.isKeyEnter;
 					this.$set(this.$data, 'foucsDate', date);
 					if (this.range && !isTimes) {
@@ -431,7 +430,7 @@ export default {
 								dates = [date];
 							}
 						}
-					} else if (this.range) {// istimes isrange
+					} else if (this.range) {
 						if (!dates[0]) dates[0] = [];
 						dates[0][this.index] = date;
 					} else {
@@ -439,7 +438,7 @@ export default {
 					}
 					this.dates = [...dates];
 					this.$nextTick(() => {
-						this.confirm(isTimes ? next === 'times' : isEnd, isKeyEnter);
+						this.confirm(isTimes ? next === 'times' : end, isKeyEnter);
 					});
 				}
 				this.$emit('on-sync-update', {
@@ -451,7 +450,7 @@ export default {
 				}, 'calendar');
 			}
 			if (invalidStatus) return;
-			if ((next && !isEnd) || (next && next !== this.endState)) this.status = next;
+			if ((next && !end) || (next && next !== this.endState)) this.status = next;
 		}
 	}
 };

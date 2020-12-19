@@ -1,6 +1,6 @@
 
 <template>
-	<section :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+	<div :class="_tobogPrefix_" :data-vview-module="$options.name">
 		<svg
 			viewBox="0 0 100 100"
 			:style="circleSize"
@@ -10,107 +10,100 @@
 			fill-opacity="0"
 			v-bind="$attrs"
 		>
-			<circle transform-origin="center center 0" :r="radius" cx="50" cy="50" :style="getStrokeDash" />
-			<circle
-				:r="radius"
-				transform-origin="center center 0"
-				cx="50"
-				cy="50"
-				:stroke="strokeColor"
-				:stroke-width="strokeWidth"
-				:style="handleStyle"
-			/>
+			<template v-if="!path">
+				<circle :r="radius" cx="50" cy="50" />
+				<circle
+					:r="radius"
+					cx="50"
+					cy="50"
+					:stroke="strokeColor"
+					:stroke-width="strokeWidth"
+					:style="handleStyle"
+				/>
+			</template>
+			<template>
+				<path :d="path" />
+				<path :d="path" :stroke="strokeColor" :stroke-width="strokeWidth" :style="handleStyle" />/>
+			</template>
 			<slot name="svg" />
 		</svg>
-		<!-- <input type="hidden"  v-if="name||name=='0'" :name="name" :value="percent" /> -->
-		<div :class="[_tobogPrefix_ + '-inner']">
+		<div :class="_tobogPrefix_+'-inner'">
 			<slot></slot>
 		</div>
-	</section>
+	</div>
 </template>
 <script>
-import { unit } from '../../utils/tool'
+// import { oneOf } from '../../utils/tool';
 export default {
-	name: "SvgCircle",
+	name: 'CircleBase',
 	inheritAttrs: false,
 	props: {
-		name: String,
 		percent: {
 			type: Number,
-			default: 0
+			default: 0,
 		},
 		size: {
 			type: Number,
-			default: 120
+			default: 120,
 		},
 		strokeWidth: {
 			type: Number,
-			default: 6
+			default: 6,
 		},
 		strokeColor: {
 			type: String,
-			default: "#2db7f5"
+			default: '#2db7f5',
 		},
 		trackWidth: {
 			type: Number,
-			default: 5
+			default: 5,
 		},
 		trackColor: {
 			type: String,
-			default: "#eaeef2"
-		},
-		dashboard: {
-			type: Boolean,
-			default: false
+			default: '#eaeef2',
 		},
 		strokeLinecap: {
 			// ['square', 'round', 'butt', 'inherit']
 			// validator(value) {
 			// 	return oneOf(value, ['square', 'round', 'butt', 'inherit']);
 			// },
-			default: "round"
-		}
+			default: 'round',
+		},
+		path: String,
+		length: Number,
 	},
 
 	computed: {
-		getStrokeDash() {
-			if (this.dashboard) {
-				const length = this.len / this.getRadix;
+		handleStyle() {
+			if (this.path) {
 				return {
-					'stroke-dasharray': `${length * 0.8},${length}`,
-					'transform': `rotate(126deg)`
-				}
+					strokeDasharray: this.handleDasharray,
+					transition: 'all 1s linear',
+				};
+			} else {
+				return {
+					strokeDasharray: this.handleDasharray,
+					transition: 'all 1s linear',
+					transform: 'rotate(-90deg)',
+					transformOrigin: ' center center 0',
+				};
 			}
 		},
-		handleStyle() {
-			return {
-				strokeDasharray: this.handleDasharray,
-				transition: "all 1s linear",
-				transform: this.dashboard ? "rotate(-234deg)" : "rotate(-90deg)",
-			};
-		},
 		handleDasharray() {
-			const len = this.len;
-			let percent = (this.percent / 100) * len
-			percent = percent > len ? len : percent;
-			return `${percent} ${len / this.getRadix}`;
+			return `${this.percent / 100 * this.len} ${this.len}`;
 		},
 		circleSize() {
-			const size = unit(this.size, 'px')
 			return {
-				width: size,
-				height: size
+				width: `${this.size}px`,
+				height: `${this.size}px`,
 			};
 		},
 		radius() {
 			return 50 - this.strokeWidth / 2;
 		},
-		getRadix() {
-			return this.dashboard ? 0.8 : 1
-		},
 		len() {
-			return Math.PI * 2 * this.radius * this.getRadix;
-		}
-	}
+			return !this.path ? Math.PI * 2 * this.radius : Number(this.length) || 100;
+		},
+	},
 };
 </script>

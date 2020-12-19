@@ -4,7 +4,7 @@
 		@mouseleave.stop="handleScroll(null)"
 		:style="{paddingLeft:scrollSize+'px'}"
 	>
-		<header :style="{marginLeft:-scrollSize+'px'}">{{langs('datepicker.time','时间')}}</header>
+		<header :style="{marginLeft:-scrollSize+'px'}">{{langs('time','时间')}}</header>
 		<ul
 			v-if="hasTimesChild('HH')"
 			ref="hours"
@@ -50,10 +50,9 @@
 <script>
 import Dates, { compareEqual } from "../../../utils/dates";
 import { getScrollBarSize } from "../../../utils/dom";
-import langMinix from '../../../mixins/lang'
+
 export default {
 	name: "DateTimes",
-	mixins: [langMinix],
 	props: {
 		value: Object,
 		sectionMethod: Function,
@@ -101,6 +100,13 @@ export default {
 	},
 	methods: {
 		formatTime: Dates.formatTime,
+		langs(key, defaultVal, val = {}) {
+			if (typeof this.$t !== 'function') return defaultVal;
+			key = `${this.__$langPrefix__}.datepicker.${key}`;
+			key = (this.__$langMap__ && this.__$langMap__[key]) ? this.__$langMap__[key] : key;
+			const value = this.$t(key, val)
+			return key === value ? defaultVal : value;
+		},
 		getScroll() {
 			const scrollStatic = {};
 			["hours", "minutes", "seconds"].forEach(key => {

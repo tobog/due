@@ -20,7 +20,7 @@ export default {
 		classes() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
-				_tobogPrefix_,
+				`${_tobogPrefix_}`,
 				{
 					[`${_tobogPrefix_}-pending`]: this.pending,
 					[`${_tobogPrefix_}-horizontal`]: this.mode === 'horizontal'

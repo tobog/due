@@ -1,57 +1,60 @@
 
 <template>
-	<transition name="fade" appear :data-vue-module="$options.name">
-		<section
-			v-transfer-dom="transfer"
-			v-show="visible"
-			:data-transfer="transfer"
-			:class="wrapClasses"
-			:allowfullscreen="fullscreen"
-			@click.self="clickMask"
-			ref="wrap"
-		>
-			<transition :name="transitionname" appear @after-leave="afterLeave">
-				<div
-					v-if="visible"
-					ref="modal"
-					:allowfullscreen="fullscreen"
-					:class="contentClasses"
-					:style="contentStyles"
-				>
-					<span :class="[_tobogPrefix_ + '-icons']">
-						<template v-if="fullscreen">
-							<Icons :class="[_tobogPrefix_+'-full']" @click.native="handleFullscreen" type="ios-expand"></Icons>
-							<Icons :class="[_tobogPrefix_+'-exit']" @click.native="handleFullscreen" type="ios-contract"></Icons>
-						</template>
-						<template v-if="closable">
-							<slot name="close">
-								<Icons type="ios-close" size="1.6em" @click.native="close"></Icons>
-							</slot>
-						</template>
-					</span>
-					<div v-if="showHeader" :class="headerClasses" ref="header">
-						<slot name="header">
-							<Icons v-if="prompt" type="info"></Icons>
-							{{title}}
-						</slot>
-					</div>
-					<div :class="[_tobogPrefix_ + '-body']" ref="body">
-						<slot></slot>
-					</div>
-					<div v-if="showFooter" :class="[_tobogPrefix_ + '-footer']" ref="footer">
-						<template v-if="!prompt">
-							<slot name="footer" :close="close" :confirm="confirm">
-								<Button
-									size="small"
-									@click.native="close"
-									style="margin-right:16px"
-								>{{langs('modal.close','关闭')}}</Button>
-								<Button theme="primary" size="small" @click.native="confirm">{{langs('modal.confirm','确认')}}</Button>
-							</slot>
-						</template>
-						<Button v-else :theme="prompt" long @click.native="confirm">{{langs('modal.confirm','确认')}}</Button>
-					</div>
-					<Loading v-if="loading" loading fix @on-close="loading=false" />
+	<transition name="fade" appear :data-vview-module="$options.name">
+		<section v-transfer-dom="transfer" :data-transfer="transfer">
+			<transition name="fade" appear @after-leave="afterLeave">
+				<div v-show="visible" :class="wrapClasses" @click.self="clickMask" allowfullscreen ref="wrap">
+					<transition :name="transitionname" appear>
+						<div
+							v-if="visible"
+							v-drag-move="dragable"
+							ref="modal"
+							allowfullscreen
+							:class="contentClasses"
+							:style="contentStyles"
+						>
+							<span :class="_tobogPrefix_ + '-icons'">
+								<template v-if="fullscreen">
+									<Icons
+										size="20"
+										:class="_tobogPrefix_+'-full'"
+										@click.native="handleFullscreen"
+										type="ios-expand"
+									></Icons>
+									<Icons
+										size="20"
+										:class="_tobogPrefix_+'-exit'"
+										@click.native="handleFullscreen"
+										type="ios-contract"
+									></Icons>
+								</template>
+								<template v-if="closable">
+									<slot name="close">
+										<Icons type="ios-close" size="27" @click.native="close"></Icons>
+									</slot>
+								</template>
+							</span>
+							<div v-if="showHeader" :class="headerClasses" ref="header">
+								<slot name="header">
+									<Icons v-if="prompt" type="info" style="margin-right:5px;"></Icons>
+									{{title}}
+								</slot>
+							</div>
+							<div :class="_tobogPrefix_ + '-body'" ref="body">
+								<slot></slot>
+							</div>
+							<footer v-if="showFooter" :class="_tobogPrefix_ + '-footer'" ref="footer">
+								<template v-if="!prompt">
+									<slot name="footer" :close="close" :confirm="confirm">
+										<Button size="small" @click="close" style="margin-right:16px">{{langs.close}}</Button>
+										<Button theme="primary" size="small" @click="confirm">{{langs.confirm}}</Button>
+									</slot>
+								</template>
+								<Button v-else :theme="prompt" size="large" long @click.native="confirm">{{langs.confirm}}</Button>
+							</footer>
+							<Loading v-if="loading" loading fix @on-close="loading=false" />
+						</div>
+					</transition>
 				</div>
 			</transition>
 		</section>
@@ -60,35 +63,36 @@
 
 <script>
 import TransferDom from '../../directives/transfer-dom';
-import { EventListener, Fullscreen, DragMove } from '../../utils/dom';
-import { unit, validVal } from '../../utils/tool';
+import DragMove from '../../directives/drag-move';
+import { EventListener, Fullscreen } from '../../utils/dom';
 import Icons from '../icons/index';
 import Button from '../button/index';
 import Loading from '../loading/loading';
-import langMinix from '../../mixins/lang'
 export default {
 	name: 'Modal',
 	inheritAttrs: false,
-	mixins: [langMinix],
 	directives: {
-		TransferDom
+		TransferDom,
+		DragMove
 	},
 	components: {
 		Icons,
 		Button,
 		Loading
 	},
+
 	props: {
-		name: [String,Number],
-		value: Boolean,
+		name: [String, Number],
+		value: [Boolean, String],
+		// icon: String,
 		title: String,
-		modalStyle: [Object, String],
+		styles: [Object, String],
 		type: {
 			type: String,//modal,drawer
 			default: "modal"
 		},
 		width: {
-			type: Number,
+			type: [String, Number],
 			default: 520,
 		},
 		maskable: {
@@ -109,7 +113,7 @@ export default {
 		},
 		transfer: {
 			type: Boolean,
-			default: false,
+			default: true,
 		},
 		dragable: {
 			type: Boolean,
@@ -129,8 +133,7 @@ export default {
 		},
 		fixed: Boolean,
 		prompt: String,
-		async: Boolean,
-		position: Array,
+		async: Boolean
 	},
 	data() {
 		return {
@@ -139,8 +142,10 @@ export default {
 		};
 	},
 	mounted() {
-		this.visible = this.visible ? 1 : 0;
 		EventListener.on(document, 'keydown', this.escClose);
+		this.$nextTick(() => {
+			this.handleBodyHeight();
+		})
 	},
 	activated() {
 		EventListener.on(document, 'keydown', this.escClose);
@@ -148,67 +153,90 @@ export default {
 	deactivated() {
 		EventListener.off(document, 'keydown', this.escClose);
 	},
-
+	watch: {
+		value(val) {
+			this.delayToggle(val);
+		},
+		visible: {
+			immediate: true,
+			handler(val, old) {
+				this.handleOverflow(val);
+				this.$emit('on-visible-change', val, this.name);
+				this.$nextTick(() => {
+					if (!val && val !== old && !this.__destroyed__ && this.$attrs.autoDestroy && typeof this.$options.destroy === 'function' && this.$attrs.__pattern === 'js') {
+						this.__destroyed__ = true;
+						if (this.__offsetParent) this.__offsetParent.style.overflow = '';
+						this.$options.destroy(this.name);
+					}
+				})
+			}
+		},
+	},
 	computed: {
-		wrapClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				`${_tobogPrefix_}-wrapper`,
-				`${_tobogPrefix_}-mask`,
-				{
-					[`${_tobogPrefix_}-fixed`]: this.fixed,
-				}
-			]
+		langs() {
+			const lang = {
+				'close': '关闭',
+				'confirm': '确认',
+			}
+			if (typeof this.$t !== 'function') return lang;
+			const langPrefix = this.__$langPrefix__,
+				obj = {};
+			Object.keys(lang).forEach((key) => {
+				let langKey = `${langPrefix}.modal.${key}`;
+				langKey = (this.__$langMap__ && this.__$langMap__[langKey]) ? this.__$langMap__[langKey] : langKey;
+				const value = this.$t(langKey)
+				obj[key] = langKey === value ? lang[key] : value;
+			})
+			return obj;
 		},
 		headerClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				`${_tobogPrefix_}-header`,
-				{
-					[`${_tobogPrefix_}-${this.prompt}`]: !!this.prompt,
-				}
-			];
-		},
-		contentClasses() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-drawer`]: this.type === 'drawer',
-
-				}
-			];
+			return [`${this._tobogPrefix_}-header`, {
+				[`${this._tobogPrefix_}-${this.prompt}`]: this.prompt,
+			}];
 		},
 		transitionname() {
 			return this.type === 'drawer' ? 'move-right' : 'slide-up'
 		},
-
+		wrapClasses() {
+			return `${this._tobogPrefix_}-wrap ${this._tobogPrefix_}-mask`;
+		},
+		contentClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_, type = this.type;
+			return [
+				_tobogPrefix_,
+				{
+					[`${_tobogPrefix_}-drawer`]: type === 'drawer',
+				}
+			];
+		},
 		contentStyles() {
-			const style = this.modalStyle || "",
-				width = unit(this.width),
-				[top, right, bottom, left] = this.position || [],
-				margin = this.type === 'drawer' ? '' : [
-					validVal(top) ? unit(top) : 'auto',
-					validVal(right) ? unit(right) : 'auto',
-					validVal(bottom) ? unit(bottom) : 'auto',
-					validVal(left) ? unit(left) : 'auto',
-				].join(' ');
-			return typeof style == 'string' ? `width:${width};margin:${margin};${style}` : {
-				width,
-				margin,
-				...style,
+			let width = this.width;
+			if (width) width = parseFloat(width) == width ? `${width}px` : width;
+			if (typeof styles == 'string') {
+				return `width:${width};${this.styles}`;
 			}
+			return { width, ...this.styles };
 		},
 	},
 	methods: {
-		dragMove() {
-			if (!this.dragable || !this.visible) return;
+		handleOverflow(val) {
+			clearTimeout(this.__timeout2);
+			this.__timeout2 = setTimeout(() => {
+				this.__offsetParent = this.$el.offsetParent || this.__offsetParent;
+				if (this.__offsetParent) this.__offsetParent.style.overflow = val ? 'hidden' : '';
+			}, 200);
+		},
+		handleBodyHeight() {
+			if (!this._isMounted || !this.fixed) return;
+			const refs = this.$refs, body = refs.body;
+			if (!body) return;
 			this.$nextTick(() => {
-				if (this._DragMove) {
-					this._DragMove.update(this.$refs.modal)
-					return
-				}
-				this._DragMove = new DragMove(this.$refs.modal);
+				const wrapHeight = (refs.modal || {}).offsetHeight || 0,
+					headerHeight = (refs.header || {}).offsetHeight || 0,
+					footerHeight = (refs.footer || {}).offsetHeight || 0,
+					style = body.style;
+				style.height = wrapHeight - headerHeight - footerHeight + 'px';
+				style.overflow = 'auto';
 			})
 		},
 		handleFullscreen() {
@@ -232,12 +260,10 @@ export default {
 		confirm() {
 			if (!this.async) this.visible = false;
 			this.loading = true;
-			this.$emit('on-confirm', this.name,()=>{
-				this.visible=false;
-			});
+			this.$emit('on-confirm', this.name);
 		},
 		escClose(e) {
-			if (this.visible && this.closable && e.keyCode === 27) this.close();
+			if (this.value && this.closable && e.keyCode === 27) this.close();
 		},
 		delayToggle(val) {
 			clearTimeout(this.__timeOut);
@@ -255,68 +281,13 @@ export default {
 				this.visible = val;
 			}
 		},
-		handleOverflow(val) {
-			if (!((val && !this._isOverflowed_) || (!val && this._isOverflowed_)) || !this._isMounted) {
-				return
-			}
-			this.__offsetParent = this.__offsetParent || this.$el.offsetParent || document.body;
-			const dataset = this.__offsetParent.dataset,
-				overflowIndex = parseInt(dataset.overflowIndex || 0),
-				style = this.__offsetParent.style,
-				originOverflow = dataset.originOverflow;
-			if (val) {
-				this._isOverflowed_ = true;
-				dataset.overflowIndex = overflowIndex + 1;
-				if (originOverflow === undefined) dataset.originOverflow = style.overflow || '';
-				style.overflow = 'hidden';
-				return;
-			}
-			this._isOverflowed_ = false;
-			if (overflowIndex < 2) {
-				style.overflow = originOverflow;
-				delete dataset.originOverflow;
-				delete dataset.overflowIndex;
-				return;
-			}
-			dataset.overflowIndex = overflowIndex - 1;
-		},
-	},
-	watch: {
-		dragable(val, old) {
-			if (val == old) return;
-			this.dragMove();
-		},
-		value(val, old) {
-			this.delayToggle(val);
-		},
-		visible: {
-			handler(val, old) {
-				if (!this._isInserted) {
-					this.$nextTick(() => {
-						this._isInserted = true;
-						this.handleOverflow(val);
-					})
-				} else {
-					this.handleOverflow(val);
-				}
-				this.dragMove();
-				this.$nextTick(() => {
-					if (!val && old && this.$attrs.autoDestroy && typeof this.$options.destroy === 'function' && this.$attrs.__pattern === 'js') {
-						this.__destroyed__ = true;
-						this.$options.destroy(this.name);
-					}
-				})
-				this.$emit('on-visible-change', val, this.name);
-			}
-		},
 	},
 	beforeDestroy() {
-		if (this.visible) this.handleOverflow(false);
+		clearTimeout(this.__timeout2);
 		EventListener.off(document, 'keydown', this.escClose);
-		clearTimeout(this.__timeout);
-		this.__timeout  = null;
-		this._DragMove && this._DragMove.destroy();
 		if (!this.__destroyed__ && typeof this.$options.destroy === 'function' && this.$attrs.__pattern === 'js') this.$options.destroy(this.name);
+		this.__timeOut = this.__timeout2 = null;
+		if (this.__offsetParent) this.__offsetParent.style.overflow = '';
 	},
 };
 </script>

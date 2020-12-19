@@ -1,19 +1,13 @@
 
 <template>
 	<transition :name="transitionName" appear>
-		<aside :data-vue-module="$options.name" :class="[_tobogPrefix_]" :data-name="name" :data-type="type">
-			<!-- <div :class="[_tobogPrefix_]" :name="name"> -->
-			<slot>{{content}}</slot>
-			<render-cell v-if="!!renderFunc" :render="renderFunc" />
-			<Icons
-				v-if="closable"
-				type="ios-close"
-				:class="[_tobogPrefix_ + '-close']"
-				size="1.5em"
-				@click.native="close"
-			></Icons>
-			<!-- </!-->
-		</aside>
+		<div :data-vview-module='$options.name'>
+			<div :class="_tobogPrefix_" :name="name">
+			    <slot><div v-if="content" v-html="content"></div></slot>
+				<render-cell v-if="!!renderFunc" :render="renderFunc"/>
+				<Icons v-if="closable" type="ios-close" :class="_tobogPrefix_ + '-close'" size="22" @click.native="close"></Icons>
+			</div>
+		</div>
 	</transition>
 </template>
 
@@ -22,7 +16,6 @@ import RenderCell from '../render';
 import Icons from '../../icons/index';
 export default {
 	name: 'NoticeBase',
-	inheritAttrs:false,
 	components: {
 		RenderCell,
 		Icons,
@@ -39,8 +32,10 @@ export default {
 		render: Function,
 		closable: Boolean,
 		transitionName: String,
-		onClose: Function,
-		type:String
+		onClose: {
+			type: Function,
+			default: function () { }
+		},
 	},
 	computed: {
 		renderFunc() {

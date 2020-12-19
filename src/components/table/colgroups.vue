@@ -1,6 +1,11 @@
 <template>
 	<colgroup>
-		<col v-for="(column,index) in columns" v-bind="setCellWidth(column)" :key="index" />
+		<col
+			v-for="(column,index) in columns"
+			v-bind="column.col"
+			:key="index"
+			:width="setCellWidth(column)"
+		>
 	</colgroup>
 </template>
 
@@ -11,7 +16,7 @@ export default {
 	},
 	methods: {
 		setCellWidth(column) {
-			return column.width ? { width: column.width } : null
+			return column._width || column.width;
 		}
 	}
 };

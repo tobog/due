@@ -1,8 +1,8 @@
 import LoadingBar from './loading-bar.js';
 
-let instance, timer, Config, vmOptions;
+let instance, timer, config,vmOptions;
 function getInstance(props) {
-    instance = instance || LoadingBar.newInstance(Object.assign({}, Config, props), vmOptions);
+    instance = instance || LoadingBar.newInstance(Object.assign({}, config, props),vmOptions);
     return instance;
 }
 
@@ -11,12 +11,12 @@ function clearTimer() {
     timer = null;
 }
 
-LoadingBar.config = function (config, isVmOptions) {
-    if (isVmOptions) {
+LoadingBar.config = function (config, isvmOptions) {
+    if (isvmOptions) {
         vmOptions = config
-        return;
+    } else {
+        config = config;
     }
-    Config = config;
 };
 
 LoadingBar.start = function (props) {
@@ -51,7 +51,7 @@ LoadingBar.destroy = function (immediate = true) {
     let timeout = setTimeout(function () {
         if (instance) instance.destroy();
         instance = timeout = null;
-    }, immediate ? 0 : 5000);
+    }, immediate ? 0 : 3000);
 }
 
 export default LoadingBar

@@ -1,228 +1,181 @@
 $prefix-cls: #{$prefix}-date;
-$prefix-cls-picter: #{$prefix}-datepicter;
-$prefix-cls-day: #{$prefix}-dateday;
-$prefix-cls-time: #{$prefix}-datetimes;
-
 .#{$prefix-cls} {
-    max-width: 250px;
-    min-width: 240px;
+    position: relative;
+    z-index: 0;
+    width: 230px;
+    min-width: 230px;
     white-space: normal;
     border: 1px solid $border;
     min-height: 270px;
-    display: inline-flex;
-    flex-direction: column;
-    user-select: none;
-
-    &-content {
-        margin: 0 10px;
-        flex: auto;
-    }
-
-    &header {
-        flex: none;
-        width: 100%;
-        padding: 0 6px;
-        min-height: 36px;
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid $divider;
-
-        span {
-            cursor: pointer;
-        }
-
-        &-title:hover {
-            color: $primary;
-        }
-
-        &-base {
-            color: $sub-content;
-
-            &>span {
-                padding: 0 3px;
-
-                &:hover {
-                    color: $primary;
-                }
-            }
-        }
-    }
 }
 
-.#{$prefix-cls-picter} {
-    &-drop-wrapper {
-        overflow: hidden;
-        display: flex;
-        justify-content: flex-start;
-        .#{$prefix-cls-picter}-date:nth-of-type(2){
-            border-left: 0;;
-        }
-    }
-
-    &-aside {
-        background-color: $back;
-        min-width: 90px;
-        flex: none;
-        border: 1px solid $border;
-        border-right: 0;
-    }
-
-    &-shortcut {
-        padding: 9px 16px;
-        cursor: pointer;
-        // overflow: hidden;
-        // white-space: nowrap;
-        // text-overflow: ellipsis;
-
-        &:hover {
-            color: #fff;
-            background-color: $primary;
-        }
-    }
-
-    &-footer {
-        padding: 6px 8px;
-        overflow: hidden;
-        border: 1px solid $border;
-        border-top: 0;
-    }
+.#{$prefix-cls}-content {
+    min-height: 100%;
+    margin: 0 10px;
+    padding-top: 36px;
 }
-
 // cell
-.#{$prefix-cls} {
-    &-cell {
-        width: 33.33%;
+.#{$prefix-cls}-cell {
+    width: 33.33%;
+    box-sizing: border-box;
+    line-height: 28px;
+    padding: 8px 12px;
+    display: inline-block;
+    text-align: center;
+    margin-bottom: 2px;
+    em {
+        display: block;
+        border-radius: 3px;
         box-sizing: border-box;
-        line-height: 28px;
-        padding: 8px 12px;
-        display: inline-block;
-        text-align: center;
-        margin-bottom: 2px;
+        border: 1px solid transparent;
         cursor: pointer;
-
-        &>em {
-            display: block;
-            border-radius: 3px;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-weight: normal;
-            border: 1px solid transparent;
-
-            &:hover {
-                background-color: $hover;
-            }
+        &:hover {
+            background-color: $hover;
         }
-
-        &-range {
-
-            &,
-            em {
-                background-color: $hover;
-            }
-        }
-
-        &#{&}-selected {
-            &>em {
-                background-color: $primary;
-                color: #fff;
-            }
-        }
-
-        &#{&}-focus>em {
-            border: 1px solid $primary; // box-shadow: 0 0 1px $primary;
-            animation: #{$prefix-cls}-cell 1.2s infinite ease-in-out;
-        }
-
-        &#{&}-disabled {
-            cursor: not-allowed;
-            color: #fff;
-
-            &>em {
-                background-color: $disabled;
-            }
-        }
-
-        &-now>em {
-            position: relative;
-
-            &::before {
-                content: "";
-                position: absolute;
-                border: 3px solid $primary;
-                border-radius: 100%;
-                right: 1px;
-                top: 1px;
-            }
-
-        }
-
-        &-now#{&}-selected>em::before {
-            border-color: #fff;
-        }
-
     }
-
+    &.#{$prefix-cls}-cell-range {
+        &,
+        em {
+            background-color: $hover;
+        }
+    }
+    &.#{$prefix-cls}-cell-selected em {
+        background-color: $primary;
+        color: $white;
+    }
+    &.#{$prefix-cls}-cell-focus em {
+        border: 1px solid $primary; // box-shadow: 0 0 1px $primary;
+        animation: waterAni 1.2s infinite ease-in-out;
+    }
+    &.#{$prefix-cls}-cell-disabled em,
+    &.#{$prefix-cls}-cell-disabled {
+        background-color: $disabled;
+        cursor: not-allowed;
+        color: #c5c8ce;
+    }
 }
-
-
-@keyframes #{$prefix-cls}-cell {
+@keyframes waterAni {
     from {
         box-shadow: 0 0 3px $primary;
     }
-
     50% {
         box-shadow: 0 0 12px $dark-primary;
     }
-
     to {
         box-shadow: 0 0 3px $primary;
     }
 }
-
-
-
-
-// .#{$prefix-cls}-footer {
-//     border-top: 1px solid $divider;
-//     padding: 8px;
-//     overflow: hidden;
-//     position: absolute;
-//     bottom: 0;
-//     width: 100%;
-// }
-
-.#{$prefix-cls-day} {
-    &[data-week='true'] {
-        .#{$prefix-cls-day}-cell {
-            width: 12.5%;
-        }
+.#{$prefix-cls}-cell-now em {
+    position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        border: 3px solid $primary;
+        border-radius: 100%;
+        right: 1px;
+        top: 1px;
     }
+}
+.#{$prefix-cls}-cell-selected.#{$prefix-cls}-cell-now em {
+    &::before {
+        border-color: $white;
+    }
+}
+.#{$prefix-cls}-footer {
+    border-top: 1px solid $divider;
+    padding: 8px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
 
-    &-cell {
-        line-height: 24px;
-        width: 14.27%;
-        padding: 2px;
-
-        &-pre,
-        &-next {
-            color: $disabled;
-
-            &>em:hover {
-                background-color: transparent;
-            }
-        }
-
-        &-range {
-            background-color: $light-primary //#e1f0fe;
+$prefix-cls: #{$prefix}-dateheader;
+.#{$prefix-cls} {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 3;
+    border-bottom: 1px solid $divider;
+    user-select: none;
+    span {
+        cursor: pointer;
+    }
+}
+.#{$prefix-cls}-title {
+    &:hover {
+        color: $primary;
+    }
+}
+.#{$prefix-cls}-base {
+    position: absolute;
+    top: 0;
+    left: 12px;
+    color: $sub-content;
+    &>span {
+        padding: 0 3px;
+        &:hover {
+            color: $primary;
         }
     }
 }
+.#{$prefix-cls}-right {
+    left: initial;
+    right: 12px;
+}
 
+$prefix-cls-datepicter: #{$prefix}-datepicter;
+.#{$prefix-cls-datepicter}-drop-wrap {
+    overflow: hidden;
+    display: table-row;
+    &>* {
+        display: table-cell;
+    }
+    .#{$prefix-cls-datepicter}-aside {
+        background-color: $back;
+        overflow: auto;
+        vertical-align: top;
+        &>div {
+            padding: 10px 20px;
+            cursor: pointer;
+            &:hover {
+                color: #fff;
+                background-color: $primary;
+            }
+        }
+    }
+}
+.#{$prefix-cls-datepicter}-footer {
+    padding: 8px;
+    overflow: hidden;
+}
+$prefix-cls-day: #{$prefix}-dateday;
+.#{$prefix-cls-day}[data-week='true'] {
+    .#{$prefix-cls-day}-cell {
+        width: 12.5%;
+    }
+}
 
+.#{$prefix-cls-day}-cell {
+    line-height: 24px;
+    width: 14.27%;
+    padding: 2px;
+}
 
-.#{$prefix-cls-time} {
+.#{$prefix-cls-day}-cell-pre,
+.#{$prefix-cls-day}-cell-next {
+    color: $disabled;
+    em:hover {
+        background-color: transparent;
+    }
+}
+
+.#{$prefix-cls-day}-cell-range {
+    background-color: $light-primary //#e1f0fe;
+}
+
+$prefix-cls: #{$prefix}-datetimes;
+.#{$prefix-cls} {
     line-height: 2;
     overflow: hidden;
     height: 100%;
@@ -230,40 +183,35 @@ $prefix-cls-time: #{$prefix}-datetimes;
     margin: 0;
     padding-top: 0;
     cursor: pointer;
-
     &>header {
         line-height: 35px;
         border-bottom: 1px solid $divider;
     }
+}
 
-    &-list {
-        float: left;
-        width: 33.33%;
-        height: 100%;
-        max-height: 216px;
-        overflow: hidden;
+.#{$prefix-cls}-list {
+    float: left;
+    width: 33.33%;
+    height: 100%;
+    max-height: 216px;
+    overflow: hidden;
+}
+
+.#{$prefix-cls}-cell {
+    border-radius: 3px;
+    &:hover {
+        background-color: $back;
     }
-
-    &-cell {
-        border-radius: 3px;
-
-        &:hover {
-            background-color: $back;
-        }
-
-        &-focus {
-            border: 1px solid $light-primary;
-        }
-
-        &-selected {
-            color: $primary;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        &-disabled {
-            background-color: $disabled;
-            cursor: not-allowed;
-        }
+    &.#{$prefix-cls}-cell-focus {
+        border: 1px solid $light-primary;
+    }
+    &.#{$prefix-cls}-cell-selected {
+        color: $primary;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+    &.#{$prefix-cls}-cell-disabled {
+        background-color: $disabled;
+        cursor: not-allowed;
     }
 }

@@ -1,62 +1,54 @@
 $prefix-cls:#{$prefix}-option;
-
 .#{$prefix-cls} {
     margin: 0;
     padding: 6px 16px;
-    // font-size: $subFont;
+    font-size: 12px;
     line-height: 1.5;
     color: $content;
     // white-space: nowrap;
     cursor: pointer;
     transition: all .3s ease-in-out;
-
-    &:hover {
+    &:hover{
         background-color: $back;
     }
-
-    &#{&}-hover {
+    &.#{$prefix-cls}-hover {
         background-color: $light-primary;
-        color: #fff;
+        color: $white;
     }
-
-    &#{&}-selected {
-        color: #fff;
+    &.#{$prefix-cls}-selected {
+        color: $white;
         background-color: $primary;
     }
-
-    &#{&}-multiple-selected {
+    &.#{$prefix-cls}-multiple-selected {
         color: $primary;
         background: none;
-    }
-
-    &-disabled {
-        cursor: not-allowed;
-        pointer-events: none;
-        background-color: $disabled;
-    }
-
-    &-icon-selected {
-        font-size: 22px;
-        float: right;
+        // .#{$prefix-cls}-icon-selected {
+        //     display: block;
+        // }
     }
 }
 
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
         &.#{$prefix-cls}-selected {
             background-color: $value;
-            color: #fff;
+            color: $white;
         }
-
         &.#{$prefix-cls}-multiple-selected {
             color: $value;
             background: none;
         }
-
-        &.#{$prefix-cls}-hover {
-            background-color: rgba($value, 0.6);
-            color: #fff;
-        }
     }
+}
+
+.#{$prefix-cls}-disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: $disabled;
+}
+
+.#{$prefix-cls}-icon-selected {
+    // display: none;
+    font-size: 22px;
+    float: right;
 }

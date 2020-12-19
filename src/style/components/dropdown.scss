@@ -1,76 +1,50 @@
 $prefix-cls-drop: #{$prefix}-drop;
-$prefix-cls-dropdown: #{$prefix}-dropdown;
-$prefix-cls-dropwrapper: #{$prefix}-dropwrapper;
-
 .#{$prefix-cls-drop} {
     transform-origin: 0 0;
     position: absolute;
-    max-height: 270px;
+    max-height: 260px;
     overflow: auto;
     padding: 5px 0;
-    background-color: #fff;
+    background-color: $white;
     box-sizing: border-box;
-    border-radius: 3px;
+    border-radius: 4px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
     z-index: 100;
+    // transition: top 0.1s, bottom 0.1s, height 0.2s
 }
 
-.#{$prefix-cls-dropdown},
-.#{$prefix-cls-dropwrapper} {
+$prefix-cls-dropdown: #{$prefix}-dropdown;
+.#{$prefix-cls-dropdown} {
     display: inline-block;
-    outline: none !important;
-
-    &-ref {
+    .#{$prefix-cls-dropdown}-ref {
         position: relative;
     }
-
-    &-list {
-        max-height: unset;
-        max-height: initial;
-
-        // [data-vue-module="DropdownItem"],
-        &>*,
-        .#{$prefix}-dropdownitem {
-            line-height: normal;
-            padding: 7px 16px;
-            color: $content;
-            white-space: nowrap;
-            cursor: pointer;
-
-            &:hover {
-                background: $back;
-            }
-        }
-    }
-
-    &-button {
-        display: flex;
-        flex-direction: row-reverse;
-
-        .#{$prefix}-icons {
-            transform: translateX(7px);
-            transition: transform 0.2s linear;
-        }
-    }
-
-    &-open>&-ref &-button .#{$prefix}-icons {
-        transform: translateX(7px) rotate(180deg);
-    }
-
 }
 
+.#{$prefix-cls-dropdown}-list {
+    max-height: unset;
+    [data-vview-module="DropdownItem"] {
+        line-height: normal;
+        padding: 7px 16px;
+        color: $content;
+        white-space: nowrap;
+        cursor: pointer;
+        &:hover {
+            background: $back;
+        }
+    }
+}
 
-.#{$prefix}-dropdownitem {
-    &#{&}-disabled {
+$prefix-cls-dropdownitem: #{$prefix}-dropdownitem;
+.#{$prefix-cls-dropdownitem} {
+    &.#{$prefix-cls-dropdownitem}-disabled {
         cursor: not-allowed;
         color: $disabled;
     }
-
-    &#{&}-selected {
+    &.#{$prefix-cls-dropdownitem}-selected {
         color: $primary;
     }
-
-    &#{&}-divided {
+    &.#{$prefix-cls-dropdownitem}-divided {
         border-bottom: 1px solid $border;
     }
 }

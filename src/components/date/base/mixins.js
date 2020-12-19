@@ -1,7 +1,5 @@
 import Dates, { compareEqual } from "../../../utils/dates";
-import langMinix from '../../../mixins/lang'
 export default {
-    mixins: [langMinix],
     props: {
         calendar: Object,
         dates: Array,
@@ -22,18 +20,6 @@ export default {
         };
     },
     computed: {
-        isDay() {
-            return this.status === 'day'
-        },
-        isMonth() {
-            return this.status === 'month'
-        },
-        isYear() {
-            return this.status === 'year'
-        },
-        isTimes() {
-            return this.status === 'times'
-        },
         wrapClasses() {
             return this._tobogPrefix_ + this.prefix;
         },
@@ -57,6 +43,13 @@ export default {
     },
     methods: {
         handleEqual: compareEqual,
+        langs(key, defaultVal, val = {}) {
+            if (typeof this.$t !== 'function') return defaultVal;
+            key = `${this.__$langPrefix__}.datepicker.${key}`;
+            key = (this.__$langMap__ && this.__$langMap__[key]) ? this.__$langMap__[key] : key;
+            const value = this.$t(key, val)
+            return key === value ? defaultVal : value;
+        },
         handleCell(date, type) {
             return {
                 date,

@@ -1,19 +1,20 @@
 $prefix-cls: #{$prefix}-tag;
 
+
 .#{$prefix-cls} {
     display: inline-flex !important;
     margin: 2px 4px 2px 0;
     padding: 3px 8px;
     border: 1px solid $border;
     border-radius: 3px;
-    background: #fff;
+    background: $white;
     opacity: 1;
     overflow: hidden;
     color: $content;
     align-items: center;
     line-height: 18px;
 
-    &-large {
+    &-size-large {
         padding: 7px 13px;
 
         .#{$prefix-cls}-dot-inner {
@@ -22,11 +23,11 @@ $prefix-cls: #{$prefix}-tag;
         }
     }
 
-    &-small {
+    &-size-small {
         padding: 2px 5px;
     }
 
-    &-middle {
+    &-size-middle {
         padding: 5px 12px;
     }
 
@@ -35,9 +36,6 @@ $prefix-cls: #{$prefix}-tag;
         position: relative;
         right: -5px;
         flex: none;
-        &:hover{
-            font-weight: bold;
-        }
     }
 
     &-ellipsis &-text {
@@ -51,12 +49,12 @@ $prefix-cls: #{$prefix}-tag;
     @each $key,
     $value in $colors-map {
         &-color-#{$key}:not(.#{$prefix-cls}-dot):not(.#{$prefix-cls}-border) {
-            color: #fff;
+            color: $white;
             background: $value;
             border-color: $value;
 
             .#{$prefix-cls}-icons-close {
-                color: #fff;
+                color: $white;
             }
         }
 

@@ -5,6 +5,8 @@ $prefix-cls-item: #{$prefix}-timelineitem;
     list-style: none;
     margin: 0;
     padding: 0;
+    // display: flex !important;
+    // flex-direction: column;
 
     &item {
         margin: 0 !important;
@@ -14,7 +16,6 @@ $prefix-cls-item: #{$prefix}-timelineitem;
         min-height: 66px;
 
         &-tail {
-            border: 0;
             border-left: 1px solid $border;
             position: absolute;
             left: 7px;
@@ -51,7 +52,7 @@ $prefix-cls-item: #{$prefix}-timelineitem;
             line-height: 1;
             border: 0;
             border-radius: 0;
-            font-size: $fontBase;
+            font-size: 12px;
             position: absolute;
             left: -13px;
             transform: translateY(-50%);
@@ -80,6 +81,7 @@ $prefix-cls-item: #{$prefix}-timelineitem;
 }
 
 .#{$prefix-cls}-horizontal {
+    // display: flex !important;
 
     .#{$prefix-cls}item {
         display: inline-block;
@@ -104,10 +106,10 @@ $prefix-cls-item: #{$prefix}-timelineitem;
         }
 
         &-tail {
+            border: none;
             border-top: 1px solid $border;
             top: 7px;
             left: 0;
-            bottom: initial;
             bottom: unset;
             right: 0;
         }

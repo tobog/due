@@ -1,82 +1,68 @@
 <template>
 	<ul :class="wrapClasses" :key="type">
-		<Cell
-			v-for="(child, index) in getRootNodeList"
-			:ref="index"
-			:key="child.linkIndex"
-			:draggable="draggable"
-			:dragTip="dragTip"
-			:selection="selection"
-			:type="type"
-			:node="child"
-			:isTransverse="isTransverse"
-			:multiple="multiple"
-			:always="always"
-			:indent="indent"
-			:expandStatus="expandStatus"
-			:activeIndex="activeIndex"
-		>
-			<slot></slot>
-		</Cell>
-		<Tooltip
-			v-if="getDragPopper && reference && popperTip"
-			:reference="reference"
-			:theme="theme || 'drak'"
-			always
-			gpu
-			placement="top-center"
-			offset="10"
-		>
-			<div slot="content" style="padding-top:3px">{{ popperTip }}</div>
-		</Tooltip>
+		<template v-for="(child,index) in cloneNodes">
+			<Cell
+				:ref="index"
+				:key="index"
+				:draggable="draggable"
+				:selection="selection"
+				:type="type"
+				:node="child"
+				:parent="parentNode"
+				:direction="direction"
+				:status="status"
+				:multiple="multiple"
+				:always="always"
+				:activeIndex="activeIndex"
+				:indent="indent"
+			></Cell>
+		</template>
 	</ul>
 </template>
 
 <script>
-import linkListMixin from "../../mixins/linkList";
-import Cell from "./node";
-import Tooltip from "../tooltip/index";
-import { validVal } from "../../utils/tool";
+import Cell from './node';
+import { deepCopy } from '../../utils/tool';
 
 export default {
-	name: "Tree",
-	mixins: [linkListMixin],
-	provide() {
-		return { "$RootTreeInstance": this };
-	},
-	components: { Cell, Tooltip },
+	name: 'Tree',
+	components: { Cell },
 	props: {
 		draggable: Boolean,
 		render: Function,
 		selection: Boolean,
 		multiple: Boolean,
 		always: Boolean,
+		data: {
+			type: Array,
+			default() {
+				return [];
+			},
+		},
 		type: {
 			type: String,
 			// validator(value) {
 			// 	return oneOf(value, ['tree', 'menu']);
 			// },
-			default: "tree"
+			default: 'tree',
 		},
 		theme: {
-			type: String
+			type: String,
 			// default: 'primary',
 		},
-		isTransverse: {
-			type: Boolean,
-			default: false
+		direction: {
+			// validator(value) {
+			// 	return oneOf(value, ['horizontal', 'vertical']);
+			// },
+			default: 'vertical',
 		},
-		dragTip: {
+		identifier: {
 			type: String,
-			default: "line" //line,popper,all,none
+			default: "key"
 		},
 		indent: {
 			type: Boolean,
-			default: true
-		},
-		selectOnlySelf: {
-			type: Boolean,
-			default: false
+			default: true,
 		},
 		toggleActive: {
 			type: Boolean,
@@ -85,30 +71,34 @@ export default {
 	},
 	data() {
 		return {
-			expandStatus: [],
-			reference: null,
-			popperTip: null,
+			cloneNodes: [],
+			status: null,
 			activeIndex: '',
+			linkedList: [],
 		};
 	},
 	created() {
-		this.$on("on-check", this.handleCheck);
-		this.$on("on-drop", this.handleDrop);
-		this.$on("on-expand", this.updateExpand);
-		this.$on("on-dragDrop", this.handleDragDrop);
-		this.$on("on-dropTip", this.handleDropTip);
+		this.$on('on-check', this.handleCheck);
+		this.$on('on-drop', this.handleDrop);
+		this.$on('on-status', this.updateStatus);
 		this.$on('on-active', this.updateActive);
-		this.initData();
+		this.initData(this.data);
 	},
 	watch: {
 		data: {
 			deep: true,
 			handler(val) {
-				this.initData();
-			}
-		}
+				this.initData(val);
+			},
+		},
 	},
+
 	computed: {
+		parentNode() {
+			return {
+				children: this.cloneNodes
+			}
+		},
 		wrapClasses() {
 			const _tobogPrefix_ = this._tobogPrefix_;
 			return [
@@ -116,263 +106,173 @@ export default {
 				{
 					[`${_tobogPrefix_}-${this.type}`]: !!this.type,
 					[`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
-					[`${_tobogPrefix_}-transverse`]: this.isTransverse
-				}
+					[`${_tobogPrefix_}-${this.direction}`]: !!this.direction,
+				},
 			];
 		},
-		getDragPopper() {
-			return (
-				this.draggable &&
-				(this.dragTip === "all" || this.dragTip === "popper")
-			);
-		},
-		getDragLine() {
-			return (
-				this.draggable &&
-				(this.dragTip === "all" || this.dragTip === "line")
-			);
-		}
 	},
 	methods: {
-		initData() {
-			const headNodeList = this.getHeadNodes();
-			const nodeList = (this.nodeList = this.handleNodeList(
-				headNodeList
-			));
-			const len = nodeList.length;
-			for (let i = len; i--; i > -1) {
-				this.updateUpTree(nodeList[i]);
+		// 对外提供
+		initStatus(linkIndex = '') {
+			if (linkIndex instanceof Array) {
+				const key = linkIndex[0] || this.identifier,
+					val = linkIndex[1],
+					data = this.linkedList.find(function (item) {
+						return item.node[key] == val;
+					}) || { node: {} };
+				linkIndex = data.node._linkIndex || "";
 			}
-			this.rootNode = this.initRootNode(headNodeList.length);
+			console.log(linkIndex)
+			this.status = linkIndex.split(',');
 		},
-		updateUpTree(node, loop = false) {
-			if (!node) return;
-			const parentIndex = node.parent;
-			if (!validVal(parentIndex)) return;
-			const parent = this.nodeList[parentIndex],
-				parentData = parent.data,
-				isOnlySelf = this.getSelectOnlySelf(parentData.selectOnlySelf),
-				data = node.data;
-			console.log(isOnlySelf, "os");
-			if (!isOnlySelf) {
-				if (data.selected) {
-					const isAll = parent.childIndexs.every(index => {
-						return this.nodeList[index].data.selected;
-					});
-					this.$set(parentData, "selected", isAll);
-					this.$set(parentData, "indeterminate", !isAll);
-				} else {
-					this.$set(parentData, "selected", false);
-					this.$set(
-						parentData,
-						"indeterminate",
-						parent.childIndexs.some(index => {
-							const { selected, indeterminate } = this.nodeList[
-								index
-							].data;
-							return selected || indeterminate;
-						})
-					);
-				}
-			}
-			if (loop) this.updateUpTree(parent);
-		},
-		updateDownTree(node, changes = {}) {
-			const data = node.data;
-			for (let key in changes) {
-				this.$set(data, key, changes[key]);
-			}
-			const childIndexs = node.childIndexs;
-			if (childIndexs && childIndexs.length) {
-				childIndexs.forEach(index => {
-					this.updateDownTree(this.nodeList[index], changes);
-				});
+		initData(val) {
+			this.cloneNodes = deepCopy(val);
+			this.linkedList = this.compileNodeState();
+			for (let i = this.linkedList.length; i--; i > -1) {
+				this.updateUpTree(this.linkedList[i].node);
 			}
 		},
-		getSelectOnlySelf(selectOnlySelf) {
-			return selectOnlySelf === undefined || selectOnlySelf === ""
-				? this.selectOnlySelf
-				: selectOnlySelf;
-		},
-		updateExpand(node, expand) {
-			const linkIndex = node.linkIndex;
-			if (this.multiple) {
-				if (expand) {
-					this.expandStatus.push(linkIndex);
-				} else {
-					const index = this.expandStatus.indexOf(linkIndex);
-					index > -1 && this.expandStatus.splice(index, 1);
-				}
-			} else {
-				this.expandStatus = expand ? [linkIndex] : [];
-			}
-			this.$emit("on-expand-change", expand, { ...node });
+		updateStatus(node, expand) {
+			if (expand) this.initStatus(node._linkIndex);//用来跟新非multiple的
+			this.$emit('on-expand-change', expand, { ...node });
 		},
 		updateActive(node) {
 			if (!this.toggleActive && !node) return;
 			this.activeIndex = node ? node._linkIndex : null;
 			this.$emit('on-active-change', this.activeIndex ? true : false, node ? { ...node } : null);
 		},
-		handleCheck(node, val) {
-			if (!this.selection) return;
-			const data = node.data,
-				isOnlySelf = this.getSelectOnlySelf(data.selectOnlySelf);
-			if (isOnlySelf) {
-				this.$set(data, "selected", val);
-				this.$set(data, "indeterminate", false);
+		compileNodeState() {
+			let key = 0, linkedList = [],
+				convertNode = function (data, parent = '') {
+					data.forEach((node, index) => {
+						let _index = key++, obj = { node, _index };
+						node._index = _index;
+						node._deepIndex = index;
+						linkedList[_index] = obj;
+						if (parent) {
+							const parentNode = parent.node;
+							node._linkIndex = `${parentNode._linkIndex},${index}`;
+							obj.parent = parent._index;
+							parent.children.push(_index);
+						} else {
+							node._linkIndex = `${index}`;
+						}
+						if (node.children) {
+							obj.children = [];
+							convertNode(node.children, obj);
+						}
+					});
+				};
+			convertNode(this.cloneNodes);
+			return linkedList;
+		},
+		handleDrop(dropIn, dragIn, insert) {
+			const linkedList = this.linkedList;
+			const cloneNodes = this.cloneNodes;
+			let dragData = linkedList[dragIn],
+				dropData = linkedList[dropIn],
+				dragTemp = dragData.node,
+				dropTemp = dropData.node,
+				dragIndex = dragTemp._deepIndex,
+				dropIndex = dropTemp._deepIndex,
+				dragPChildren = dragData.parent !== undefined ? linkedList[dragData.parent].node.children : cloneNodes,
+				dropPChildren = dropData.parent !== undefined ? linkedList[dropData.parent].node.children : cloneNodes,
+				type = 'sort';
+			if (insert) {
+				if (!dropTemp.children) this.$set(dropTemp, 'children', []);
+				dropTemp.children.push(dragPChildren.splice(dragIndex, 1)[0]);
+				type = 'insert';
 			} else {
-				this.updateDownTree(node, {
-					selected: val,
-					indeterminate: false
+				const isUp = dragIn > dropIn;
+				type = isUp ? 'up' : 'down';
+				dropPChildren.splice(isUp ? dropIndex : dropIndex + 1, 0, dragTemp);
+				dragPChildren.some(function (item, index) {
+					if (item === dragTemp) {
+						dragPChildren.splice(index, 1);
+						return true;
+					}
+				})
+			}
+
+			// if (insert) {
+			// 	if (!dropTemp.children) this.$set(dropTemp, 'children', []);
+			// 	dropTemp.children.push(dragPChildren.splice(dragIndex, 1)[0]);
+			// 	type = 'insert';
+			// } else {
+			// 	if (dragPChildren === dropPChildren) {
+			// 		if (dragIndex < dropIndex) {
+			// 			type = 'down';
+			// 		} else {
+			// 			type = 'up';
+			// 		}
+			// 		dropPChildren.splice(dragIndex, 1);
+			// 		dropPChildren.splice(dropIndex, 0, dragTemp);
+			// 	} else {
+			// 		this.$set(dragPChildren, dragIndex, dropTemp);
+			// 		this.$set(dropPChildren, dropIndex, dragTemp);
+			// 		type = 'exchange';
+			// 	}
+			// }
+			this.linkedList = this.compileNodeState();
+			this.$nextTick(() => {
+				this.updateUpTree(dragTemp, true);
+				this.$nextTick(() => {
+					this.$forceUpdate();
+					this.$emit('on-drop-change', dragTemp, dropTemp, type);
+				})
+			})
+		},
+		handleCheck(val, node) {
+			if (!this.selection) return;
+			this.updateDownTree(node, { selected: val, _indeterminate: false });
+			this.$nextTick(() => {
+				this.updateUpTree(node, true);
+				this.$emit('on-check-change', val, { ...node }, this.filterData('selected', this.identifier), this.filterData('_indeterminate', this.identifier));
+			});
+		},
+		updateDownTree(node, changes = {}) {
+			for (let key in changes) {
+				this.$set(node, key, changes[key]);
+			}
+			const children = node.children;
+			if (children && children.length) {
+				children.forEach(child => {
+					this.updateDownTree(child, changes);
 				});
 			}
-			this.$nextTick(() => {
-				if (!isOnlySelf) this.updateUpTree(node, true);
-				this.$emit(
-					"on-select-change",
-					val,
-					{ ...node },
-					this.filterData("selected", this.identifier),
-					this.filterData("indeterminate", this.identifier)
-				);
-			});
+		},
+		updateUpTree(node, loop = false) {
+			if (!node) return;
+			const data = this.linkedList[node._index], parentKey = data.parent;
+			if (parentKey === undefined) return;
+			const parent = this.linkedList[parentKey].node;
+			if (node.selected) {
+				const isAll = parent.children.every(node => node.selected);
+				this.$set(parent, 'selected', isAll);
+				this.$set(parent, '_indeterminate', !isAll);
+			} else {
+				this.$set(parent, 'selected', false);
+				this.$set(parent, '_indeterminate', parent.children.some(node => node.selected || node._indeterminate));
+			}
+			if (loop) {
+				this.updateUpTree(parent);
+			}
 		},
 		filterData(key, targetKey, val = true) {
 			const arr = [];
-			this.nodeList.forEach(node => {
-				const data = node.data;
+			this.linkedList.forEach(child => {
+				const node = child.node;
 				if (node[key] === val) {
-					arr.push(
-						targetKey !== undefined ? node[targetKey] : { ...node }
-					);
+					arr.push(targetKey !== undefined ? node[targetKey] : { ...node });
 				}
 			});
 			return arr;
 		},
-		// 对外提供
-		initStatus(key, val) {
-			const index = this.nodeList.findIndex(node => {
-				return node.data[key] == val;
-			});
-			this.updateExpand(index, true);
-		},
-		handleSortNode(linkIndex = "", compareLink = "") {
-			linkIndex = linkIndex.split(",");
-			compareLink = compareLink.split(",");
-			return linkIndex.some((val, index) => {
-				return val > (compareLink[index] || 0);
-			});
-		},
-		updateNodeLinkList(node) {
-			const identifier = this.identifier;
-			const iteratorNode = (childIndexs, parent) => {
-				childIndexs.forEach((key, index) => {
-					const node = this.nodeList[key],
-						id = node.data[identifier],
-						obj = { ...node, sortIndex: index };
-
-					if (parent) {
-						obj.parent = parent.index;
-						obj.linkIndex = parent.linkIndex
-							? `${parent.linkIndex},${index}`
-							: `${index}`;
-						parent.childIds.push(id);
-					}
-					this.$set(this.nodeList, key, obj);
-					const childIndexs = node.childIndexs;
-					if (childIndexs && childIndexs.length) {
-						obj.childIds = [];
-						iteratorNode(childIndexs, obj);
-					}
-				});
-			};
-			const childIndexs = node.childIndexs;
-			if (childIndexs) {
-				node.childIds = [];
-				iteratorNode(childIndexs, node);
-			}
-		},
-		handleDragDrop(data) {
-			if (data.type === "dragstart") {
-				this._dragData = data;
-				return;
-			}
-			if (
-				data.type === "drop" &&
-				data.linkIndex !== undefined &&
-				this._dragData
-			) {
-				const nodeList = this.nodeList,
-					dragData = this._dragData,
-					insert = data.insert,
-					dragNode = nodeList[dragData.index],
-					dropNode = nodeList[data.index],
-					dragIndex = dragNode.sortIndex,
-					dropIndex = dropNode.sortIndex,
-					dragParent =
-						dragNode.parent !== undefined
-							? nodeList[dragNode.parent]
-							: this.rootNode,
-					dropParent =
-						dropNode.parent !== undefined
-							? nodeList[dropNode.parent]
-							: this.rootNode,
-					dragPChildIndexs = dragParent.childIndexs,
-					dropPChildIndexs = dropParent.childIndexs;
-				let type = "sort";
-				if (insert == 2) {
-					if (!dropNode.childIndexs)
-						this.$set(dropNode, "childIndexs", []);
-					dragPChildIndexs.splice(dragIndex, 1);
-					dropNode.childIndexs.push(dragNode.index);
-					type = "insert";
-				} else {
-					const isUp = insert == 1,
-						type = isUp ? "up" : "down";
-					dropPChildIndexs.splice(
-						isUp ? dropIndex : dropIndex + 1,
-						0,
-						dragData.index
-					);
-					if (dropPChildIndexs === dragPChildIndexs) {
-						dragPChildIndexs.splice(
-							isUp ? dragIndex + 1 : dragIndex,
-							1
-						);
-					} else {
-						dragPChildIndexs.splice(dragIndex, 1);
-					}
-				}
-				this.$nextTick(() => {
-					this.updateNodeLinkList(dragParent);
-					dragParent !== dropParent &&
-						this.updateNodeLinkList(dropParent);
-					this.$emit("on-drop-change", dragNode, dropNode, type);
-				});
-			}
-			this.$nextTick(() => {
-				this._dragData = this.reference = this.popperTip = null;
-			});
-		},
-		handleDropTip(data, event) {
-			if (!this.getDragPopper) return;
-			const { value } = data;
-			const reference = event.currentTarget.querySelector(
-				`.${this._tobogPrefix_}node-text`
-			);
-			let popperTip = false;
-			if (this.reference !== reference) this.reference = reference;
-			if (value == 2) {
-				popperTip = "作为子节点插入";
-			} else if (value == 1) {
-				popperTip = "作为前一节点插入";
-			} else if (value == 3) {
-				popperTip = "作为后一节点插入";
-			} else {
-				popperTip = false;
-			}
-			this.popperTip = popperTip;
-		}
-	}
+	},
+	beforeDestroy() {
+		this.$off('on-check', this.handleCheck);
+		this.$off('on-drop', this.handleDrop);
+		this.$off('on-status', this.updateStatus);
+	},
 };
 </script>

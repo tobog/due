@@ -1,6 +1,11 @@
 <template>
-	<transition appear :data-vue-module="$options.name" :name="transition" v-on="transitionListeners">
-		<div ref="drop" :class="[_tobogPrefix_]" v-offset-dom="{reference,options}" v-on="listeners">
+	<transition
+		appear
+		:data-vview-module="$options.name"
+		:name="transition"
+		v-on="transitionListeners"
+	>
+		<div ref="drop" :class="_tobogPrefix_" v-offset-dom="{reference,options}" v-on="listeners">
 			<slot></slot>
 		</div>
 	</transition>

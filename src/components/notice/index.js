@@ -19,11 +19,10 @@ function notice(type, options = {}) {
         desc = '',
         onClose,
         render,
-        duration = 5,
+        duration = 3,
         name,
-        maskable,
         ghost = false,
-        style,
+        style = "width:280px;",
         className = '', closable = true } = options,
         instance = getInstance();
 
@@ -33,11 +32,10 @@ function notice(type, options = {}) {
         theme: type,
         type: "notice",
         name,
-        maskable,
         duration,
         render: function (h) {
             const renderVnode = typeof render === 'function' ? render(h) : null;
-            return <Alert type={type} ghost={ghost} showIcon >
+            return <Alert type={type} ghost={ghost} showIcon style="margin-bottom:0;" >
                 {title}
                 {desc ? <template slot="desc" >
                     {desc}{renderVnode}
@@ -66,8 +64,8 @@ export default {
     error(options) {
         return notice('error', options);
     },
-    config(config, isVmOptions) {
-        if (isVmOptions) {
+    config(config, isvmOptions) {
+        if (isvmOptions) {
             vmOptions = config;
         } else {
             Config = config;

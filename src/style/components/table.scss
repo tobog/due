@@ -1,5 +1,5 @@
-$prefix-cls-fix: #{$prefix}-tablefix;
 $prefix-cls: #{$prefix}-table;
+$prefix-cls-simple: #{$prefix}-tablesimple;
 
 %ellipsis {
     overflow: hidden;
@@ -7,363 +7,206 @@ $prefix-cls: #{$prefix}-table;
     white-space: nowrap;
 }
 
-.#{$prefix-cls},
-.#{$prefix-cls-fix} {
-    &-wrapper {
-        position: relative;
-        // z-index: 6;
-        outline: 1px solid rgba($border, 0.8);
-        color: $content;
-        font-size: $fontBase;
-        box-sizing: content-box;
-        background-color: #fff;
-        display: block;
-    }
+.#{$prefix-cls}-wrapper,
+.#{$prefix-cls-simple}-wrapper {
+    position: relative;
+    z-index: 0;
+    border: 1px solid $border;
+    color: $content;
+    font-size: 12px;
+    box-sizing: content-box;
+    background-color: $white;
+    display: block;
+}
 
-    & {
+.#{$prefix-cls}-hide {
+    display: none;
+}
+
+.#{$prefix-cls-simple}-stripe table tr:nth-child(2n) td,
+.#{$prefix-cls}-stripe .#{$prefix-cls}-tbody tr:nth-child(2n) td,
+.#{$prefix-cls}-stripe .#{$prefix-cls}-tbody-fixed tr:nth-child(2n) td {
+    background-color: $back;
+}
+
+.#{$prefix-cls-simple}-hover tr {
+    &:hover {
+        td {
+            background-color: $hover !important;
+        }
+    }
+}
+
+.#{$prefix-cls-simple}-row-highlight td,
+.#{$prefix-cls}-row-hover td,
+.#{$prefix-cls}-row-highlight td {
+    background-color: $hover !important;
+}
+
+.#{$prefix-cls-simple}-ellipsis,
+.#{$prefix-cls}-ellipsis {
+    table td {
+        @extend %ellipsis;
+    }
+}
+
+.#{$prefix-cls}-thead,
+.#{$prefix-cls}-thead-fixed,
+.#{$prefix-cls}-tbody-fixed {
+    overflow: hidden;
+    background-color: $white;
+}
+
+.#{$prefix-cls}-left-fixed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 6px $border;
+}
+
+.#{$prefix-cls}-right-fixed {
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-shadow: -4px 0 6px $border;
+}
+
+.#{$prefix-cls-simple}-cell,
+.#{$prefix-cls}-cell {
+    height: 46px;
+}
+
+.#{$prefix-cls-simple}-splitbar,
+.#{$prefix-cls}-splitbar {
+    float: right;
+    width: 6px;
+    margin-right: -6px;
+    background-color: transparent;
+    cursor: col-resize;
+}
+.#{$prefix-cls-simple}-border,
+.#{$prefix-cls}-border{
+    border-right: none;
+    td,
+    th {
+        border-right: 1px solid $border;
+    }
+}
+
+// .#{$prefix-cls-simple}-expanded-cell,
+// .#{$prefix-cls}-expanded-cell{
+//     background-color: $back;
+// }
+.#{$prefix-cls-simple}-cell-expand,
+.#{$prefix-cls}-cell-expand
+{
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+.#{$prefix-cls-simple}-cell-expanded,
+.#{$prefix-cls}-cell-expanded{
+    transform: rotate(90deg);
+}
+
+@each $prefixkey in $prefix-cls-simple, $prefix-cls {
+    .#{$prefixkey} {
         height: 100%;
         max-width: 100%;
         border-radius: inherit;
         overflow: hidden;
         vertical-align: middle;
         line-height: 1.5;
-    }
-
-    &-stripe &-table tr:nth-child(2n) td {
-        background-color: $back;
-    }
-
-    &-hover &-table tr:hover,
-    &-row-hover,
-    &-row-highlight {
-        td {
-            background-color: $hover !important;
+        .#{$prefixkey}-cell-ellipsis {
+            @extend %ellipsis;
         }
 
-    }
-
-    &-ellipsis &-table td,
-    &-table &-cell-ellipsis {
-        @extend %ellipsis;
-    }
-
-    &-body {
-        height: 100%;
-        max-width: 100%;
-        overflow: auto;
-    }
-
-    &-table {
-        box-sizing: border-box !important;
-        display: table !important;
-        border-collapse: collapse;
-        word-wrap: break-word;
-        // table-layout: fixed;
-        background-color: #fff;
-        margin: 0;
-        padding: 0;
-        border-bottom: 1px solid $border;
-        width: 100%;
+        tr:last-child>td {
+            border-bottom-color: transparent;
+        }
 
         td,
         th {
+            padding: 6px;
+            height: 48px;
             box-sizing: border-box !important;
             border-bottom: 1px solid $border;
-            text-align: left;
-            padding: 6px;
-            height: 46px;
-            line-height: normal;
-            min-width: 50px;
+            text-align: left; // min-width: 60px;
+            white-space: normal;
+            word-break: break-all;
         }
 
         th {
             background-color: $back;
-
+            height: 46px;
+            word-wrap: break-word;
+            word-break: initial;
         }
     }
-
-
-
-    &-hide {
-        display: none;
-    }
-
-
-    &-cell-expand {
-        cursor: pointer;
-        text-align: center;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    &-cell-expanded {
-        transform: rotate(90deg);
-    }
-
-    &-splitbar {
-        float: right;
-        width: 3px;
-        margin-right: -6px;
-        max-height: 100%;
-        min-height: 3px;
-        background-color: transparent;
-        opacity: 0;
-        cursor: col-resize;
-        transform: scaleY(6);
-        overflow: hidden;
-    }
-
-    &-table &-cell-right {
-        text-align: right;
-    }
-
-    &-table &-cell-left {
-        text-align: left;
-    }
-
-    &-table &-cell-center {
-        text-align: center;
-    }
-
-    &-tip {
-        overflow: auto;
-        background-color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 60px;
-    }
-
-    &-summary {
-        overflow: hidden;
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    &-wrapper &-table>&-summary-body>tr td,
-    &-wrapper &-summary>&-table>tbody>tr td {
-        border-top: 1px solid $border !important;
-        background-color: inherit !important;
-    }
-
-    &-both &-table,
-    &-border &-table {
-
-        td,
-        th {
-            border: 1px solid $border;
-        }
-    }
-
-    // &-horizontal &-table{
-
-    // }
-    &-vertical &-table {
-        th {
-            border-right: 1px solid $border;
-        }
-
-        td {
-            border-color: transparent;
-            border-right: 1px solid $border;
-        }
-    }
-
-    &-none &-table {
-
-        td,
-        th {
-            border: none;
-        }
-    }
-
-    &-small &-table {
-
-        td,
-        th {
-            height: 36px;
-        }
-    }
-
-    &-large &-table {
-
-        td,
-        th {
-            padding: 9px 12px;
-            height: 56px;
-        }
-    }
-
 }
 
+.#{$prefix-cls}-tbody,
+.#{$prefix-cls}-tip {
+    overflow: auto;
+    background-color: $white;
+}
 
 .#{$prefix-cls} {
-
-    &-fixed-thead,
-    &-left-fixed,
-    &-right-fixed {
-        position: absolute;
-        top: 0;
-        z-index: 20;
-        background-color: #fff;
-        display: none;
-
-        .#{$prefix-cls}-expanded-cell {
-            visibility: hidden;
-        }
-    }
-
-    &-fixed-thead {
-        left: 0;
-    }
-
-    &-ready &-fixed-thead,
-    &-ready &-left-fixed,
-    &-ready &-right-fixed {
-        display: inline-block;
-    }
-
-    &-fixed-thead {
-        z-index: 10;
-        right: 0;
-        width: 100%;
-        box-shadow: 0 2px 6px -2px $border;
-        background-color: $back;
-    }
-
-    &-fixed-thead &-fixed-wrapper {
-        overflow-y: visible;
-        overflow-x: hidden;
-    }
-
-
-
-    &-body &-table {
-        min-width: 100%;
-    }
-
-    &-left-fixed {
-        box-shadow: 3px -1px 6px 0 $border;
-        left: 0;
-
-        &-wrapper {
-            overflow: hidden;
-        }
-    }
-
-
-    &-left-fixed &-fixed-wrapper,
-    &-right-fixed &-fixed-wrapper {
-        overflow-y: auto;
-        overflow-x: hidden;
-        max-height: 100%;
-    }
-
-    &-right-fixed-head,
-    &-left-fixed-head {
-        background-color: $back;
-        position: relative;
-        z-index: 10;
-        box-shadow: 3px 3px 6px 0 $border;
-    }
-
-    &-right-fixed-head &-table tr th:last-child {
-        border-right-color: $back;
-    }
-
-
-    &-right-fixed {
-        right: 0;
-        box-shadow: -3px -1px 6px 0 $border;
-        z-index: 10;
-    }
-
-    &-right-fixed>&-summary {
-        bottom: 0 !important;
-    }
-
-    &-fix-summary &-body &-summary-body,
-    &-fix-summary &-fixed-wrapper &-summary-body,
-    &-fix-header &-body thead {
-        visibility: hidden;
-    }
-
-
-    &-table .#{$prefix}-sort {
-        position: relative;
-        top: -6px;
-    }
-
-}
-
-.#{$prefix-cls-fix} {
-    &-table {
-        table-layout: fixed;
-    }
-
-    &-layout-auto &-table {
-        table-layout: auto;
-    }
-
-    & &-cell-hidden {
+    .#{$prefix-cls}-cell-hidden {
         visibility: hidden;
         opacity: 0;
     }
 
-    &-fixed-thead {
-        overflow: hidden;
-        background-color: $back;
+    table {
+        table-layout: fixed;
+        width: 100%;
     }
 
-    &-left-fixed,
-    &-right-fixed {
-        position: absolute;
-        top: 0;
-        box-shadow: 3px 0 6px -2px $border;
+    @each $align in left, right, center {
+        .#{$prefix-cls}-cell-#{$align} {
+            text-align: $align;
+        }
+    }
+}
 
-        .#{$prefix-cls-fix}-expanded-cell {
-            visibility: hidden;
+
+.#{$prefix-cls-simple} {
+    overflow: initial;
+    table {
+        width: 100%;
+        display: table !important;
+        min-height: 100%;
+        tr td.#{$prefix-cls-simple}-tip {
+            text-align: center;
+            background-color: initial !important;
         }
     }
 
-    &-left-fixed {
-        left: 0;
+    @each $align in left, right, center {
+        .#{$prefix-cls-simple}-cell-#{$align} {
+            text-align: $align;
+        }
     }
-
-    &-right-fixed {
-        right: 0;
-        box-shadow: -3px 0 6px -2px $border;
-    }
-
-    &-body-fixed {
-        overflow: hidden;
-        max-height: 100%;
-    }
-
-    &-fixed-wrapper {
-        overflow-y: auto;
-        overflow-x: hidden;
-        max-height: 100%;
-    }
-
-    &-scroll-tool {
-        height: 1px !important;
-        max-height: 1px !important;
-        overflow: hidden;
-    }
-
-    &-left-fixed,
-    &-left-fixed {
-        display: none;
-    }
-
-    &-ready &-left-fixed,
-    &-ready &-left-fixed {
-        display: block
-    }
-    &-summary {
-        bottom: 0.5px;
-    }
-
+    // tbody{
+    //     display: block;
+    //     // height: 80px;
+    //     overflow: scroll;
+    // }
+    // thead,tbody tr{
+    //     display: table;
+    //     width: 100%;
+    //     table-layout: fixed;
+    // }
 }
+.#{$prefix-cls-simple}-tooltip,
+.#{$prefix-cls}-tooltip{
+    max-width: 60vw;
+}
+.#{$prefix-cls-simple}-scroll{
+    overflow: auto;
+}
+
+
+
+

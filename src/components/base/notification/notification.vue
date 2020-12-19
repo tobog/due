@@ -1,7 +1,7 @@
 <template>
-	<section :class="wrapClasses" :data-vue-module="$options.name">
+	<div :class="wrapClasses" :data-vview-module="$options.name">
 		<NoticeBase v-for="notice in notices" :key="notice.name" v-bind="notice"></NoticeBase>
-	</section>
+	</div>
 </template>
 
 <script>
@@ -29,15 +29,17 @@ export default {
 		},
 		hasMask() {
 			return this.notices.some((notice) => {
-				return notice.maskable;
+				return notice.mask;
 			})
 		}
 	},
 	methods: {
 		add(notice = {}) {
-			this._nameLen = (this._nameLen || 0) + 1;
-			if (!notice.name) notice.name = `${this._uid}${this._nameLen}`
-			this.notices.push({ ...notice });
+			this.nameLength = (this.nameLength || 0) + 1;
+			notice.name = notice.name || `${this._uid}${this.nameLength}`;
+			this.notices.push({
+				...notice
+			});
 			return notice.name;
 		},
 		remove(name, isTheme) {
@@ -47,7 +49,7 @@ export default {
 				return item[key] !== name;
 			});
 		},
-		destroy() {
+		destory() {
 			this.notices = [];
 		},
 	},

@@ -2,127 +2,48 @@ $prefix-cls-row:#{$prefix}-row;
 $prefix-cls-col:#{$prefix}-col;
 
 .#{$prefix-cls-row} {
+    position: relative;
     margin: 0;
     zoom: 1;
     display: block;
-
-    &::after,
-    &::before {
-        content: "";
-        clear: both;
-        visibility: hidden;
-        font-size: 0;
-        height: 0;
-        width: 0;
-        zoom: 0;
-        display: table;
-    }
-
-    &-flex {
-        display: flex !important;
-        justify-content: flex-start;
-        // align-items: flex-start;
-        align-content: flex-start;
-        flex-wrap: wrap;
-    }
-
-    &-top {
-        align-items: flex-start;
-    }
-
-    &-middle {
-        align-items: center;
-    }
-
-    &-bottom {
-        align-items: flex-end;
-    }
-
-    &-stretch {
-        align-items: stretch;
-    }
-
-    &-start {
-        justify-content: flex-start;
-    }
-
-    &-center {
-        justify-content: center;
-    }
-
-    &-end {
-        justify-content: flex-end;
-    }
-
-    &-space-around {
-        justify-content: space-around;
-    }
-
-    &-space-between {
-        justify-content: space-between;
-    }
+    @extend .#{$prefix}-clearfix;
 }
-
 
 .#{$prefix-cls-col} {
-    float: left;
-    position: relative;
+    float: left; // display: block;
+    width: 100%;
     box-sizing: border-box;
-    flex: none;
-
-    &-0 {
-        width: 0;
-        display: none !important;
-    }
 }
 
-@mixin display($type:'') {
-    @each $display in none inline inline-block block flex inline-flex {
-        .#{$prefix}-d#{$type}-#{$display} {
-            display: #{$display} !important;
-        }
-    }
-}
-
-@mixin bootstrap($type:'') {
+@mixin bootstrap($type) {
     @for $i from 0 through 24 {
         $per: $i/24*100%;
 
-        .#{$prefix}-col#{$type}-order-#{$i} {
-            order: $i
-        }
-
-        .#{$prefix}-col#{$type}-#{$i} {
+        .col-#{$type}-#{$i} {
             width: $per;
-            // flex: 0 0 $per;
+            position: relative; // min-height: 1px;
+            float: left;
         }
 
-        .#{$prefix}-col#{$type}-offset-#{$i} {
+        .col-#{$type}-offset-#{$i} {
             margin-left: $per;
         }
 
-        .#{$prefix}-col#{$type}-pull-#{$i} {
+        .col-#{$type}-pull-#{$i} {
             right: $per;
         }
 
-        .#{$prefix}-col#{$type}-push-#{$i} {
+        .col-#{$type}-push-#{$i} {
             left: $per;
         }
     }
-
-    .#{$prefix}-col#{$type}-0 {
-        width: 0;
-        display: none !important;
-    }
 }
 
-@include display();
-@include bootstrap();
+$media-map:(xs:(max-width:768px), sm:(min-width:768px), md:(min-width:992px), lg:(min-width:1200px));
 
 @each $type,
 $media in $media-map {
     @media #{$media} {
-        @include display(-#{$type});
-        @include bootstrap(-#{$type});
+        @include bootstrap($type);
     }
 }

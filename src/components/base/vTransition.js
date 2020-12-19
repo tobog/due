@@ -1,11 +1,11 @@
-import { getStyles } from "../../utils/dom";
+import { getStyles } from "../../utils/dom"; //ClassList
 export default {
-    name: "UTransition",
+    name: "VTransition",
     functional: true,
     props: {
         duration: {
             type: Number,
-            default: 0.2,
+            default: 0.2
         },
     },
     render(h, ctx) {
@@ -14,7 +14,7 @@ export default {
             elTransition = `${duration}s height ease-in-out, ${duration}s opacity ease-in-out,${duration}s padding-top ease-in-out,${duration}s padding-bottom ease-in-out,${duration}s margin-top ease-in-out,${duration}s margin-bottom ease-in-out`;
         let tag = "transition",
             children = ctx.children;
-        if (children.length > 1 || (data.attrs && data.attrs.tag)) {
+        if (children.length > 1) {
             tag = "transition-group";
             children.forEach((child, index) => {
                 child.key = child.key || index;

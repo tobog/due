@@ -1,58 +1,4 @@
-import { throttle } from "./tool";
-
-export function getScroll() {
-    const docEl = document.documentElement, body = document.body;
-    if (body.scrollTop < docEl.scrollTop || body.scrollLeft < docEl.scrollLeft) return docEl;
-    return body;
-}
-
-export function isScroll(element) {
-    if (!element) return false;
-    const data = ["scroll", "auto"];
-    if (
-        data.indexOf(getStyle(element, "overflow")) !== -1 ||
-        data.indexOf(getStyle(element, "overflow-x")) !== -1 ||
-        data.indexOf(getStyle(element, "overflow-y")) !== -1
-    ) {
-        return true;
-    }
-    return false;
-}
-
-export function transformStyle(transform = "") {
-    const matrix = transform.replace(/[^0-9\-,]/g, '').split(',').filter(item => item !== "");
-    // const getRotate=function (a, b, c, d, e, f) {
-    //     var aa = Math.round(180 * Math.asin(a) / Math.PI);
-    //     var bb = Math.round(180 * Math.acos(b) / Math.PI);
-    //     var cc = Math.round(180 * Math.asin(c) / Math.PI);
-    //     var dd = Math.round(180 * Math.acos(d) / Math.PI);
-    //     var deg = 0;
-    //     if (aa == bb || -aa == bb) {
-    //         deg = dd;
-    //     } else if (-aa + bb == 180) {
-    //         deg = 180 + cc;
-    //     } else if (aa + bb == 180) {
-    //         deg = 360 - cc || 360 - dd;
-    //     }
-    //     return deg >= 360 ? 0 : deg;
-    // }
-
-    return matrix.length > 6 ? {
-        translateX: parseFloat(matrix[11] || 0),
-        translateY: parseFloat(matrix[12] || 0),
-        // scaleX: parseFloat(matrix[0]),
-        // scaleY: parseFloat(matrix[12]),
-        // rotate: parseFloat(matrix[12]),
-
-    } : {
-            translateX: parseFloat(matrix[4] || 0),
-            translateY: parseFloat(matrix[5] || 0),
-            // scaleX: parseFloat(matrix[0]),
-            // scaleY: parseFloat(matrix[3]),
-            // rotate: parseFloat(matrix[12]),
-
-        }
-}
+import { typeOf, throttle } from "./tool";
 
 export function getStyles(element, pseudoElt = null) {
     if (!element) return null;
@@ -72,9 +18,8 @@ export function getStyle(element, styleName, pseudoElt = null) {
     const style = getStyles(element, pseudoElt) || {};
     return style[styleName] || '';
 }
-let _AnimationFrame;
-function InitAnimationFrame() {
-    if (!window) return;
+
+export const AnimationFrame = (function () {
     const requestFrame =
         window.requestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -87,7 +32,7 @@ function InitAnimationFrame() {
             window.mozCancelAnimationFrame ||
             window.webkitCancelAnimationFrame ||
             window.clearTimeout;
-    return _AnimationFrame = {
+    return {
         requestFrame(fn) {
             return requestFrame(fn);
         },
@@ -95,66 +40,49 @@ function InitAnimationFrame() {
             return cancelFrame(id);
         }
     };
-}
-export const AnimationFrame = {
-    requestFrame: function (fn) {
-        if (!_AnimationFrame && !InitAnimationFrame()) return;
-        return _AnimationFrame.requestFrame(fn)
-    },
-    cancelFrame: function (id) {
-        if (!_AnimationFrame && !InitAnimationFrame()) return;
-        return _AnimationFrame.cancelFrame(id)
-    }
-}
+})();
 
-
-let _EventListener
-function InitEventListener() {
-    if (!document) return;
+export const EventListener = (function () {
     if (document.addEventListener) {
-        return _EventListener = {
-            on: function (element, events, handler) {
-                if (element && events && handler) {
-                    let eventList = events.split(",");
-                    eventList.forEach(event => {
-                        // element.removeEventListener(event, handler, false);
-                        element.addEventListener(event, handler, false);
-                    });
-                }
-            },
-            off: function (element, events, handler) {
+        let on = function (element, events, handler) {
+            if (element && events && handler) {
+                let eventList = events.split(",");
+                eventList.forEach(event => {
+                    // element.removeEventListener(event, handler, false);
+                    element.addEventListener(event, handler, false);
+                });
+            }
+        },
+            off = function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach(event => {
                         element.removeEventListener(event, handler, false);
                     });
                 }
+            };
+        return { on, off };
+    } else if (document.attachEvent) {
+        let on = function (element, events, handler) {
+            if (element && events && handler) {
+                let eventList = events.split(",");
+                eventList.forEach(event => {
+                    // element.detachEvent('on' + event, handler);
+                    element.attachEvent("on" + event, handler);
+                });
             }
-        }
-    }
-    if (document.attachEvent) {
-        return _EventListener = {
-            on: function (element, events, handler) {
-                if (element && events && handler) {
-                    let eventList = events.split(",");
-                    eventList.forEach(event => {
-                        // element.detachEvent('on' + event, handler);
-                        element.attachEvent("on" + event, handler);
-                    });
-                }
-            },
-            off: function (element, events, handler) {
+        },
+            off = function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach(event => {
                         element.detachEvent("on" + event, handler);
                     });
                 }
-            }
-        }
-    }
-    return _EventListener = {
-        on: function (element, events, handler) {
+            };
+        return { on, off };
+    } else {
+        let on = function (element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
                 eventList.forEach(event => {
@@ -162,43 +90,32 @@ function InitEventListener() {
                 });
             }
         },
-        off: function (element, events, handler) {
-            if (element && events && handler) {
-                let eventList = events.split(",");
-                eventList.forEach(event => {
-                    element["on" + event] = null;
-                });
-            }
-        }
+            off = function (element, events, handler) {
+                if (element && events && handler) {
+                    let eventList = events.split(",");
+                    eventList.forEach(event => {
+                        element["on" + event] = null;
+                    });
+                }
+            };
+        return { on, off };
     }
-}
+})();
 
-export const EventListener = {
-    on: function (element, events, handler) {
-        if (!_EventListener && !InitEventListener()) return;
-        return _EventListener.on(element, events, handler)
-    },
-    off: function (element, events, handler) {
-        if (!_EventListener && !InitEventListener()) return;
-        return _EventListener.off(element, events, handler)
-    }
-}
-
-
-// export const throttleEvent = function (type, name, obj) {
-//     obj = obj || window;
-//     var requestFrame = AnimationFrame.requestFrame,
-//         running = false,
-//         func = function () {
-//             if (running) return;
-//             running = true;
-//             requestFrame(function () {
-//                 obj.dispatchEvent(new CustomEvent(name));
-//                 running = false;
-//             });
-//         };
-//     EventListener.on(obj, type, func);
-// };
+export const throttleEvent = function (type, name, obj) {
+    obj = obj || window;
+    var requestFrame = AnimationFrame.requestFrame,
+        running = false,
+        func = function () {
+            if (running) return;
+            running = true;
+            requestFrame(function () {
+                obj.dispatchEvent(new CustomEvent(name));
+                running = false;
+            });
+        };
+    EventListener.on(obj, type, func);
+};
 
 export const ObserverDomSize = function () {
     let stylesCreated = false,
@@ -346,32 +263,14 @@ export const ObserverDomSize = function () {
         reset: resetTriggers
     };
 };
-
-let _Mutation;
-function _setMutation() {
+export const Mutation = (function () {
     const mutationObserver =
-        MutationObserver ||
+        window.MutationObserver ||
         window.WebkitMutationObserver ||
         window.MozMutationObserver ||
         window.MsMutationObserver;
-    if (mutationObserver) {
-        _Mutation = {
-            observer: function (dom, options = {}, callbck) {
-                let instance = new mutationObserver(callbck);
-                dom._mutationObserver_ = instance;
-                instance.observe(dom, options);
-                return instance;
-            },
-            destroy: function (dom) {
-                if (dom._mutationObserver_) {
-                    dom._mutationObserver_.disconnect();
-                    dom._mutationObserver_ = null;
-                }
-
-            }
-        }
-    } else {
-        _Mutation = {
+    if (!mutationObserver)
+        return {
             observer: function (dom, options = {}, callbck) {
                 EventListener.on(dom, "DOMAttrModified", callbck);
                 return dom;
@@ -379,22 +278,18 @@ function _setMutation() {
             destroy: function (dom, callbck) {
                 if (dom) EventListener.off(dom, "DOMAttrModified", callbck);
             }
+        };
+    return {
+        observer: function (dom, options = {}, callbck) {
+            let instance = new mutationObserver(callbck);
+            instance.observe(dom, options);
+            return instance;
+        },
+        destroy: function (observer, callbck) {
+            if (observer) observer.disconnect();
         }
-    }
-}
-export const Mutation = {
-    observer: function (dom, options = {}, callbck) {
-        if (!_Mutation) _setMutation();
-        _Mutation.observer(dom, options, callbck);
-        return dom;
-    },
-    destroy: function (dom, callbck) {
-        if (dom) {
-            if (!_Mutation) _setMutation();
-            _Mutation.destroy(dom, callbck);
-        }
-    }
-}
+    };
+})();
 
 export const Fullscreen = {
     _isFullscreen() {
@@ -510,21 +405,21 @@ export const Fullscreen = {
     }
 };
 
-let _cached;
+let cached;
 export function getScrollBarSize(fresh) {
-    if (fresh || _cached === undefined) {
+    if (fresh || cached === undefined) {
         const inner = document.createElement("div");
+        inner.style.width = "100%";
+        inner.style.height = "200px";
         const outer = document.createElement("div");
         const outerStyle = outer.style;
-        inner.style.width = "100%";
-        inner.style.height = "100px";
         outerStyle.position = "absolute";
         outerStyle.top = 0;
         outerStyle.left = 0;
         outerStyle.pointerEvents = "none";
         outerStyle.visibility = "hidden";
-        outerStyle.width = "100px";
-        outerStyle.height = "50px";
+        outerStyle.width = "200px";
+        outerStyle.height = "150px";
         outerStyle.overflow = "hidden";
         outer.appendChild(inner);
         document.body.appendChild(outer);
@@ -533,107 +428,179 @@ export function getScrollBarSize(fresh) {
         let widthScroll = inner.offsetWidth;
         if (widthContained === widthScroll) widthScroll = outer.clientWidth;
         document.body.removeChild(outer);
-        _cached = widthContained - widthScroll || 8;
+        cached = widthContained - widthScroll || 8;
     }
-    return _cached;
+    return cached;
 }
 
 // scrollTop animation
-// export function scrollTop(el, from = 0, to, duration = 500, endCallback) {
-//     // const clientSize = getClientSize('viewport');
-//     // const difference = Math.abs(from - to);
-//     // const step = Math.ceil(difference / duration * 50);
+export function scrollTop(el, from = 0, to, duration = 500) {
+    const difference = Math.abs(from - to);
+    const step = Math.ceil((difference / duration) * 50);
+    function scroll(start, end, step) {
+        if (start === end) return;
 
-//     // function scroll(start, end, step) {
-//     //     if (start === end) {
-//     //         endCallback && endCallback();
-//     //         return;
-//     //     }
+        let d = start + step > end ? end : start + step;
+        if (start > end) {
+            d = start - step < end ? end : start - step;
+        }
 
-//     //     let d = (start + step > end) ? end : start + step;
-//     //     if (start > end) {
-//     //         d = (start - step < end) ? end : start - step;
-//     //     }
+        if (el === window) {
+            window.scrollTo(d, d);
+        } else {
+            el.scrollTop = d;
+        }
+        AnimationFrame.requestFrame(function () {
+            scroll(d, end, step);
+        });
+    }
+    scroll(from, to, step);
+}
 
-//     //     if (el === window) {
-//     //         window.scrollTo(d, d);
-//     //     }
-//     //     AnimationFrame.requestFrame(() => scroll(d, end, step));
-//     // }
-//     // scroll(from, to, step);
-// }
+export class ScrollLoad {
+    constructor(element, options /*options = { offset: 60 }*/) {
+        let type = typeOf(options),
+            callback = function () {
+                console.warn("%c is not function", callback);
+            },
+            _options = { offset: 60 };
+        if (type === "function") {
+            callback = options;
+        } else if (options === "object") {
+            if (typeof options.callback === "function") {
+                callback = toptions.callback;
+            }
+            _options = { offset: 60, ...options };
+        }
+        this._element = element;
+        this._options = _options;
+        this.handler = throttle(callback, 16.7);
+        this._callback = this._handler.bind(this);
+        this._isLoad = false;
+    }
+    _handler(event) {
+        const target = event.target,
+            bool =
+                target.scrollHeight - target.clientHeight - target.scrollTop <
+                this._options.offset;
+        event.stopPropagation();
+        if (bool) {
+            if (this._isLoad) return;
+            this._isLoad = true;
+            this.handler(event);
+        } else {
+            this._isLoad = false;
+        }
+    }
+    binding() {
+        EventListener.on(this._element, "scroll", this._callback);
+    }
+    update(element, options) {
+        EventListener.off(this._element, "scroll", this._callback);
+        this._element = element || this._element;
+        this._options = Object.assign(this._options, options);
+        EventListener.on(this._element, "scroll", this._callback);
+    }
+    destroy() {
+        EventListener.off(this._element, "scroll", this._callback);
+    }
+}
 
-// export class ClassList {
-//     // constructor() { }
-//     static contains(el, cls = "") {
-//         if (!el || !cls) return false;
-//         const className = el.className.split(/\s+/g);
-//         cls = cls.split(/\s+/g);
-//         return !cls.some(val => {
-//             return className.indexOf(val) == -1;
-//         });
-//     }
-//     static add(el, cls = "") {
-//         if (!el || !cls) return;
-//         const className = el.className.split(/\s+/g);
-//         cls = cls.split(/\s+/g);
-//         cls.forEach(val => {
-//             className.push(val);
-//         });
-//         el.className = className.join(" ");
-//     }
-//     static remove(el, cls = "") {
-//         if (!el || !cls) return;
-//         const className = el.className.split(/\s+/g);
-//         cls = cls.split(/\s+/g);
-//         cls.forEach(val => {
-//             const index = className.indexOf(val);
-//             if (index > -1) className.splice(index, 1);
-//         });
-//         el.className = className.join(" ");
-//     }
-//     static toggle(el, cls = "") {
-//         if (!el || !cls) return;
-//         const className = el.className.split(/\s+/g);
-//         cls = cls.split(/\s+/g);
-//         cls.forEach(val => {
-//             const index = className.indexOf(val);
-//             if (index > -1) {
-//                 className.splice(index, 1);
-//             } else {
-//                 className.push(val);
-//             }
-//         });
-//         el.className = className.join(" ");
-//     }
-// }
+export class ClassList {
+    constructor() { }
+    static contains(el, cls = "") {
+        if (!el || !cls) return false;
+        const className = el.className.split(/\s+/g);
+        cls = cls.split(/\s+/g);
+        return !cls.some(val => {
+            return className.indexOf(val) == -1;
+        });
+    }
+    static add(el, cls = "") {
+        if (!el || !cls) return;
+        const className = el.className.split(/\s+/g);
+        cls = cls.split(/\s+/g);
+        cls.forEach(val => {
+            className.push(val);
+        });
+        el.className = className.join(" ");
+    }
+    static remove(el, cls = "") {
+        if (!el || !cls) return;
+        const className = el.className.split(/\s+/g);
+        cls = cls.split(/\s+/g);
+        cls.forEach(val => {
+            const index = className.indexOf(val);
+            if (index > -1) className.splice(index, 1);
+        });
+        el.className = className.join(" ");
+    }
+    static toggle(el, cls = "") {
+        if (!el || !cls) return;
+        const className = el.className.split(/\s+/g);
+        cls = cls.split(/\s+/g);
+        cls.forEach(val => {
+            const index = className.indexOf(val);
+            if (index > -1) {
+                className.splice(index, 1);
+            } else {
+                className.push(val);
+            }
+        });
+        el.className = className.join(" ");
+    }
+}
 
-// export function setMatchMedia() {
-//     if (typeof window !== "undefined") {
-//         const matchMediaPolyfill = mediaQuery => {
-//             return {
-//                 media: mediaQuery,
-//                 matches: false,
-//                 on() { },
-//                 off() { }
-//             };
-//         };
-//         window.matchMedia = window.matchMedia || matchMediaPolyfill;
-//     }
-// }
+export function setMatchMedia() {
+    if (typeof window !== "undefined") {
+        const matchMediaPolyfill = mediaQuery => {
+            return {
+                media: mediaQuery,
+                matches: false,
+                on() { },
+                off() { }
+            };
+        };
+        window.matchMedia = window.matchMedia || matchMediaPolyfill;
+    }
+}
 
+export function isScroll(element) {
+    if (!element) return false;
+    const data = ["scroll", "auto"];
+    if (
+        data.indexOf(getStyle(element, "overflow")) !== -1 ||
+        data.indexOf(getStyle(element, "overflow-x")) !== -1 ||
+        data.indexOf(getStyle(element, "overflow-y")) !== -1
+    ) {
+        return true;
+    }
+    return false;
+}
 
 export function getClientSize(type) {
     const body = document.body,
-        html = document.documentElement || {};
+        html = document.documentElement || {},
+        width = body.clientWidth || 0,
+        height = body.clientHeight || 0,
+        innerWidth = window.innerWidth || 0,
+        innerHeight = window.innerHeight || 0,
+        htmlWidth = html.clientWidth || 0,
+        htmlHeight = html.clientHeight || 0,
+        sizeWidth = [width, innerWidth, htmlWidth].filter(function (val) {
+            return typeof val === "number" && val > 0;
+        }),
+        sizeHeight = [height, innerHeight, htmlHeight].filter(function (val) {
+            return typeof val === "number" && val > 0;
+        });
     let size = {
         document: {
-            width: html.scrollWidth || body.scrollWidth || 0,
-            height: html.scrollHeight || body.scrollHeight || 0,
+            width: Math.max(...sizeWidth),
+            height: Math.max(...sizeHeight)
         },
         viewport: {
-            width: window.innerWidth || html.clientWidth || body.clientWidth || 0,
-            height: window.innerHeight || html.clientHeight || body.clientheight || 0
+            width: Math.min(...sizeWidth),
+            height: Math.min(...sizeHeight)
         },
         window: window.screen
     };
@@ -641,448 +608,128 @@ export function getClientSize(type) {
 }
 
 export class DragMove {
-    constructor(element, options, callback) {
-        this._options = {
-            style: ['translateX', 'translateY'],
-            boundaryElement: '',//添加边界元素,
-            timeOut: null,
-        }
-        if (typeof options === "function") {
-            callback = options;
-            options = {};
-        } else {
-            callback = typeof callback === "function" ? callback : function (obj) {
-                if (obj.cancel) return;
-                const { data, distance, element, style, isTransform } = obj;
-                const styles = element.style;
-                if (isTransform) {
-                    styles.transform = `translate(${data.translateX + distance[0]}px,${data.translateY + distance[1]}px)`
-                } else {
-                    style.forEach((key, index) => {
-                        styles[key] = parseFloat(data[key]) + distance[index] + 'px';
-                    })
-                }
-            }
-        }
-        this._setOptions(options);
-        this._handler = throttle(callback, this._options.timeOut);
+    constructor(element, callback) {
         this._element = element;
-        this._isBind = this._isRun = false;
-        this._initAxis = this._handlerInitAxis.bind(this);
+        this.handler = throttle(
+            typeOf(callback) === "function"
+                ? callback
+                : function () {
+                    console.warn("%c is not function", callback);
+                },
+            16.7
+        );
         this._callback = this._handlerCallback.bind(this);
+        this._initAxis = this._handlerInitAxis.bind(this);
         this._cancel = this._handlerCancel.bind(this);
-        this._binding();
-
+        this._isBind = this._isRun = false;
+        this._axis = null;
+        this._distance = this._fixed = [0, 0];
     }
-    _setOptions(options = {}) {
-        this._options = Object.assign(this._options, options)
-        const style = this._options.style;
-        this._isTransform = style.indexOf('translateX') > -1 || style.indexOf('translateY') > -1
-    }
-    _binding() {
-        if (this._isBind) return;
-        this._isBind = true;
-        EventListener.on(this._element, "mousedown", this._initAxis);
-    }
-    _getInitStyle() {
-        const styles = getStyles(this._element);
-        const { style, props } = this._options;
-        if (this._isTransform && !props) {
-            return transformStyle(styles.transform);
-        }
-        const target = {};
-        if (props) {
-            props.forEach((key) => {
-                target[key] = this._element[key];
-            })
-        } else {
-            style.forEach((key) => {
-                target[key] = styles[key];
-            })
-        }
-        return target;
-    }
-    _handlerInitAxis(event) {
+    _handlerInitAxis(event = {}) {
+        // 处理鼠标左右键同安绑定多个事件
         this._axis = [event.clientX, event.clientY];
-        this._initOffset = this._getInitStyle();
-        //设置样式  
-        this._element.style.cursor = 'move';
-        this._element.style.userSelect = "none";
         if (this._isRun) return;
         this._isRun = true;
         EventListener.on(document, "mousemove", this._callback);
         EventListener.on(document, "mouseup", this._cancel);
-        EventListener.on(this._element, "mouseup", this._cancel);
-    }
-    _isMousemove(pos) {
-        if (this._innerPos === pos) return;
-        this._innerPos = pos;
-        return true;
+        // this._element.style.cursor = "move";
+        // this._element.style.userSelect = "none";
     }
     _handlerCallback(event) {
-        if (event.stopPropagation) {
-            event.stopPropagation()
-        } else {
-            window.event.cancelBubble = true;
-        }
-        const { clientX, clientY } = event;
-        if (!this._isRun || !this._handler || !this._isMousemove(`${clientX}&${clientY}`)) return;
-        const axis = this._axis, { style, props } = this._options;
-        const distance = this._distance = [clientX - axis[0], clientY - axis[1]];
-        this._handler({
-            distance,
-            data: this._initOffset,
+        const axis = this._axis,
+            { clientX, clientY } = event,
+            x = clientX - axis[0],
+            y = clientY - axis[1];
+        this._distance = [x + this._distance[0], y + this._distance[1]];
+        this._fixed = [x + this._fixed[0], y + this._fixed[1]];
+        this._axis = [clientX, clientY];
+        this.handler({
+            absolute: this._distance,
+            fixed: this._fixed,
+            relative: [x, y],
             element: this._element,
-            style,
-            props,
-            axis,
-            isTransform: this._isTransform
-        }, event);
+            run: true
+        });
     }
     _handlerCancel() {
-        if (this._handler) {
-            const axis = this._axis, { style, props } = this._options;
-            this._handler({
-                distance: this._distance,
-                data: this._initOffset,
-                element: this._element,
-                style,
-                props,
-                axis,
-                isTransform: this._isTransform,
-                cancel: true,
-            });
-            this._distance = [0, 0]
-        }
-        this._isBind = this._isRun = false;
-        this._element.style.cursor = this._element.style.userSelect = this._innerPos = '';
         EventListener.off(document, "mousemove", this._callback);
         EventListener.off(document, "mouseup", this._cancel);
-        EventListener.off(this._element, "mouseup", this._cancel);
+        const absolute = this._distance;
+        this._distance = [0, 0];
+        // this._element.style.userSelect = "";
+        this._isRun = false;
+        this.handler({
+            absolute,
+            relative: [0, 0],
+            fixed: this._fixed,
+            element: this._element,
+            run: false
+        });
     }
+    binding() {
+        if (this._isBind) return this;
+        EventListener.on(this._element, "mousedown", this._initAxis);
+    }
+
     update(element, options) {
         this.destroy();
+        this._isBind = true;
         this._element = element || this._element;
-        this._setOptions(options);
-        this._binding();
+        EventListener.on(this._element, "mousedown", this._initAxis);
     }
+
     destroy() {
-        this._handlerCancel();
+        this._isBind = this._isRun = false;
+        this._axis = null;
+        this._distance = [0, 0];
+        EventListener.off(document, "mousemove", this._callback);
         EventListener.off(this._element, "mousedown", this._initAxis);
+        EventListener.off(document, "mouseup", this._cancel);
     }
 }
 
 export class ClickOut {
-    constructor(elements, options, callback) {
-        if (typeof options === "function") {
-            callback = options;
-            options = {};
-        }
-        this._options = {
-            delay: 120,
-            ...options
-        }
-        this._setElements(elements);
-        this._callback = typeof callback === "function" && callback;
-        this._handler = this._handlerCallback.bind(this);
+    constructor(elements, callback) {
+        this._elements = elements;
+        this.handler =
+            typeOf(callback) === "function"
+                ? callback
+                : function () {
+                    console.warn("%c is not function", callback);
+                };
+        this._callback = this._handlerCallback.bind(this);
         this._isBind = false;
-        this._binding();
     }
-    _setElements(elements) {
-        elements = Array.isArray(elements) ? elements : [elements];
-        this._elements = elements.filter((ele) => !!ele);
-    }
+    // _contains(target, parent) {
+    //     while (target) {
+    //         console.log(target, parent)
+    //         if (target === parent) {
+    //             return true;
+    //         }
+    //         if (/^(html|body)$/i.test(target.tagName)) return;
+    //         target = target.parentNode;
+    //     }
+    // }
     _handlerCallback(event) {
-        if (!this._callback) return;
-        const type = event.type;
-        if (type === this._currentType) return;
-        // console.log(type, event.target.className, event.timeStamp)
-        this._currentType = type;
-        clearTimeout(this._delayTime);
-        const currentTarget = event.currentTarget;
-        const cb = (target) => {
-            const bool = !this._elements.some(element => element.contains(target));
-            this._callback(bool, event, currentTarget);
-        };
-        if (type !== 'focusout') {
-            cb(event.target);
-            setTimeout(() => {
-                this._currentType = this._delayTime = null;
-            }, 30);
-            return
-        }
-        this._delayTime = setTimeout(() => {
-            cb(document.activeElement);
-            this._currentType = this._delayTime = null;
-        }, this._options.delay);
+        let target = event.target,
+            elements = this._elements;
+        if (typeOf(elements) !== "array") elements = [elements];
+        const bool = !target ? false : elements.some((element) => {
+            return element === target || element.contains(target);
+        });
+        this.handler(!bool, 'clickout');
     }
-    _binding() {
-        if (this._isBind || !this._callback) return this;
-        this._isBind = true;
-        this._elements.forEach((element) => {
-            const tabindex = element.getAttribute('tabindex');
-            if (tabindex) {
-                element.dataset.tabindex = tabindex;
-            } else {
-                element.setAttribute('tabindex', -1);
-            }
-            element.style.outline = "none";
-            EventListener.on(element, "click,focusin,focusout", this._handler);
-        })
-        EventListener.on(document, "click", this._handler);
-        return this;
-    }
-    update(elements) {
-        if (elements) {
-            this.destroy();
-            this._setElements(elements);
-            this._binding();
-        }
-    }
-    destroy() {
-        this._isBind = false;
-        this._elements.forEach((element) => {
-            if (!element.dataset.tabindex) {
-                element.removeAttribute('tabindex');
-            } else {
-                element.dataset.tabindex = '';
-            }
-            element.style.outline = "none";
-            EventListener.off(element, "click,focusin,focusout", this._handler);
-            EventListener.off(document, "click", this._handler);
-        })
-        clearTimeout(this._delayTime);
-    }
-}
-
-export class HoverOut {
-    constructor(elements, options, callback) {
-        if (typeof options === "function") {
-            callback = options;
-            options = {};
-        }
-        this._options = {
-            delay: 60,
-            ...options
-        }
-        this._setElements(elements);
-        this._callback = typeof callback === "function" && callback;
-        this._handler = this._handlerCallback.bind(this);
-        this._isBind = false;
-        this._binding();
-    }
-    _setElements(elements) {
-        elements = Array.isArray(elements) ? elements : [elements];
-        this._elements = elements.filter((ele) => !!ele);
-    }
-    _handlerCallback(event) {
-        if (!this._callback) return;
-        const type = event.type;
-        if (type === this._currentType) return;
-        // console.log(type, event.target.className, event.timeStamp)
-        this._currentType = type;
-        clearTimeout(this._delayTime);
-        const currentTarget = event.currentTarget;
-        const cb = (bool) => {
-            this._callback(bool, event, currentTarget);
-            this._currentType = this._delayTime = null;
-        };
-        if (type !== 'mouseleave') return cb(false);
-        this._delayTime = setTimeout(() => {
-            cb(true);
-        }, this._options.delay);
-    }
-    _binding() {
-        if (this._isBind || !this._callback) return this;
-        this._isBind = true;
-        this._elements.forEach((element) => {
-            EventListener.on(element, "mouseenter,mouseleave", this._handler);
-        })
+    binding() {
+        if (this._isBind) return this;
+        EventListener.off(document, "click", this._callback);
+        EventListener.on(document, "click", this._callback);
         return this;
     }
     update(elements, options) {
-        if (elements) {
-            this.destroy();
-            this._setElements(elements);
-            this._binding();
-        }
-        return this
+        this._elements = elements || this._elements;
     }
     destroy() {
         this._isBind = false;
-        this._elements.forEach((element) => {
-            EventListener.off(element, "mouseenter,mouseleave", this._handler);
-        });
-        clearTimeout(this._delayTime);
+        EventListener.off(document, "click", this._callback);
     }
 }
-
-
-export class ScrollSync {
-    constructor(elements, options, callback) {
-        this._options = {
-            isPercent: false,//percent,
-            isScrollTop: false,//left,
-            throttle: 32,
-        };
-
-        if (typeof options === 'function') {
-            this._callback = options;
-            options = {};
-        } else {
-            this._callback = typeof callback === "function" && callback;
-        }
-        this._setElements(elements);
-        this._setOptions(options);
-        this._setScroll = throttle(this._setScroll.bind(this), this._options.throttle);
-        this._handler = this._handlerCallback.bind(this);
-        this._binding();
-    }
-    _setElements(elements) {
-        if (Array.isArray(elements) && elements.length > 1) {
-            this._elements = elements.map((ele) => {
-                if (!ele) return;
-                if (typeof ele === 'string') {
-                    return document.querySelector(ele)
-                }
-                if (ele instanceof HTMLElement) {
-                    return ele
-                }
-            }).filter((ele) => !!ele);
-        }
-    }
-    _setOptions(options) {
-        this._options = Object.assign(this._options, options);
-    }
-    _binding() {
-        if (this._isBind || !this._elements) return this;
-        this._isBind = true;
-        this._elements.forEach((element) => {
-            EventListener.on(element, "scroll", this._handler);
-        })
-        return this;
-    }
-    _handlerCallback(event) {
-        event.stopPropagation();
-        const currentTarget = event.currentTarget;
-        if (this._runEle && this._runEle !== currentTarget) return;
-        this._runEle = currentTarget;
-        this._setScroll(currentTarget);
-    }
-    _setScroll(ele) {
-        const { isPercent, isScrollTop } = this._options;
-        const { scrollTop, scrollLeft, scrollHeight, clientHeight, clientWidth, scrollWidth } = ele,
-            isDown = scrollTop > this._preScrollTop;
-        this._preScrollTop = scrollTop;
-        let value;
-        if (isPercent) {
-            value = isScrollTop ? (scrollTop / ((scrollHeight - clientHeight) || 1)) : (scrollLeft / ((scrollWidth - clientWidth) || 1))
-        } else {
-            value = isScrollTop ? scrollTop : scrollLeft;
-        }
-        this._elements.forEach(item => {
-            if (item === ele) return;
-            const { scrollHeight, clientHeight, clientWidth, scrollWidth } = item;
-            if (isScrollTop) {
-                item.scrollTop = isPercent ? value * (scrollHeight - clientHeight) : value
-            } else {
-                item.scrollLeft = isPercent ? value * (scrollWidth - clientWidth) : value
-            }
-        });
-        this._callback && this._callback(ele, isDown);
-        clearTimeout(this._delayTime);
-        this._delayTime = setTimeout(() => {
-            this._runEle = this._delayTime = null;
-        }, 120);
-    }
-    sync(ele) {
-        if (!this._elements) return;
-        this._setScroll(ele);
-    }
-    update(elements, options = {}) {
-        if (elements) {
-            this.destroy();
-            this._setElements(elements);
-            this._setOptions(options);
-            this._binding();
-        }
-        return this
-    }
-    destroy() {
-        this._elements && this._elements.forEach((element) => {
-            EventListener.off(element, "scroll", this._handler);
-        });
-        this._isBind = false;
-        this._runEle = null;
-        clearTimeout(this._delayTime);
-    }
-}
-
-
-
-export class ScrollLoad {
-    constructor(element, options /*options = { offset: 60 }*/, callback) {
-        this._options = {
-            offset: 60,
-            isReachTop: false,
-        }
-        if (typeof options === "function") {
-            callback = options;
-            options = {}
-        }
-        this._element = element;
-        this._setOptions(options);
-        this._callback = typeof callback === 'function' && callback;
-        this._handler = this._handlerCallback.bind(this);
-        this._isRun = false;
-        this._preScrollTop = 0;
-        this._binding();
-    }
-    _setOptions(options) {
-        this._options = Object.assign(this._options, options);
-    }
-    async _handlerCallback(event) {
-        event.stopPropagation();
-        const currentTarget = event.currentTarget,
-            scrollTop = currentTarget.scrollTop,
-            isDown = scrollTop > this._preScrollTop;
-        this._preScrollTop = scrollTop;
-        if (this._isRun) return;
-        const { scrollHeight, clientHeight } = currentTarget,
-            { isReachTop, offset } = this._options;
-        let isEdge;
-        if (isDown) {
-            isEdge = scrollHeight - clientHeight - scrollTop - offset < 0;
-        } else if (isReachTop) {
-            isEdge = scrollTop - offset < 0;
-        }
-        if (isEdge) {
-            this._isRun = true;
-            this._preScrollTop = scrollTop;
-            this._callback && await this._callback(isDown).catch(console.warn);
-            this._delayTime = setTimeout(() => {
-                this._isRun = false;
-                this._delayTime = null;
-            }, 100);
-        }
-
-    }
-    _binding() {
-        if (this._isBind || !this._element) return this;
-        EventListener.on(this._element, "scroll", this._handler);
-        this._isBind = true;
-    }
-    update(element, options = {}) {
-        this._setOptions(options)
-        if (element && this._element === element) return;
-        this.destroy();
-        this._binding();
-    }
-    destroy() {
-        EventListener.off(this._element, "scroll", this._handler);
-        this._isBind = this._isRun = false;
-        clearTimeout(this._delayTime);
-    }
-}
-
-

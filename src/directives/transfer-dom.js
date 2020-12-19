@@ -8,7 +8,7 @@ export function getTarget(node) {
 
 
 export default  {
-    inserted(el, { value }) {
+    inserted(el, { value }, vnode) {
         if (value === false) return false;
         el.className = el.className ? el.className + ' v-transfer-dom' : 'v-transfer-dom';
         const parentNode = el.parentNode;

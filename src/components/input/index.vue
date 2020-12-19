@@ -1,74 +1,163 @@
 
 
 <template>
-	<InputDrop
-		ref="inputDrop"
-		:type="type"
-		:data-vue-module="$options.name"
-		:transfer="transfer"
-		:dropStyle="dropStyle"
-		:visible="visible"
-		:prefix="prefix"
-		:suffix="suffix"
-		:readonly="readonly"
-		:name="name"
-		:clearable="clearable"
-		:disabled="disabled"
-		:theme="theme"
-		:multiple="multiple"
-		:valueText="valueText"
-		:isInput="isInput"
-		:isSelect="isSelect"
-		@on-focus="handleFocus"
-		@on-input="handleInput"
-		@on-blur="handleBlur"
-		@on-keydown="handleKeydown"
-		@on-visible-change="handleVisible"
-		@on-clear="handleClear"
-		@on-remove-item="clearTag"
-		@on-change="handleChange"
-		@on-icon-click="handleIconClick"
-		@on-scroll="handleScroll"
+	<section
+		:class="wrapClasses"
+		:data-vview-module="$options.name"
+		v-click-outside="{ callback: close, reference: ($refs.drop || {}).$el }"
 	>
-		<template v-if="prepend" slot="prepend">
-			<slot name="prepend"></slot>
-		</template>
-		<template v-if="append" slot="append">
-			<slot name="append"></slot>
-		</template>
-		<template v-if="showPrefix" slot="prefix">
-			<slot name="prefix"></slot>
-		</template>
-		<template v-if="showSuffix" slot="suffix">
-			<slot name="suffix"></slot>
-		</template>
-		<template v-if="showDrop" slot="drop">
-			<slot>
-				<div v-if="hasOpts">
-					<Option v-for="item in getInOpts" :key="item.value" v-bind="item"></Option>
-				</div>
-			</slot>
-			<div v-if="hasValidOpts" :class="[_tobogPrefix_ + '-tip']">
-				<slot name="tip">{{ getOptTip }}</slot>
+		<aside v-if="prepend" :class="[_tobogPrefix_ + '-prepend']" :style="handlePendWidth('prepend')">
+			<div ref="prepend" style="display:inline-block">
+				<slot name="prepend"></slot>
 			</div>
+		</aside>
+		<div :class="innerClasses" @mouseover="clearStatus=true" @mouseleave="clearStatus=false">
+			<span v-if="showprefix" :class="iconWrapClass" data-type-icon="prefix" ref="prefix">
+				<slot name="prefix">
+					<Icons :type="prefix" :class="iconClass" center />
+				</slot>
+			</span>
+			<span
+				v-if="showsuffix"
+				:class="iconWrapClass"
+				@click.stop="handleIconClick"
+				data-type-icon="suffix"
+				ref="suffix"
+			>
+				<slot name="suffix">
+					<Icons :type="suffix" center :class="iconClass" size="16" />
+				</slot>
+			</span>
+			<Icons
+				v-if="isClearable"
+				:class="iconClasses"
+				type="close"
+				center
+				@click.native.stop="handleClear"
+			/>
+			<div
+				v-if="multiple"
+				:style="handleInputStyle()"
+				:class="inputClasses"
+				ref="mulInputWrap"
+				data-form="input"
+				@click.stop="toggleOpen"
+			>
+				<div :class="[_tobogPrefix_ + '-tag']" v-for="(val,index) in model" :key="index">
+					<span>{{handleValueText(val)}}</span>
+					<Icons
+						v-if="!disabled"
+						:class="[_tobogPrefix_ + '-empty']"
+						type="close"
+						@click.native="clearTag(index)"
+					></Icons>
+				</div>
+				<input :value="model" type="hidden" :name="name" />
+				<input
+					v-model="valueText"
+					v-if="ready&&!isReadonly"
+					type="text"
+					ref="input"
+					:autocomplete="autocomplete"
+					:style="handleMultiInput"
+					:class="[_tobogPrefix_ + '-taginput']"
+					@focusin="handleFocus"
+					@keydown.enter.stop="handleKeyEnter"
+					@paste.stop.prevent="handleMultiPaste"
+					@blur="handleBlur"
+				/>
+			</div>
+			<template v-else-if="type==='file'">
+				<input type="file" style="display:none" @change="handleChange" ref="file" :name="name" />
+				<input
+					v-show="ready"
+					data-form="input"
+					ref="input"
+					:name="name"
+					:value="getFilesName"
+					type="text"
+					:class="inputClasses"
+					:style="handleInputStyle()"
+					readonly
+					@focusin="handleFocus"
+					@blur="handleBlur"
+					@click.stop="handleFileClick"
+					v-bind="$attrs"
+				/>
+			</template>
+			<input
+				v-else
+				v-show="ready"
+				data-form="input"
+				ref="input"
+				:value="model"
+				:name="name"
+				:type="type"
+				:class="inputClasses"
+				:style="handleInputStyle()"
+				:disabled="disabled"
+				:readonly="readonly"
+				:autocomplete="autocomplete"
+				@input="handleInput"
+				@focusin="handleFocus"
+				@blur="handleBlur"
+				@change="handleChange"
+				@keydown.enter="handleKeyEnter"
+				@keyup.stop="queryOption"
+				@paste.stop="queryOption"
+				@click.stop="toggleOpen"
+				v-bind="$attrs"
+			/>
+		</div>
+		<aside v-if="append" :class="[_tobogPrefix_ + '-append']" :style="handlePendWidth('append')">
+			<div ref="append" style="display:inline-block">
+				<slot name="append"></slot>
+			</div>
+		</aside>
+		<template v-if="showDrop">
+			<Drop
+				ref="drop"
+				v-show="visible&&!isReadonly"
+				v-scroll-load="scrollLoad"
+				:transfer="transfer"
+				:updateDrop="updateDrop"
+				:class="[_tobogPrefix_+'-drop']"
+				:reference="$refs.input"
+				:style="handleDropStyle()"
+				@focusin.stop.native="dropFocus"
+			>
+				<slot></slot>
+				<div v-if="hasValidOpts" style="padding:6px 15px;">
+					<slot name="opttip">{{getOptTip}}</slot>
+				</div>
+			</Drop>
 		</template>
-	</InputDrop>
+	</section>
 </template>
 
 <script>
-import InputDrop from "./inputdrop";
-import Option from "./option";
-import { throttle, validVal, debounce } from "../../utils/tool";
-import mixin from "./mixin";
+import Icons from '../icons/index'
+import Drop from '../base/drop'
+import ClickOutside from '../../directives/click-outside'
+import ScrollLoad from '../../directives/scroll-load'
+import Emitter from '../../utils/emitter'
+import { debounce, throttle } from '../../utils/tool'
+import { findComponentsDownward } from '../../utils/findComponent'
+import mixin from './mixin'
 export default {
-	name: "Input",
+	name: 'Input',
 	inheritAttrs: false,
-	mixins: [mixin],
+	mixins: [Emitter, mixin],
+	directives: {
+		ClickOutside,
+		ScrollLoad
+	},
 	components: {
-		InputDrop,
-		Option
+		Icons,
+		Drop,
 	},
 	props: {
+		multiple: Boolean,
 		multipleKey: String,
 		multiplSplit: {
 			type: String,
@@ -76,113 +165,107 @@ export default {
 		},
 		transfer: Boolean,
 		search: Boolean,
-		multiple: Boolean,
-		dropStyle: [Object, String],
-		filterable: {
-			type: Boolean,
-			default: true
+		filterable: Boolean,
+		value: {
+			default: '',
 		},
 		type: {
 			type: String,
-			default: "text"
+			default: 'text',
+		},
+		dropStyle: {
+			type: [Object, String]
 		},
 		autoClose: {
 			type: Boolean,
-			default: true
+			default: true,
 		},
-		tip: {
+		opttip: {
 			type: String,
-			// default: "暂无数据",
 			default: undefined
 		},
-		keyModal: {
-			type: Boolean,
-			default: true
-		},
-		beforeInput: Function,
-		strict: Boolean,
-		options: Array,
-		optCount: Number
+		beforeInput: Function
 	},
 	data() {
 		return {
 			visible: false,
-			optComponents: [],
+			isFocus: false,
 			valueText: "",
-			lastOptIndex: this.optCount || 15,
-			inOpts: [],
+			optComponents: [],
+			updateDrop: 0,
+			filelist: []
 		};
 	},
 	created() {
-		this.__updatedDrop = debounce(this.updatedDrop, 60);
-		this.$on("on-updated", this.__updatedDrop);
-		this.$on("on-option-change", this.getAllOpt);
-		this.$on("on-select", this.select);
-		this.searchMethod = throttle(val => {
-			this.$emit("on-search", val);
+		this.__debounce = debounce(this.getAllOption);
+		this.$on('on-select', this.select);
+		this.$on('on-option-change', this.__debounce);
+		this.searchMethod = throttle((val) => {
+			this.$emit('on-search', val);
 		}, 360);
-	},
-	mounted() {
-		this.handleDispatch('on-change', this.model);
+		this.__isFocus = true;
 	},
 	computed: {
-		hasOpts() {
-			return Array.isArray(this.options)
-		},
-		getInOpts() {
-			return this.inOpts.filter(opt => !opt.hidden).slice(0, this.lastOptIndex);
-		},
 		getOptTip() {
-			if (this.tip === undefined) return this.langs('input.noDataText', '暂无数据');
-			return this.tip
+			if (this.opttip === undefined) return this.langs('noDataText', '暂无数据');
+			return this.opttip
 		},
-		isSelect() {
-			return false
+		inputClasses() {
+			const _tobogPrefix_ = this._tobogPrefix_;
+			return [
+				_tobogPrefix_,
+				{
+					[`${_tobogPrefix_}-active`]: this.visible || this.isFocus,
+					[`${_tobogPrefix_}-file`]: this.type === 'file',
+				}
+			];
 		},
-		isInput() {
-			return true;
-		},
-		hasValidOpts() {
-			return false
-		},
-		isFile() {
-			return this.type === "file";
+		getFilesName() {
+			return [...this.model].map((file) => {
+				return file.name
+			}).join(',')
 		},
 		showDrop() {
-			return this.$slots.default || this.hasValidOpt || this.hasOpts;
+			return this.ready && (this.search || this.filterable) && !this.multiple
 		},
+		handleMultiInput() {
+			const style = {}, ready = this.ready, width = ((this.$refs.mulInputWrap || { clientWidth: 62 }).clientWidth - 62),
+				_width = this.valueText.length * 12;
+			style.width = (_width < 36 ? 36 : _width) + 'px';
+			style.maxWidth = width > 0 ? `${width}px` : ''
+			return style;
+		},
+		hasValidOpts() {
+			return (this.$slots.opttip || this.getOptTip) && (!this.optComponents.some(function (item) {
+				return !item.hidden
+			}))
+		},
+
 	},
 	methods: {
-		getAllOpt(type, component) {
-			const model = this.model;
-			if (type === "destroy") {
-				const index = this.optComponents.indexOf(component);
-				index > -1 && this.optComponents.splice(index, 1);
-				return;
-			}
-			if (type === "change") {
-				component.$emit("on-selected", model);
-			}
-			if (type === "created") {
-				component.$emit("on-selected", model);
-				this.optComponents.push(component);
+		langs(key, defaultVal, val = {}) {
+			if (typeof this.$t !== 'function') return defaultVal;
+			key = `${this.__$langPrefix__}.input.${key}`;
+			key = (this.__$langMap__ && this.__$langMap__[key]) ? this.__$langMap__[key] : key;
+			const value = this.$t(key, val)
+			return key === value ? defaultVal : value;
+		},
+		handleKeydown(e) {
+			if (!this.visible || this.isReadonly || !this.optComponents.length) return;
+			const keyCode = e.keyCode;
+			// Esc slide-up
+			if (keyCode == 27) this.close(true, 'select');
+			// next
+			if (keyCode == 38) this.navigateOptions(-1);
+			if (keyCode == 40) this.navigateOptions(1);
+			if (keyCode == 13) {
+				const component = this.optComponents.find(component => component.hover);
+				if (component) component.select();
 			}
 		},
-		getMatchedOpt(value, isUpdate) {
-			if (isUpdate) {
-				this.optComponents.forEach(component => {
-					component.$emit("on-query-option", value);
-				});
-			}
-			const component = this.optComponents.find(component => component.hover);
-			if (component) component.select();
-			return component;
-		},
-		navigateOpts(val) {
+		navigateOptions(val) {
 			let index,
-				optComponents = this.optComponents.filter(
-					component => !component.hidden
-				),
+				optComponents = this.optComponents.filter(component => !component.hidden),
 				lastIndex = optComponents.length - 1;
 			optComponents.forEach((component, i) => {
 				if (component.hover) index = i;
@@ -198,13 +281,12 @@ export default {
 			if (index > lastIndex) index = lastIndex;
 			const component = optComponents[index];
 			component.hover = true;
-			this.focusIndex(component, index);
+			this.focusIndex(component, index)
 		},
 		focusIndex(component, index) {
 			if (index < 0) return;
 			// update scroll
-			const element = component.$el,
-				parentNode = element.parentNode,
+			const element = component.$el, parentNode = element.parentNode,
 				elementRect = element.getBoundingClientRect(),
 				parentRect = parentNode.getBoundingClientRect(),
 				bottomOverflowDistance = elementRect.bottom - parentRect.bottom,
@@ -216,263 +298,243 @@ export default {
 				parentNode.scrollTop += topOverflowDistance;
 			}
 		},
-		selectedOpt(val) {
+		toggleOpen() {
+			if (this.isReadonly) return;
+			if (this.search || this.filterable) {
+				this.visible = !this.visible;
+				this.__isFocus = true;
+			}
+			if (this.visible) this.isFocus = true;
+			if (this.multiple) {
+				this.visible = this.__isFocus = null;
+				this.setInputFocus(null);
+			}
+		},
+		handleFileClick() {
+			this.$refs.file.click();
+		},
+		setInputFocus(isFocus) {
+			this.__isFocus = isFocus;
+			this.$refs.input.focus();
+			this.isFocus = true;
+			this.$nextTick(() => {
+				this.handleClearTimeout();
+			})
+		},
+		handleValueText(val) {
+			if (val && typeof val === 'object' && this.multipleKey) return val[this.multipleKey];
+			return val;
+		},
+		handleDropStyle() {
+			const dropStyle = this.dropStyle || {}, width = (this.$refs.input || {}).offsetWidth;
+			if (typeof dropStyle === 'string') {
+				return `width:${width}px;${dropStyle}`
+			} else {
+				return { width: `${width}px`, ...dropStyle }
+			}
+		},
+		scrollLoad(event) {
+			this.$emit('on-scroll-loading', this.model, event);
+		},
+		getAllOption() {
+			const model = this.model;
+			this.optComponents = findComponentsDownward(this, 'Option');
 			this.optComponents.forEach(component => {
-				component.$emit("on-selected", val);
+				component.$emit('on-selected', model);
 			});
 		},
 		select(val, text, attach) {
-			if (this.multiple) {
-				const model = Array.isArray(this.model)
-					? this.model
-					: [this.model];
-				val = model.some(item => this.strict ? item === val : item == val)
-					? model.filter(item => this.strict ? item !== val : item != val)
-					: [...model, val];
-				// if (this.strict) {
-				// 	val = model.some(item => item === val)
-				// 		? model.filter(item => item !== val)
-				// 		: [...model, val];
-				// } else {
-				// 	val = model.some(item => item == val)
-				// 		? model.filter(item => item != val)
-				// 		: [...model, val];
-				// }
-			} else if (this.autoClose) {
-				this.visible = false;
-			}
-			this.__attachData = attach;
-			this.updateModel(val);
-			this.$refs.inputDrop.setInputFocus();;//有问题无法失去焦点
-			this.$emit("on-change", this.model, this.__attachData);
+			this.updateModel(text);
+			this.__attach = attach;
+			this.__hiddenId = val;
+			this.setInputFocus(false);
 		},
-		handleFocus(event) {
-			this.selectedOpt(this.model);
-			this.$nextTick(() => {
-				this.$emit("on-focus", this.model, event);
+		selectedOpt(val) {
+			this.optComponents.forEach(component => {
+				component.$emit('on-selected', val);
 			});
+		},
+		handleClear() {
+			this.__attach = '';
+			this.updateModel(this.multiple ? [] : '')
+			this.$emit('on-clear');
+		},
+		async queryOption(event) {
+			if (!this.visible) return;
+			const keyCode = event.keyCode;
+			if (keyCode == 13 || keyCode == 40 || keyCode == 37 || keyCode == 38 || keyCode == 39) {
+				this.handleKeydown(event);
+				return;
+			}
+			const val = await this.handleBeforeInput(event.target.value || this.model, event);
+			this.__attach = '';
+			if (this.search) {
+				this.searchMethod(val);
+			} else if (this.filterable) {
+				this.optComponents.forEach(component => {
+					component.$emit('on-query-option', val);
+				});
+			}
+			setTimeout(() => {
+				this.updateDrop += 1;
+			}, 60)
 		},
 		async handleBeforeInput(val, event) {
 			return typeof this.beforeInput === 'function' ? await this.beforeInput(val, event) : val;
 		},
-		async handleInput(event) {
-			const value = await this.handleBeforeInput(event.target.value, event);
-			if (!this.multiple) this.valueText = value;
-			this.__attachData = "";
-			if (this.search) {
-				this.searchMethod(value, this.model, event);
-				return;
-			}
-			if (this.hasOpts) {
-				this.handeOptQuery(value);
-			} else {
-				this.optComponents.forEach(component => {
-					component.$emit("on-query-option", value);
-				});
-			}
-			this.__updatedDrop();
-			if (!this.isSelect) {
-				if (!this.multiple) {
-					this.updateModel(value);
-					return;
-				}
-				if (this.multiplSplit && value && event.type === 'paste') {
-					this.updateModel([...this.model, ...value.split(new RegExp('\\' + this.multiplSplit, 'g'))]);
-				}
-			}
+		async handleMultiPaste(event) {
+			const data = await this.handleBeforeInput(event.clipboardData.getData('Text') || window.clipboardData.getData('Text'), event);
+			this.updateModel([...this.model, ...(this.multiplSplit ? data.split(new RegExp('\\' + this.multiplSplit, 'g')) : [data])]);
 		},
-		handleBlur() {
-			if (!this.$refs.inputDrop.isActive) return;
-			if (!this.isReadonly) this.handleModel(this.getInputDom().value);
-			if (this.type === "number") {
-				const value = this.handleRange(this.model);
-				value !== undefined && this.updateModel(value);
+		handleChange(event) {
+			if (this.type === 'file') {
+				this.updateModel(files)
 			}
 			this.$nextTick(() => {
-				!this.isFile && this.$emit("on-change", this.model, this.__attachData);
-				this.$emit("on-blur", this.model, this.__attachData);
-				this.close(true);
+				this.$emit('on-change', this.model, this.__attach);
 			});
 		},
-		handleKeydown(event) {
-			if (!this.keyModal) return;
-			const visible = this.visible,
-				keyCode = event.keyCode;
-			// Esc slide-up
-			// next
-			if (keyCode == 38 && visible) {
-				event.preventDefault();
-				this.navigateOpts(-1);
+		handleFocus(event) {
+			this.isFocus = true;
+			if (this.__isFocus) {
+				this.$emit('on-focus', this.model, event);
+			} else if (this.__isFocus !== null) {
+				this.handleChange(event);
+				this.$emit('on-select-option', this.model, this.__hiddenId, event);
 			}
-			if (keyCode == 40 && visible) {
-				event.preventDefault();
-				this.navigateOpts(1);
-			}
-			if (keyCode == 13) {
-				const component = this.getMatchedOpt();
-				if (!component) this.handleModel(event.target.value);
+			this.selectedOpt(this.model);
+			this.$nextTick(() => {
 				this.$nextTick(() => {
-					this.$emit("on-enter", this.model, event);
-					this.visible = false;
-				});
-			}
-			if (keyCode == 27) {
-				this.visible = false;
-			}
+					this.__isFocus = true;
+				})
+			})
 		},
-		handleChange() {
-			if (this.type === "text") return;
-			const dom = this.getInputDom();
-			let value;
-			if (this.isFile) {
-				const files = dom.files;
-				value = this.multiple ? [...files] : files[0];
-			} else {
-				value = dom.value;
-			}
-			this.updateModel(value);
-			this.$emit("on-change", this.model, this.__attachData);
-		},
-		handleClear() {
-			this.__attachData = "";
-			this.updateModel(this.multiple ? [] : "");
-			this.$refs.inputDrop.setInputFocus();
-			this.$emit("on-clear");
-		},
-		clearTag(index) {
-			const data = [...this.model];
-			const item = data.splice(index, 1);
-			this.$refs.inputDrop.setInputFocus();
-			this.updateModel(data);
-			this.$emit("on-remove-item", item, index);
-		},
-		close() {
-			this.__attachData = "";
-			this.visible = false;
-			this.$refs.inputDrop.close();
-			this.handleDispatch("on-validate", this.model);
-		},
-		getInputDom() {
-			return this.$refs.inputDrop.getInputDom();
-		},
-		handleVisible(val) {
-			this.visible = val;
-		},
-		handleRange(val) {
-			if (!validVal(val)) return;
-			const { max, min } = this.$attrs;
-			if ((min || min == "0") && val < min) return parseFloat(min);
-			if ((max || max == "0") && val > max) return parseFloat(max);
-		},
-		handleModel(value) {
-			const isValid = validVal(value);
-			const component = isValid && this.getMatchedOpt(value, true);
-			if (component) return;
-			if (isValid && this.multiple) {
-				this.updateModel(Array.isArray(this.model) ? [...this.model, value] : [value])
+		handleKeyEnter(event) {
+			if (this.multiple) {
+				if (this.valueText) {
+					this.updateModel([...this.model, this.valueText])
+				}
+				this.$emit('on-enter', this.model, this.valueText, event);
+				this.valueText = "";
 				return;
 			}
-			if (!this.multiple) this.updateModel(value);
+			this.handleKeydown(event);
+			this.$nextTick(() => {
+				this.close(true, event);
+				this.$emit('on-enter', this.model, event);
+			})
 		},
-		getValueText() {
-			if (this.multiple) {
-				const key = this.multipleKey || "name";
-				return this.model.map(val => {
-					if (val && typeof val === 'object' && key) return val[key];
-					return val;
-				})
+		dropFocus(event) {
+			this.$nextTick(() => {
+				this.visible = true;
+				this.handleClearTimeout();
+			})
+		},
+		handleBlur(event) {
+			let value;
+			if (this.type === 'number') {
+				value = this.handleRange(this.model);
 			}
-			const data = this.optComponents.find(item => {
-				// if (this.strict) return item.value === this.model;
-				return item.value == this.model;
-			});
-			const text = data && data.text();
-			if (this.isSelect) return text === undefined ? "" : text;
-			return text === undefined ? this.model : text;
+			if (this.multiple) {
+				if (value !== undefined) this.valueText = value;
+				if (!this.valueText) return;
+				this.updateModel(this.model instanceof Array ? [...this.model, this.valueText] : [this.valueText]);
+				this.valueText = '';
+			} else {
+				this.updateModel(value !== undefined ? value : this.model);
+			}
+			this.close(true, event);
+		},
+
+		handleRange(val) {
+			if (this.type !== 'number' || val === "" || val === undefined) return;
+			const { max, min } = this.$attrs;
+			if ((min !== "" && min !== undefined) && val < min) {
+				return min
+			}
+			if ((max !== "" && max !== undefined) && val > max) {
+				return max
+			}
+		},
+		close(status, event) {
+			if (!this.isFocus) return;
+			clearTimeout(this.__timeout);
+			if (status || this.autoClose) {
+				console.log(status, event, event && event.type)
+				this.__timeout = setTimeout(() => {
+					this.forceClose(event);
+				}, 130);
+			}
+		},
+		forceClose(event) {
+			clearTimeout(this.__clearTimeout);
+			clearTimeout(this.__timeout);
+			this.visible = this.isFocus = this.__timeout = null;
+			this.handleDispatch('on-validate', this.model);
+
+		},
+		clearTag(index) {
+			const data = [...this.model]
+			const item = data.splice(index, 1);
+			this.updateModel(data);
+			this.$emit('on-remove-item', item, index);
+		},
+		handleClearTimeout() {
+			clearTimeout(this.__timeout);
+			clearTimeout(this.__clearTimeout);
+			this.__clearTimeout = setTimeout(() => {
+				clearTimeout(this.__timeout);
+			}, 50)
 		},
 		updateModel(val) {
 			if (val === this.model) return;
 			this.model = val;
 			this.selectedOpt(val);
-			this.valueText = this.getValueText();
-			this.$emit("input", val);
-			this.handleDispatch("on-change", val);
-			if (this.multiple) this.getInputDom().value = "";
-			this.__attachData = "";
+			this.$emit('input', val);
+			this.handleDispatch('on-change', val);
 		},
-		updatedDrop() {
-			this.$nextTick(() => {
-				if (this.$refs.inputDrop) this.$refs.inputDrop.updatedDrop();
-			});
-		},
-		//对外提供
-		getSelectedOpts() {
-			return this.optComponents.filter(component => component.selected);
-		},
-		handleScroll(event) {
-			if (this._runOptIndex_) return;
-			const target = event.target
-			if (target.scrollHeight - target.scrollTop - target.clientHeight < 60) {
-				this._runOptIndex_ = true;
-				this.lastOptIndex += 5;
-			}
-		},
-		handeOptQuery(value = '') {
-			const model = Array.isArray(this.model) ? this.model : [this.model];
-			this.inOpts.forEach((opt) => {
-				this.lastOptIndex = this.optCount || 15;
-				if (value === '' || model.some(val => this.strict ? val === opt.value : val == opt.value)) return opt.hidden = false;
-				const parsedQuery = `${value}`.replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function (match, reg, offset, str) {
-					if (reg === '\\') return '\\\\'
-					return reg;
-				}).trim();
-				try {
-					const text = `${opt.label == undefined ? opt.value : opt.label}`;
-					opt.hidden = !(text.indexOf(value) > -1 || (new RegExp(parsedQuery, 'ig').test(text)));
-				} catch (error) {
-					console.error(error)
-				}
-			})
+		handleInput(event) {
+			this.updateModel(event.target.value)
 		}
-	},
-	updated() {
-		this.$nextTick(() => {
-			this._runOptIndex_ = false;
-		})
 	},
 	watch: {
 		value: {
 			immediate: true,
 			deep: true,
 			handler(val, old) {
+				if (this.multiple && !(val instanceof Array)) val = (val || val === 0) ? [val] : [];
+				this.updateModel(val)
+			},
+		},
+		isFocus(val, old) {
+			if (!val) {
 				this.$nextTick(() => {
-					if (this.multiple && !Array.isArray(val))
-						val = validVal(val) ? [val] : [];
-					this.updateModel(val);
+					this.$emit('on-change', this.model, this.__attach);
+					this.$emit('on-blur', this.model);
 				});
 			}
 		},
-		options: {
-			immediate: true,
-			handler(val, old) {
-				this.inOpts = this.hasOpts ? val.map(opt => {
-					return {
-						...opt,
-						hidden: false
-					}
-				}) : [];
-			}
-		},
+		// model(val) {
+		// 	this.selectedOpt(val);
+		// 	this.handleRange(val);
+		// 	this.$emit('input', val);
+		// 	this.handleDispatch('on-change', val);
+		// },
 		visible(val, old) {
 			if (val) {
 				this.optComponents.forEach(component => {
-					component.hidden = component.hover = false;
+					component.hidden = false;
 				});
-				this.handeOptQuery('');
 			}
-			this.$emit("on-visible-change", val);
-		}
+			this.$emit('on-visible-change', val);
+		},
 	},
-
+	beforeDestroy() {
+		clearTimeout(this.__timeout);
+		clearTimeout(this.__clearTimeout);
+		this.__timeout = null;
+		this.$off('on-select', this.select);
+		this.$off('on-option-change', this.__debounce);
+	},
 };
 </script>

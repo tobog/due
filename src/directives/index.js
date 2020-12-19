@@ -1,15 +1,14 @@
-
-import OffsetDom from './offset-dom';
-import TransferDom from './transfer-dom';
-import DragMove from './drag-move';
-import ScrollAffix from './scroll-affix';
-import ClickOutside from './click-outside';
-import ScrollLoad from './scroll-load';
+import ClickOutsideVview from './click-outside'
+import OffsetDomVview from './offset-dom'
+import TransferDomVview from './transfer-dom'
+import ScrollLoadVview from './scroll-load'
+import ScrollAffixVview from './scroll-affix'
+import DragMoveVview from './drag-move'
 export default {
-    OffsetDom,
-    TransferDom,
-    DragMove,
-    ScrollAffix,
-    ClickOutside,
-    ScrollLoad
+    ClickOutsideVview,
+    OffsetDomVview,
+    TransferDomVview,
+    ScrollLoadVview,
+    ScrollAffixVview,
+    DragMoveVview,
 }

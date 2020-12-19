@@ -1,188 +1,201 @@
 
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Transfer 穿梭框)</h2>
-			<h4 class="padding-top-10">双栏穿梭选择框，常用于将多个项目从一边移动到另一边。</h4>
-		</vCol>
-		<vCol span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vTransfer v-bind="formData" v-model="value" @on-transfer="transfer" :data="datalist">
-					<div :style="{ float: 'right', padding: '5px' }">
-						<vButton size="small" theme="success" @click="mockData">Refresh</vButton>
-					</div>
-				</vTransfer>
-				{{value}}
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+	<main style="padding:20px 0;" class="examples-main clearfix">
+		<vForm class="example" vertical>
+			<div style="padding:10px 0;">参数：</div>
+			<vFormItem v-for="(item,key) of switchs" :key="key" label-width="100" :label="key">
+				<vSwitch v-model="switchs[key]"/>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of selects" :key="key" label-width="100" :label="key">
+				<vSelect v-model="selects[key]" transfer>
+					<vOption v-for="(val,index) of options[key]" :value="val" :key="index"></vOption>
+				</vSelect>
+			</vFormItem>
+			<vFormItem v-for="(item,key) of inputs" :key="key" label-width="100" :label="key">
+				<vInput v-model="inputs[key]"></vInput>
+			</vFormItem>
+		</vForm>
+		<section class="example" v-if="attrs.show">
+			<div style="padding:20px 0;">视图：</div>
+			<vTransfer v-bind="attrs" @on-transfer="transfer"></vTransfer>
+			<vTransferList v-bind="attrs" @on-transfer="transfer"></vTransferList>
+		</section>
+		<h2 class="title">Props & Events #</h2>
+		<vTable :columns="columns" :data="data" style="width:100%" border stripe></vTable>
+	</main>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: '',
-			datalist: [],
-			value: []
+			switchs: {
+				show: true,
+				filterable: true,
+				disabled: false,
+				gpu: false,
+				always: undefined,
+			},
+			selects: {
 
+			},
+			options: {
+
+			},
+			inputs: {
+				data: [],
+				targetKeys: [],
+				renderFormat: function (item) {
+					return item.description
+				}
+
+			},
 		};
 	},
 	created() {
-		this.mockData();
+		this.inputs.data = this.mockData;
 	},
 	methods: {
-		transfer() {
-
-		},
+		transfer(val) {
+			this.attrs.targetKeys = val
+		}
+	},
+	computed: {
 		mockData() {
 			let mockData = [];
 			for (let i = 1; i <= 30; i++) {
 				mockData.push({
 					key: i.toString(),
-					label: "Content " + i,
-					description: "The desc of content  " + i,
+					label: 'Content ' + i,
+					description: 'The desc of content  ' + i,
 					disabled: Math.random() * 3 < 1
 				});
 			}
-			this.datalist = mockData;
+			return mockData;
+		},
+		attrs() {
+			return {
+				...this.selects,
+				...this.switchs,
+				...this.inputs,
+			}
+		},
+		columns() {
+			return [{
+				title: '属性/事件/方法',
+				key: 'prop',
+			},
+			{
+				title: '说明',
+				key: 'explain',
+				width: '50%'
+			},
+			{
+				title: '类型',
+				key: 'type',
+			},
+			{
+				title: '默认值/参数/返回值',
+				key: 'default',
+				sortable: true,
+			},
+			]
+		},
+		data() {
+			return [{
+				prop: 'trigger',
+				explain: 'trigger',
+				type: 'String',
+				default: '-',
+			},
+			{
+				prop: 'transfer',
+				explain: '弹层放置于 body 内',
+				type: 'Boolean',
+				default: 'false',
+			},
+			{
+				prop: 'disabled',
+				explain: '禁用开关',
+				type: 'Boolean',
+				default: 'false',
+			},
+			{
+				prop: 'content',
+				explain: '显示的内容',
+				type: 'Any',
+				default: '-',
+			},
+			{
+				prop: 'gpu',
+				explain: 'gpu加速',
+				type: 'Any',
+				default: 'false',
+			},
+			{
+				prop: 'always',
+				explain: '是否总是可见',
+				type: 'Boolean',
+				default: '-',
+			},
+			{
+				prop: 'popperStyle',
+				explain: 'popper Style',
+				type: 'String, Object',
+				default: '-',
+			},
+			{
+				prop: 'theme',
+				explain: 'theme：//dark,light ',
+				type: 'String',
+				default: 'dark',
+			},
+			{
+				prop: 'delay',
+				explain: '延迟显示，单位毫秒',
+				type: 'Number',
+				default: '200',
+			},
+			{
+				prop: 'offset',
+				explain: '出现位置的偏移量',
+				type: 'Number',
+				default: '5',
+			},
+			{
+				prop: 'placement',
+				explain: 'left，right，top，bottom，center，组合',
+				type: 'String',
+				default: 'top-center',
+			},
+			{
+				prop: 'reference',
+				explain: 'reference 参照索引',
+				type: 'HTMLElement',
+				default: '-',
+			},
+			{
+				prop: 'slot:content',
+				explain: '指定内容',
+				type: 'VNODE:slot',
+				default: '-',
+			},
+			{
+				prop: 'slot',
+				explain: '',
+				type: 'VNODE:slot',
+				default: '-',
+			},
+			{
+				prop: 'on-visible-change',
+				explain: 'on-visible-change',
+				type: 'Function:visible=>{}',
+				default: '-',
+			},
+
+			]
 		}
 	},
-	computed: {
-		getCode() {
-			return `
-				<vTooltip v-bind="${this.getCodeString(this.formData)}">
-					<vButton>vButton</vButton>
-					<div slot="content">{{${this.getCodeString(this.formData)}}}</div>
-				</vTooltip>
-				<vTooltip v-bind="${this.getCodeString(this.formData)}">
-					<vButton>Long Content</vButton>
-					<div slot="content">史蒂夫·乔布斯（Steve Jobs），1955年2月24日生于美国加利福尼亚州旧金山，美国发明家、企业家、美国苹果公司联合创办人。</div>
-				</vTooltip>`;
-		},
-		getBase() {
-			return [
-				{
-					label: "搜索框",
-					key: "filterable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "拖拽",
-					key: "draggable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "源数据下标",
-					key: "originIndex",
-					tag: "vInputNumber",
-					default: 0
-				},
-				{
-					label: "分组",
-					key: "group",
-					tag: "vInputNumber",
-					default: 3
-				},
-			];
-		},
-		compProps() {
-			return [
-				{
-					prop: 'data',
-					explain: '数据源，其中的数据将会被渲染到左边一栏中，value 中指定的除外。',
-					type: 'Array',
-					default: '',
-				},
-				{
-					prop: 'name',
-					explain: '表单字段name',
-					type: 'String',
-					default: "-",
-				},
-				{
-					prop: 'value',
-					explain: 'v-model:group<2时显示待选框数据的key集合group>=2,所有框的对应集合，',
-					type: 'Array|Map',
-					default: "[]",
-				},
-				{
-					prop: 'renderFormat',
-					explain: '每行数据渲染函数，该函数的入参为 data 中的项',
-					type: 'Funtion:(item)=>String',
-					default: 'item.label|| item.title||item.name',
-				},
-				{
-					prop: 'listStyle',
-					explain: '两个穿梭框的自定义样式',
-					type: 'Object|String',
-					default: '-',
-				},
-				{
-					prop: 'titles',
-					explain: '标题集合，顺序从左至右',
-					type: 'Array',
-					default: '["源列表", "目的列表"]',
-				},
-				{
-					prop: 'filterable',
-					explain: '是否显示搜索框',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					explain: "自定义搜索函数，入参为 data 和 query，data 为项，query 为当前输入的搜索词",
-					prop: "filterMethod",
-					type: 'Funtion:(item,query)=>Boolean',
-					default: "(item,query)=>new RegExp(query, i).test(this.renderFormat(item))"
-				},
-				{
-					prop: 'slot',
-					explain: '自定义底部内容',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'on-selected-change',
-					explain: '选中项发生变化时触发',
-					type: 'Function:(checkedKeys,targetIndex,targetKeys)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'input',
-					explain: '选项在两栏之间转移变化时触发',
-					type: 'Function:(targetKeys|allKeys)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-transfer',
-					explain: '选项在两栏之间转移变化时触发,',
-					type: 'Function:(checkedKeys,targetIndex,allKeys,originIndex)=>{}',
-					default: '-',
-				},
-
-			];
-		}
-	}
 };
 </script>
+
