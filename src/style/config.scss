@@ -1,39 +1,39 @@
-// :root {
+:root {
 
-//     // --prefix: 'due';
-//     // 主题颜色
-//     --primary: #2d8cf0;
-//     --light-primary: #5cadff;
-//     --dark-primary: #2b85e4;
-//     // 辅助颜色
-//     --confirm: var(--primary);
-//     --info: #2db7f5;
-//     --success: #19be6b;
-//     --warning: #ff9900;
-//     --error: #ed4014;
-//     --danger: var(--error);
-//     --error-shadow: rgba(237, 63, 20, 0.2);
-//     // 字体颜色
-//     --title: #17233d;
-//     --content: #515a6e;
-//     --sub-content: #808695; // 待优化
-//     --disable-content: #C0C4CC; // 待优化
-//     // 背景、边框、阴影等 // 待优化
+    //     // --prefix: 'due';
+    //     // 主题颜色
+    //     --primary: #2d8cf0;
+    //     --light-primary: #5cadff;
+    //     --dark-primary: #2b85e4;
+    //     // 辅助颜色
+    //     --confirm: var(--primary);
+    //     --info: #2db7f5;
+    //     --success: #19be6b;
+    //     --warning: #ff9900;
+    //     --error: #ed4014;
+    //     --danger: var(--error);
+    //     --error-shadow: rgba(237, 63, 20, 0.2);
+    // 字体颜色
+    --title: #17233d;
+    --content: #515a6e;
+    --sub-content: #808695; // 待优化
+    --disable-content: #c0c4cc; // 待优化
+    // 背景、边框、阴影等 // 待优化
+    --globalBack: #fff;
+    //     --disabled: #f7f7f7;
+    --border: #dcdee2;
+    //     --divider: #e8eaec;
 
-//     --disabled: #f7f7f7;
-//     --border: #dcdee2;
-//     --divider: #e8eaec;
+    //     --hover: #ebf7ff;
+    //     --transparent: transparent;
 
-//     --hover: #ebf7ff;
-//     --transparent: transparent;
+    //     --back: #f8f8f9;
+    //     --darkback: rgba(41, 42, 48, 0.9);
+    //     --mask: rgba(55, 55, 55, 0.6);
+    //     --white: $white;
+    //     --white-mask: rgba(255, 255, 255, 0.9);
 
-//     --back: #f8f8f9;
-//     --darkback: rgba(41, 42, 48, 0.9);
-//     --mask: rgba(55, 55, 55, 0.6);
-//     --white: $white;
-//     --white-mask: rgba(255, 255, 255, 0.9);
-
-// }
+}
 
 // // 前缀配置
 // $prefix: 'due' !default !global;
@@ -49,14 +49,16 @@
 // $error: var(--error, #ed4014) !default !global;
 // $danger: var(--danger, #ed4014) !default !global;
 // $error-shadow: var(--error-shadow, rgba(237, 63, 20, 0.2)) !default !global;
-// // 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
-// $title:var(--title, #17233d) !default !global;
-// $content:var(--content, #515a6e) !default !global;
-// $sub-content:var(--sub-content, #808695) !default !global;
-// $disable-content:var(--disable-content, #C0C4CC) !default !global;
+// 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
+$title:var(--title, #17233d) !default !global;
+$content:var(--content, #515a6e) !default !global;
+$sub-content:var(--sub-content, #808695) !default !global;
+$disable-content:var(--disable-content, #C0C4CC) !default !global;
+
+$globalBack:var(--globalBack, #fff) !default !global;
 
 // $disabled:var(--disabled, #f7f7f7) !default !global;
-// $border:var(--border, #dcdee2) !default !global;
+$border:var(--border, #dcdee2) !default !global;
 // $divider:var(--divider, #e8eaec) !default !global;
 
 // $hover:var(--hover, #ebf7ff) !default !global;
@@ -69,7 +71,11 @@
 // $white-mask:var(--white-mask, rgba(255, 255, 255, 0.9)) !default !global;
 // 前缀配置
 $prefix: "due" !default !global;
-$theme: #fff !default !global;
+
+// 背景主题
+// $globalBack: #fff !default !global;
+
+
 // 颜色配置
 $primary: #2d8cf0 !default !global;
 $confirm: #2d8cf0 !default !global;
@@ -84,14 +90,14 @@ $danger: #ed4014 !default !global;
 $gray: gray !default !global;
 $error-shadow: rgba(237, 63, 20, 0.2) !default !global;
 // 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
-$title: #17233d !default !global;
-$content: #515a6e !default !global;
-$sub-content: #808695 !default !global;
-$disable-content: #c0c4cc !default !global;
+// $title: #17233d !default !global;
+// $content: #515a6e !default !global;
+// $sub-content: #808695 !default !global;
+// $disable-content: #c0c4cc !default !global;
 
 $disabled: #e6e6e6 !default !global;
 // $disabled: #f7f7f7 !default !global;
-$border: #dcdee2 !default !global;
+// $border: #dcdee2 !default !global;
 $divider: #e8eaec !default !global;
 
 $hover: #ebf7ff !default !global;
@@ -103,8 +109,7 @@ $mask: rgba(55, 55, 55, 0.6) !default !global;
 $white: #fff !default !global;
 $white-mask: rgba(255, 255, 255, 0.9) !default !global;
 // 颜色配置
-$colors-map: (
-    confirm: $primary,
+$colors-map: (confirm: $primary,
     success: $success,
     primary: $primary,
     warning: $warning,
@@ -115,32 +120,28 @@ $colors-map: (
 );
 
 // 字体
+$largeFont: 20px;
+$titleFont: 16px;
 $fontBase: 14px;
 $subFont: 12px;
 $radius: 4px;
 // media
-$media-map: (
-    xs: (
-        max-width: 768px,
+$media-map: (xs: (max-width: 768px,
     ),
-    sm: (
-        min-width: 768px,
+    sm: (min-width: 768px,
     ),
-    md: (
-        min-width: 992px,
+    md: (min-width: 992px,
     ),
-    lg: (
-        min-width: 1200px,
+    lg: (min-width: 1200px,
     ),
-    xl: (
-        min-width: 1600px,
+    xl: (min-width: 1600px,
     ),
-    xxl: (
-        min-width: 1920px,
+    xxl: (min-width: 1920px,
     ),
 );
 
 .#{$prefix}-clearfix {
+
     &::before,
     &::after {
         content: "";
@@ -177,3 +178,13 @@ $media-map: (
 //     height:40,
 //     size:14
 // }
+
+
+$lineHeight:1.12;
+
+@mixin baseStyle {
+    background-color: $globalBack;
+    line-height: $lineHeight;
+    font-size: $fontBase;
+    color: $title;
+}

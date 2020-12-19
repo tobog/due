@@ -13,6 +13,9 @@
                     Content of prompt. Content of prompt. Content of prompt. Content of prompt.
                 </div>
             </Alert>
+            <Alert v-bind="config">
+                Alert offsetBottom
+            </Alert>
         </template>
     </Demo>
 </template>
@@ -70,11 +73,11 @@ export default {
                     label: "类型",
                     key: "type",
                     tag: "Select",
-                    demoDefault: "",
-                    explain: "警告提示样式，可选值为：success, info, warning, error,loading",
+                    demoDefault: "info",
+                    explain: "警告提示样式，可选值为：success, info, warning, error,loading,或者自定义icon",
                     dataType: "String",
-                    default: "",
-                    options: [...this.getThemes, "loading"],
+                    default: "info",
+                    options: ["success", "info", "warning", "error", "loading"],
                 },
                 {
                     showConfig: true,
@@ -100,6 +103,13 @@ export default {
                     label: "事件",
                     key: "on-close",
                     explain: "关闭时触发",
+                    dataType: "Function:Event",
+                    default: "-",
+                },
+                {
+                    label: "事件",
+                    key: "on-after-close",
+                    explain: "关闭动画消失时触发",
                     dataType: "Function:Event",
                     default: "-",
                 },

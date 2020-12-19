@@ -1,7 +1,6 @@
 $prefix-cls: #{$prefix}-layout;
 
 .#{$prefix-cls} {
-    background-color: $theme;
     flex-shrink: 0;
     flex-grow: 1;
     &-has-aside,

@@ -24,12 +24,23 @@
     .demo-table {
         width: 100%;
     }
+    .demo-view[data-dark="true"] {
+        background-color: #000;
+    }
 }
 </style>
 
 <template>
     <div class="demo-wrapper">
+        <component v-if="isDark" :is="'style'">{{ styleCode }}</component>
         <div class="demo-header">
+            <span>
+                深色
+                <vSwitch v-model="isDark" class="margin-10">
+                    <span slot="open">开</span>
+                    <span slot="close">关</span>
+                </vSwitch>
+            </span>
             <slot name="header">
                 <h2>代码示例({{ title }})</h2>
             </slot>
@@ -39,7 +50,7 @@
             <vCol :lg="isAll ? 24 : 14" span="24" class="demo-form">
                 <FormEdit :formdata="config" v-model="formData"></FormEdit>
             </vCol>
-            <vCol :lg="isAll ? 24 : 10" span="24" class="demo-view">
+            <vCol :lg="isAll ? 24 : 10" span="24" class="demo-view" :data-dark="isDark">
                 <vSwitch v-model="show" class="margin-bottom-10">
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -72,7 +83,7 @@
 //     options: "false|top|bottom", // 可选值
 //     explain: "在固定状态发生改变时触发",
 // }
-import FormEdit from "./formedit"
+import FormEdit from "./formedit";
 export default {
     components: {
         FormEdit,
@@ -83,7 +94,7 @@ export default {
         config: {
             type: Array,
             default() {
-                return []
+                return [];
             },
         },
         code: String,
@@ -92,13 +103,23 @@ export default {
         return {
             show: true,
             formData: {},
-        }
+            isDark: false,
+            styleCode: `
+                :root {
+                    --title: #fff;
+                    --content: #c6c9cf;
+                    --sub-content: #777; // 待优化
+                    --disable-content: #56565a;
+                    --globalBack:#151518;
+                    --border:gray;
+            }`,
+        };
     },
     watch: {
         formData: {
             deep: true,
             handler(val) {
-                this.$emit("on-formData", val)
+                this.$emit("on-formData", val);
             },
         },
     },
@@ -138,8 +159,8 @@ export default {
                 //     title: "切换",
                 //     key: "options",
                 // },
-            ]
+            ];
         },
     },
-}
+};
 </script>

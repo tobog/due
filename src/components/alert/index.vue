@@ -1,6 +1,6 @@
 <template>
-    <Transitions :name="transitionName" appear @after-leave="$emit('on-after-leave')" v-bind="$attrs">
-        <section v-if="!closed" :class="wrapClasses" :data-vue-module="$options.name" :style="handleStyle">
+    <Transitions :name="transitionName" appear @after-leave="$emit('on-after-close')" v-bind="$attrs">
+        <section v-if="!closed" :class="classes" :data-vue-module="$options.name" :style="handleStyle">
             <div :class="[_tobogPrefix_ + '-main']">
                 <template v-if="showIcon">
                     <slot name="icon">
@@ -24,12 +24,12 @@
 </template>
 
 <script>
-import Color from '../../utils/color';
-import Icons from '../icons/index';
-import Transitions from '../base/transition';
+import Color from "../../utils/color";
+import Icons from "../icons/index";
+import Transitions from "../base/transition";
 
 export default {
-    name: 'Alert',
+    name: "Alert",
     components: {
         Icons,
         Transitions,
@@ -37,7 +37,7 @@ export default {
     props: {
         type: {
             type: String,
-            default: 'info', // ['success', 'info', 'warning', 'error']
+            default: "info", // ['success', 'info', 'warning', 'error']
         },
         color: String,
         closable: Boolean,
@@ -50,9 +50,9 @@ export default {
         align: String,
         transitionName: {
             type: String,
-            default: 'fade',
+            default: "fade",
         },
-        broadcast: Boolean
+        broadcast: Boolean,
     },
     data() {
         return {
@@ -60,7 +60,7 @@ export default {
         };
     },
     computed: {
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,
@@ -79,11 +79,11 @@ export default {
         },
         iconType() {
             const iconMap = {
-                success: 'checkmark-circle',
-                info: 'information-circle',
-                warning: 'alert',
-                error: 'close-circle',
-                loading: 'loading',
+                success: "checkmark-circle",
+                info: "information-circle",
+                warning: "alert",
+                error: "close-circle",
+                loading: "loading",
             };
             return iconMap[this.type] || this.type;
         },
@@ -92,7 +92,7 @@ export default {
             if (Color.isColor(this.color)) {
                 const color = new Color(this.color);
                 style.borderColor = this.color;
-                !this.ghost && (style.backgroundColor = color.setAlpha(0.06).toCSS());
+                !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS());
             }
             return style;
         },
@@ -100,7 +100,7 @@ export default {
     methods: {
         close() {
             this.closed = true;
-            this.$emit('on-close');
+            this.$emit("on-close");
         },
     },
 };
