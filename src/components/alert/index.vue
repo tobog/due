@@ -30,6 +30,12 @@ import Transitions from "../base/transition";
 
 export default {
     name: "Alert",
+    inject: {
+        $ConfigProvide: {
+            from: "$ConfigProvide",
+            default: "",
+        },
+    },
     components: {
         Icons,
         Transitions,
@@ -53,6 +59,7 @@ export default {
             default: "fade",
         },
         broadcast: Boolean,
+        size: String,
     },
     data() {
         return {
@@ -95,6 +102,12 @@ export default {
                 !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS());
             }
             return style;
+        },
+        getSize() {
+            if (this.size !== void 0) return this.size;
+            if (this.$ConfigProvide && this.$ConfigProvide.getConfig.size !== void 0)
+                return this.$ConfigProvide.getConfig.size;
+            return null;
         },
     },
     methods: {
