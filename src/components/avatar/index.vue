@@ -19,23 +19,23 @@
     </span>
 </template>
 <script>
-import Icons from '../icons/index';
-import { unit } from '../../utils/tool';
+import Icons from "../icons/index";
+import { unit } from "../../utils/tool";
+import globalMixin from "../../mixins/global";
 export default {
-    name: 'Avatar',
+    name: "Avatar",
+    componentName: "Avatar",
+    mixins: [globalMixin],
     components: { Icons },
     props: {
         shape: {
             type: String,
-            default: 'circle', //'circle', 'square',rounded
+            default: "circle", //'circle', 'square',rounded
         },
-        size: {
-            type: [String, Number],
-            // default: '',
-        },
+        size: [String, Number],
         src: {
             type: String,
-            default: 'ios-person',
+            default: "ios-person",
         },
         fallback: String,
         fit: String, //fill,contain,cover,none,scale-down
@@ -55,20 +55,22 @@ export default {
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
+            const size = this.getGlobalData("size");
             return [
-                `${_tobogPrefix_}`,
-                `${_tobogPrefix_}--${this.shape}`,
+                _tobogPrefix_,
+
                 {
-                    [`${_tobogPrefix_}-${this.size}`]: this.size && ['small', 'large'].indexOf(this.size) > -1,
+                    [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
+                    [`${_tobogPrefix_}-size-${size}`]: size,
                 },
             ];
         },
         styles() {
             let style = {};
             let isNaN = parseInt(this.size);
-            if (isNaN === isNaN && ['small', 'large'].indexOf(this.size) === -1) {
+            if (isNaN === isNaN && ["small", "large"].indexOf(this.size) === -1) {
                 style.height = style.width = unit(this.size);
-                style.fontSize = unit(this.size, 'px', 0.67);
+                style.fontSize = unit(this.size, "px", 0.67);
             }
             return style;
         },
@@ -96,7 +98,7 @@ export default {
             }
         },
         handleError(e) {
-            this.$emit('on-error', e);
+            this.$emit("on-error", e);
         },
     },
 };

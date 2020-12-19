@@ -4,7 +4,7 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
 .#{$prefix-cls} {
     color: $content;
     overflow: hidden;
-    font-size: $fontBase;
+    font-size: $baseFont;
 }
 
 .#{$prefix-cls-breaditem} {

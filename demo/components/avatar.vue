@@ -1,148 +1,91 @@
+<style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Avatar 头像)</h2>
             <h4 class="padding-top-10">用来代表用户或事物，支持图片、图标或字符展示。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <div v-if="show">
-                <vAvatar class="margin-right-10" v-bind="formData" src="ios-person" />
-                <vAvatar class="margin-right-10" v-bind="formData">U</vAvatar>
-                <vAvatar class="margin-right-10" v-bind="formData">USER</vAvatar>
-                <vAvatar
-                    class="margin-right-10"
-                    v-bind="formData"
-                    src="https://i.loli.net/2017/08/21/599a521472424.jpg"
-                />
-                <vAvatar class="margin-right-10" v-bind="formData" src="https://tem/d.png">
-                    <img slot="fallback" src="https://i.loli.net/2017/08/21/599a521472424.jpg" alt="" />
-                </vAvatar>
-                <vAvatar class="margin-right-10" v-bind="formData" style="color: #f56a00;background-color: #fde3cf"
-                    >U</vAvatar
-                >
-                <vAvatar class="margin-right-10" v-bind="formData" style="background-color: #87d068" src="ios-person" />
-                <vAvatar class="margin-right-10" v-bind="formData" />
-            </div>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vAvatar class="margin-right-10" v-bind="config" src="ios-person" />
+            <vAvatar class="margin-right-10" v-bind="config">U</vAvatar>
+            <vAvatar class="margin-right-10" v-bind="config">USER</vAvatar>
+            <vAvatar class="margin-right-10" v-bind="config" src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+            <vAvatar class="margin-right-10" v-bind="config" src="https://tem/d.png">
+                <img slot="fallback" src="https://i.loli.net/2017/08/21/599a521472424.jpg" alt="" />
+            </vAvatar>
+            <vAvatar class="margin-right-10" v-bind="config" style="color: #f56a00;background-color: #fde3cf"
+                >U</vAvatar
+            >
+            <vAvatar class="margin-right-10" v-bind="config" style="background-color: #87d068" src="ios-person" />
+            <vAvatar class="margin-right-10" v-bind="config" />
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
     data() {
-        return {
-            formData: {},
-        };
+        return {};
     },
-
     computed: {
-        getBase() {
+        getCode() {
+            return `<Avatar v-bind=CODE icon="ios-person" />
+                    <Avatar v-bind="formData">U</Avatar>
+                    <Avatar v-bind="formData">USER</Avatar>
+                    <Avatar v-bind="formData" icon="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+                    <Avatar v-bind="formData" style="color: #f56a00;background-color: #fde3cf">U</Avatar>
+                    <Avatar v-bind="formData" style="background-color: #87d068" icon="ios-person" />
+                    <Avatar v-bind="formData" />`;
+        },
+        getConfig() {
             return [
                 {
-                    label: '图标类型',
-                    key: 'src',
-                    tag: 'vSelect',
-                    default: 'ios-person',
+                    showConfig: true,
+                    label: "图标类型",
+                    key: "src",
+                    tag: "vSelect",
+                    demoDefault: "ios-person",
+                    explain: "设置头像的图标类型，参考 Icon 组件",
+                    dataType: "String",
+                    default: "",
                     options: this.iconslist,
                 },
                 {
-                    label: '形状',
-                    key: 'shape',
-                    tag: 'vSelect',
-                    default: 'circle',
-                    options: [
-                        {
-                            value: 'square',
-                            label: 'square',
-                        },
-                        {
-                            value: 'circle',
-                            label: 'circle',
-                        },
-                        {
-                            value: 'rounded',
-                            label: 'rounded',
-                        },
-                    ],
+                    showConfig: true,
+                    label: "形状",
+                    key: "shape",
+                    tag: "vSelect",
+                    demoDefault: "circle",
+                    explain: "指定头像的形状，可选值为：square, circle, rounded",
+                    dataType: "String",
+                    default: "circle",
+                    options: ["square", "circle", "rounded"],
                 },
                 {
-                    label: '大小',
-                    key: 'size',
-                    tag: 'vInput',
-                    // default: "ios-person",
-                    options: [
-                        {
-                            value: 'large',
-                            label: 'large',
-                        },
-                        {
-                            value: 'small',
-                            label: 'small',
-                        },
-                        {
-                            value: 'normal',
-                            label: 'normal',
-                        },
-                    ],
-                },
-            ];
-        },
-        getCode() {
-            return `<vAvatar v-bind="${this.getCodeString(this.formData)}" icon="ios-person" />
-                    <vAvatar v-bind="formData">U</vAvatar>
-                    <vAvatar v-bind="formData">USER</vAvatar>
-                    <vAvatar v-bind="formData" icon="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    <vAvatar v-bind="formData" style="color: #f56a00;background-color: #fde3cf">U</vAvatar>
-                    <vAvatar v-bind="formData" style="background-color: #87d068" icon="ios-person" />
-                    <vAvatar v-bind="formData" />`;
-        },
-        compProps() {
-            return [
-                {
-                    prop: 'src',
-                    explain: '设置头像的图标类型，参考 Icon 组件',
-                    type: 'string',
-                    default: '-',
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置头像的大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    prop: 'size',
-                    explain: '设置头像的大小，可选值为 large、small、default，设置具体数值',
-                    type: 'String | Number',
-                    default: '-',
+                    label: "自定义头像",
+                    key: "slot:default",
+                    explain: "自定义头像",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'shape',
-                    explain: '指定头像的形状，可选值为 circle、square',
-                    type: 'String',
-                    default: 'circle',
-                },
-                {
-                    prop: 'slot',
-                    explain: '自定义头像',
-                    type: 'VNode',
-                    default: '-',
-                },
-                {
-                    prop: 'on-error',
-                    explain: 'icon为外链接图片加载不成功时触发',
-                    type: 'Funtion',
-                    default: '-',
+                    label: "事件",
+                    key: "on-error",
+                    explain: "icon为外链接图片加载不成功时触发",
+                    dataType: "Function:Event",
+                    default: "error",
                 },
             ];
         },

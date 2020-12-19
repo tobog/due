@@ -1,5 +1,5 @@
-import Formedit from "./template/formedit"
-import Demo from "./template/demo"
+import Formedit from "./template/formedit";
+import Demo from "./template/demo";
 
 // const struct = {
 //     showConfig: false, //  是否显示demo配置
@@ -17,7 +17,7 @@ export default {
         return {
             show: true,
             formData: {},
-        }
+        };
     },
     components: {
         Formedit,
@@ -26,9 +26,9 @@ export default {
     methods: {
         getCodeString(val = {}) {
             try {
-                return JSON.stringify(val)
+                return JSON.stringify(val);
             } catch (error) {
-                return val
+                return val;
             }
         },
     },
@@ -36,10 +36,10 @@ export default {
         getFormatCode() {
             return this.getCode.replace(/\s{5,}/g, function() {
                 const reg = arguments[0],
-                    leng = reg.length
+                    leng = reg.length;
                 // console.log(arguments, leng)
-                return `\n${reg.slice(leng > 18 ? 20 : 6)}`
-            })
+                return `\n${reg.slice(leng > 18 ? 20 : 6)}`;
+            });
         },
         getTableColumns() {
             return [
@@ -59,7 +59,7 @@ export default {
                     title: "默认值/参数/返回值",
                     key: "default",
                 },
-            ]
+            ];
         },
         getFormTypes() {
             return [
@@ -86,7 +86,7 @@ export default {
                 "tel",
                 "text",
                 "url",
-            ]
+            ];
         },
         getThemes() {
             return [
@@ -99,7 +99,7 @@ export default {
                 "error",
                 "gray",
                 "confirm",
-            ]
+            ];
         },
         getPlacements() {
             return [
@@ -124,7 +124,7 @@ export default {
                 "fix-left",
                 "fix-right",
                 "fix-center",
-            ]
+            ];
         },
         iconslist() {
             return [
@@ -988,10 +988,13 @@ export default {
                 "wine",
                 "woman",
                 "ios-loading",
-            ]
+            ];
         },
         getBearkpoints() {
-            return ["xs", "sm", "md", "lg", "xl", "xxl"]
+            return ["xs", "sm", "md", "lg", "xl", "xxl"];
+        },
+        getSize() {
+            return ["small", "normal", "midiue", "large"];
         },
     },
-}
+};

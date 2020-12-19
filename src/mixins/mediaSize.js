@@ -11,8 +11,8 @@ export default {
         this.__applyResize = true
     },
     created() {
-        if (this.$ConfigProvide && this.$ConfigProvide.getConfig.mediaSize.width) {
-            this.mediaSize = this.$ConfigProvide.getConfig.mediaSize
+        if (this.$ConfigProvide && this.$ConfigProvide.mediaSize.width) {
+            this.mediaSize = this.$ConfigProvide.mediaSize
             return
         }
         this.__getClientSize = debounce(
@@ -38,7 +38,7 @@ export default {
             this.__bindresize = false
         },
         bindResize() {
-            if (this.$ConfigProvide && this.$ConfigProvide.getConfig.mediaSize.width) {
+            if (this.$ConfigProvide && this.$ConfigProvide.mediaSize.width) {
                 return
             }
             if (this.__applyResize && !this.__bindresize) {
@@ -128,7 +128,7 @@ export default {
         },
     },
     watch: {
-        "$ConfigProvide.getConfig"(val, old) {
+        "$ConfigProvide"(val, old) {
             // console.log(this.$ConfigProvide, this.$options.name, "watch")
             if (old && val && val.mediaSize.width !== old.mediaSize.width) {
                 this.mediaSize = val.mediaSize

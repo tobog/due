@@ -73,7 +73,7 @@ $prefix-cls: #{$prefix}-slider;
     &-mark-text {
         position: absolute;
         transform: translateX(-50%);
-        font-size: $fontBase;
+        font-size: $baseFont;
         color: $content;
         margin-top: 8px;
         top: 100%;

@@ -15,7 +15,7 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
 }
 
 .#{$prefix-cls} {
-    font-size: $fontBase;
+    font-size: $baseFont;
     user-select: none;
     display: inline-flex !important;
     justify-content: center;

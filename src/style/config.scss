@@ -122,7 +122,7 @@ $colors-map: (confirm: $primary,
 // 字体
 $largeFont: 20px;
 $titleFont: 16px;
-$fontBase: 14px;
+$baseFont: 14px;
 $subFont: 12px;
 $radius: 4px;
 // media
@@ -185,6 +185,6 @@ $lineHeight:1.12;
 @mixin baseStyle {
     background-color: $globalBack;
     line-height: $lineHeight;
-    font-size: $fontBase;
+    font-size: $baseFont;
     color: $title;
 }

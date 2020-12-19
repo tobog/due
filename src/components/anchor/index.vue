@@ -1,19 +1,15 @@
 <template>
-    <a
-        :class="[_tobogPrefix_]"
-        :href="href"
-        :data-selector="selector"
-        @click.prevent="goAnchor"
-        :title="title"
-        v-bind="$attrs"
-    >
+    <a :class="classes" :href="href" :data-selector="selector" @click.prevent="goAnchor" :title="title" v-bind="$attrs">
         <slot>{{ title }}</slot>
     </a>
 </template>
 <script>
 import { scrollIntoView, getElement } from "../../utils/dom";
+import globalMixin from "../../mixins/global";
 export default {
     name: "Anchor",
+    componentName: "Anchor",
+    mixins: [globalMixin],
     props: {
         href: String,
         title: String,
@@ -22,12 +18,22 @@ export default {
             type: [Number, Boolean, String],
             default: "start",
         },
+        size: String,
     },
-    // data() {
-    //     return {};
-    // },
     mounted() {
         this.initGoAnchor();
+    },
+    computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_;
+            const size = this.getGlobalData("size");
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-size-${size}`]: !!size,
+                },
+            ];
+        },
     },
     methods: {
         initGoAnchor() {

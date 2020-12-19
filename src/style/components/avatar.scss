@@ -8,6 +8,7 @@ $prefix-cls: #{$prefix}-avatar;
     .#{$prefix-cls}-icon {
         font-size: $fontSize;
         line-height: normal;
+
         &[data-size='true'] {
             font-size: inherit;
         }
@@ -26,13 +27,16 @@ $prefix-cls: #{$prefix}-avatar;
 
     @include avatar-size(32px, 24px);
 
-    &-large {
-        @include avatar-size(40px, 32px);
+    &-size {
+        &-large {
+            @include avatar-size(40px, 32px);
+        }
+
+        &-small {
+            @include avatar-size(24px, 16px);
+        }
     }
 
-    &-small {
-        @include avatar-size(24px, 16px);
-    }
 
     &-square {
         border-radius: 0;
@@ -43,10 +47,8 @@ $prefix-cls: #{$prefix}-avatar;
     }
 
     &-icon {
-        height: 100%;
-        > img {
-            // width: 100%;
-            height: 100%;
+        >img {
+            width: 100%;
             border: none;
         }
     }

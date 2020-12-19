@@ -91,7 +91,7 @@ export default {
         visible(val) {
             this.open = !!val
         },
-        "$ConfigProvide.getMedia"(val) {
+        "$ConfigProvide.media"(val) {
             console.log(val, this.open, this.breakpoint, "----------------")
             if (!this.breakpoint) return
             val = this.$ConfigProvide.compareMedia(val, this.breakpoint)

@@ -93,6 +93,17 @@ export default {
                 },
                 {
                     showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "尺寸大小，可选值为：small,normal(default),midiue,large",
+                    dataType: "String",
+                    default: "inf",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
                     label: "自定义颜色",
                     key: "color",
                     tag: "vInput",

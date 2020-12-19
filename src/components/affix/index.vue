@@ -4,10 +4,11 @@
     </aside>
 </template>
 <script>
-import {parseNumber} from "../../utils/tool"
-import Affix from "../../utils/scroll-affix"
+import { parseNumber } from "../../utils/tool";
+import Affix from "../../utils/scroll-affix";
 export default {
     name: "Affix",
+    componentName: "Affix",
     props: {
         offsetTop: Number,
         offsetBottom: Number,
@@ -17,7 +18,7 @@ export default {
         },
     },
     mounted() {
-        this.bindAffix()
+        this.bindAffix();
     },
     computed: {
         affixData() {
@@ -25,30 +26,30 @@ export default {
                 offsetTop: parseNumber(this.offsetTop),
                 offsetBottom: parseNumber(this.offsetBottom),
                 zIndex: parseNumber(this.zIndex),
-            }
+            };
         },
     },
     watch: {
         affixData() {
             this.$nextTick(() => {
-                this.__bindAffix && this.__bindAffix.resetOpt(this.affixData, this.handleChange)
-            })
+                this.__bindAffix && this.__bindAffix.resetOpt(this.affixData, this.handleChange);
+            });
         },
     },
     methods: {
         bindAffix() {
             this.$nextTick(() => {
-                this.__bindAffix = new Affix(this.affixData, this.handleChange)
-                this.__bindAffix.init(this.$el)
-            })
+                this.__bindAffix = new Affix(this.affixData, this.handleChange);
+                this.__bindAffix.init(this.$el);
+            });
         },
         handleChange(type = false) {
-            this.$emit("on-change", type)
+            this.$emit("on-change", type);
         },
     },
     beforeDestroy() {
-        this.__bindAffix && this.__bindAffix.destroy()
-        this.__bindAffix = null
+        this.__bindAffix && this.__bindAffix.destroy();
+        this.__bindAffix = null;
     },
-}
+};
 </script>
