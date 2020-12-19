@@ -1,7 +1,4 @@
-// Type definitions for iview 3.3.1
-// Project: https://github.com/iview/iview
-// Definitions by: yangdan
-// Definitions: https://github.com/yangdan8/iview.git
+
 import Vue from 'vue';
 
 export { Affix } from './affix';
@@ -63,7 +60,7 @@ export { Transfer } from './transfer';
 export { Tree, TreeChild } from './tree';
 export { Upload } from './upload';
 
-interface IViewGlobalOptions{
+interface DueGlobalOptions{
     size?: string;
     transfer?: boolean | string;
     select: {
@@ -119,18 +116,18 @@ interface IViewGlobalOptions{
     };
 }
 
-interface IViewInstallOptions extends IViewGlobalOptions{
+interface DueInstallOptions extends DueGlobalOptions{
     locale?: any;
     i18n?: any;
 }
 
 declare const API: {
     version: string;
-    locale: (l: any) => void;
-    i18n: (fn: any) => void;
+    // locale: (l: any) => void;
+    // i18n: (fn: any) => void;
     install: (
         Vue: Vue,
-        opts: IViewInstallOptions
+        opts: DueInstallOptions
     ) => void;
     lang: (code: string) => void;
 };
@@ -139,6 +136,6 @@ export default API;
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $IVIEW: IViewGlobalOptions;
+        $DUE: DueGlobalOptions;
     }
 }

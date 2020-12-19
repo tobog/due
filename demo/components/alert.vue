@@ -1,202 +1,142 @@
+<style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig">
+        <template slot="header">
             <h2>代码示例 (Alert 警告提示)</h2>
             <h4 class="padding-top-10">静态地呈现一些警告信息，可手动关闭</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <vAlert v-if="show" v-bind="formData"
-                >vAlert offsetBottom Content of prompt. Content of prompt. Content of prompt. Content of prompt. Content
-                of prompt. Content of prompt. Content of prompt. Content of prompt.333</vAlert
-            >
-            <vAlert v-if="show" v-bind="formData">
-                vAlert offsetBottom
+        </template>
+        <template v-slot="config">
+            <Alert v-bind="config">
+                Alert offsetBottom
                 <div slot="desc">
                     Content of prompt. Content of prompt. Content of prompt. Content of prompt.
                 </div>
-            </vAlert>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+            </Alert>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
     data() {
-        return {
-            formData: {},
-        };
+        return {};
     },
-
     computed: {
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '可关闭',
-                    key: 'closable',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "可关闭",
+                    key: "closable",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否可关闭",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '显示图标',
-                    key: 'showIcon',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "显示图标",
+                    key: "showIcon",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否显示图标",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '幽灵透明',
-                    key: 'ghost',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "幽灵透明",
+                    key: "ghost",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "幽灵透明",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '广播',
-                    key: 'broadcast',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "广播",
+                    key: "broadcast",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否可广播",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '类型',
-                    key: 'type',
-                    tag: 'vSelect',
-                    default: 'info',
-                    options: [
-                        {
-                            value: 'info',
-                            label: 'info',
-                        },
-                        {
-                            value: 'warning',
-                            label: 'warning',
-                        },
-                        {
-                            value: 'error',
-                            label: 'error',
-                        },
-                        {
-                            value: 'success',
-                            label: 'success',
-                        },
-                        {
-                            value: 'loading',
-                            label: 'loading',
-                        },
-                    ],
+                    showConfig: true,
+                    label: "类型",
+                    key: "type",
+                    tag: "Select",
+                    demoDefault: "",
+                    explain: "警告提示样式，可选值为：success, info, warning, error,loading",
+                    dataType: "String",
+                    default: "",
+                    options: [...this.getThemes, "loading"],
                 },
                 {
-                    label: '垂直位置',
-                    key: 'align',
-                    tag: 'vSelect',
-                    default: 'info',
-                    options: [
-                        {
-                            value: 'start',
-                            label: 'start',
-                        },
-                        {
-                            value: 'center',
-                            label: 'center',
-                        },
-                        {
-                            value: 'end',
-                            label: 'end',
-                        },
-                    ],
+                    showConfig: true,
+                    label: "自定义颜色",
+                    key: "color",
+                    tag: "Input",
+                    demoDefault: "",
+                    explain: "自定义颜色",
+                    dataType: "String",
+                    default: "",
                 },
                 {
-                    label: '自定义颜色',
-                    key: 'color',
-                    tag: 'vInput',
+                    showConfig: true,
+                    label: "描述",
+                    key: "desc",
+                    tag: "Textarea",
+                    demoDefault: "",
+                    explain: "描述",
+                    dataType: "String",
+                    default: "",
                 },
                 {
-                    label: '描述',
-                    key: 'desc',
-                    tag: 'vTextarea',
-                    span: 24,
-                },
-            ];
-        },
-        getCode() {
-            return `<vAlert v-bind='${this.getCodeString(this.formData)}'>
-							vAlert offsetBottom
-						</vAlert>`;
-        },
-        compProps() {
-            return [
-                {
-                    prop: 'type',
-                    explain: '警告提示样式，可选值为：success, info, warning, error,loading',
-                    type: 'string',
-                    default: 'info',
+                    label: "事件",
+                    key: "on-close",
+                    explain: "关闭时触发",
+                    dataType: "Function:Event",
+                    default: "-",
                 },
                 {
-                    prop: 'closable',
-                    explain: '是否可关闭',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "子元素",
+                    key: "slot:default",
+                    explain: "警告提示内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'broadcast',
-                    explain: '是否可广播',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "标题子元素",
+                    key: "slot:default",
+                    explain: "警告提示内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'showIcon',
-                    explain: '是否显示图标',
-                    type: 'Boolean',
-                    default: 'true',
+                    label: "描述子元素",
+                    key: "slot:desc",
+                    explain: "警告提示辅助性文字介绍",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'ghost',
-                    explain: '幽灵透明',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "关闭子元素",
+                    key: "slot:close",
+                    explain: "自定义关闭内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'on-close',
-                    explain: '关闭时触发',
-                    type: 'Event',
-                    default: '-',
-                },
-                {
-                    prop: 'slot:default',
-                    explain: '警告提示内容',
-                    type: 'VNode',
-                    default: '-',
-                },
-                {
-                    prop: 'slot:desc',
-                    explain: '警告提示辅助性文字介绍',
-                    type: 'VNode',
-                    default: '-',
-                },
-                {
-                    prop: 'slot:close',
-                    explain: '自定义关闭内容',
-                    type: 'VNode',
-                    default: '-',
-                },
-                {
-                    prop: 'slot:icon',
-                    explain: '自定义图标内容',
-                    type: 'VNode',
-                    default: '-',
+                    label: "图标内容",
+                    key: "slot:icon",
+                    explain: "自定义图标内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
             ];
         },

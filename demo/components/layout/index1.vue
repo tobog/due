@@ -29,6 +29,7 @@
                 :width="formData['Aside:width']"
                 :fixed="formData['Aside:fixed']"
                 :breakpoint="formData['Aside:breakpoint']"
+                
             >
                 Slider
             </vAside>

@@ -12,12 +12,9 @@
         "sourceMap": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": [
+                "src/*"
+            ]
         },
-        "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
     },
-    "include": [
-        "types/*.ts",
-    ],
-    "exclude": ["node_modules"]
 }

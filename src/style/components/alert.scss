@@ -7,9 +7,9 @@ $prefix-cls: #{$prefix}-alert;
     border-radius: $radius;
     color: $title;
     margin-bottom: 6px;
-    display: flex !important;
-    justify-content: flex-start;
-    align-items: center;
+    // display: flex !important;
+    // justify-content: flex-start;
+    // align-items: center;
     border: 1px solid $border;
     box-shadow: 0 0 4px -1px $border;
     &-closable {

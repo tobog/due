@@ -1,10 +1,7 @@
-// Type definitions for iview 3.3.1
-// Project: https://github.com/iview/iview
-// Definitions by: yangdan
-// Definitions: https://github.com/yangdan8/iview.git
-import iView from './iview';
 
-export default iView;
-export as namespace iView;
+export * from './components';
 
-export * from './iview.components';
+import * as Due from './components';
+export default Due;
+export as namespace Due;
+

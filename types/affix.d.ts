@@ -1,6 +1,5 @@
 
-import { UIComponent } from './component'
-import { VNode } from 'vue';
+import { UIComponent, VNode } from './component'
 
 export type AffixEventParam = false | 'top' | 'bottom';
 export declare class Affix extends UIComponent {
@@ -24,8 +23,8 @@ export declare class Affix extends UIComponent {
    */
   $emit(eventName: 'on-change', value: AffixEventParam): this;
   /**
-* slot插槽对象
-*/
+  * slot插槽对象
+  */
   $slots: {
     /**
      * @default 
