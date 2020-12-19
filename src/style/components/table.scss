@@ -11,13 +11,14 @@ $prefix-cls: #{$prefix}-table;
 .#{$prefix-cls-fix} {
     &-wrapper {
         position: relative;
-        // z-index: 6;
-        outline: 1px solid rgba($border, 0.8);
+        outline: 1px solid $border;
         color: $content;
         font-size: $fontBase;
         box-sizing: content-box;
-        background-color: #fff;
+        background-color: $white;
         display: block;
+        line-height: 1;
+        text-align: left;
     }
 
     & {
@@ -26,20 +27,32 @@ $prefix-cls: #{$prefix}-table;
         border-radius: inherit;
         overflow: hidden;
         vertical-align: middle;
-        line-height: 1.5;
     }
 
-    &-stripe &-table tr:nth-child(2n) td {
+    &-align {
+        &-left {
+            text-align: left;
+        }
+
+        &-right {
+            text-align: right;
+        }
+
+        &-center {
+            text-align: center;
+        }
+    }
+
+    &-stripe &-table tr:nth-child(2n) > td {
         background-color: $back;
     }
 
     &-hover &-table tr:hover,
     &-row-hover,
     &-row-highlight {
-        td {
-            background-color: $hover !important;
+        & > td {
+            background-color: $hover;
         }
-
     }
 
     &-ellipsis &-table td,
@@ -58,10 +71,9 @@ $prefix-cls: #{$prefix}-table;
         display: table !important;
         border-collapse: collapse;
         word-wrap: break-word;
-        // table-layout: fixed;
-        background-color: #fff;
         margin: 0;
         padding: 0;
+        outline: 0;
         border-bottom: 1px solid $border;
         width: 100%;
 
@@ -69,7 +81,6 @@ $prefix-cls: #{$prefix}-table;
         th {
             box-sizing: border-box !important;
             border-bottom: 1px solid $border;
-            text-align: left;
             padding: 6px;
             height: 46px;
             line-height: normal;
@@ -78,38 +89,85 @@ $prefix-cls: #{$prefix}-table;
 
         th {
             background-color: $back;
-
         }
     }
-
-
 
     &-hide {
         display: none;
     }
 
-
     &-cell-expand {
         cursor: pointer;
-        text-align: center;
-        transition: transform 0.3s ease-in-out;
     }
 
-    &-cell-expanded {
+    &-cell-expanded > &-arrow-icon {
+        transition: transform 0.3s ease-in-out;
         transform: rotate(90deg);
     }
 
     &-splitbar {
+        position: relative;
         float: right;
-        width: 3px;
-        margin-right: -6px;
-        max-height: 100%;
-        min-height: 3px;
+        width: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
         background-color: transparent;
         opacity: 0;
         cursor: col-resize;
-        transform: scaleY(6);
-        overflow: hidden;
+        overflow: visible;
+        font-size: 0;
+
+        &::before {
+            content: "";
+            position: absolute;
+            height: 50vh;
+            width: 6px;
+            // background-color: red;
+            transform: translate(50%, -50%);
+        }
+    }
+
+    &-resize-line {
+        // display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        border-right: 2px dashed $border;
+        z-index: 10;
+    }
+
+    &-sort {
+        margin-left: 3px;
+    }
+
+    &-filter {
+        &-icon {
+            color: $disable-content;
+            margin-left: 3px;
+        }
+
+        &-wrapper[data-active="true"] &-icon {
+            color: $primary;
+        }
+    }
+
+    &-children-icon {
+        border: 1px solid $border;
+        margin-top: -2px;
+        margin-right: 3px;
+
+        &:hover {
+            color: $primary;
+            border-color: $primary;
+        }
+
+        &[data-loading="true"] {
+            border: 0;
+            color: $primary;
+        }
     }
 
     &-table &-cell-right {
@@ -124,9 +182,13 @@ $prefix-cls: #{$prefix}-table;
         text-align: center;
     }
 
+    &-cell > &-checkbox-readonly {
+        cursor: pointer;
+    }
+
     &-tip {
         overflow: auto;
-        background-color: #fff;
+        background-color: $white;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -139,26 +201,36 @@ $prefix-cls: #{$prefix}-table;
         left: 0;
         right: 0;
         bottom: 0;
+        background-color: $white;
+
+        &-hide > tr {
+            opacity: 0;
+            visibility: hidden;
+        }
     }
 
-    &-wrapper &-table>&-summary-body>tr td,
-    &-wrapper &-summary>&-table>tbody>tr td {
+    &-table > &-summary-body > tr td,
+    &-summary > &-table > tbody > tr td {
         border-top: 1px solid $border !important;
-        background-color: inherit !important;
+        background-color: inherit;
+    }
+
+    &-summary-fixed &-table,
+    &-summary-fixed-left &-table,
+    &-summary-fixed-right &-table {
+        & > tbody > tr > td {
+            background-color: $back;
+        }
     }
 
     &-both &-table,
     &-border &-table {
-
         td,
         th {
             border: 1px solid $border;
         }
     }
 
-    // &-horizontal &-table{
-
-    // }
     &-vertical &-table {
         th {
             border-right: 1px solid $border;
@@ -171,7 +243,6 @@ $prefix-cls: #{$prefix}-table;
     }
 
     &-none &-table {
-
         td,
         th {
             border: none;
@@ -179,7 +250,6 @@ $prefix-cls: #{$prefix}-table;
     }
 
     &-small &-table {
-
         td,
         th {
             height: 36px;
@@ -187,26 +257,22 @@ $prefix-cls: #{$prefix}-table;
     }
 
     &-large &-table {
-
         td,
         th {
             padding: 9px 12px;
             height: 56px;
         }
     }
-
 }
 
-
 .#{$prefix-cls} {
-
     &-fixed-thead,
     &-left-fixed,
     &-right-fixed {
         position: absolute;
         top: 0;
         z-index: 20;
-        background-color: #fff;
+        background-color: $white;
         display: none;
 
         .#{$prefix-cls}-expanded-cell {
@@ -233,11 +299,8 @@ $prefix-cls: #{$prefix}-table;
     }
 
     &-fixed-thead &-fixed-wrapper {
-        overflow-y: visible;
-        overflow-x: hidden;
+        overflow: hidden;
     }
-
-
 
     &-body &-table {
         min-width: 100%;
@@ -251,7 +314,6 @@ $prefix-cls: #{$prefix}-table;
             overflow: hidden;
         }
     }
-
 
     &-left-fixed &-fixed-wrapper,
     &-right-fixed &-fixed-wrapper {
@@ -272,14 +334,13 @@ $prefix-cls: #{$prefix}-table;
         border-right-color: $back;
     }
 
-
     &-right-fixed {
         right: 0;
         box-shadow: -3px -1px 6px 0 $border;
         z-index: 10;
     }
 
-    &-right-fixed>&-summary {
+    &-right-fixed > &-summary {
         bottom: 0 !important;
     }
 
@@ -288,13 +349,6 @@ $prefix-cls: #{$prefix}-table;
     &-fix-header &-body thead {
         visibility: hidden;
     }
-
-
-    &-table .#{$prefix}-sort {
-        position: relative;
-        top: -6px;
-    }
-
 }
 
 .#{$prefix-cls-fix} {
@@ -321,9 +375,11 @@ $prefix-cls: #{$prefix}-table;
         position: absolute;
         top: 0;
         box-shadow: 3px 0 6px -2px $border;
+        background-color: $white;
 
         .#{$prefix-cls-fix}-expanded-cell {
-            visibility: hidden;
+            color: transparent;
+            user-select: none;
         }
     }
 
@@ -360,10 +416,10 @@ $prefix-cls: #{$prefix}-table;
 
     &-ready &-left-fixed,
     &-ready &-left-fixed {
-        display: block
+        display: block;
     }
+
     &-summary {
         bottom: 0.5px;
     }
-
 }

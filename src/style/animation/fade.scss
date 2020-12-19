@@ -1,29 +1,20 @@
-@mixin  fade-motion($className, $keyframeName) {
-    @include make-motion($className, $keyframeName);
-    .#{$className}-enter-active, .#{$className}-appear {
-        opacity: 0;
-        animation-timing-function: linear;
-    }
-    .#{$className}-leave-active {
-        animation-timing-function: linear;
-    }
-}
+@include init-motion(fade, #{$prefix}AnimationFade);
 
-@include fade-motion(fade, uiFade);
-
-@keyframes uiFadeIn {
+@keyframes #{$prefix}AnimationFadeIn {
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
 }
 
-@keyframes uiFadeOut {
+@keyframes #{$prefix}AnimationFadeOut {
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }

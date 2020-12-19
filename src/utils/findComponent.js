@@ -53,6 +53,6 @@ export function findBrothersComponents(context, componentName) {
     let res = context.$parent.$children.filter(item => {
         return item.$options.name === componentName
     }), index = res.indexOf(context);
-    res.splice(index, 1);
+    index > -1 && res.splice(index, 1);
     return res;
 }

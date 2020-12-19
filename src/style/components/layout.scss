@@ -1,45 +1,107 @@
 $prefix-cls: #{$prefix}-layout;
-// $prefix-cls-header: #{$prefix}-layout-header;
 
 .#{$prefix-cls} {
-    display: flex;
-    flex-direction: column !important;
-    width: 100%;
+    background-color: $theme;
+    flex-shrink: 0;
+    flex-grow: 1;
+    &-has-aside,
+    &-has-all {
+        display: flex;
+        align-items: stretch;
+    }
+    &-has-header#{&}-top,
+    &-has-aside#{&}-top > &-has-header,
+    &-has-all#{&}-top > &-has-header {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    &-has-aside#{&}-top > &-aside-fixed,
+    &-has-all#{&}-top > &-aside-fixed,
+    &-top > &-has-all > &-aside-fixed {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    &-has-header#{&}-top > &-header-fixed,
+    &-has-header#{&}-top > &-footer-fixed {
+        z-index: 300;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    &-has-all {
+        position: relative;
+    }
+
+    &-has-all > &-header:not(&-header-fixed) {
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+
+    &-has-all > &-footer:not(&-footer-fixed) {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    &-content {
+        flex-shrink: 0;
+        flex-grow: 1;
+        box-sizing: border-box;
+    }
 
     &-header {
         width: 100%;
-        flex: none;
-        height: 64px;
+        height: 60px;
+        box-sizing: border-box;
 
         &-fixed {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1223;
+            z-index: 100;
         }
     }
 
-    &-main {
+    &-footer {
         width: 100%;
-        flex: 1 0 auto;
-        display: flex;
+        height: 60px;
+        box-sizing: border-box;
+
+        &-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
     }
 
-    &-content {
-        flex: 1 0 auto;
-    }
-
-    &-slider {
+    &-aside {
         flex: none;
         width: 200px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+
         &-fixed {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            z-index: 116;
+            z-index: 200;
             overflow: auto;
+        }
+
+        &-right {
+            left: unset;
+            left: initial;
+            right: 0;
+            order: 9999;
         }
     }
 }

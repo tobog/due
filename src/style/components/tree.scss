@@ -107,14 +107,14 @@ $prefix-cls-checkbox: #{$prefix}-checkbox;
 
     .#{$prefix-cls-checkbox} {
         &-inner {
-            background-color: #fff;
+            background-color: $white;
             border-color: $border !important;
         }
 
         &-checked,
         &-indeterminate {
             .#{$prefix-cls-checkbox}-inner {
-                background-color: #fff;
+                background-color: $white;
                 color: $title;
             }
         }
@@ -127,11 +127,11 @@ $prefix-cls-checkbox: #{$prefix}-checkbox;
 
     &,
     a {
-        color: #fff;
+        color: $white;
     }
 
     .#{$prefix-cls-treenode}-drag-line {
-        background-color: #fff;
+        background-color: $white;
     }
 
     .#{$prefix-cls-treenode}-title {
@@ -154,12 +154,12 @@ $prefix-cls-checkbox: #{$prefix}-checkbox;
 
     &,
     a {
-        color: #fff;
+        color: $white;
     }
 
     .#{$prefix-cls-treenode} {
         &-drag-line {
-            background-color: #fff;
+            background-color: $white;
         }
 
         &-title {

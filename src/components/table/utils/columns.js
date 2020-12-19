@@ -1,4 +1,4 @@
-// import { deepCopy } from '../../../utils/tool';
+
 const convertColumnOrder = (columns, layoutFixed) => {
     const left = [], center = [], right = [];
     columns.forEach((column) => {

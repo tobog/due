@@ -4,7 +4,7 @@ $prefix-cls-group: #{$prefix}-buttongroup;
 @mixin btn-base($color, $bgc, $border) {
     color: $color;
     background-color: $bgc;
-    border-color: $border;
+    border-color: rgba($border, 0.8);
 }
 
 @mixin btn-active($color, $bgc, $border) {
@@ -30,23 +30,43 @@ button.#{$prefix-cls} {
     -webkit-appearance: initial;
     -webkit-appearance: unset;
     margin: 0;
-    padding: 5px 15px 6px;
+    padding: 0 15px;
     font-size: $fontBase;
-    line-height: normal;
-    border-radius: 3px;
+    line-height: 30px;
+    box-sizing: border-box;
+    border-radius: $radius;
     border: 1px solid transparent;
     background-image: none;
     outline: none;
     cursor: pointer; // touch-action: manipulation;
     white-space: nowrap;
     transition: all 0.2s linear;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
     &-long {
-        width: 100%;
+       width: 100%;
+    }
+    & > * {
+        vertical-align: middle;
+    }
+    & > .#{$prefix}-icons {
+        margin-right: 4px;
+        font-size: 1.2em;
+    }
+    &-only > .#{$prefix}-icons {
+        margin-right: 0;
+    }
+    &-square {
+        border-radius: 0;
+    }
+    &-circle {
+        & > .#{$prefix}-icons {
+            margin: 0;
+        }
+        padding: 0;
+        width: 32px;
+        border-radius: 50%;
     }
 
     &,
@@ -65,16 +85,37 @@ button.#{$prefix-cls} {
         background-color: transparent !important;
     }
 
-    @each $key,
-    $value in $colors-map {
+    @each $key, $value in $colors-map {
         &-#{$key} {
             @include btn-base(#fff, $value, $value);
             @include btn-active(#fff, $value, $value);
-
+            &.#{$prefix-cls}-plain {
+                background-color: rgba($value, 0.05);
+                color: $value;
+                &:hover,
+                &:focus {
+                    background-color: rgba($value, 0.8);
+                    color: $white;
+                }
+            }
             &.#{$prefix-cls}-ghost {
                 color: $value;
+                &:hover,
+                &:focus {
+                    background-color: rgba($value, 0.05);
+                }
             }
         }
+    }
+
+    &-custome-color:hover {
+        opacity: 0.7;
+    }
+    &-custome-color:focus {
+        box-shadow: none;
+    }
+    &-custome-size > * {
+        transform: translateY(-4px);
     }
 
     &-ghost {
@@ -88,35 +129,43 @@ button.#{$prefix-cls} {
 
     &-size {
         &-small {
-            padding: 5px 10px 6px;
+            padding: 0 10px;
             font-size: $subFont;
+            line-height: 22px;
+            &.#{$prefix-cls}-circle {
+                width: 24px;
+                padding: 0;
+            }
         }
 
         &-large {
-            padding: 10px 21px 11px;
+            padding: 0 22px;
+            line-height: 38px;
+            &.#{$prefix-cls}-circle {
+                width: 40px;
+                padding: 0;
+            }
         }
     }
 
-    &-circle {
+    &-round {
         border-radius: 9999px;
     }
 
     &-loading {
         cursor: not-allowed !important;
-        opacity: 0.8;
+        opacity: 0.8 !important;
     }
 
     &-disabled {
-        opacity: 0.8;
+        opacity: 0.9 !important;
         cursor: not-allowed !important;
         background-color: $disabled !important;
-        border-color: $disabled !important;
+        border-color: $border !important;
         color: $sub-content !important;
+        box-shadow: none !important;
     }
-
 }
-
-
 
 .#{$prefix-cls-group} {
     -webkit-appearance: none !important;
@@ -130,38 +179,34 @@ button.#{$prefix-cls} {
             border-radius: 0;
             margin-left: -1px;
 
-            &:first-child:not(:last-child) {
-                border-top-left-radius: 3px;
-                border-bottom-left-radius: 3px;
-
-            }
-
-
-            &:last-child:not(:first-child) {
-                border-top-right-radius: 3px;
-                border-bottom-right-radius: 3px;
-            }
-
-            &:first-child {
-
-                &.#{$prefix-cls}-circle {
-                    border-top-left-radius: 9999px;
-                    border-bottom-left-radius: 9999px;
-                }
-            }
-
-            &:last-child {
-                &.#{$prefix-cls}-circle {
-                    border-top-right-radius: 9999px;
-                    border-bottom-right-radius: 9999px;
-
-                }
-            }
-
             &:hover,
             &:focus {
                 z-index: 2;
             }
+            &:first-child:not(:last-child) {
+                border-top-left-radius: $radius;
+                border-bottom-left-radius: $radius;
+            }
+
+            &:last-child:not(:first-child) {
+                border-top-right-radius: $radius;
+                border-bottom-right-radius: $radius;
+            }
+        }
+    }
+
+    &#{&}-compact#{&}-square .#{$prefix-cls} {
+        border-radius: 0 !important;
+    }
+    &#{&}-compact#{&}-round .#{$prefix-cls} {
+        &:first-child {
+            border-top-left-radius: 9999px;
+            border-bottom-left-radius: 9999px;
+        }
+
+        &:last-child {
+            border-top-right-radius: 9999px;
+            border-bottom-right-radius: 9999px;
         }
     }
 
@@ -182,48 +227,45 @@ button.#{$prefix-cls} {
         padding-top: 1px;
 
         .#{$prefix-cls} {
-            display: flex;
+            display: block;
             border-radius: 0;
             position: relative;
             z-index: 0;
             margin-top: -1px;
 
-            &:first-child:not(:last-child) {
-                border-top-left-radius: 3px;
-                border-top-right-radius: 3px;
-            }
-
-            &:last-child:not(:first-child) {
-                border-bottom-left-radius: 3px;
-                border-bottom-right-radius: 3px;
-            }
-
-            &:first-child {
-
-                &.#{$prefix-cls}-circle {
-                    border-top-left-radius: 9999px;
-                    border-top-right-radius: 9999px;
-                }
-            }
-
-            &:last-child {
-                &.#{$prefix-cls}-circle {
-                    border-bottom-left-radius: 9999px;
-                    border-bottom-right-radius: 9999px;
-
-                }
-            }
-
             &:hover,
             &:focus {
                 z-index: 2;
+            }
+            &:first-child:not(:last-child) {
+                border-top-left-radius: $radius;
+                border-top-right-radius: $radius;
+            }
+
+            &:last-child:not(:first-child) {
+                border-bottom-left-radius: $radius;
+                border-bottom-right-radius: $radius;
+            }
+        }
+        &.#{$prefix-cls-group}-square .#{$prefix-cls} {
+            border-radius: 0 !important;
+        }
+        &.#{$prefix-cls-group}-round .#{$prefix-cls} {
+            &:first-child {
+                border-top-left-radius: 9999px;
+                border-top-right-radius: 9999px;
+            }
+
+            &:last-child {
+                border-bottom-left-radius: 9999px;
+                border-bottom-right-radius: 9999px;
             }
         }
     }
 
     &:not(.#{$prefix-cls-group}-compact) {
         .#{$prefix-cls} {
-            display: flex;
+            display: block;
             margin-bottom: 8px;
 
             &:last-child {

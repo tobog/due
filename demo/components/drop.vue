@@ -26,13 +26,6 @@
 					<div style="width:100px;">111111</div>
 					<div>2222</div>
 				</vDrop>
-				<vDropWrapper>
-					<vButton>vDropWrapper</vButton>
-					<template slot="list">
-						<div style="width:100px;">111111</div>
-						<div>2222</div>
-					</template>
-				</vDropWrapper>
 			</section>
 		</vCol>
 		<vCol span="24" class="demo-code">

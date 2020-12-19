@@ -51,7 +51,7 @@ export default {
         },
         noDataText: {
             type: String,
-            default: undefined,
+            default: void 0,
             // default: '暂时没有相关数据',
         },
         column: Object,
@@ -134,7 +134,7 @@ export default {
             return performance;
         },
         getNoDataText() {
-            if (this.noDataText === undefined) return this.langs('noDataText', '暂时没有相关数据');
+            if (this.noDataText === void 0) return this.langs('noDataText', '暂时没有相关数据');
             return this.noDataText
         },
     },

@@ -1,52 +1,103 @@
 <template>
-	<i :class="classes" :style="styles" :data-vue-module="$options.name" v-on="$listeners">
-		<img
-			v-if="isHttpIcon"
-			:class="[_tobogPrefix_ + '-img']"
-			:src="type"
-			:alt="type"
-			@error="handleError"
-		/>
-		<slot></slot>
-	</i>
+    <i :class="classes" :style="styles" :data-vue-module="$options.name" v-on="$listeners">
+        <img
+            v-if="isHttpIcon && !isError"
+            v-show="!showLoading"
+            :class="[_tobogPrefix_ + '-img']"
+            :src="type"
+            :alt="type"
+            @load="handleSuccess"
+            @error="handleError"
+        />
+        <template v-if="isError">
+            <slot name="fallback">
+                <img :class="[_tobogPrefix_ + '-img']" :src="fallback" :alt="fallback" data-type="'fallback'" />
+            </slot>
+        </template>
+        <template v-else-if="(isHttpLoadingIcon || $slots.loading) && isLoading">
+            <slot name="loading">
+                <img :class="[_tobogPrefix_ + '-img']" :src="loading" :alt="loading" data-type="'loading'" />
+            </slot>
+        </template>
+        <slot></slot>
+    </i>
 </template>
 
 <script>
 import { unit } from "../../utils/tool";
 export default {
-	name: "Icons",
-	props: {
-		type: String,
-		size: [Number, String],
-		color: String,
-		center: Boolean
-	},
-	computed: {
-		classes() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-${this.type}`]: this.type && !this.isHttpIcon,
-					[`${_tobogPrefix_}-httpicon`]: this.isHttpIcon,
-					[`${_tobogPrefix_}-center`]: this.center
-				}
-			];
-		},
-		isHttpIcon() {
-			return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.type || "");
-		},
-		styles() {
-			const style = {};
-			if (this.size) style["fontSize"] = unit(this.size, 'px');
-			if (this.color) style.color = this.color;
-			return style;
-		}
-	},
-	methods: {
-		handleError(e) {
-			this.$emit('on-error', e);
-		}
-	}
+    name: "Icons",
+    props: {
+        type: String,
+        size: [Number, String],
+        color: String,
+        center: Boolean,
+        fit: String, //fill,contain,cover,none,scale-down,
+        fallback: String,
+        loading: {
+            type: [Boolean, String],
+            default: true,
+        },
+    },
+    data() {
+        return {
+            isError: false,
+            isLoading: true,
+        };
+    },
+    watch: {
+        type() {
+            this.isError = false;
+        },
+    },
+    computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_;
+            const innerType = this.type && !this.isHttpIcon;
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-loading`]:
+                        this.type && this.loading && this.isLoading && !innerType && !this.isHttpLoadingIcon,
+                    [`${_tobogPrefix_}-${this.type}`]: innerType,
+                    [`${_tobogPrefix_}-httpicon`]: this.isHttpIcon,
+                    [`${_tobogPrefix_}-center`]: this.center,
+                    [`${_tobogPrefix_}-fit-${this.fit}`]: !!this.fit,
+                    [`${_tobogPrefix_}-fallback`]: this.isError,
+                    [`${_tobogPrefix_}-loadback`]: !innerType && this.showLoading,
+                },
+            ];
+        },
+        isHttpIcon() {
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.type || "");
+        },
+        isHttpErrorIcon() {
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.fallback || "");
+        },
+        isHttpLoadingIcon() {
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.loading || "");
+        },
+        showLoading() {
+            return (this.loading || this.$slots.loading) && this.isLoading;
+        },
+        styles() {
+            const style = {};
+            if (this.size) style["fontSize"] = unit(this.size, "px");
+            if (this.color) style.color = this.color;
+            return style;
+        },
+    },
+    methods: {
+        handleSuccess(e) {
+            this.isError = this.isLoading = false;
+            // console.log(Date.now(), e, "handleSuccess");
+        },
+        handleError(e) {
+            // console.log(Date.now(), e, "handleError");
+            this.isLoading = false;
+            this.isError = !!(this.fallback || this.$slots.fallback);
+            this.$emit("on-error", e);
+        },
+    },
 };
 </script>

@@ -70,9 +70,9 @@ export default {
 		renderFormat: {
 			type: Function,
 			default(item) {
-				if (item.label !== undefined) return item.label;
-				if (item.title !== undefined) return item.title;
-				if (item.name !== undefined) return item.name;
+				if (item.label !== void 0) return item.label;
+				if (item.title !== void 0) return item.title;
+				if (item.name !== void 0) return item.name;
 				return item;
 			}
 		},

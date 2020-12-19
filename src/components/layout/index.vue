@@ -1,124 +1,129 @@
 <template>
-	<div :class="wrapClasses" :data-vue-module="$options.name">
-		<header v-if="$slots.header" :class="navClasses" :style="headerStyle" >
-			<slot name="header"></slot>
-		</header>
-		<main :class="[_tobogPrefix_ + '-main']" :style="contentStyle">
-			<div
-				:class="sliderClasses"
-				:style="sliderStyle"
-				v-if="$slots.slider"
-			>
-				<slot name="slider"></slot>
-			</div>
-			<div :class="[_tobogPrefix_ + '-content']" v-if="$slots.default">
-				<slot></slot>
-			</div>
-		</main>
-		<div :class="[_tobogPrefix_ + '-footer']" v-if="$slots.footer">
-			<slot name="footer"></slot>
-		</div>
-	</div>
+    <section :class="classes" :data-vue-module="$options.name">
+        <slot></slot>
+    </section>
 </template>
 
 <script>
-	export default {
-		name: "Layout",
-		props: {
-			fixHeader: {
-				type: Boolean,
-				default: false
-			},
-			headerHeight: {
-				type: Number,
-				default: 64
-			},
-			fixSlider: {
-				type: Boolean,
-				default: false
-			},
-			sliderWidth: {
-				type: Number,
-				default: 200
-			},
-			insideMode:{
-				type:Boolean,
-				defaul:false
-			}
-		},
-		data() {
-			return {};
-		},
-		computed: {
-			wrapClasses(){
-				const _tobogPrefix_ = this._tobogPrefix_;
-				return [
-					_tobogPrefix_,
-					{
-						[`${_tobogPrefix_}-inside`]: !!this.insideMode
-					}
-				];
-			},
-			navClasses() {
-				const _tobogPrefix_ = this._tobogPrefix_;
-				return [
-					`${_tobogPrefix_}-header`,
-					{
-						[`${_tobogPrefix_}-header-fixed`]: !!this.fixHeader
-					}
-				];
-			},
-			sliderClasses() {
-				const _tobogPrefix_ = this._tobogPrefix_;
-				return [
-					`${_tobogPrefix_}-slider`,
-					{
-						[`${_tobogPrefix_}-slider-fixed`]: !!this.fixSlider
-					}
-				];
-			},
-			getHeaderHeight() {
-				const height = parseFloat(this.headerHeight || 0);
-				return isNaN(height) || !height ? 64 : height;
-			},
-			getSliderWidth() {
-				const width = parseFloat(this.sliderWidth || 0);
-				return isNaN(width) || !width ? 200 : width;
-			},
-			headerStyle() {
-				const height = this.getHeaderHeight;
-				const width = this.getSliderWidth;
-				const style={};
-				if(height!=64) style.height=height + "px";
-				if(!this.fixHeader &&
-						this.fixSlider &&
-						this.$slots.slider &&
-						width) style.paddingLeft=width + "px";
-				if(this.fixHeader&&this.insideMode&&this.fixSlider &&
-						this.$slots.slider &&
-						width) style.left=width + "px";
-				return style;
-			},
-			sliderStyle() {
-				const width = this.getSliderWidth;
-				const height = this.getHeaderHeight;
-				const style={};
-				if(width!=200) style.width=width + "px";
-				if(this.fixHeader&&!this.insideMode && this.$slots.header && height) style.top=height + "px";
-				return style;
-			},
-			contentStyle() {
-				const height = this.getHeaderHeight;
-				const width = this.getSliderWidth;
-				const style = {};
-				if (this.fixHeader && this.$slots.header && height) {
-					style.paddingTop = height + "px";
-				}
-				if (this.fixSlider && this.$slots.slider && width) {
-					style.paddingLeft = width + "px";
-				}
-				return style;
-			}
-		}
-	};
+export default {
+    name: "Layout",
+    props: {},
+    data() {
+        return {
+            hasAside: false,
+            hasHeader: false,
+            childSize: null,
+            isTopLayout: false,
+        }
+    },
+    mounted() {
+        this.init()
+    },
+    methods: {
+        init() {
+            this.$nextTick(() => {
+                const layoutSize = this.getMediaWidth()
+                if (this.$parent && this.$parent.$options.name === "Layout") {
+                    this.$parent.childSize = layoutSize
+                } else {
+                    this.isTopLayout = true
+                }
+                this.childSize &&
+                    ["top", "bottom", "left", "right"].forEach((key) => {
+                        layoutSize[key] = layoutSize[key] || this.childSize[key]
+                    })
+                this.setSize(layoutSize)
+                this.findChild("Layout").forEach((comp) => {
+                    comp.setSize(layoutSize)
+                })
+                if (!this.isTopLayout) {
+                    this.$parent.init()
+                }
+            })
+        },
+        findChild(type = "Layout-Aside", context) {
+            context = context || this
+            return context.$children.filter((child) => {
+                return child.$options.name === type
+            })
+        },
+        getMediaWidth() {
+            let header = this.findChild("Layout-Header"),
+                aside = this.findChild("Layout-Aside"),
+                footer = this.findChild("Layout-Footer"),
+                top = 0,
+                bottom = 0,
+                left = 0,
+                right = 0
+            this.hasAside = aside.length > 0
+            this.hasHeader = header.length > 0 || footer.length > 0
+            aside.forEach((comp) => {
+                if (comp.fixed && !comp.right) {
+                    left = comp.getWidth()
+                }
+                if (comp.fixed && comp.right) {
+                    right = comp.getWidth()
+                }
+            })
+            header.forEach((comp) => {
+                if (comp.fixed || (this.hasAside && this.hasHeader)) {
+                    top = comp.getHeight()
+                }
+            })
+            footer.forEach((comp) => {
+                if (comp.fixed || (this.hasAside && this.hasHeader)) {
+                    bottom = comp.getHeight()
+                }
+            })
+            return {top, bottom, left, right}
+        },
+        setSize(size) {
+            let header = this.findChild("Layout-Header"),
+                aside = this.findChild("Layout-Aside"),
+                footer = this.findChild("Layout-Footer"),
+                content = this.findChild("Layout-Content")
+            header.forEach((comp) => {
+                if (size.left) comp.left = size.left
+                if (size.right) comp.right = size.right
+            })
+            aside.forEach((comp) => {
+                if (size.top) comp.top = size.top
+                if (size.bottom) comp.bottom = size.bottom
+            })
+            footer.forEach((comp) => {
+                if (size.left) comp.left = size.left
+                if (size.right) comp.right = size.right
+            })
+            content.forEach((comp) => {
+                if (size.left) comp.left = size.left
+                if (size.right) comp.right = size.right
+                if (size.bottom) comp.bottom = size.bottom
+                if (size.top) comp.top = size.top
+            })
+        },
+        refresh() {
+            if (this.$parent && this.$parent.$options.name === "Layout" && typeof this.$parent.init === "function") {
+                this.$parent.init(true)
+            }
+        },
+    },
+    computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-has-aside`]: this.hasAside && !this.hasHeader,
+                    [`${_tobogPrefix_}-has-header`]: !this.hasAside && this.hasHeader,
+                    [`${_tobogPrefix_}-has-all`]: this.hasAside && this.hasHeader,
+                    [`${_tobogPrefix_}-top`]: this.isTopLayout,
+                },
+            ]
+        },
+    },
+
+    beforeDestroy() {
+        this.refresh()
+    },
+}
 </script>

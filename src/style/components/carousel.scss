@@ -1,7 +1,7 @@
 $prefix-cls: #{$prefix}-carousel;
+$timeTest: 0.5s;
 
 .#{$prefix-cls} {
-
     position: relative;
     display: block;
     box-sizing: border-box;
@@ -16,55 +16,85 @@ $prefix-cls: #{$prefix}-carousel;
     }
 
     // scroll
+    // &-scroll {
+    //     position: relative;
+
+    //     &bar {
+    //         position: absolute;
+    //         bottom: 0;
+    //         height: 0;
+    //         left: 0;
+    //         right: 0;
+    //         z-index: 10;
+    //         background-color: $white;
+    //     }
+
+    //     .#{$prefix-cls}-list {
+    //         white-space: nowrap;
+    //         overflow-y: hidden;
+    //         overflow-x: scroll;
+    //         height: calc(100% + 20px);
+    //     }
+
+    //     .#{$prefix-cls}-item {
+    //         display: inline-flex;
+    //         position: relative !important;
+    //         transition: none;
+    //     }
+
+    //     .#{$prefix-cls}-dots {
+    //         bottom: 18px !important;
+    //     }
+
+    //     // .#{$prefix-cls}-active {
+    //     //     transition: none;
+    //     // }
+
+    //     .#{$prefix-cls}-next,
+    //     .#{$prefix-cls}-pre {
+    //         transition: transform $timeTest ease;
+
+    //         &.#{$prefix-cls}-left {
+    //             transform: translate3d(-100%, 0, 0);
+    //         }
+
+    //         &.#{$prefix-cls}-right {
+    //             transform: translate3d(100%, 0, 0);
+    //         }
+    //     }
+    // }
+
+    // scroll
     &-scroll {
-        position: relative;
-
-        &bar {
-            position: absolute;
-            bottom: 0;
-            height: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            background-color: #fff;
-        }
-
-        .#{$prefix-cls}-list {
-            white-space: nowrap;
-            overflow-y: hidden;
-            overflow-x: scroll;
-            height: calc(100% + 20px);
-        }
-
-        .#{$prefix-cls}-item {
-            display: inline-flex;
-            position: relative !important;
-            transition: none;
-        }
-
-        .#{$prefix-cls}-dots {
-            bottom: 18px !important;
-        }
-
-        // .#{$prefix-cls}-active {
-        //     transition: none;
-        // }
-
-        .#{$prefix-cls}-next,
-        .#{$prefix-cls}-pre {
-            transition: transform 1s ease;
-
-            &.#{$prefix-cls}-left {
-                transform: translate3d(-100%, 0, 0);
+        .#{$prefix-cls} {
+            &-list {
+                position: relative;
+                display: inline-flex;
+                transition: transform $timeTest ease, opacity $timeTest ease;
             }
-
-            &.#{$prefix-cls}-right {
-                transform: translate3d(100%, 0, 0);
+            &-item {
+                position: static;
+                width: auto;
+                height: 100%;
+                flex: none;
+                transform: none;
+                transition: none;
+            }
+        }
+        &.#{$prefix-cls}-vertical {
+            .#{$prefix-cls} {
+                &-list {
+                    flex-direction: column;
+                    height: auto;
+                    width: 100%;
+                }
+                &-item {
+                    width: 100%;
+                    height: auto;
+                }
             }
         }
     }
-
-    // scroll
 
     &-list {
         position: relative;
@@ -77,30 +107,28 @@ $prefix-cls: #{$prefix}-carousel;
     }
 
     &-item {
-        display: none;
+        display: flex;
         height: 100%;
         width: 100%;
         justify-content: center;
         align-items: center;
         flex-wrap: nowrap;
         overflow: hidden;
-    }
-
-    &-active,
-    &-next,
-    &-pre {
-        display: flex;
-        transition: transform 0.6s ease;
-    }
-
-    &-next,
-    &-pre {
         position: absolute;
         top: 0;
+    }
+
+    &-next,
+    &-pre {
+        z-index: 10;
         left: 0;
     }
 
     &-active {
+        position: relative;
+        z-index: 20;
+        transition: transform $timeTest ease, opacity $timeTest ease;
+
         &.#{$prefix-cls}-left {
             transform: translate3d(-100%, 0, 0);
         }
@@ -118,21 +146,37 @@ $prefix-cls: #{$prefix}-carousel;
         transform: translateX(-100%);
     }
 
+    &-vertical &-active {
+        &.#{$prefix-cls}-left {
+            transform: translate3d(0, -100%, 0);
+        }
+
+        &.#{$prefix-cls}-right {
+            transform: translate3d(0, 100%, 0);
+        }
+    }
+
+    &-vertical &-next {
+        transform: translateY(100%);
+    }
+
+    &-vertical &-pre {
+        transform: translateY(-100%);
+    }
+
     &-next#{&}-left,
     &-pre#{&}-right {
+        transition: transform $timeTest ease, opacity $timeTest ease;
         transform: translate3d(0, 0, 0);
     }
 
     &-fade {
-        .#{$prefix-cls}-active {
-            transform: translate3d(0, 0, 0);
-        }
-
+        .#{$prefix-cls}-item,
         .#{$prefix-cls}-next,
         .#{$prefix-cls}-pre,
         .#{$prefix-cls}-active.#{$prefix-cls}-left,
         .#{$prefix-cls}-active.#{$prefix-cls}-right {
-            transition: opacity 0.6s cubic-bezier(0.93, 0.25, 0.68, 0.49);
+            transition: opacity $timeTest cubic-bezier(0.93, 0.25, 0.68, 0.49);
             opacity: 0.1;
             transform: translate3d(0, 0, 0);
         }
@@ -140,6 +184,12 @@ $prefix-cls: #{$prefix}-carousel;
         .#{$prefix-cls}-next.#{$prefix-cls}-left,
         .#{$prefix-cls}-pre.#{$prefix-cls}-right {
             opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .#{$prefix-cls}-active {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
         }
     }
 
@@ -153,11 +203,11 @@ $prefix-cls: #{$prefix}-carousel;
         display: none;
         position: absolute;
         top: 50%;
-        z-index: 10;
+        z-index: 50;
         transform: translateY(-50%);
         transition: background-color 0.3s ease;
-        background-color: rgba(31, 45, 61, .11);
-        color: #fff;
+        background-color: rgba(31, 45, 61, 0.11);
+        color: $white;
         justify-content: center;
         align-items: center;
         font-size: 1.6em;
@@ -184,6 +234,24 @@ $prefix-cls: #{$prefix}-carousel;
         }
     }
 
+    &-vertical &-arrow {
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%) rotate(90deg);
+
+        &[data-right] {
+            right: unset;
+            right: initial;
+            top: unset;
+            top: initial;
+            bottom: 12px;
+        }
+    }
+
+    &-outside &-arrow {
+        margin-top: -10px;
+    }
+
     &:hover &-arrow-hover {
         opacity: 1;
     }
@@ -192,7 +260,7 @@ $prefix-cls: #{$prefix}-carousel;
         $padding: 6px;
         display: none;
         position: relative;
-        z-index: 10;
+        z-index: 50;
         justify-content: center;
         align-items: center;
         flex-wrap: nowrap;
@@ -201,7 +269,7 @@ $prefix-cls: #{$prefix}-carousel;
         &-inside {
             display: flex;
             position: absolute;
-            bottom: 18px - $padding;
+            bottom: 12px - $padding;
         }
 
         &-outside {
@@ -212,19 +280,19 @@ $prefix-cls: #{$prefix}-carousel;
         .#{$prefix-cls}-dot {
             display: inline-block;
             font-size: 0;
-            margin: 0 $padding;
-            cursor: pointer;
+            margin: 0 6px;
             padding: 6px 0;
+            cursor: pointer;
 
             &::before {
-                content: "";
-                opacity: 0.3;
+                content: '';
                 transition: all 0.4s ease;
                 display: block;
                 width: 16px;
                 height: 3px;
-                background: red;
-                border-radius: 1px;
+                background: $white;
+                border-radius: 2px;
+                opacity: 0.5;
             }
 
             &[data-radius]::before {
@@ -234,7 +302,7 @@ $prefix-cls: #{$prefix}-carousel;
             }
 
             &-active::before {
-                opacity: 1;
+                opacity: 1 !important;
                 width: 24px;
             }
 
@@ -246,6 +314,135 @@ $prefix-cls: #{$prefix}-carousel;
 
             &:hover::before {
                 opacity: 0.7;
+            }
+        }
+
+        &-outside > .#{$prefix-cls}-dot::before {
+            background: #c0c4cc;
+        }
+
+        &-top {
+            bottom: unset;
+            bottom: initial;
+            top: 12px - $padding;
+        }
+
+        &-inside#{&}-left,
+        &-inside#{&}-right {
+            flex-direction: column;
+            top: 0;
+            bottom: 0;
+            left: 12px - $padding;
+            width: auto;
+
+            .#{$prefix-cls}-dot {
+                padding: 0 6px;
+                margin: 6px 0;
+
+                &:before {
+                    height: 16px;
+                    width: 3px;
+                }
+
+                &-active :before {
+                    height: 24px;
+                }
+            }
+        }
+
+        &-right {
+            left: unset;
+            left: initial;
+            right: 12px - $padding;
+        }
+    }
+
+    // card
+    &-card {
+        .#{$prefix-cls} {
+            &-item {
+                width: 50%;
+                transform-origin: center center;
+                opacity: 0;
+                margin: auto;
+            }
+
+            &-card-pre,
+            &-card-next {
+                left: 25%;
+                transform: translateX(-80%) scale(0.8);
+                opacity: 0.8;
+                z-index: 5;
+            }
+
+            &-card-next {
+                transform: translateX(80%) scale(0.8);
+            }
+
+            &-active {
+                left: 0;
+                opacity: 1;
+
+                &.#{$prefix-cls}-left {
+                    opacity: 0.8;
+                    transform: translate3d(-80%, 0, 0) scale(0.8);
+                }
+
+                &.#{$prefix-cls}-right {
+                    opacity: 0.8;
+                    transform: translate3d(80%, 0, 0) scale(0.8);
+                }
+            }
+
+            &-next.#{$prefix-cls}-left,
+            &-pre.#{$prefix-cls}-right {
+                transform: translate3d(0, 0, 0) scale(1);
+                z-index: 30;
+                opacity: 1;
+            }
+        }
+
+        &.#{$prefix-cls}-vertical {
+            .#{$prefix-cls} {
+                &-item {
+                    height: 50%;
+                    width: 100%;
+                }
+
+                &-card-pre,
+                &-card-next {
+                    left: 0;
+                    top: 25%;
+                    transform: translateY(-80%) scale(0.8);
+                    opacity: 0.3;
+                    z-index: 5;
+                }
+
+                &-card-next {
+                    transform: translateY(80%) scale(0.8);
+                }
+
+                &-active {
+                    top: 25%;
+                    opacity: 1;
+
+                    &.#{$prefix-cls}-left {
+                        opacity: 0.3;
+                        transform: translate3d(0, -80%, 0) scale(0.8);
+                    }
+
+                    &.#{$prefix-cls}-right {
+                        opacity: 0.3;
+                        transform: translate3d(0, 80%, 0) scale(0.8);
+                    }
+                }
+
+                &-next.#{$prefix-cls}-left,
+                &-pre.#{$prefix-cls}-right {
+                    transform: translate3d(0, 0, 0) scale(1);
+                    z-index: 30;
+                    opacity: 1;
+                }
             }
         }
     }

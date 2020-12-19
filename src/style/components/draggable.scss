@@ -1,0 +1,11 @@
+$prefix-cls: #{$prefix}-draggable;
+
+.#{$prefix-cls} {
+    width: 300px;
+    height: 300px;
+    border: 1px solid $border;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

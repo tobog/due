@@ -1,7 +1,7 @@
 
 import { EventListener } from '../utils/dom'
 export default class Carousel {
-    constructor(el, options, callback) {
+    constructor (el, options, callback) {
         if (!el) throw new Error("el must be the HTMLElement");
         if (typeof options === 'function') {
             this._callback = options;
@@ -18,6 +18,8 @@ export default class Carousel {
         this._nextClass = `${_prefix}-next`;
         this._rightClass = `${_prefix}-right`;
         this._preClass = `${_prefix}-pre`;
+        this._cardNextClass = `${_prefix}-card-next`;
+        this._cardPreClass = `${_prefix}-card-pre`;
         this._running = false;
         this._isPaused = false;
         this.update({
@@ -30,18 +32,65 @@ export default class Carousel {
         });
         this.play();
     }
-    _getElementSibling(isRight) {
-        const activeEle = this.el.querySelector(`.${this._activeClass}`) || this._children[0];
+    _getNextActiveEle(isRight) {
+        const activeEle = this.el.querySelector(`.${this._activeClass}`) || this.el.querySelector(`.${this._itemClass}[data-active]`) || this._children[0];
         if (!activeEle) {
-            return this._activeEle = this._eleSibling = null;
+            return this._activeEle = this._nextActiveEle = null;
         }
         activeEle.classList.add(this._activeClass);
         this._activeEle = activeEle;
         if (isRight) {
-            this._eleSibling = activeEle.previousElementSibling || (this.loop && activeEle.parentNode.lastElementChild);
+            this._nextActiveEle = activeEle.previousElementSibling || (this.loop && activeEle.parentNode.lastElementChild);
         } else {
-            this._eleSibling = activeEle.nextElementSibling || (this.loop && activeEle.parentNode.firstElementChild);
+            this._nextActiveEle = activeEle.nextElementSibling || (this.loop && activeEle.parentNode.firstElementChild);
         }
+        this._getElementSibling(isRight);
+        return true;
+    }
+    // mode card
+    _getElementSibling(isRight) {
+        if (this.mode !== 'card' || this._children.length < 2) return this._elementSiblings = null;
+        const nextActiveEle = this._nextActiveEle;
+        const activeEle = this._activeEle;
+        if (!nextActiveEle) {
+            return this._elementSiblings = null;
+        }
+        if (isRight) {
+            this._elementSiblings = [nextActiveEle.previousElementSibling || nextActiveEle.parentNode.lastElementChild, activeEle.nextElementSibling || activeEle.parentNode.firstElementChild];
+            nextActiveEle.classList.add(this._cardPreClass);
+            this._elementSiblings[1].classList.add(this._cardNextClass);
+        } else {
+            this._elementSiblings = [activeEle.previousElementSibling || activeEle.parentNode.lastElementChild, nextActiveEle.nextElementSibling || nextActiveEle.parentNode.firstElementChild];
+            nextActiveEle.classList.add(this._cardNextClass);
+            this._elementSiblings[0].classList.add(this._cardPreClass);
+        }
+        return true;
+    }
+    // mode srcoll
+    _setScrollData(isRight) {
+        const nextActiveEle = this._nextActiveEle;
+        if (!nextActiveEle || this.mode !== 'scroll') return false;
+        const parentNode = nextActiveEle.parentNode;
+        const isVertical = this.direction === 'vertical';
+        const maxData = isVertical ? (parentNode.scrollHeight - parentNode.parentNode.clientHeight) : (parentNode.scrollWidth - parentNode.parentNode.clientWidth);
+        let data = isVertical ? nextActiveEle.offsetTop : nextActiveEle.offsetLeft;
+        console.log(maxData, data)
+        // if(isVertical)
+        if (maxData < data) data = maxData;
+        this._speed(false, parentNode);
+        parentNode.style.transform = isVertical ? `translateY(-${data}px)` : `translateX(-${data}px)`;
+        nextActiveEle.classList.add(this._activeClass);
+        this._activeEle.classList.remove(this._activeClass);
+        const index = this._getChildIndex(nextActiveEle);
+        this._selectedSlide(index);
+        this._handleCallback(index);
+        if (data === maxData) return true;
+        this._once(parentNode, () => {
+            this._speed(true, parentNode);
+            this._activeEle = nextActiveEle;
+            if (this._isPaused) return;
+            this.play(isRight, this.autoplay);
+        }, true)
         return true;
     }
     _getChildren() {
@@ -55,21 +104,30 @@ export default class Carousel {
     _getChildIndex(element) {
         return this._children.indexOf(element);
     }
-    _once(el, callback) {
+    _once(el, callback, isOnce) {
         let running;
         const _callback = function (event) {
             if (running) return;
-            running = true;
+            running = !isOnce;
             callback(event);
-            EventListener.off(el, 'webkitTransitionEnd,transitionend', _callback);
+            !isOnce && EventListener.off(el, 'webkitTransitionEnd,transitionend', _callback);
+            this._onceBinded = isOnce;
         }
-        EventListener.on(el, 'webkitTransitionEnd,transitionend', _callback);
+        if (!this._onceBinded) {
+            this._onceBinded = isOnce;
+            EventListener.on(el, 'webkitTransitionEnd,transitionend', _callback);
+        }
+
     }
-    _speed(isRemove) {
+    _speed(isRemove, ele) {
         if (this.speed) {
             const speed = isRemove ? '' : this.speed;
-            this._activeEle && (this._activeEle.style.transitionDuartion = speed);
-            this._eleSibling && (this._eleSibling.style.transitionDuartion = speed);
+            if (ele) {
+                ele.style.transitionDuartion = speed;
+            } else {
+                this._activeEle && (this._activeEle.style.transitionDuartion = speed);
+                this._nextActiveEle && (this._nextActiveEle.style.transitionDuartion = speed);
+            }
         }
     }
     _reflow(ele) {
@@ -94,9 +152,11 @@ export default class Carousel {
         this.interval = options.interval;
         this.reverse = options.reverse;
         this.speed = options.speed;
-        this.autoplay = true;
+        this.mode = options.mode;
+        this.autoplay = options.autoplay;
+        this.direction = options.direction;
         this._getChildren();
-        this._getElementSibling(this.reverse);
+        this._getNextActiveEle(this.reverse);
         const index = this._getChildIndex(this._activeEle);
         this._handleCallback(index);
         setTimeout(() => {
@@ -117,7 +177,7 @@ export default class Carousel {
             this._queue = ['slide', slideIndex];
             return
         }
-        this._eleSibling = this._children[slideIndex];
+        this._nextActiveEle = this._children[slideIndex];
         this._step(slideIndex < activeIndex);
     }
     play(isRight = this.reverse, isAuto = this.autoplay) {
@@ -137,7 +197,7 @@ export default class Carousel {
             this._queue = !this._queue && ['step', isRight];
             return;
         }
-        if (!this._getElementSibling(isRight)) return;
+        if (!this._getNextActiveEle(isRight)) return;
         this._step(isRight);
     }
     _handleCallback(index) {
@@ -153,11 +213,20 @@ export default class Carousel {
         }
     }
     _step(isRight = this.reverse) {
-        const _eleSibling = this._eleSibling;
-        if (!_eleSibling || this._children.length < 2) return;
+        const nextActiveEle = this._nextActiveEle;
+        if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
         this._running = true;
         const activeEleClass = this._activeEle.classList,
-            eleSiblingClass = _eleSibling.classList;
+            nextActiveEleClass = nextActiveEle.classList;
+        if (this._elementSiblings) {
+            if (isRight) {
+                activeEleClass.add(this._cardNextClass);
+                this._elementSiblings[0].classList.add(this._cardPreClass);
+            } else {
+                activeEleClass.add(this._cardPreClass);
+                this._elementSiblings[1].classList.add(this._cardNextClass);
+            }
+        }
         let preNextClass, rightLeftClass;
         if (isRight) {
             preNextClass = this._preClass;
@@ -166,20 +235,30 @@ export default class Carousel {
             preNextClass = this._nextClass;
             rightLeftClass = this._leftClass;
         }
-        eleSiblingClass.add(preNextClass);
+
+        nextActiveEleClass.add(preNextClass);
         this._speed();
-        this._reflow(_eleSibling);
-        eleSiblingClass.add(rightLeftClass);
+        this._reflow(nextActiveEle);
+        nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
-        const index = this._getChildIndex(_eleSibling);
+        const index = this._getChildIndex(nextActiveEle);
         this._selectedSlide(index);
         this._handleCallback(index);
-        this._once(_eleSibling, () => {
-            eleSiblingClass.remove(preNextClass, rightLeftClass);
+        this._once(nextActiveEle, () => {
+            nextActiveEleClass.remove(preNextClass, rightLeftClass, this._cardNextClass, this._cardPreClass);
             activeEleClass.remove(this._activeClass, rightLeftClass);
+            if (this._elementSiblings) {
+                if (isRight) {
+                    // activeEleClass.add(this._cardNextClass);
+                    this._elementSiblings[1].classList.remove(this._cardNextClass);
+                } else {
+                    // activeEleClass.add(this._cardPreClass);
+                    this._elementSiblings[0].classList.remove(this._cardPreClass);
+                }
+            }
             this._speed(true);
-            eleSiblingClass.add(this._activeClass);
-            this._activeEle = _eleSibling;
+            nextActiveEleClass.add(this._activeClass);
+            this._activeEle = nextActiveEle;
             if (this._runQueue() || this._isPaused) return;
             this.play(isRight, this.autoplay);
         })

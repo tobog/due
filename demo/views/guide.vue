@@ -1,28 +1,28 @@
 <template>
 	<div class="demo-layout padding-20">
-		<h2>关于 UI-TOBOG</h2>
-		<header class="padding-20">UI-TOBOG 是一套基于 Vue.js 的开源 UI 组件库，主要服务于 PC 界面的中后台产品。</header>
+		<h2>关于 Due</h2>
+		<header class="padding-20">Due 是一套基于 Vue.js 的开源 UI 组件库，主要服务于 PC 界面的中后台产品。</header>
 		<h2>安装</h2>
 		<h3 class="padding-20">NPM 安装</h3>
 		<div class="demo-code demo-code-other">
 			<pre v-highlight>
-				<code class="vue" v-text="'$ npm install ui-tobog --save'"></code>
+				<code class="vue" v-text="'$ npm install Due --save'"></code>
 			</pre>
 			<div>或使用 &lt;script&gt;全局引用</div>
 			<pre v-highlight>
-				<code class="vue" v-text="'<script type=text/javascript src=ui-tobog.umd.min.js></script>'"></code>
+				<code class="vue" v-text="'<script type=text/javascript src=Due.umd.min.js></script>'"></code>
 			</pre>
 		</div>
-		<h2 class="padding-top-20">引入 UI-TOBOG</h2>
+		<h2 class="padding-top-20">引入 Due</h2>
 		<div class="demo-code demo-code-other">
 			<pre v-highlight>
 				<code class="vue">
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Routers from './router.js';
-import  UiTobog from 'ui-tobog';
+import  Due from 'Due';
 Vue.use(VueRouter);
-Vue.use(UiTobog);
+Vue.use(Due);
 // The routing configuration
 const RouterConfig = {
     routes: Routers
@@ -48,7 +48,7 @@ new Vue({
 		<div class="demo-code demo-code-other">
 			<pre v-highlight>
 				<code class="vue">
-Vue.use(UITOBOG, {
+Vue.use(Due, {
 	compPrefix: "",//组件别名前缀
 	langPrefix: 'ui',//多语言前缀,
 	cssPrefix: 'ui',//css前缀,
@@ -67,8 +67,8 @@ Vue.use(UITOBOG, {
 				<code class="vue">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import UiTobog from 'ui-tobog';
-Vue.use(UiTobog);
+import Due from 'Due';
+Vue.use(Due);
 Vue.use(VueI18n);
 new Vue({ i18n }).$mount('#app');
 				</code>

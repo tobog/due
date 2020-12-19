@@ -1,6 +1,6 @@
 
 export function getTarget(node) {
-    if (node === undefined || node === true) {
+    if (node === void 0 || node === true) {
         return document.body
     }
     return document.querySelector(node)

@@ -1,34 +1,39 @@
 $prefix-cls-drop: #{$prefix}-drop;
+
+
 $prefix-cls-dropdown: #{$prefix}-dropdown;
-$prefix-cls-dropwrapper: #{$prefix}-dropwrapper;
+
 
 .#{$prefix-cls-drop} {
     transform-origin: 0 0;
     position: absolute;
-    max-height: 270px;
+    max-height: 100vh;
     overflow: auto;
-    padding: 5px 0;
-    background-color: #fff;
+    padding: 0;
+    background-color: $white;
     box-sizing: border-box;
     border-radius: 3px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
     z-index: 100;
+    outline: none;
+
+    &[data-placement^='top'],
+    &[data-placement$='-bottom'],
+    &[data-placement^='fix'] {
+        transform-origin: 0 bottom;
+    }
+
 }
 
-.#{$prefix-cls-dropdown},
-.#{$prefix-cls-dropwrapper} {
-    display: inline-block;
-    outline: none !important;
 
-    &-ref {
-        position: relative;
+.#{$prefix-cls-dropdown} {
+    &-wrapper {
+        display: inline-block;
+        outline: none;
     }
 
     &-list {
-        max-height: unset;
-        max-height: initial;
 
-        // [data-vue-module="DropdownItem"],
         &>*,
         .#{$prefix}-dropdownitem {
             line-height: normal;
@@ -46,24 +51,23 @@ $prefix-cls-dropwrapper: #{$prefix}-dropwrapper;
     &-button {
         display: flex;
         flex-direction: row-reverse;
+        align-items: center;
 
         .#{$prefix}-icons {
-            transform: translateX(7px);
+            width: 7px;
             transition: transform 0.2s linear;
         }
     }
 
-    &-open>&-ref &-button .#{$prefix}-icons {
-        transform: translateX(7px) rotate(180deg);
+    .#{$prefix-cls-drop}-visible>&-button .#{$prefix}-icons {
+        transform: rotate(180deg);
     }
-
 }
-
 
 .#{$prefix}-dropdownitem {
     &#{&}-disabled {
         cursor: not-allowed;
-        color: $disabled;
+        color: $disable-content;
     }
 
     &#{&}-selected {

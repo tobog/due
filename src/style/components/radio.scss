@@ -1,18 +1,32 @@
 $prefix-cls: #{$prefix}-radio;
+$prefix-cls-group: #{$prefix}-radiogroup;
 
 .#{$prefix-cls} {
     user-select: none;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    display: inline-block;
+    vertical-align: middle;
     overflow: hidden;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
-    border: none !important;
-    outline: none !important;
+    border: none;
+    outline: none;
+    margin-right: 10px;
+    &:hover > &-inner {
+        box-shadow: 0 0 5px -1px $primary;
+    }
 
-    &:hover>&-inner {
-        box-shadow: 0 0 2px rgba($primary, 0.8);
+    &-border {
+        border: 1px solid $border;
+        padding: 5px 12px;
+        border-radius: $radius;
+        text-align: center;
+        height: 32px;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        &:hover {
+            border-color: $primary;
+        }
     }
 
     &-label {
@@ -22,75 +36,145 @@ $prefix-cls: #{$prefix}-radio;
     &-disabled,
     &-readonly {
         cursor: not-allowed !important;
-        opacity: 0.9;
         pointer-events: none !important;
     }
-
-
+    &-disabled > &-label {
+        color: $disable-content;
+    }
+    &-disabled#{&}-border {
+        border-color: $disabled !important;
+    }
 
     &-input {
         display: none !important;
     }
 
-
     &-inner {
         border: 1px solid $border;
-        border-radius: 9999px;
+        border-radius: 9999em;
         transition: all 0.3s ease-in-out;
         overflow: hidden;
-        // min-width: 14px;
-        // min-height: 14px;
-        margin: 2px 6px 2px;
-        display: flex;
+        margin: 2px 6px;
+        display: inline-flex;
         justify-content: center;
         align-items: center;
-        background-color: #fff;
+        background-color: $white;
 
         &::after {
-            display: block;
-            transition: all 0.3s ease-in-out;
             content: "";
+            transition: all 0.3s ease-in-out;
             line-height: 0;
-            border-radius: 9999px;
+            border-radius: 9999em;
             width: 76%;
             height: 76%;
         }
-
     }
 
-    &-checked &-inner {
+    &-checked > &-inner {
         border-color: $primary;
 
         &::after {
             background-color: $primary;
         }
     }
+    &-checked#{&}-border {
+        border-color: $primary;
+        color: $primary;
+    }
 
-    &-disabled &-inner {
+    &-disabled > &-inner {
         background-color: $disabled;
         border-color: $disabled;
     }
 
-    &-disabled#{&}-checked &-inner {
-        background-color: #fff;
+    &-disabled#{&}-checked > &-inner {
+        background-color: $white;
 
         &::after {
             background-color: $disabled;
         }
     }
-
 }
 
-
-
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
-        &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) .#{$prefix-cls}-inner {
-            border-color: $value;
+        &.#{$prefix-cls}-border {
+            &:hover {
+                border-color: $value;
+            }
+        }
+        &:hover > .#{$prefix-cls}-inner {
+            box-shadow: 0 0 5px -1px $value;
+        }
+        &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) {
+            &.#{$prefix-cls}-border {
+                color: $value;
+                border-color: $value;
+            }
+            & > .#{$prefix-cls}-inner {
+                border-color: $value;
 
-            &::after {
-                background-color: $value;
+                &::after {
+                    background-color: $value;
+                }
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-group} {
+    &-disabled,
+    &-readonly {
+        cursor: not-allowed !important;
+        pointer-events: none !important;
+    }
+    &-compact#{&}-border {
+        .#{$prefix-cls} {
+            margin: 0;
+            border-radius: 0;
+            border-left: 0;
+            & > .#{$prefix-cls}-inner {
+                display: none !important;
+            }
+            &:first-child {
+                box-shadow: -1px 0 0 0 $border;
+                border-top-left-radius: $radius;
+                border-bottom-left-radius: $radius;
+            }
+            &:last-child {
+                border-top-right-radius: $radius;
+                border-bottom-right-radius: $radius;
+            }
+            &:hover {
+                box-shadow: -1px 0 0 0 $primary;
+            }
+            &.#{$prefix-cls}-checked {
+                box-shadow: -1px 0 0 0 $primary;
+                background-color: $primary;
+                color: $white;
+            }
+            &.#{$prefix-cls}-disabled {
+                box-shadow: -1px 0 0 0 $disabled !important;
+            }
+            &.#{$prefix-cls}-disabled.#{$prefix-cls}-checked {
+                background-color: $back !important;
+                color: $disable-content !important;
+            }
+        }
+    }
+}
+
+@each $key, $value in $colors-map {
+    .#{$prefix-cls-group}-#{$key} {
+        &.#{$prefix-cls-group}-compact.#{$prefix-cls-group}-border {
+            .#{$prefix-cls} {
+                &:hover {
+                    box-shadow: -1px 0 0 0 $value;
+                }
+                &.#{$prefix-cls}-checked {
+                    box-shadow: -1px 0 0 0 $value;
+                    background-color: $value;
+                }
             }
         }
     }

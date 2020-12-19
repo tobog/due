@@ -3,22 +3,80 @@ $prefix-cls: #{$prefix}-scroll;
 .#{$prefix-cls} {
     overflow: auto;
     height: 300px;
-
-    &-loading {
-        display: flex;
-        justify-content: center;
-        height: 0;
-        align-items: center;
+    position: relative;
+    &-placeholder {
+        display: none;
+        text-align: center;
+        height: 50px;
         position: relative;
-        transform: scale(0);
-        transition: opacity .3s, transform .5s, height .5s;
         overflow: hidden;
         max-width: 100%;
+        &-inner {
+            // display: inline-flex;
+            // justify-content: center;
+            // align-items: center;
 
-        &-active {
-            height: 60px;
-            transform: scale(1);
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            transform: translateY(200%);
+            transition: transform 0.3s linear;
+        }
+        &[data-direction="top"] > &-inner {
+            transform: translateY(-200%);
         }
     }
+    &-mask::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $mask;
+    }
+    &-up > &-placeholder[data-direction="up"],
+    &-down > &-placeholder[data-direction="down"] {
+        display: block;
+    }
+    &-down > &-placeholder[data-active="true"] > &-placeholder-inner {
+        transform: translateY(0%);
+        animation: #{$prefix-cls}-down 0.2s linear;
+    }
+    &-up > &-placeholder[data-active="true"] > &-placeholder-inner {
+        transform: translateY(0%);
+        animation: #{$prefix-cls}-up 0.2s linear;
+    }
+    &-message &-placeholder-inner {
+        line-height: 50px;
+        color: $disable-content;
+    }
 
+    @keyframes #{$prefix-cls}-down {
+        from {
+            transform: translateY(100%);
+        }
+
+        70% {
+            transform: translateY(-50%);
+        }
+
+        to {
+            transform: translateY(0%);
+        }
+    }
+    @keyframes #{$prefix-cls}-up {
+        from {
+            transform: translateY(-100%);
+        }
+
+        70% {
+            transform: translateY(50%);
+        }
+
+        to {
+            transform: translateY(0%);
+        }
+    }
 }

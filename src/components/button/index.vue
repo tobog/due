@@ -1,90 +1,125 @@
-
 <template>
-	<component
-		:is="getTag"
-		:data-vue-module="$options.name"
-		:class="classes"
-		:type="type"
-		v-on="$listeners"
-		v-bind="$attrs"
-	>
-		<template v-if="showIcon">
-			<slot name="icon">
-				<Icons :type="getIcon"></Icons>
-			</slot>
-		</template>
-		<slot></slot>
-	</component>
+    <component
+        :is="getTag"
+        :data-vue-module="$options.name"
+        :class="classes"
+        :type="type"
+        :style="styles"
+        @click="handleClick"
+        v-on="getListeners"
+        v-bind="$attrs"
+    >
+        <template v-if="$slots.icon || icon || loading">
+            <slot name="icon">
+                <Icons :type="icon || (loading && 'loading')"></Icons>
+            </slot>
+        </template>
+        <slot></slot>
+    </component>
 </template>
 <script>
 import Icons from '../icons/index';
+import Color from '../../utils/color';
+import { unit } from '../../utils/tool';
 export default {
-	name: 'Button',
-	inheritAttrs: false,
-	components: { Icons },
-	props: {
-		theme: {
-			type: String,
-			// validator(value) {
-			// 	return oneOf(value, [
-			// 		'primary',
-			// 		'dashed',
-			// 		'text',
-			// 		'info',
-			// 		'success',
-			// 		'warning',
-			// 		'error',
-			// 		'default',
-			// 	]);
-			// },
-			// default: '',
-		},
-		size: {
-			// validator(value) {
-			// 	return oneOf(value, ['small', 'large', 'default']);//60...
-			// },
-			// default: 'default',
-			type: String,
-		},
-		type:{
-			type: String,
-			default:'button',
-		},
-		shape: String,
-		icon: String,
-		ghost: Boolean,
-		long: Boolean,
-		loading: Boolean,
-		disabled: Boolean,
-	},
-	computed: {
-		getTag() {
-			const { to, href, tag = 'button' } = this.$attrs;
-			if (to) return this.$router ? 'router-link' : 'a';
-			if (href) return 'a';
-			return tag;
-		},
-		showIcon() {
-			return this.$slots.icon || this.icon || this.loading
-		},
-		getIcon() {
-			return this.icon || this.loading && 'loading'
-		},
-		classes() {
-			const _tobogPrefix_ = this._tobogPrefix_;
-			return [
-				_tobogPrefix_,
-				{
-					[`${_tobogPrefix_}-loading`]: this.icon === 'loading' || this.loading,
-					[`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
-					[`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
-					[`${_tobogPrefix_}-size-${this.size}`]: this.size === 'small' || this.size === 'large',
-					[`${_tobogPrefix_}-ghost`]: this.ghost,
-					[`${_tobogPrefix_}-long`]: this.long,
-					[`${_tobogPrefix_}-disabled`]: this.disabled,
-				},
-			];
-		},
-	},
+    name: 'Button',
+    inheritAttrs: false,
+    components: { Icons },
+    props: {
+        size: [String, Number],
+        theme: String,
+        color: String,
+        shape: String, //round ,circle,square
+        icon: String,
+        ghost: Boolean,
+        long: Boolean,
+        loading: Boolean,
+        disabled: Boolean,
+        plain: Boolean,
+        type: {
+            type: String,
+            default: 'button',
+        },
+    },
+    computed: {
+        getTag() {
+            const { to, href, tag = 'button' } = this.$attrs;
+            if (to) return this.$router ? 'router-link' : 'a';
+            if (href) return 'a';
+            return tag;
+        },
+        isOnly() {
+            const hasIcon = this.$slots.icon || this.icon || this.loading;
+            return !!((hasIcon && !this.$slots.default) || (!hasIcon && this.$slots.default));
+        },
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_;
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-loading`]: this.icon === 'loading' || this.loading,
+                    [`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
+                    [`${_tobogPrefix_}-size-${this.size}`]: this.size === 'small' || this.size === 'large',
+                    [`${_tobogPrefix_}-ghost`]: this.ghost,
+                    [`${_tobogPrefix_}-long`]: this.long,
+                    [`${_tobogPrefix_}-only`]: this.isOnly,
+                    [`${_tobogPrefix_}-plain`]: this.plain,
+                    [`${_tobogPrefix_}-disabled`]: this.disabled,
+                    [`${_tobogPrefix_}-custome-color`]: !!this.styles.color,
+                    [`${_tobogPrefix_}-custome-size`]: this.shape === 'circle' && !!this.styles.lineHeight,
+                },
+            ];
+        },
+        getListeners() {
+            const listeners = { ...this.$listeners };
+            delete listeners['click'];
+            return listeners;
+        },
+        styles() {
+            const style = {},
+                color = this.color || this.theme,
+                isNaN = parseInt(this.size);
+            if (isNaN === isNaN && ['small', 'large'].indexOf(this.size) === -1) {
+                style.lineHeight = unit(this.size);
+                style.paddingLeft = style.paddingRight = style.fontSize = unit(this.size, 'px', 0.5);
+                if (this.shape === 'circle') {
+                    style.paddingLeft = style.paddingRight = 0;
+                    style.width = style.height = style.lineHeight;
+                }
+            }
+            if (Color.isColor(color)) {
+                const data = new Color(color);
+                const value = data.toCSS();
+                if (this.ghost) {
+                    style.backgroundColor = 'transparent';
+                    style.borderColor = style.color = value;
+                } else if (this.plain) {
+                    style.backgroundColor = data.setAlpha(0.05).toCSS();
+                    style.borderColor = style.color = value;
+                } else {
+                    style.color = '#fff';
+                    style.backgroundColor = style.borderColor = value;
+                }
+            }
+            return style;
+        },
+    },
+    methods: {
+        async handleClick(e) {
+            if (this._runningClick) return;
+            const click = this.$listeners['click'];
+            if (typeof click === 'function') {
+                try {
+                    this._runningClick = true;
+                    await click(e);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    this._runningClick = false;
+                }
+            }
+        },
+    },
 };
 </script>

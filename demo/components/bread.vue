@@ -17,6 +17,9 @@
 			</div>
 			<vBread v-if="show" v-bind="formData">
 				<vBreadItem href="/">
+					<vIcon type="ios-home-outline"></vIcon>
+				</vBreadItem>
+				<vBreadItem href="/">
 					<vIcon type="ios-home-outline"></vIcon>Home
 				</vBreadItem>
 				<vBreadItem to="/bread">
@@ -25,6 +28,7 @@
 				<vBreadItem>
 					<vIcon type="pound"></vIcon>vBread
 				</vBreadItem>
+				
 			</vBread>
 		</vCol>
 		<vCol span="24" class="demo-code">

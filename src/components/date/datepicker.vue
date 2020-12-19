@@ -1,373 +1,223 @@
-
 <template>
-	<section :data-vue-module="$options.name" @keydown.stop="handleKeydown">
-		<InputBase
-			dropStyle="max-height:initial; padding: 0;overflow: hidden;width:auto;"
-			ref="input"
-			tip
-			suffix="ios-calendar-outline"
-			:value="model"
-			:filterable="true"
-			:autoClose="false"
-			:keyModal="false"
-			v-bind="$attrs"
-			@input="handleInput"
-			@on-focus="handleFocus"
-			@on-clear="handleClear"
-			@on-blur="handleBlur"
-			@on-change="handleChange"
-			@on-visible-change="handleVisible"
-			@on-icon-click="handleIconClick"
-		>
-			<div :class="dropWrapClasses" :key="formats" @click.stop>
-				<aside :class="[_tobogPrefix_+'-aside']" v-if="shortcuts.length>0">
-					<div
-						v-for="(item,index) in shortcuts"
-						@click.stop="handleShortcuts(item)"
-						:class="[_tobogPrefix_+'-shortcut']"
-						:key="index"
-						v-html="item.text"
-					></div>
-				</aside>
-				<DateBase
-					ref="ref0"
-					index="0"
-					:visible="visible"
-					:class="[_tobogPrefix_+'-date']"
-					:multiple="multiple"
-					:range="range"
-					:format="formats"
-					:showWeek="showWeek"
-					:weeks="weeks"
-					:startDate="startDates[0]"
-					@on-selected="selected"
-					@on-sync-update="handleCalendar"
-					:value="dates"
-					:sectionMethod="sectionMethod"
-				/>
-				<DateBase
-					v-if="range"
-					ref="ref1"
-					index="1"
-					:visible="visible"
-					:class="[_tobogPrefix_+'-date']"
-					:multiple="multiple"
-					:range="range"
-					:format="formats"
-					:showWeek="showWeek"
-					:weeks="weeks"
-					:startDate="startDates[1]"
-					@on-selected="selected"
-					@on-sync-update="handleCalendar"
-					:value="dates"
-					:sectionMethod="sectionMethod"
-				/>
-			</div>
-			<aside v-if="confirm||hasDateTimes" :class="[_tobogPrefix_+'-footer']">
-				<Button
-					v-if="hasDateTimes"
-					@click="syncStatus(status==='times'?'day':'times')"
-					theme="text"
-					size="small"
-				>{{status==='times'?langs('datepicker.selectDate','选择日期'):langs('datepicker.selectTime','选择时间')}}</Button>
-				<Button
-					v-if="confirm"
-					style="float:right;margin-left:8px;"
-					size="small"
-					theme="primary"
-					@click="close"
-				>{{langs('datepicker.confirm','确定')}}</Button>
-				<Button
-					v-if="confirm"
-					style="float:right;"
-					size="small"
-					@click="handleClear"
-				>{{langs('datepicker.clear','清除')}}</Button>
-			</aside>
-		</InputBase>
-	</section>
+    <DropBase
+        ref="dropBase"
+        dropStyle="overflow:hidden;width:auto;"
+        isOutRef
+        isToggle
+        :class="[_tobogPrefix_ + '-wrapper']"
+        :dropClass="[_tobogPrefix_ + '-drop-wrapper']"
+        :data-vue-module="$options.name"
+        :transfer="transfer"
+        :disabled="isReadonly"
+        :reference="ready ? $refs.inputBase.$refs.inputInner : null"
+        v-model="visible"
+    >
+        <InputBase
+            ref="inputBase"
+            :class="[_tobogPrefix_]"
+            :value="getValueText"
+            :prefix="prefix"
+            :suffix="suffix || 'ios-calendar-outline'"
+            :readonly="readonly"
+            :name="name"
+            :clearable="clearable"
+            :disabled="disabled"
+            :theme="theme"
+            :collapse="collapse"
+            :active="visible"
+            :isInput="true"
+            :multiple="isTag && multiple"
+            v-bind="$attrs"
+            @hook:created="ready = true"
+            @on-focus="handleFocus"
+            @on-input="handleInputText"
+            @on-clear="handleClear"
+            @on-remove-item="handleClearTag"
+            @on-blur="handleBlur"
+            @on-visible-change="handleVisible"
+            @on-icon-click="handleIconClick"
+        >
+            <template v-if="prepend" slot="prepend">
+                <slot name="prepend"></slot>
+            </template>
+            <template v-if="append" slot="append">
+                <slot name="append"></slot>
+            </template>
+            <template v-if="showPrefix" slot="prefix">
+                <slot name="prefix"></slot>
+            </template>
+            <template v-if="showSuffix" slot="suffix">
+                <slot name="suffix"></slot>
+            </template>
+        </InputBase>
+        <DatePanel
+            ref="datePanel"
+            slot="drop"
+            :value="model"
+            :class="[_tobogPrefix_ + '-panel']"
+            :type="type"
+            :format="format"
+            :confirm="confirm"
+            :options="options"
+            :multiple="multiple"
+            :startDate="startDate"
+            :weeks="weeks"
+            :showWeek="showWeek"
+            :sectionMethod="sectionMethod"
+            :firstDayOfWeek="firstDayOfWeek"
+            :visible="visible"
+            :doublePanel="doublePanel"
+            @input="handleInput"
+            @on-clear="handleClear('autoClose')"
+            @on-confirm="handleConfirm"
+            @on-status-change="handleStatusChange"
+        >
+        </DatePanel>
+    </DropBase>
 </template>
 
 <script>
-import DateBase from "./base";
-import InputBase from '../input/index';
-import Button from '../button/index';
-import Dates from '../../utils/dates'
-import langMinix from '../../mixins/lang'
+import DatePanel from "./index";
+import DropBase from "../base/dropBase";
+import InputBase from "../input/base";
+import mixin from "../input/base/mixin";
+import Button from "../button/index";
+import Dates from "../../utils/dates";
+import langMinix from "../../mixins/lang";
 export default {
-	name: "DatePicter",
-	inheritAttrs: false,
-	mixins: [langMinix],
-	components: {
-		DateBase,
-		InputBase,
-		Button
-	},
-	props: {
-		type: {
-			type: String,
-			default: 'datetime',
-		},
-		value: {
-			type: [String, Array, Date],
-			default: '',
-		},
-		format: {
-			type: String,
-			default: '',
-		},
-		confirm: {
-			type: Boolean,
-			default: true,
-		},
-		options: {
-			type: Object,
-			default() {
-				return {}
-			},
-		},
-		multiple: {
-			type: Boolean,
-			default: false,
-		},
-		showWeek: {
-			type: Boolean,
-			default: false,
-		},
-		startDate: {
-			type: [String, Date, Object, Number],
-			default() {
-				return Date.now()
-			},
-		},
-		weeks: Array,
-		sectionMethod: Function
-	},
+    name: "DatePicter",
+    inheritAttrs: false,
+    mixins: [langMinix, mixin],
+    components: {
+        DatePanel,
+        DropBase,
+        InputBase,
+        Button,
+    },
+    props: {
+         doublePanel: {
+            type: Boolean,
+            default: true,
+        },
+        transfer: Boolean,
+        type: {
+            type: String,
+            default: "datetime",
+        },
+        value: {
+            type: [String, Array, Date],
+            default: "",
+        },
+        format: {
+            type: String,
+            default: "",
+        },
+        confirm: {
+            type: Boolean,
+            default: true,
+        },
+        options: {
+            type: Object,
+            default() {
+                return {};
+            },
+        },
+        multiple: {
+            type: Boolean,
+            default: false,
+        },
+        showWeek: {
+            type: Boolean,
+            default: false,
+        },
+        startDate: {
+            type: [String, Date, Object, Number],
+            default() {
+                return Date.now();
+            },
+        },
+        weeks: Array,
+        sectionMethod: Function,
+        firstDayOfWeek: {
+            type: Number,
+            default: 0,
+        },
+        isTag: Boolean,
+    },
 
-	data() {
-		return {
-			visible: false,
-			dates: this.value,
-			model: this.value,
-			status: 'day',
-			startDates: [0, 0],
-		};
-	},
-	created() {
-		this.initStatus();
-	},
-	computed: {
-		hasDateTimes() {
-			return /d.*(H|M|S)+/g.test(this.formats);
-		},
-		shortcuts() {
-			return (this.options || {}).shortcuts || []
-		},
-		range() {
-			const format = this.format, type = this.type;
-			if (format) {
-				let objIndex = { y: 0, m: 0, d: 0, H: 0, M: 0, S: 0 },
-					range = false,
-					str = format.replace(/(y|m|d|H|M|S)+/g, function (match, reg, offset, str) {
-						if (objIndex[reg] >= 1) range = true;
-						objIndex[reg] += 1;
-						return match;
-					});
-				return range;
-			}
-			switch (type) {
-				case 'daterange':
-				case 'datetimerange':
-				case 'timesrange':
-				case 'hoursrange': return true; break;
-				default: return false;
-			}
-		},
-		formats() {
-			if (this.format) return this.format;
-			return Dates.formats(this.type);
-		},
-		dropWrapClasses() {
-			return `${this._tobogPrefix_}-drop-wrapper`
-		},
-	},
-	methods: {
-		initStatus() {
-			let format = this.formats;
-			if (format.indexOf('dd') > -1) {
-				this.status = 'day';
-			} else if (format.indexOf('mm') > -1) {
-				this.status = 'month';
-			} else if (format.indexOf('yy') > -1) {
-				this.status = 'year';
-			}
-			this.curIndex = 0;
-			this.__dateData = "";
-			this.handleSiblingDates(this.status, this.startDate);
-		},
-		handleKeydown(e) {
-			const keyCode = e.keyCode;
-			console.log(keyCode, 'keyCode')
-			// left/top/right/down/enter
-			if ([37, 38, 39, 40, 13].indexOf(keyCode) === -1) return;
-			const ref = this.$refs[`ref${this.curIndex}`];
-			if (ref) {
-				ref.handleKeydown(e);
-				if (keyCode != 13 && this.range) {
-					this.handleCalendar({
-						index: this.curIndex,
-						date: ref.foucsDate,
-						dates: ref.dates,
-						direction: (keyCode == 37 || keyCode == 38) ? 'pre' : 'next'
-					}, 'calendar')
-				}
-			}
-		},
-		handleVisible() {
-			this.visible = !this.visible;
-		},
-		syncStatus(status) {
-			if (status) {
-				this.status = status;
-				const ref0 = this.$refs.ref0,
-					ref1 = this.$refs.ref1;
-				if (ref0) ref0.status = status;
-				if (ref1) ref1.status = status;
-			}
-		},
-		handleCalendar(data = {}, type) {
-			const { status, index = 0, date, dates, direction } = data;
-			const ref0 = this.$refs.ref0,
-				ref1 = this.$refs.ref1;
-			this.curIndex = index;
-			if (type === 'range') {
-				if (ref0) ref0.rangeDate = date;
-				if (ref1) ref1.rangeDate = date;
-			}
-			if (type === 'calendar') {
-				this.syncStatus(status);
-				if (ref0) {
-					if (index == 0) {
-						ref0.foucsDate = date;
-					}
-					ref0.dates = dates;
-				}
-				if (ref1) {
-					if (index == 1) {
-						ref1.foucsDate = date;
-					}
-					ref1.dates = dates;
-				}
-				if (ref0 && ref1) {
-					let focusDate0 = ref0.foucsDate, focusDate1 = ref1.foucsDate;
-					let interval, status;
-					let validYear = focusDate1.year - focusDate0.year;
-					let isPre = direction === 'pre' && index == 1;
-					let isNext = direction === 'next' && index == 0;
-					if (this.status === 'year' && validYear < 1) {
-						if (isPre) interval = -10;
-						if (isNext) interval = 10;
-					}
+    data() {
+        return {
+            visible: false,
+            model: this.value,
+        };
+    },
+    computed: {
+        getValueText() {
+            return !this.isTag && Array.isArray(this.model) ? this.model.join(",") : this.model;
+        },
+    },
+    methods: {
+        handleFocus(event) {
+            this.$emit("on-focus", this.model, event);
+        },
+        handleInputText(event) {
+            let val = event.target.value;
+            if (!val) {
+                this.model = "";
+            }
+            this.$emit("input", val);
+        },
+        handleClear(type) {
+            this.model = "";
+            this.__dates = null;
+            this.$refs.dropBase.cancelChange();
+            this.$emit("input", this.model, null);
+            this.$emit("on-clear");
+            if (type === "autoClose") this.visible = false;
+        },
+        handleClearTag(index) {
+            const data = [...this.model];
+            const item = data.splice(index, 1);
+            this.model = data;
+            Array.isArray(this.__dates) && this.__dates.splice(index, 1);
+            this.$refs.dropBase.cancelChange();
+            this.$emit("input", this.model, this.__dates);
+            this.$emit("on-remove-item", item, index);
+        },
 
-					if (this.status === 'month' && validYear < 1) {
-						if (isPre) interval = -1;
-						if (isNext) interval = 1;
-						status = 'year'
-					}
-
-					if (this.status === 'day' && validYear < 0) {
-						if (isPre) interval = -1;
-						if (isNext) interval = 1;
-						status = 'year'
-					}
-
-					if (this.status === 'day' && validYear == 0 && focusDate1.month <= focusDate0.month) {
-						if (isPre) interval = -1;
-						if (isNext) interval = 1;
-						status = 'day';
-					}
-					if (status && interval) {
-						this.handleSiblingDates(status, date, interval);
-					}
-				}
-			}
-		},
-		/**
-		 * 计算隔离时间
-		 */
-		handleSiblingDates(status, date, interval = 1) {
-			const instance = Dates.New(date);
-			const cloneDate = new Date(instance);
-			const dateMap = {
-				year: 'FullYear',
-				month: 'FullYear',
-				day: 'Month',
-			};
-			const method = dateMap[status];
-			if (method) {
-				const dates = [instance, cloneDate['set' + method](cloneDate['get' + method]() + interval)]
-				this.startDates = interval > 0 ? dates : dates.reverse();
-			}
-		},
-		handleClear() {
-			this.handleVisible()
-			this.dates = [];
-			this.model = "";
-			this.$emit('on-clear');
-		},
-		handleShortcuts(data) {
-			const onClick = data.onClick, value = typeof data.value === 'function' ? data.value() : data.value;
-			this.dates = this.multiple ? value : [value]
-			if (typeof onClick === 'function') onClick(this);
-		},
-		handleFocus(event) {
-			this.$nextTick(() => {
-				this.$emit('on-foucs', this.model, this.__dateData, event);
-			})
-		},
-		handleBlur(event) {
-			this.$nextTick(() => {
-				this.$emit('on-blur', this.model, this.__dateData, event)
-				this.$emit('input', this.model, event);
-			})
-		},
-		handleChange() {
-			this.$nextTick(() => {
-				this.$emit('on-change', this.model, this.__dateData, event);
-			});
-		},
-		selected({ datestring, datesInstance, index = 0, endState = 'day' } = {}, isEnd) {
-			this.model = datestring;
-			this.__dateData = datesInstance;
-			this.__endState = endState;
-			if (!this.confirm&&isEnd!==false) this.close();
-		},
-		close() {
-			this.$nextTick(() => {
-				this.$refs.input.handleBlur();
-				this.syncStatus(this.__endState);
-			})
-		},
-		handleInput(val, event) {
-			if (!val) {
-				this.dates = [];
-				this.model = "";
-			}
-			this.$emit('input', val, event);
-		},
-		handleIconClick() {
-			this.$refs.input.toggleOpen();
-		},
-	},
-	watch: {
-		value(val, old) {
-			if (!val) {
-				this.model = "";
-			} else if (this.model !== val) {
-				this.dates = val;
-			}
-		},
-	},
+        handleBlur() {
+            this.$nextTick(() => {
+                this.$emit("on-change", this.model, this.__dates);
+                this.$emit("on-blur", this.model, this.__dates);
+                this.handleDispatch("on-validate", this.model);
+            });
+        },
+        handleInput(val, dates) {
+            // console.log(this.model);
+            this.model = val;
+            this.__dates = dates;
+            this.$emit("input", this.model, dates);
+        },
+        handleConfirm(val, dates) {
+            this.model = val;
+            this.__dates = dates;
+            this.$emit("input", this.model, dates);
+            this.$emit("on-confirm", this.model, dates);
+            this.$refs.inputBase.setInputFocus(); //有问题无法失去焦点
+            this.$refs.dropBase.cancelChange();
+            this.visible = false;
+        },
+        handleStatusChange(obj) {
+            this.$emit("on-status-change", obj);
+        },
+        handleVisible(val) {
+            this.$emit("on-visible-change", val);
+        },
+    },
+    watch: {
+        value(val) {
+            this.model = val;
+        },
+    },
 };
 </script>
-

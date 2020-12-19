@@ -1,6 +1,21 @@
 $prefix-cls: #{$prefix}-checkbox;
+$prefix-cls-group: #{$prefix}-checkboxgroup;
+
+.#{$prefix-cls-group} {
+    &-readonly {
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    .#{$prefix-cls}{
+        margin-right: 32px;
+        &:last-child{
+            margin-right: 0;
+        }
+    }
+}
 
 .#{$prefix-cls} {
+    font-size: $fontBase;
     user-select: none;
     display: inline-flex !important;
     justify-content: center;
@@ -11,8 +26,8 @@ $prefix-cls: #{$prefix}-checkbox;
     border: none;
     outline: none !important;
     vertical-align: middle;
-
-    &:hover>.#{$prefix-cls}-inner {
+    padding: 1px;
+    &:hover > &-inner {
         box-shadow: 0 0 2px rgba($primary, 0.8);
     }
 
@@ -21,118 +36,140 @@ $prefix-cls: #{$prefix}-checkbox;
         opacity: 0.9;
     }
 
-    &-disabled {
-        cursor: not-allowed !important;
-        opacity: 0.9;
-        pointer-events: none;
-    }
-
     &-input {
-        display: none !important;
+        display: none;
     }
 
     &-border {
-        border: 1px solid #dcdee2;
-        border-radius: 3px;
+        border: 1px solid $border;
+        border-radius: $radius;
         padding: 6px 12px;
-        transition: border .2s ease-in-out;
+        transition: border 0.2s ease-in-out;
     }
 
     &-inner {
         color: transparent;
         border: 1px solid $border;
-        border-radius: 2px;
+        border-radius: 3px;
         transition: all 0.3s ease-in-out;
         overflow: hidden;
-        margin: 2px 6px;
+        width: 16px;
+        height: 16px;
         display: flex;
         justify-content: center;
         align-items: center;
-
-        &>.#{$prefix}-icons {
+        box-sizing: border-box;
+        & > .#{$prefix}-icons {
             display: none;
             max-height: 100%;
         }
     }
+    &-label {
+        margin-left: 6px;
+    }
 
-    &-checked>&-inner,
-    &-indeterminate>&-inner {
+    &-checked > &-inner,
+    &-indeterminate > &-inner {
         border-color: $primary;
         background-color: $primary;
-        color: #fff;
+        color: $white;
 
-        &>.#{$prefix}-icons {
-            display: inline-block;
-
+        & > .#{$prefix}-icons {
+            display: inline-flex;
         }
     }
 
     &-checked#{&}-border {
         border-color: $primary;
     }
+    &-ghost#{&} {
+        &.#{$prefix-cls} > .#{$prefix-cls}-inner {
+            border-color: transparent !important;
+            background-color: transparent !important;
+            box-shadow: none;
+        }
+        &.#{$prefix-cls}-checked,
+        &.#{$prefix-cls}-indeterminate {
+            > .#{$prefix-cls}-inner {
+                color: $primary;
+            }
+        }
+    }
 
     &-radio {
-        &>.#{$prefix-cls}-inner {
+        & > .#{$prefix-cls}-inner {
             border-radius: 50%;
         }
 
         &.#{$prefix-cls}-checked {
-            &>.#{$prefix-cls}-inner {
-                background-color: #fff;
+            & > .#{$prefix-cls}-inner {
+                background-color: $white;
 
                 &::after {
                     transition: all 0.3s ease-in-out;
-                    content: "";
+                    content: '';
                     background-color: $primary;
-                    width: 72%;
-                    height: 72%;
+                    width: 100%;
+                    height: 100%;
                     border-radius: 50%;
+                    transform: scale(0.7);
                 }
             }
         }
     }
 
     &-disabled {
-        &>.#{$prefix-cls}-inner {
+        cursor: not-allowed !important;
+        pointer-events: none;
+        opacity: 0.9;
+        color: $sub-content;
+        & > .#{$prefix-cls}-inner {
             background-color: $disabled;
-            border-color: $disabled;
+            border-color: $border;
+            color: inherit;
+            opacity: 0.8;
         }
 
         &.#{$prefix-cls}-radio.#{$prefix-cls}-checked {
-            &>.#{$prefix-cls}-inner {
-                background-color: #fff;
-
+            & > .#{$prefix-cls}-inner {
+                // background-color: $white;
                 &:after {
-                    background-color: $disabled;
+                    background-color: $border;
                 }
             }
         }
     }
-
 }
 
-
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
         &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) {
-            .#{$prefix-cls}-inner {
+            > .#{$prefix-cls}-inner {
                 border-color: $value;
                 background-color: $value;
+            }
+            &:hover > .#{$prefix-cls}-inner {
+                box-shadow: 0 0 2px rgba($value, 0.8);
             }
 
             &.#{$prefix-cls}-border {
                 border-color: $value;
+                color: $value;
+            }
+        }
+        &.#{$prefix-cls}-ghost.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled),
+        &.#{$prefix-cls}-ghost.#{$prefix-cls}-indeterminate:not(.#{$prefix-cls}-disabled) {
+            > .#{$prefix-cls}-inner {
+                color: $value;
             }
         }
 
-        &.#{$prefix-cls}-radio.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) .#{$prefix-cls}-inner {
-            background-color: #fff;
+        &.#{$prefix-cls}-radio.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) > .#{$prefix-cls}-inner {
+            background-color: $white;
 
             &::after {
                 background-color: $value;
             }
         }
-
     }
 }

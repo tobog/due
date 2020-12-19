@@ -3,9 +3,7 @@ export default class Offset {
     constructor() {
 
     }
-    static getClientSize(...args) {
-        return getClientSize(...args)
-    }
+    static getClientSize = getClientSize
     static getRelativeOffsetRect(element, parent) {
         var elementRect = Offset.boundingClientRect(element);
         var parentRect = Offset.boundingClientRect(parent);
@@ -19,7 +17,7 @@ export default class Offset {
         };
         return rect;
     }
-    static boundingClientRect(element) {
+    static boundingClientRect(element, isAll) {
         if (!element) return {
             left: 0,
             top: 0,
@@ -29,11 +27,22 @@ export default class Offset {
             height: 0,
             offsetTop: 0,
             offsetLeft: 0,
+            offsetRight: 0,
+            offsetBottom: 0,
+            viewWidth: 0,
+            viewHeight: 0,
         }
         let rect = element.getBoundingClientRect(),
             top = rect.top;
         if (element.tagName === "BODY") {
             top = Math.min(rect.top, document.documentElement.getBoundingClientRect().top)
+        }
+        if (isAll === true) {
+            let viewsize = Offset.getClientSize('viewport');
+            rect.viewWidth = viewsize.width;
+            rect.viewHeight = viewsize.height;
+            rect.offsetRight = viewsize.width - element.offsetWidth - rect.left;
+            rect.offsetBottom = viewsize.height - element.offsetHeight - rect.top;
         }
         // IE11以下//
         return {
@@ -45,6 +54,10 @@ export default class Offset {
             height: element.offsetHeight,
             offsetTop: element.offsetTop,
             offsetLeft: element.offsetLeft,
+            offsetRight: rect.offsetRight || 0,
+            offsetBottom: rect.offsetBottom || 0,
+            viewWidth: rect.viewWidth || 0,
+            viewHeight: rect.viewHeight || 0,
         };
     }
     static getOffset(node) {

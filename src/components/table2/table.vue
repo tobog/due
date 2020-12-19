@@ -488,7 +488,7 @@ export default {
 								_width = parseInt(
 									0 + _getStyle($td[key], "width")
 								);
-							if (width === undefined || width === "") {
+							if (width === void 0 || width === "") {
 								let minWidth = column.minWidth || 0,
 									maxWidth = column.maxWidth;
 								_width = _width < minWidth ? minWidth : _width;

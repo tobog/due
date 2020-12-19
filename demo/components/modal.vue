@@ -25,7 +25,10 @@
 				<vButton @click="handleModal('warning')">warning</vButton>
 				<vButton @click="handleModal('error')">error</vButton>
 				<vButton @click="handleModal('destroy')">destroy</vButton>
-				<vModal v-bind="formData" v-model="val">destroy</vModal>
+				<vButton @click="val=true">destroy</vButton>
+				<vModal v-bind="formData" v-model="val">
+					<vModal  v-model="val1">destroy</vModal>
+				</vModal>
 			</section>
 		</vCol>
 		<vCol span="24" class="demo-code">
@@ -57,7 +60,8 @@ export default {
 	// ${this.getCodeString(this.formData)}
 	data() {
 		return {
-			val: false,
+			val: true,
+			val1:true
 		};
 	},
 	computed: {
@@ -119,6 +123,12 @@ export default {
 				{
 					label: "全屏",
 					key: "fullscreen",
+					tag: "vSwitch",
+					default: true
+				},
+				{
+					label: "全局覆盖",
+					key: "lock",
 					tag: "vSwitch",
 					default: true
 				},
@@ -198,7 +208,7 @@ export default {
 					default: '-',
 				},
 				{
-					prop: 'value',
+					prop: 'visible',
 					explain: '对话框是否显示，可使用 v-model 双向绑定数据。',
 					type: 'Boolean',
 					default: '-',

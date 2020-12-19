@@ -3,7 +3,7 @@
 	<div
 		v-show="!hidden"
 		:class="wrapClasses"
-		@click="select"
+		@click.stop="select"
 		@mousedown.prevent
 		:data-vue-module="$options.name"
 	>
@@ -33,12 +33,12 @@ export default {
 		},
 		label: {
 			type: [String, Number],
-			default: undefined
+			default: void 0
 		},
 		disabled: Boolean,
 		strict: {
 			type: Boolean,
-			default: undefined
+			default: void 0
 		},
 		theme: String,
 		attach: {}
@@ -62,13 +62,13 @@ export default {
 			return this.theme || (this.__parentComponent__ || {}).theme;
 		},
 		getText() {
-			return this.label !== undefined ? this.label : this.value;
+			return this.label !== void 0 ? this.label : this.value;
 		},
 		multiple() {
 			return this.formItemComponent && this.formItemComponent.multiple;
 		},
 		stricts() {
-			if (this.strict !== undefined) return this.strict;
+			if (this.strict !== void 0) return this.strict;
 			return this.formItemComponent && this.formItemComponent.strict === false ? false : true;
 		},
 		iconClass() {
@@ -90,13 +90,13 @@ export default {
 	},
 	methods: {
 		text() {
-			const text = this.label !== undefined ? this.label : (this.$refs.text || {}).textContent || this.value;
+			const text = this.label !== void 0 ? this.label : (this.$refs.text || {}).textContent || this.value;
 			return `${text}`.trim();
 		},
 		select() {
 			this.hover = false;
 			if (this.disabled) return;
-			const text = this.text(), attach = this.attach === undefined ? { label: this.label, text } : this.attach;
+			const text = this.text(), attach = this.attach === void 0 ? { label: this.label, text } : this.attach;
 			this.handleDispatch('on-select', this.value, text, attach);
 			this.handleDispatch('on-attach', attach, this.value, text);
 		},
@@ -139,7 +139,7 @@ export default {
 	},
 	watch: {
 		value: {
-			handler(val) {
+			handler() {
 				this.handleDispatch('on-option-change', "change", this)
 			},
 			deep: true,

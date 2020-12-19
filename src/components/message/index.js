@@ -27,7 +27,7 @@ function notice(type, options = {}, single = false) {
         style,
         className,
         maskable,
-        ghost = true } = options,
+        ghost } = options,
         instance = getInstance();
 
     instance.notice({
@@ -40,7 +40,7 @@ function notice(type, options = {}, single = false) {
         maskable,
         render: function (h) {
             const renderVnode = typeof render === 'function' ? render(h) : content || render;
-            return <Alert type={type} ghost={ghost} showIcon>
+            return <Alert transitionName={null} type={type} ghost={ghost} showIcon>
                 {renderVnode}
             </Alert>
         },

@@ -1,20 +1,26 @@
 $prefix-cls: #{$prefix}-date;
 $prefix-cls-picter: #{$prefix}-datepicter;
+$prefix-cls-panel: #{$prefix}-datepanel;
 $prefix-cls-day: #{$prefix}-dateday;
 $prefix-cls-time: #{$prefix}-datetimes;
 
 .#{$prefix-cls} {
-    max-width: 250px;
-    min-width: 240px;
+    width: 240px;
     white-space: normal;
     border: 1px solid $border;
-    min-height: 270px;
+    min-height: 280px;
     display: inline-flex;
     flex-direction: column;
     user-select: none;
+    &-showweek{
+        width: 270px;
+    }
+    &[data-index='1'] {
+        border-left-color: transparent;
+    }
 
     &-content {
-        margin: 0 10px;
+        margin: 0 8px;
         flex: auto;
     }
 
@@ -48,49 +54,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
             }
         }
     }
-}
 
-.#{$prefix-cls-picter} {
-    &-drop-wrapper {
-        overflow: hidden;
-        display: flex;
-        justify-content: flex-start;
-        .#{$prefix-cls-picter}-date:nth-of-type(2){
-            border-left: 0;;
-        }
-    }
-
-    &-aside {
-        background-color: $back;
-        min-width: 90px;
-        flex: none;
-        border: 1px solid $border;
-        border-right: 0;
-    }
-
-    &-shortcut {
-        padding: 9px 16px;
-        cursor: pointer;
-        // overflow: hidden;
-        // white-space: nowrap;
-        // text-overflow: ellipsis;
-
-        &:hover {
-            color: #fff;
-            background-color: $primary;
-        }
-    }
-
-    &-footer {
-        padding: 6px 8px;
-        overflow: hidden;
-        border: 1px solid $border;
-        border-top: 0;
-    }
-}
-
-// cell
-.#{$prefix-cls} {
     &-cell {
         width: 33.33%;
         box-sizing: border-box;
@@ -126,18 +90,18 @@ $prefix-cls-time: #{$prefix}-datetimes;
         &#{&}-selected {
             &>em {
                 background-color: $primary;
-                color: #fff;
+                color: $white;
             }
         }
 
         &#{&}-focus>em {
-            border: 1px solid $primary; // box-shadow: 0 0 1px $primary;
+            border: 1px solid $primary;
             animation: #{$prefix-cls}-cell 1.2s infinite ease-in-out;
         }
 
         &#{&}-disabled {
             cursor: not-allowed;
-            color: #fff;
+            color: $white;
 
             &>em {
                 background-color: $disabled;
@@ -148,24 +112,74 @@ $prefix-cls-time: #{$prefix}-datetimes;
             position: relative;
 
             &::before {
-                content: "";
+                content: '';
                 position: absolute;
                 border: 3px solid $primary;
                 border-radius: 100%;
                 right: 1px;
                 top: 1px;
             }
-
         }
 
         &-now#{&}-selected>em::before {
-            border-color: #fff;
+            border-color: $white;
         }
-
     }
-
 }
 
+.#{$prefix-cls-panel} {
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: flex-start;
+
+    .#{$prefix-cls-picter}-date:nth-of-type(2) {
+        border-left: 0;
+    }
+
+    &-wrapper {
+        display: inline-block;
+        outline: none;
+    }
+
+    &-aside {
+        background-color: $back;
+        min-width: 90px;
+        flex: none;
+        border: 1px solid $border;
+        border-right: 0;
+    }
+
+    &-shortcut {
+        padding: 6px 12px;
+        cursor: pointer;
+
+        &:hover {
+            color: $white;
+            background-color: $primary;
+        }
+    }
+
+    &-footer {
+        padding: 6px 8px;
+        overflow: hidden;
+        border: 1px solid $border;
+        border-top: 0;
+    }
+
+    &-switch {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    &-confirm {
+        float: right;
+        margin-left: 8px;
+    }
+
+    &-clear {
+        float: right;
+    }
+}
 
 @keyframes #{$prefix-cls}-cell {
     from {
@@ -181,18 +195,6 @@ $prefix-cls-time: #{$prefix}-datetimes;
     }
 }
 
-
-
-
-// .#{$prefix-cls}-footer {
-//     border-top: 1px solid $divider;
-//     padding: 8px;
-//     overflow: hidden;
-//     position: absolute;
-//     bottom: 0;
-//     width: 100%;
-// }
-
 .#{$prefix-cls-day} {
     &[data-week='true'] {
         .#{$prefix-cls-day}-cell {
@@ -201,13 +203,23 @@ $prefix-cls-time: #{$prefix}-datetimes;
     }
 
     &-cell {
-        line-height: 24px;
+        line-height: 26px;
         width: 14.27%;
         padding: 2px;
 
+        &-week {
+            color: $sub-content;
+
+            &>em:hover {
+                background-color: transparent;
+            }
+        }
+
+        &-weeks,
         &-pre,
         &-next {
-            color: $disabled;
+            color: $sub-content;
+            opacity: 0.5;
 
             &>em:hover {
                 background-color: transparent;
@@ -215,12 +227,10 @@ $prefix-cls-time: #{$prefix}-datetimes;
         }
 
         &-range {
-            background-color: $light-primary //#e1f0fe;
+            background-color: $light-primary; //#e1f0fe;
         }
     }
 }
-
-
 
 .#{$prefix-cls-time} {
     line-height: 2;
@@ -265,5 +275,18 @@ $prefix-cls-time: #{$prefix}-datetimes;
             background-color: $disabled;
             cursor: not-allowed;
         }
+    }
+}
+
+.#{$prefix-cls-picter} {
+
+    &-wrapper>&-panel,
+    &-drop-wrapper {
+        overflow: hidden;
+    }
+
+    &-panel {
+        display: inline-flex;
+        flex-direction: column;
     }
 }

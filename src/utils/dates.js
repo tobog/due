@@ -21,8 +21,14 @@ export default class Dates extends Date {
         if (!date) return 0;
         const type = typeOf(date);
         switch (type) {
-            case 'string': return Date.parse(date);
-            case 'date': return date.getTime();
+            case 'string': {
+                const times = Date.parse(date);
+                return clearhours ? Math.floor(times / 3600 / 1000 / 24) * 3600 * 1000 * 24 : times;
+            }
+            case 'date': {
+                const times = date.getTime();
+                return clearhours ? Math.floor(times / 3600 / 1000 / 24) * 3600 * 1000 * 24 : times;
+            }
             case 'object': {
                 const hours = clearhours ? `00:00:00` : `${date.hours || 0}:${date.minutes || 0}:${date.seconds || 0}`;
                 return Date.parse(`${date.year || 1917}-${date.month || 1}-${date.day || 1} ` + hours);
@@ -55,7 +61,7 @@ export default class Dates extends Date {
             const cells = format.split(/[^ymdHMS0-9]+/i);
             cells.forEach((item, index) => {
                 const key = item[0], count = objIndex[key], obj = arr[count] || {};
-                if (count === undefined) return;
+                if (count === void 0) return;
                 objIndex[key] = count + 1;
                 obj[keymap[key]] = date[index] || '00';
                 arr[count] = obj;

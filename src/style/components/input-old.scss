@@ -1,0 +1,377 @@
+
+
+$prefix-cls-number: #{$prefix}-number;
+$prefix-cls-textarea: #{$prefix}-textarea;
+$prefix-cls: #{$prefix}-inputdrop;
+
+
+%input {
+    margin: 0;
+    padding: 0 6px;
+    outline: none !important;
+    box-sizing: border-box;
+    border-radius: $radius;
+    border: 1px solid $border;
+    transition: all 0.3s ease-in-out;
+}
+
+.#{$prefix-cls}-drop {
+    display: inline-block;
+    width: auto;
+    min-height: 36px;
+    outline: none !important;
+}
+
+.#{$prefix-cls}-wrapper,
+.#{$prefix-cls-number}-wrapper,
+.#{$prefix-cls-textarea}-wrapper {
+    display: flex !important;
+    width: 100%;
+    min-height: 32px;
+    color: $content;
+    outline: none !important;
+    border: none;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    & > * {
+        background-color: $white;
+    }
+}
+
+.#{$prefix-cls}-inner,
+.#{$prefix-cls-number}-inner,
+.#{$prefix-cls-textarea}-inner {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    justify-content: space-between;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    flex: auto;
+    border: 1px solid $border;
+    padding: 1px 0;
+    outline: none;
+    // position: relative;
+    // z-index:1;
+    min-height: inherit;
+
+    &:hover {
+        border-color: $primary;
+    }
+
+    &:focus {
+        box-shadow: 0 0 6px 0 $primary;
+        border-color: $primary;
+    }
+}
+
+.#{$prefix-cls}-prepend,
+.#{$prefix-cls}-append,
+.#{$prefix-cls-number}-prepend,
+.#{$prefix-cls-number}-append,
+.#{$prefix-cls-textarea}-prepend,
+.#{$prefix-cls-textarea}-append {
+    @extend %input;
+    display: inline-flex;
+    background-color: $back;
+    align-items: center;
+    flex: none;
+}
+
+.#{$prefix-cls}-append,
+.#{$prefix-cls-number}-append,
+.#{$prefix-cls-textarea}-append {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.#{$prefix-cls}-prepend,
+.#{$prefix-cls-number}-prepend,
+.#{$prefix-cls-textarea}-prepend {
+    border-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+
+.#{$prefix-cls}-radius-left,
+.#{$prefix-cls-number}-radius-left,
+.#{$prefix-cls-textarea}-radius-left {
+    border-top-left-radius: $radius;
+    border-bottom-left-radius: $radius;
+}
+
+.#{$prefix-cls}-radius-right,
+.#{$prefix-cls-number}-radius-right,
+.#{$prefix-cls-textarea}-radius-right {
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+}
+
+.#{$prefix-cls}-inner.#{$prefix-cls}-active,
+.#{$prefix-cls-number}-inner.#{$prefix-cls-number}-active,
+.#{$prefix-cls-textarea}-inner.#{$prefix-cls-textarea}-active {
+    box-shadow: 0 0 6px 0 $primary;
+    border-color: $primary;
+}
+
+.#{$prefix-cls},
+.#{$prefix-cls-number},
+.#{$prefix-cls-textarea} {
+    & {
+        @extend %input;
+        border: none !important;
+        box-shadow: none !important;
+        flex: auto !important;
+        max-height: 100%;
+        max-width: calc(100% - 2px);
+        min-width: 0;
+        margin: 0 1px;
+        line-height: normal;
+        width: 30px;
+    }
+
+    &-prefix,
+    &-suffix,
+    &-icon {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 6px;
+        flex: none;
+    }
+
+    &-readonly {
+        cursor: not-allowed !important;
+        pointer-events: none;
+    }
+
+    &-disabled {
+        cursor: not-allowed !important;
+        pointer-events: none;
+        & > * {
+            background-color: $disabled;
+        }
+    }
+
+    &-clear {
+        &icon {
+            display: none;
+        }
+
+        &:hover > &icon {
+            display: inline-flex;
+        }
+
+        &:hover > .#{$prefix-cls}-arrow {
+            display: none;
+        }
+    }
+}
+
+.#{$prefix-cls}-clear:hover > .#{$prefix-cls}-suffix,
+.#{$prefix-cls-textarea}-clear:hover > .#{$prefix-cls-textarea}-suffix {
+    display: none;
+}
+
+.#{$prefix-cls-textarea}-clear {
+    position: relative;
+
+    &icon {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        height: auto;
+        transform: translateY(-50%);
+    }
+}
+
+.#{$prefix-cls} {
+    &-arrow {
+        padding: 0 6px;
+    }
+
+    &-arrow::before {
+        transition: transform 0.2s;
+    }
+
+    &-open {
+        .#{$prefix-cls}-arrow::before {
+            transform: rotate(180deg);
+        }
+    }
+
+    &-tip {
+        padding: 6px 16px;
+    }
+
+    &-file {
+        cursor: pointer;
+    }
+
+    &-tags {
+        cursor: text;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        align-content: center;
+        max-width:calc(100% - 36px);
+        flex: auto;
+        flex-shrink: 2;
+
+        .#{$prefix-cls} {
+            border: none !important;
+            align-self: stretch;
+            max-width: 80%;
+            flex-shrink: 2;
+        }
+    }
+
+    &-tag {
+        margin: 2px;
+        padding: 3px 6px;
+        border: 1px solid $border;
+        border-radius: 3px;
+        background-color: $back;
+        cursor: inherit;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        align-self: center;
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        &[data-hidden=true] {
+            display: none;
+        }
+        &>span{
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        &:hover {
+            border: 1px solid $primary;
+            color: $primary;
+        }
+
+        &-clear {
+            transform: translateX(3px);
+            flex: none;
+        }
+    }
+
+    &-file {
+        display: none !important;
+    }
+
+    &-readonly {
+        .#{$prefix-cls}-suffix {
+            cursor: pointer;
+            pointer-events: initial;
+        }
+    }
+
+    &-drop {
+        width: auto;
+        min-height: 41px;
+        outline: none !important;
+    }
+}
+
+.#{$prefix-cls-number}-suffix {
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid $border;
+
+    & > .#{$prefix}-icons:hover {
+        color: $primary;
+    }
+}
+
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-#{$key} {
+        .#{$prefix-cls}-tag {
+            &:hover {
+                border: 1px solid $value;
+                color: $value;
+            }
+        }
+
+        .#{$prefix-cls}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus,
+            &.#{$prefix-cls}-active {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+    }
+
+    .#{$prefix-cls-number}-#{$key} {
+        .#{$prefix-cls-number}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus,
+            &.#{$prefix-cls-number}-active {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+
+        .#{$prefix-cls-number}-suffix {
+            & > .#{$prefix}-icons:hover {
+                color: $value;
+            }
+        }
+    }
+
+    .#{$prefix-cls-textarea}-#{$key} {
+        .#{$prefix-cls-textarea}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus,
+            &.#{$prefix-cls-textarea}-active {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-textarea}-wrapper {
+    height: auto;
+}
+
+.#{$prefix-cls-textarea} {
+    &-inner {
+        overflow: hidden;
+    }
+
+    & {
+        padding: 4px 7px;
+        overflow: hidden;
+    }
+}
+
+.#{$prefix-cls-number}::-webkit-inner-spin-button {
+    display: none;
+}
+
+.#{$prefix-cls-number}-suffix {
+    .#{$prefix}-icons[data-min],
+    .#{$prefix}-icons[data-max] {
+        color: $disabled !important;
+        cursor: not-allowed;
+    }
+}

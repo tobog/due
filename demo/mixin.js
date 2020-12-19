@@ -1,4 +1,16 @@
-import Formedit from './template/formedit'
+import Formedit from "./template/formedit"
+import Demo from "./template/demo"
+
+// const struct = {
+//     showConfig: false, //  是否显示demo配置
+//     label: "距离顶部", // 字段名称
+//     key: "offsetTop", // 字段
+//     tag: "vInputNumber", // 渲染类型
+//     demoDefault: 10, // 默认值，
+//     dataType: "Function:Event",
+//     options: "false|top|bottom", // 可选值
+//     explain: "在固定状态发生改变时触发",
+// }
 
 export default {
     data() {
@@ -9,106 +21,109 @@ export default {
     },
     components: {
         Formedit,
+        Demo,
     },
     methods: {
         getCodeString(val = {}) {
             try {
                 return JSON.stringify(val)
             } catch (error) {
-                return val;
+                return val
             }
         },
     },
     computed: {
         getFormatCode() {
-            return this.getCode.replace(/\s{5,}/g, function () {
-                const reg = arguments[0], leng = reg.length;
+            return this.getCode.replace(/\s{5,}/g, function() {
+                const reg = arguments[0],
+                    leng = reg.length
                 // console.log(arguments, leng)
                 return `\n${reg.slice(leng > 18 ? 20 : 6)}`
-            });
+            })
         },
         getTableColumns() {
-            return [{
-                title: '属性/事件/方法',
-                key: 'prop',
-            },
-            {
-                title: '说明',
-                key: 'explain',
-            },
-            {
-                title: '类型',
-                key: 'type',
-            },
-            {
-                title: '默认值/参数/返回值',
-                key: 'default',
-            },
+            return [
+                {
+                    title: "属性/事件/方法",
+                    key: "prop",
+                },
+                {
+                    title: "说明",
+                    key: "explain",
+                },
+                {
+                    title: "类型",
+                    key: "type",
+                },
+                {
+                    title: "默认值/参数/返回值",
+                    key: "default",
+                },
             ]
         },
         getFormTypes() {
-            return ['button',
-                'checkbox',
-                'color',
-                'date',
-                'datetime',
-                'datetime-local',
-                'month',
-                'week',
-                'time',
-                'email',
-                'file',
-                'hidden',
-                'image',
-                'number',
-                'password',
-                'radio',
-                'range',
-                'reset',
-                'search',
-                'submit',
-                'tel',
-                'text',
-                'url',
+            return [
+                "button",
+                "checkbox",
+                "color",
+                "date",
+                "datetime",
+                "datetime-local",
+                "month",
+                "week",
+                "time",
+                "email",
+                "file",
+                "hidden",
+                "image",
+                "number",
+                "password",
+                "radio",
+                "range",
+                "reset",
+                "search",
+                "submit",
+                "tel",
+                "text",
+                "url",
             ]
-
         },
         getThemes() {
             return [
-                'primary',
-                'dashed',
-                'text',
-                'info',
-                'success',
-                'warning',
-                'error',
-                'gray',
-                'confirm'
+                "primary",
+                // 'dashed',
+                // 'text',
+                "info",
+                "success",
+                "warning",
+                "error",
+                "gray",
+                "confirm",
             ]
         },
         getPlacements() {
             return [
-                'top',
-                'top-left',
-                'top-right',
-                'top-center',
-                'top-fix',
-                'bottom',
-                'bottom-left',
-                'bottom-right',
-                'bottom-center',
-                'bottom-fix',
-                'left',
-                'left-top',
-                'left-bottom',
-                'left-center',
-                'right',
-                'right-top',
-                'right-bottom',
-                'right-center',
-                'fix-left',
-                'fix-right',
-                'fix-center',
+                "top",
+                "top-left",
+                "top-right",
+                "top-center",
+                "top-fix",
+                "bottom",
+                "bottom-left",
+                "bottom-right",
+                "bottom-center",
+                "bottom-fix",
+                "left",
+                "left-top",
+                "left-bottom",
+                "left-center",
+                "right",
+                "right-top",
+                "right-bottom",
+                "right-center",
+                "fix-left",
+                "fix-right",
+                "fix-center",
             ]
         },
         iconslist() {
@@ -974,6 +989,9 @@ export default {
                 "woman",
                 "ios-loading",
             ]
+        },
+        getBearkpoints() {
+            return ["xs", "sm", "md", "lg", "xl", "xxl"]
         },
     },
 }

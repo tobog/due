@@ -1,8 +1,8 @@
 
 <template>
-	<section :class="[_tobogPrefix_]">
-		<div :style="styles" :class="innerClasses"></div>
-	</section>
+	<div :class="[_tobogPrefix_]">
+		<span :style="styles" :class="innerClasses"></span>
+	</div>
 </template>
 <script>
 import { unit } from "../../utils/tool";

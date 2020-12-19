@@ -5,7 +5,7 @@
 </template>
 <script>
 	export default {
-		name: "TabPane",
+		name: "TabPanel",
 		inject: ["$RootTabsInstance"],
 		props: {
 			name: {

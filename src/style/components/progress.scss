@@ -5,13 +5,13 @@ $prefix-cls: #{$prefix}-progress;
     &-wrapper {
         display: flex;
         align-items: center;
-         position: relative;
+        position: relative;
     }
 
     & {
         display: flex;
         background-color: $back;
-        border-radius: 9999px;
+        border-radius: 9999em;
         flex: auto;
     }
 
@@ -22,6 +22,8 @@ $prefix-cls: #{$prefix}-progress;
         position: relative;
         border-radius: inherit;
         overflow: visible;
+        height: 10px;
+        background-size: 100%;
     }
 
     &-text {
@@ -33,7 +35,7 @@ $prefix-cls: #{$prefix}-progress;
 
     &-inside &-text,
     &-inside-center &-text {
-        color: #fff;
+        color: $white;
         position: absolute;
         top: 50%;
         right: 0;
@@ -76,9 +78,16 @@ $prefix-cls: #{$prefix}-progress;
         animation: #{$prefix-cls}-active 2s linear infinite;
     }
 
+    &-split &>&-bar {
+        background-size: 100%;
+        background-repeat: no-repeat;
+        animation: none;
+    }
+
     &-vertical {
         display: inline-flex;
         align-items: center;
+        height: 120px;
 
         .#{$prefix-cls} {
             width: auto;
@@ -107,36 +116,15 @@ $prefix-cls: #{$prefix}-progress;
         }
 
     }
-}
 
-@keyframes #{$prefix-cls}-active {
-    0% {
-        background-position: 0;
+    @keyframes #{$prefix-cls}-active {
+        0% {
+            background-position: 0;
+        }
+
+        100% {
+            background-position: 40px;
+        }
     }
 
-    100% {
-        background-position: 40px;
-    }
 }
-
-// @keyframes #{$prefix-cls}-active {
-//     0% {
-//         opacity: .3;
-//         width: 0;
-//     }
-//     100% {
-//         opacity: 0;
-//         width: 100%;
-//     }
-// }
-
-// @keyframes #{$prefix-cls}-active {
-//     0% {
-//         opacity: .3;
-//         height: 0;
-//     }
-//     100% {
-//         opacity: 0;
-//         height: 100%;
-//     }
-// }

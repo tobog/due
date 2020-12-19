@@ -47,7 +47,7 @@
 //     &-dashed-h,
 //     &-dashed-v {
 //         position: absolute;
-//         border: 0 dashed #fff;
+//         border: 0 dashed $white;
 //         opacity: .5;
 //         top: 0;
 //         bottom: 0;
@@ -105,8 +105,6 @@
 //             cursor: s-resize;
 //         }
 //     }
-
-
 
 //     &-line-left {
 //         top: -3%;

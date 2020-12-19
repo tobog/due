@@ -178,7 +178,7 @@ export default class FileSilce {
     //     // })
     //     // store.save(name, {
     //     //     ...this._file,
-    //     //     chunks: undefined,
+    //     //     chunks: void 0,
     //     //     md5s,
     //     // })
     // }

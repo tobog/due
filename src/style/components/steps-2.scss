@@ -1,0 +1,349 @@
+$prefix-cls: #{$prefix}-steps;
+$prefix-cls-item: #{$prefix}-step;
+
+.#{$prefix-cls} {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.#{$prefix-cls-item} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $sub-content;
+    flex: auto;
+    position: relative;
+    & > * {
+        order: 1;
+    }
+    &-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: $white;
+    }
+
+    &-tail {
+        border: 0px solid $disabled;
+        border-top-width: 1.5px;
+        flex: auto;
+        margin: 0 10px;
+        min-width: 100px;
+        position: relative;
+        overflow: visible;
+        color: $disabled;
+    }
+
+    &-arrow-icon {
+        position: absolute;
+        font-size: 1.4em;
+        right: 1px;
+        top: -0.8px;
+        transform: translate(50%, -50%);
+        color: inherit;
+    }
+
+    &-icon {
+        border: 1px solid $border;
+        border-radius: 50%;
+        transition: all 0.2s ease-in-out;
+        min-width: 26px;
+        min-height: 26px;
+        flex: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &-title {
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+
+    &-desc {
+        max-width: 100%;
+        font-weight: normal;
+        padding-top: 5px;
+        // word-break: break-all;
+        white-space: normal;
+        word-break: break-word;
+        position: absolute;
+        z-index: 10;
+    }
+
+    &:nth-last-of-type(1) {
+        flex-grow: 0 !important;
+
+        &.#{$prefix-cls-item}-with-desc {
+            // flex-grow: 0.5 !important;
+            justify-content: flex-start;
+        }
+    }
+
+    &-finish {
+        & > .#{$prefix-cls-item}-tail {
+            border-color: $primary;
+            color: $primary;
+        }
+
+        & > .#{$prefix-cls-item}-content {
+            & > .#{$prefix-cls-item}-icon {
+                color: $primary;
+                border-color: $primary;
+            }
+        }
+    }
+
+    &-process {
+        & > .#{$prefix-cls-item}-pre-tail {
+            border-color: $primary;
+            color: $primary;
+        }
+
+        & > .#{$prefix-cls-item}-content {
+            & > .#{$prefix-cls-item}-title {
+                color: $title;
+            }
+
+            & > .#{$prefix-cls-item}-icon {
+                color: $white;
+                border-color: $primary;
+                background: $primary;
+            }
+        }
+    }
+
+    &-error {
+        & > .#{$prefix-cls-item}-pre-tail {
+            border-color: $error;
+            color: $error;
+        }
+
+        & > .#{$prefix-cls-item}-content {
+            & > .#{$prefix-cls-item}-title {
+                color: $error;
+            }
+
+            & > .#{$prefix-cls-item}-icon {
+                border-color: $error;
+                color: $error;
+            }
+        }
+    }
+
+    &-pre > .#{$prefix-cls}-vertical {
+        & > .#{$prefix-cls-item}-process {
+            & > .#{$prefix-cls-item}-next-tail {
+                border-color: $primary;
+                color: $primary;
+            }
+        }
+    }
+
+    &-next > .#{$prefix-cls}-vertical {
+        & > .#{$prefix-cls-item}-process {
+            & > .#{$prefix-cls-item}-next-tail {
+                border-color: $border;
+                color: $border;
+            }
+        }
+    }
+}
+
+.#{$prefix-cls}-vertical {
+    flex-direction: column;
+
+    & > .#{$prefix-cls-item} {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+
+        & > .#{$prefix-cls-item}-tail {
+            margin: 10px 0 10px 12px;
+            border-top-width: 0;
+            border-left-width: 1.5px;
+            min-height: 60px;
+            min-width: 0;
+        }
+    }
+}
+
+.#{$prefix-cls-item} {
+    &-horizontal {
+        height: 26px; //设置高度不需要注释的样式
+        overflow: visible;
+    }
+
+    & > &-pre {
+        margin-left: -100%;
+        transform: translate(100%, -50%);
+        position: relative;
+        bottom: 12px;
+    }
+
+    &-vertical > &-pre {
+        bottom: 0;
+        margin-left: 0;
+        height: 0;
+        transform: translate(-100%, 100%);
+        align-self: stretch;
+    }
+
+    &-content > &-next {
+        transform: translate(-100%, 50%);
+        position: relative;
+        top: 12px;
+        // height: 0;
+        // align-self: stretch;
+    }
+
+    // &-horizontal>&-content>&-next {
+    //     //    height: unset;
+    //     //    height: auto;
+    //     //    top: 24px;
+    // }
+
+    &-vertical > &-content > &-next {
+        margin-left: 0;
+        transform: translate(0, 0);
+        top: 0;
+        width: 0;
+    }
+
+    &-next &-vertical > &-pre {
+        width: 0;
+    }
+
+    &-next &-vertical > &-pre > .#{$prefix-cls}-horizontal {
+        transform: translateX(-100%);
+    }
+
+    // &-next .#{$prefix-cls}-horizontal{
+    //     align-items: flex-start;
+    // }
+    // &-vertical>&-content>&-next &-horizontal>&-pre{
+    //     // height: 0;
+    //     // & .#{$prefix-cls}{
+    //     //     transform: translateY(-100%);
+    //     // }
+    // }
+    //线条样式
+    &-pre-tail {
+        display: none;
+    }
+
+    &:nth-last-of-type(1) > &-tail {
+        display: none;
+    }
+
+    &-pre &:nth-last-of-type(1) > &-next-tail,
+    &-next &:nth-of-type(1) > &-pre-tail {
+        display: block;
+    }
+
+    &-next &-vertical:only-child > &-next-tail {
+        display: none;
+    }
+
+    &-next &-vertical:only-child > &-pre-tail {
+        display: block;
+    }
+
+    &-next > .#{$prefix-cls}-horizontal > &:nth-last-of-type(1) > &-next-tail {
+        display: none;
+    }
+
+    &-pre &-horizontal:only-child > &-pre-tail {
+        display: none;
+    }
+
+    &-pre &-horizontal:only-child > &-next-tail {
+        display: block;
+    }
+
+    &-pre > .#{$prefix-cls}-vertical > &:only-child > &-next-tail {
+        display: block;
+    }
+
+    &-pre > .#{$prefix-cls}-vertical > &:only-child > &-pre-tail {
+        display: none;
+    }
+
+    & > &-pre {
+        & > .#{$prefix-cls}-horizontal {
+            flex-direction: row-reverse;
+
+            &.#{$prefix-cls}-origin {
+                flex-direction: row;
+            }
+        }
+
+        & > .#{$prefix-cls}-vertical {
+            flex-direction: column-reverse;
+
+            &.#{$prefix-cls}-origin {
+                flex-direction: column;
+            }
+        }
+    }
+}
+
+//箭头样式
+.#{$prefix-cls-item} {
+    &-vertical > &-tail &-arrow-icon {
+        right: 0.8px;
+        top: unset;
+        top: initial;
+        left: unset;
+        left: initial;
+        bottom: 1px;
+        transform: rotate(90deg) translate(50%, -50%);
+    }
+
+    &-next > .#{$prefix-cls}-origin > .#{$prefix-cls-item} > .#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon,
+    &-pre > .#{$prefix-cls} > .#{$prefix-cls-item} > .#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon {
+        right: unset;
+        right: initial;
+        bottom: unset;
+        bottom: initial;
+        top: -1.5px;
+        left: 1.5px;
+        transform: rotate(-180deg) translate(50%, 50%);
+    }
+
+    &-pre
+        > .#{$prefix-cls}-vertical
+        > .#{$prefix-cls-item}
+        > .#{$prefix-cls-item}-tail
+        .#{$prefix-cls-item}-arrow-icon {
+        right: 0.8px;
+        top: 1.5px;
+        bottom: unset;
+        bottom: initial;
+        left: unset;
+        left: initial;
+        transform: rotate(-90deg) translate(50%, 50%);
+    }
+
+    &-pre > .#{$prefix-cls}-origin > .#{$prefix-cls-item} > .#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon {
+        right: 1px;
+        top: -0.8px;
+        transform: translate(50% - 1, -50%);
+        bottom: unset;
+        bottom: initial;
+        left: unset;
+        left: initial;
+    }
+}
+
+// 基于slotType样式
+.#{$prefix-cls}-pre {
+    & > .#{$prefix-cls-item} > .#{$prefix-cls-item}-pre-tail {
+        display: none !important;
+    }
+}
+
+// @import "./steps2.scss";

@@ -22,7 +22,10 @@ export default {
             type: Number,
             default: 10,
         },
-        strokeColor: Array
+        strokeColor: [String, Array],
+        split: Boolean,
+        linear: Boolean,
+        isInnerColor: Boolean,
 
     },
     data() {
@@ -50,25 +53,49 @@ export default {
             return this.curStatus == 'error' || this.curStatus == 'success';
         },
         getStrokeColor() {
-            const strokeColor = this.strokeColor;
-            if (Array.isArray(strokeColor)) {
-                return strokeColor.map((item) => {
-                    return Array.isArray(item) ? item.join(" ") : item;
-                }).join(',')
+            if (Array.isArray(this.strokeColor)) {
+                const unitPercent = this.isInnerColor ? 1 : 100 / this.percent;
+                if (this.linear) {
+                    return this.strokeColor.map((item) => {
+                        return `${item.color} ${item.percent * unitPercent}%`
+                    }).join(',');
+                }
+                if (this.split) {
+                    return this.strokeColor.map((item, index) => {
+                        let next = this.strokeColor[index + 1];
+                        return `${item.color} ${item.percent * unitPercent}%` + (next ? `,${item.color} ${next.percent * unitPercent}%` : `,${item.color} ${unitPercent * 100}%`)
+                    }).join(',');
+                }
+                const data = this.strokeColor.find((item) => {
+                    return this.percent < item.percent;
+                });
+                return (data && data.color);
             }
+            return this.strokeColor;
         },
+
         barStyle() {
-            const linearColor = this.getStrokeColor;
+            const strokeColor = this.getStrokeColor;
             return this.vertical
                 ? {
                     height: `${this.getPercent}`,
                     width: `${this.getStrokeWidth}`,
-                    backgroundImage: linearColor ? `linear-gradient(to top,${linearColor})` : ''
+                    ...(this.split ? {
+                        backgroundImage: `linear-gradient(to top,${strokeColor})`,
+                        // backgroundSize: '100%'
+                    } : {
+                            backgroundColor: strokeColor || ''
+                        })
                 }
                 : {
                     width: `${this.getPercent}`,
                     height: `${this.getStrokeWidth}`,
-                    backgroundImage: linearColor ? `linear-gradient(to right,${linearColor})` : ''
+                    ...(this.split ? {
+                        backgroundImage: `linear-gradient(to right,${strokeColor})`,
+                        // backgroundSize: '100%'
+                    } : {
+                            backgroundColor: strokeColor || ''
+                        })
                 };
         },
     },

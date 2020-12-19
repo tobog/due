@@ -1,0 +1,270 @@
+$prefix-cls: #{$prefix}-color;
+$prefix-cls-picker: #{$prefix}-colorpicker;
+
+.#{$prefix-cls} {
+    width: 240px;
+    outline: 1px solid $border;
+    overflow: hidden;
+    &-basic {
+        font-size: 0;
+        padding-bottom: 60%;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+        &-white,
+        &-black {
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        &-white {
+            background: linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0));
+        }
+        &-black {
+            background: linear-gradient(0deg, #000, transparent);
+        }
+        &-pointer {
+            width: 12px;
+            height: 12px;
+            border: 2px solid $white;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-5px, -5px);
+            cursor: pointer;
+        }
+    }
+    &-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+    &-demo {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        margin-right: 20px;
+        flex: none;
+        cursor: pointer;
+        background-image: linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0),
+            linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0);
+        background-position: 0 0, 6px 6px;
+        background-size: 2 * 6px 2 * 6px;
+        & > span {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+        }
+    }
+    &-sliders {
+        flex: auto;
+        user-select: none;
+    }
+    &-bar {
+        background: linear-gradient(90deg, red 0, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, red);
+    }
+    &-alpha-wrapper {
+        background-image: linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0),
+            linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0);
+        background-position: 0 0, 6px 6px;
+        background-size: 2 * 6px 2 * 6px;
+        margin-top: 10px;
+    }
+    &-bar,
+    &-alpha {
+        position: relative;
+        height: 12px;
+        border-radius: $radius;
+        border: 1px solid #eee;
+        & > span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0;
+            height: 0;
+            overflow: visible;
+            cursor: pointer !important;
+            &:before {
+                content: '';
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: $white;
+                box-shadow: 0 0 3px #999;
+                overflow: hidden;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+    &-type {
+        flex: auto;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        & > div {
+            margin-right: 3px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+        span {
+            font-size: $subFont;
+            color: $sub-content;
+            text-transform: uppercase;
+        }
+        &-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px 10px;
+        }
+    }
+
+    &-input {
+        width: 100%;
+        line-height: 2;
+        padding: 0;
+        margin-bottom: 6px;
+        text-align: center;
+        border: 1px solid $border;
+        border-radius: $radius;
+    }
+    &-sort {
+        position: relative;
+        flex: none;
+        width: 16px;
+        height: 0;
+        overflow: visible;
+        margin-left: 6px;
+        text-align: right;
+        & > span {
+            position: absolute;
+            width: 0;
+            height: 0;
+            top: 0;
+            right: 3px;
+            border: 4px solid transparent;
+            border-bottom-color: #000;
+            transform: translateY(-10px);
+            cursor: pointer;
+            &:last-child {
+                transform: translateY(0);
+                border-top-color: #000;
+                border-bottom-color: transparent;
+            }
+        }
+    }
+
+    &-palettes {
+        flex: auto;
+        text-align: left;
+        // display: flex;
+        // justify-content: space-between;
+        // align-items: center;
+        // flex-direction: wrap;
+        &-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid $border;
+        }
+        & > span {
+            width: 12px;
+            height: 12px;
+            margin: 0 12px 6px 0;
+            display: inline-block;
+            outline: 0;
+            cursor: pointer;
+        }
+        @each $index,
+            $color
+                in (
+                    1: #f44336,
+                    2: #e91e63,
+                    3: #9c27b0,
+                    4: #673ab7,
+                    5: #3f51b5,
+                    6: #2196f3,
+                    7: #03a9f4,
+                    8: #00bcd4,
+                    9: #009688,
+                    10: #4caf50,
+                    11: #8bc34a,
+                    12: #cddc39,
+                    13: #ffeb3b,
+                    14: #ffc107,
+                    15: #ff9800,
+                    16: #ff5722,
+                    17: #795548,
+                    18: #9e9e9e,
+                    19: #607d8b
+                )
+        {
+            & > span:nth-child(#{$index}) {
+                background-color: $color;
+                &:hover,
+                &:focus {
+                    box-shadow: 2px -2px 0 0 rgba($color, 0.6), 5px -5px 1px 0 rgba($color, 0.3);
+                }
+            }
+        }
+    }
+}
+
+.#{$prefix-cls-picker} {
+    display: inline-block;
+    position: relative;
+    &-input {
+        display: inline-block;
+        box-sizing: border-box;
+        // height: 40px;
+        width: 40px;
+        padding: 4px;
+        border: 1px solid $border;
+        border-radius: $radius;
+        position: relative;
+        cursor: pointer;
+        &-inner {
+            position: relative;
+            border: 1px solid #999;
+            border-radius: $radius;
+            text-align: center;
+            background-image: linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0),
+                linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0);
+            background-position: 0 0, 6px 6px;
+            background-size: 2 * 6px 2 * 6px;
+            & > span {
+                height: 0;
+                display: block;
+                padding-top: 100%;
+            }
+        }
+        &-icon {
+            color: $white;
+            position: absolute;
+            top: 51%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+    &-disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    &-btn {
+        text-align: right;
+        padding: 6px 3px;
+        border-top: 1px solid $border;
+        & > *:last-child {
+            margin-left: 12px;
+        }
+    }
+}

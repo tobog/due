@@ -1,27 +1,34 @@
-$prefix-cls:#{$prefix}-rate;
+$prefix-cls: #{$prefix}-rate;
 
 .#{$prefix-cls} {
     display: inline-block;
-    font-size: $fontBase * 1.6;
+    font-size: $fontBase * 1.5;
     cursor: pointer;
-
+    list-style: none;
     &-disabled,
     &-readonly {
         cursor: not-allowed;
         pointer-events: none;
-        opacity: 0.9;
+    }
+    &-disabled {
+        opacity: 0.8;
+    }
+
+    &-input {
+        display: none;
     }
 
     &-star {
+        list-style: none;
         overflow: hidden;
         display: inline-block;
         vertical-align: middle;
         padding: 0;
-        margin: 0 8px 0 0;
+        margin: 0 5px 0 0;
         position: relative;
         z-index: 0;
         transition: all 0.3s ease;
-        color: darken($back, 20);
+        color: $disable-content;
     }
 
     &-full {
@@ -45,22 +52,18 @@ $prefix-cls:#{$prefix}-rate;
     }
 
     &-hover {
-        transform: scale(1.1);
+        transform: scale(1.2);
     }
 
     &-label {
-        font-size: $subFont;
+        font-size: $fontBase;
         color: $content;
         display: inline-block;
-        vertical-align: middle;
     }
 }
 
-
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
-
         .#{$prefix-cls}-active,
         .#{$prefix-cls}-half-active .#{$prefix-cls}-half {
             color: $value;

@@ -9,7 +9,7 @@ LoadingBar.newInstance = function (props = {}, vmOptions = {}) {
             let render = props.render,vNode
             delete props.render;
             if (typeof vNode === 'function') vNode = render(h)
-            return h(LoadingBar, { attrs: props }, vNode ? [vNode] : undefined)
+            return h(LoadingBar, { attrs: props }, vNode ? [vNode] : void 0)
         }
     }),
         component = Instance.$mount(),

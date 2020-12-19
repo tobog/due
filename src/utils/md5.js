@@ -252,7 +252,7 @@ function binl2rstr(input) {
 function rstr2binl(input) {
     var i
     var output = []
-    output[(input.length >> 2) - 1] = undefined
+    output[(input.length >> 2) - 1] = void 0
     for (i = 0; i < output.length; i += 1) {
         output[i] = 0
     }
@@ -286,7 +286,7 @@ function rstrHMACMD5(key, data) {
     var ipad = []
     var opad = []
     var hash
-    ipad[15] = opad[15] = undefined
+    ipad[15] = opad[15] = void 0
     if (bkey.length > 16) {
         bkey = binlMD5(bkey, key.length * 8)
     }

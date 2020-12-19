@@ -14,7 +14,8 @@ export default {
         rangeDate: Object,
         endState: String,
         format: String,
-        showWeek: Boolean
+        showWeek: Boolean,
+        firstDayOfWeek: Number,
     },
     data() {
         return {
@@ -58,6 +59,7 @@ export default {
     methods: {
         handleEqual: compareEqual,
         handleCell(date, type) {
+            // date.day == 13 && console.log(date.day, this.linkedDates, this.handleSelected(date, type))
             return {
                 date,
                 selected: this.handleSelected(date, type),
@@ -77,17 +79,19 @@ export default {
                 !this.range ||
                 this.endState !== this.prefix ||
                 this.dates.length == 0 ||
-                !date ||
-                !compare
+                !date
             )
                 return false;
             const handleRange = function (date, compare, dates) {
                 let start = Dates.getTimes(dates[0], true);
                 date = Dates.getTimes(date, true);
-                compare =
-                    dates.length > 1
-                        ? Dates.getTimes(dates[1], true)
-                        : Dates.getTimes(compare, true);
+                if (dates.length > 1) {
+                    compare = Dates.getTimes(dates[1], true);
+                } else if (!compare) {
+                    return false;
+                } else {
+                    compare = Dates.getTimes(compare, true);
+                }
                 if (start > compare) {
                     let temp = start;
                     start = compare;
@@ -104,7 +108,7 @@ export default {
             }
         },
         handleMouseMove(cell) {
-            if (cell.disabled || !this.range) return;
+            if ((cell && cell.disabled) || !this.range) return;
             this.$emit("on-range-change", { ...cell });
         },
         handleClick(cell, next) {
@@ -123,7 +127,7 @@ export default {
                     [`${_tobogPrefix_}-cell-focus`]: cell.focus,
                     [`${_tobogPrefix_}-cell-disabled`]: cell.disabled,
                     [`${_tobogPrefix_}-cell-now`]: cell.now,
-                    [`${_tobogPrefix_}-cell-range`]: cell.inRange
+                    [`${_tobogPrefix_}-cell-range`]: cell.inRange,
                 }
             ];
         }

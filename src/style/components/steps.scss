@@ -4,34 +4,64 @@ $prefix-cls-item: #{$prefix}-step;
 .#{$prefix-cls} {
     display: inline-flex;
     justify-content: space-between;
-    align-items: center;
+    // align-items: center;
+    align-items: flex-start;
     position: relative;
+    list-style: none;
 }
 
 .#{$prefix-cls-item} {
+    list-style: none;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    // align-items: center;
     color: $sub-content;
+    align-items: flex-start;
     flex: auto;
     position: relative;
+
+    &>* {
+        order: 5;
+    }
+
+    &-horizontal>&-tail {
+        margin-top: 13px;
+    }
 
     &-content {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        background: #fff;
+        align-items: flex-start;
+        // align-items: center;
+        background: $white;
+
+        &-wrapper {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
     }
 
     &-tail {
+        line-height: 1;
         border: 0px solid $disabled;
         border-top-width: 1.5px;
         flex: auto;
         margin: 0 10px;
-        min-width: 100px;
+        min-width: 30px;
         position: relative;
         overflow: visible;
         color: $disabled;
+
+        &-next {
+            display: none;
+        }
+    }
+
+    &:nth-of-type(1)>&-tail {
+        display: none;
     }
 
     &-arrow-icon {
@@ -42,8 +72,6 @@ $prefix-cls-item: #{$prefix}-step;
         transform: translate(50%, -50%);
         color: inherit;
     }
-
-
 
     &-icon {
         border: 1px solid $border;
@@ -58,7 +86,7 @@ $prefix-cls-item: #{$prefix}-step;
     }
 
     &-title {
-        padding-left: 10px;
+        padding: 5px 0 5px 10px;
         white-space: nowrap;
         font-weight: bold;
     }
@@ -72,6 +100,7 @@ $prefix-cls-item: #{$prefix}-step;
         word-break: break-word;
         position: absolute;
         z-index: 10;
+        min-width: 120px;
     }
 
     &:nth-last-of-type(1) {
@@ -83,243 +112,63 @@ $prefix-cls-item: #{$prefix}-step;
         }
     }
 
-
-    &-finish {
-        &>.#{$prefix-cls-item}-tail {
-            border-color: $primary;
-            color: $primary;
-        }
-
-        &>.#{$prefix-cls-item}-content {
-            &>.#{$prefix-cls-item}-icon {
-                color: $primary;
-                border-color: $primary;
-            }
-        }
+    &-finish>&-tail,
+    &-finish>&-content-wrapper>&-content,
+    &-finish>&-content-wrapper>&-content>&-icon {
+        border-color: $primary;
+        color: $primary;
     }
 
-    &-process {
-        &>.#{$prefix-cls-item}-pre-tail {
-            border-color: $primary;
-            color: $primary;
-        }
-
-        &>.#{$prefix-cls-item}-content {
-
-            &>.#{$prefix-cls-item}-title {
-                color: $title;
-            }
-
-            &>.#{$prefix-cls-item}-icon {
-                color: #fff;
-                border-color: $primary;
-                background: $primary;
-            }
-        }
+    &-process#{&}-slot-pre>&-tail-next,
+    &-process>&-tail-pre,
+    &-process>&-content-wrapper>&-content {
+        border-color: $primary;
+        color: $primary;
     }
 
-    &-error {
-        &>.#{$prefix-cls-item}-pre-tail {
-            border-color: $error;
-            color: $error;
-        }
-
-        &>.#{$prefix-cls-item}-content {
-            &>.#{$prefix-cls-item}-title {
-                color: $error;
-            }
-
-            &>.#{$prefix-cls-item}-icon {
-                border-color: $error;
-                color: $error;
-            }
-        }
+    &-process>&-content-wrapper>&-content>&-icon {
+        color: $white;
+        border-color: $primary;
+        background: $primary;
     }
 
-    &-pre>.#{$prefix-cls}-vertical {
-        &>.#{$prefix-cls-item}-process {
-            &>.#{$prefix-cls-item}-next-tail {
-                border-color: $primary;
-                color: $primary;
-            }
-        }
-    }
-
-    &-next>.#{$prefix-cls}-vertical {
-        &>.#{$prefix-cls-item}-process {
-            &>.#{$prefix-cls-item}-next-tail {
-                border-color: $border;
-                color: $border;
-            }
-        }
+    &-error>&-tail,
+    &-error>&-content-wrapper>&-content,
+    &-error>&-content-wrapper>&-content>&-icon {
+        border-color: $error;
+        color: $error;
     }
 }
-
-
-
-
-
-
 
 .#{$prefix-cls}-vertical {
     flex-direction: column;
 
-    &>.#{$prefix-cls-item} {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-
-        &>.#{$prefix-cls-item}-tail {
-            margin: 10px 0 10px 12px;
-            border-top-width: 0;
-            border-left-width: 1.5px;
-            min-height: 60px;
-            min-width: 0;
-        }
-
+    &.#{$prefix-cls}-pre {
+        // width: 0;
+        flex-direction: column-reverse;
+        // transform: translate(0, -100%);
     }
 }
 
-
-.#{$prefix-cls-item} {
-
-    &-horizontal {
-        height: 26px; //设置高度不需要注释的样式
-        overflow: visible;
-    }
-
-    &>&-pre {
-        margin-left: -100%;
-        transform: translate(100%, -50%);
-        position: relative;
-        bottom: 12px;
-    }
-
-    &-vertical>&-pre {
-        bottom: 0;
-        margin-left: 0;
-        height: 0;
-        transform: translate(-100%, 100%);
-        align-self: stretch;
-    }
-
-    &-content>&-next {
-        transform: translate(-100%, 50%);
-        position: relative;
-        top: 12px;
+.#{$prefix-cls}-horizontal {
+    &.#{$prefix-cls}-pre {
         // height: 0;
-        // align-self: stretch;
+        flex-direction: row-reverse;
+        // transform: translate(-100%, 0);
     }
 
-    // &-horizontal>&-content>&-next {
-    //     //    height: unset;
-    //     //    height: auto;
-    //     //    top: 24px;
+    // &.#{$prefix-cls}-next {
+    //     height: 26px;
     // }
-
-    &-vertical>&-content>&-next {
-        margin-left: 0;
-        transform: translate(0, 0);
-        top: 0;
-        width: 0;
-    }
-
-    &-next &-vertical>&-pre {
-        width: 0;
-    }
-
-    &-next &-vertical>&-pre>.#{$prefix-cls}-horizontal {
-        transform: translateX(-100%);
-    }
-
-    // &-next .#{$prefix-cls}-horizontal{
-    //     align-items: flex-start;
-    // }
-    // &-vertical>&-content>&-next &-horizontal>&-pre{
-    //     // height: 0;
-    //     // & .#{$prefix-cls}{
-    //     //     transform: translateY(-100%);
-    //     // }
-    // }
-    //线条样式
-    &-pre-tail {
-        display: none;
-    }
-
-    &:nth-last-of-type(1)>&-tail {
-        display: none;
-    }
-
-    &-pre &:nth-last-of-type(1)>&-next-tail,
-    &-next &:nth-of-type(1)>&-pre-tail {
-        display: block;
-    }
-
-    &-next &-vertical:only-child>&-next-tail {
-        display: none;
-    }
-
-    &-next &-vertical:only-child>&-pre-tail {
-        display: block;
-    }
-
-    &-next>.#{$prefix-cls}-horizontal>&:nth-last-of-type(1)>&-next-tail {
-        display: none;
-    }
-
-    &-pre &-horizontal:only-child>&-pre-tail {
-        display: none;
-    }
-
-    &-pre &-horizontal:only-child>&-next-tail {
-        display: block;
-    }
-
-    &-pre>.#{$prefix-cls}-vertical>&:only-child>&-next-tail {
-        display: block;
-    }
-
-    &-pre>.#{$prefix-cls}-vertical>&:only-child>&-pre-tail {
-        display: none;
-    }
-
-
-
-    &>&-pre {
-        &>.#{$prefix-cls}-horizontal {
-            flex-direction: row-reverse;
-
-            &.#{$prefix-cls}-origin {
-                flex-direction: row;
-            }
-        }
-
-        &>.#{$prefix-cls}-vertical {
-            flex-direction: column-reverse;
-
-            &.#{$prefix-cls}-origin {
-                flex-direction: column;
-            }
-        }
-
-    }
 }
 
-
-//箭头样式
+// 箭头
 .#{$prefix-cls-item} {
-    &-vertical>&-tail &-arrow-icon {
-        right: 0.8px;
-        top: unset;
-        top: initial;
-        left: unset;
-        left: initial;
-        bottom: 1px;
-        transform: rotate(90deg) translate(50%, -50%);
+    &-vertical {
+        flex-direction: column;
     }
 
-    &-next>.#{$prefix-cls}-origin>.#{$prefix-cls-item}>.#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon,
-    &-pre>.#{$prefix-cls}>.#{$prefix-cls-item}>.#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon {
+    &-horizontal#{&}-slot-pre>&-tail &-arrow-icon {
         right: unset;
         right: initial;
         bottom: unset;
@@ -329,8 +178,26 @@ $prefix-cls-item: #{$prefix}-step;
         transform: rotate(-180deg) translate(50%, 50%);
     }
 
-    &-pre>.#{$prefix-cls}-vertical>.#{$prefix-cls-item}>.#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon {
-        right: 0.8px;
+    &-vertical>&-tail {
+        margin: 10px 0 10px 12px;
+        border-top-width: 0;
+        border-left-width: 1.5px;
+        min-height: 30px;
+        min-width: 0;
+    }
+
+    &-vertical>&-tail &-arrow-icon {
+        right: 0.7px;
+        top: unset;
+        top: initial;
+        left: unset;
+        left: initial;
+        bottom: 1px;
+        transform: rotate(90deg) translate(50%, -50%);
+    }
+
+    &-vertical#{&}-slot-pre>&-tail &-arrow-icon {
+        right: 0.7px;
         top: 1.5px;
         bottom: unset;
         bottom: initial;
@@ -339,22 +206,19 @@ $prefix-cls-item: #{$prefix}-step;
         transform: rotate(-90deg) translate(50%, 50%);
     }
 
-    &-pre>.#{$prefix-cls}-origin>.#{$prefix-cls-item}>.#{$prefix-cls-item}-tail .#{$prefix-cls-item}-arrow-icon {
-        right: 1px;
-        top: -0.8px;
-        transform: translate(50% - 1, -50%);
-        bottom: unset;
-        bottom: initial;
-        left: unset;
-        left: initial;
+    &-vertical:not(#{&}-slot-pre):nth-of-type(1)>&-tail-pre,
+    &-vertical:not(#{&}-slot-pre)>&-tail-next,
+    &-vertical#{&}-slot-pre>&-tail-pre,
+    &-horizontal#{&}-slot-pre>&-tail-pre,
+    &-vertical#{&}-slot-pre:nth-last-of-type(1)>&-tail-pre {
+        display: none;
     }
 
-}
-
-
-// 基于slotType样式
-.#{$prefix-cls}-pre {
-    &>.#{$prefix-cls-item}>.#{$prefix-cls-item}-pre-tail {
-        display: none !important;
+    &-vertical:not(#{&}-slot-pre)>&-tail-pre,
+    &-vertical#{&}-slot-pre>&-tail-next,
+    &-vertical#{&}-slot-next:nth-of-type(1)>&-tail-pre,
+    &-horizontal#{&}-slot-pre>&-tail-next,
+    &-horizontal#{&}-slot-next:nth-of-type(1)>&-tail-pre {
+        display: block;
     }
 }

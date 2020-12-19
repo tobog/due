@@ -39,11 +39,11 @@
 		</div>
 		<!-- <div class="demo-code demo-code-other">
 			<pre v-highlight>
-				<code class="vue" v-text="'$ npm install ui-tobog --save'"></code>
+				<code class="vue" v-text="'$ npm install Due --save'"></code>
 			</pre>
 			<div>或使用 &lt;script&gt;全局引用</div>
 			<pre v-highlight>
-				<code class="vue" v-text="'<script type=text/javascript src=ui-tobog.umd.min.js></script>'"></code>
+				<code class="vue" v-text="'<script type=text/javascript src=Due.umd.min.js></script>'"></code>
 			</pre>
 		</div>-->
 	</div>

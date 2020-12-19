@@ -17,133 +17,111 @@ $prefix-cls: #{$prefix}-slider;
         cursor: not-allowed;
         pointer-events: none !important;
     }
-
-
-    &-bar-left,
-    &-bar-right {
-        height: 100%;
+    &-bar {
+        // height: 100%;
         position: absolute;
         top: 0;
         bottom: 0;
         background-color: $primary;
-        transition: all 0.1s linear;
-        border-radius: inherit;
         overflow: visible;
+        border-radius: 9999px;
+        z-index: 1;
     }
-
-    &-bar-left {
-        left: 0;
-        width: 0;
-    }
-
-    &-bar-right {
-        right: 0;
-    }
-
     &-btn {
         position: absolute;
         top: 50%;
-        width: 13px;
-        height: 13px;
-        transform: translate(50%, -50%);
+        width: 0;
+        height: 0;
+        z-index: 10;
+        overflow: visible;
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid $primary;
+            box-sizing: border-box;
+            background-color: $white;
+            transition: all 0.2s linear;
+            overflow: hidden;
+            transform: translate(-50%, -50%);
+        }
     }
 
-    &-bar-left &-btn {
-        right: 0;
+    &-btn:hover::before {
+        transform: translate(-50%, -50%) scale(1.2);
     }
 
-    &-bar-right &-btn {
-        left: 0;
-        transform: translate(-50%, -50%);
-    }
-
-    &-btn:hover>&-btn-inner {
-        transform: scale(1.5);
-    }
-
-    &-btn:hover>&-tip,
-    &-btn[data-status=true]>&-tip {
+    &-btn:hover > &-tooltip,
+    &-btn[data-status="true"] > &-tooltip {
         display: block;
     }
-
-    &-btn-inner {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        border: 2px solid $primary;
-        background-color: #fff;
-        transition: all 0.2s linear;
-        border-radius: 50%;
-    }
-
+    &-mark,
     &-spot {
         position: absolute;
-        width: 4px;
+        width: 6px;
         height: 100%;
-        background-color: #fff;
+        background-color: $white;
         transform: translateX(-50%);
-        z-index: 10;
+        z-index: 5;
         left: 0;
         border-radius: 9999px;
+        overflow: visible;
     }
 
-    &-tip {
+    &-mark-text {
+        position: absolute;
+        transform: translateX(-50%);
+        font-size: $fontBase;
+        color: $content;
+        margin-top: 8px;
+        top: 100%;
+        left: 50%;
+    }
+
+    &-tooltip {
         display: none;
         position: absolute;
-        left: 50%;
+        left: 0;
         bottom: 100%;
-        transform: translate(-50%, -8px);
+        transform: translate(-50%, -14px);
         background-color: $darkback;
-        color: #fff;
-        padding: 6px 12px 7px;
-        border-radius: 3px;
+        color: $white;
+        padding: 6px 12px;
+        border-radius: $radius;
 
         &::before {
-            content: '';
+            content: "";
             position: absolute;
             left: 50%;
             bottom: -3px;
             width: 0;
             height: 0;
-            border: 4px solid rgba(41, 42, 48, 0.9);
+            border: 4px solid $darkback;
             border-top-color: transparent !important;
             border-left-color: transparent !important;
             transform: translateX(-50%) rotate(45deg);
         }
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -10px;
+            height: 12px;
+            background-color: transparent;
+        }
     }
 }
 
-
-.#{$prefix-cls}-range {
-    background-color: $primary;
-
-    .#{$prefix-cls}-bar-left,
-    .#{$prefix-cls}-bar-right {
-        background-color: $back;
-        z-index: 10;
-    }
-}
-
-
-
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
-        &.#{$prefix-cls}-range {
-            background-color: $value;
-
-            .#{$prefix-cls}-bar-left {
-                background-color: $back !important;
-            }
-        }
-
-        .#{$prefix-cls}-bar-left {
+        .#{$prefix-cls}-bar {
             background-color: $value;
         }
-
-        .#{$prefix-cls}-btn-inner {
+        .#{$prefix-cls}-btn::before {
             border-color: $value;
         }
     }

@@ -1,7 +1,7 @@
 import Loading from "./loading.js";
 let Instances = {}, Config, VmOptions;
 
-function getInstance(props, name = "") {
+function getInstance(props, name = '') {
     if (Instances[name]) return Instances[name];
     if (typeof props === 'string') props = { render: props }
     const instance = Loading.newInstance(Object.assign({}, Config, props), VmOptions);
@@ -32,7 +32,7 @@ Loading.show = function (name = '') {
         return getInstance({
             fix: true,
             loading: true,
-            transfer: true,
+            fullscreen: true,
             ...name
         })
     }

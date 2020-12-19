@@ -14,7 +14,6 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
         &:hover {
             color: $primary;
         }
-
     }
 
     &-sep {
@@ -22,8 +21,11 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
         color: $sub-content;
     }
 
-    &-item:last-child {
-        font-weight: 700;
-        color: $title;
+    &-item {
+        cursor: default;
+        &:last-child {
+            font-weight: 700;
+            color: $title;
+        }
     }
 }

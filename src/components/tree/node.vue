@@ -66,7 +66,7 @@
 			:class="[_tobogPrefix_ + '-drag-line']"
 			:key="node.linkIndex"
 		></div>
-		<vTransition v-if="hasChildren" tag="ul" :class="[_tobogPrefix_ + '-next']" name="node">
+		<ueTransition v-if="hasChildren" tag="ul" :class="[_tobogPrefix_ + '-next']" name="node">
 			<template v-for="child in getChildren">
 				<TreeNode
 					v-if="expand || always"
@@ -84,7 +84,7 @@
 					:indent="indent"
 				></TreeNode>
 			</template>
-		</vTransition>
+		</ueTransition>
 	</li>
 </template>
 
@@ -92,7 +92,7 @@
 import Icons from "../icons/index";
 import Render from "./render";
 import Checkbox from "../checkbox/index";
-import vTransition from "../base/vTransition";
+import ueTransition from "../base/transition";
 
 export default {
 	name: "TreeNode",
@@ -101,7 +101,7 @@ export default {
 		Checkbox,
 		Icons,
 		Render,
-		vTransition
+		ueTransition
 	},
 	props: {
 		always: Boolean,

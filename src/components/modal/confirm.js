@@ -1,11 +1,11 @@
 
 import Modal from './modal.vue';
 
-Modal.newInstance = function (properties = {}, on = {},vmOptions={}) {
+Modal.newInstance = function (properties = {}, on = {}, vmOptions = {}) {
     let Instance = new global.__VUE__({
-        mixins:[vmOptions],
+        mixins: [vmOptions],
         created() {
-            this.properties=Object.assign({autoDestroy:true, value: true, width: 360, __pattern: 'js' }, properties);
+            this.properties = Object.assign({ autoDestroy: true, visible: true, width: 360, __pattern: 'js' }, properties);
             if (!this.properties.name) this.properties.name = this._uid;
         },
         render(h) {
@@ -14,7 +14,7 @@ Modal.newInstance = function (properties = {}, on = {},vmOptions={}) {
                 children = typeof render === 'function' ? render(h, attrs) :
                     h({ template: `<div>${content || render}</div>` });
             return h(Modal, {
-                attrs:{...attrs},
+                attrs: { ...attrs },
                 on
             }, [children]);
         }
@@ -25,9 +25,9 @@ Modal.newInstance = function (properties = {}, on = {},vmOptions={}) {
     document.body.appendChild(element);
     return {
         component: child,
-        name: child.name||child._uid,
+        name: child.name || child._uid,
         destroy() {
-            child.visible=false;
+            child.show = false;
             setTimeout(() => {
                 component.$destroy();
                 try {
@@ -35,7 +35,7 @@ Modal.newInstance = function (properties = {}, on = {},vmOptions={}) {
                 } catch (error) {
                     // console.log(error)
                 }
-                Instance =component=child=element= null;
+                Instance = component = child = element = null;
             }, 360);
         },
 

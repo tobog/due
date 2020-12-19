@@ -84,7 +84,7 @@ export default {
 					label: "进度条高度",
 					key: "height",
 					tag: "vInputNumber",
-					default: 3
+					default: 10
 				},
 			];
 		},

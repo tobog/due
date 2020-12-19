@@ -51,7 +51,7 @@ LoadingBar.destroy = function (immediate = true) {
     let timeout = setTimeout(function () {
         if (instance) instance.destroy();
         instance = timeout = null;
-    }, immediate ? 0 : 5000);
+    }, immediate ? 0 : 3000);
 }
 
 export default LoadingBar

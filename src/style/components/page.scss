@@ -18,7 +18,7 @@ $prefix-cls: #{$prefix}-page;
         border: 1px solid $border;
         border-radius: 3px;
         transition: all 0.2s ease-in-out;
-        background-color: #fff;
+        background-color: $white;
 
         .#{$prefix-cls}-more:last-child {
             display: none;
@@ -41,8 +41,15 @@ $prefix-cls: #{$prefix}-page;
             }
         }
 
+        &[data-disabled] {
+            color: $disable-content;
+            border-color: $disable-content;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         &.#{$prefix-cls}-active {
-            color: #fff;
+            color: $white;
             border-color: $primary;
             background-color: $primary;
         }
@@ -58,8 +65,12 @@ $prefix-cls: #{$prefix}-page;
     }
 
     &-select {
-        width: 106px;
+        width: 116px;
         white-space: nowrap;
+
+        &>* {
+            flex: auto;
+        }
     }
 
     &-input {

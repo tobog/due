@@ -1,10 +1,11 @@
 export default {
-    name: 'RenderCell',
+    name: "RenderCell",
     functional: true,
     props: {
-        render: Function
+        render: Function,
     },
     render: (h, ctx) => {
-        return ctx.props.render.call(ctx.parent, h);
-    }
-};
+        console.log(ctx)
+        return ctx.props.render.call(ctx.parent, h, ctx.data.attrs)
+    },
+}

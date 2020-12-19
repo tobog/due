@@ -190,7 +190,7 @@ export default {
 			}
 		},
 		getSelectOnlySelf(selectOnlySelf) {
-			return selectOnlySelf === undefined || selectOnlySelf === ""
+			return selectOnlySelf == void 0 || selectOnlySelf === ""
 				? this.selectOnlySelf
 				: selectOnlySelf;
 		},
@@ -243,7 +243,7 @@ export default {
 				const data = node.data;
 				if (node[key] === val) {
 					arr.push(
-						targetKey !== undefined ? node[targetKey] : { ...node }
+						targetKey !== void 0 ? node[targetKey] : { ...node }
 					);
 				}
 			});
@@ -299,7 +299,7 @@ export default {
 			}
 			if (
 				data.type === "drop" &&
-				data.linkIndex !== undefined &&
+				data.linkIndex !== void 0 &&
 				this._dragData
 			) {
 				const nodeList = this.nodeList,
@@ -310,11 +310,11 @@ export default {
 					dragIndex = dragNode.sortIndex,
 					dropIndex = dropNode.sortIndex,
 					dragParent =
-						dragNode.parent !== undefined
+						dragNode.parent !== void 0
 							? nodeList[dragNode.parent]
 							: this.rootNode,
 					dropParent =
-						dropNode.parent !== undefined
+						dropNode.parent !== void 0
 							? nodeList[dropNode.parent]
 							: this.rootNode,
 					dragPChildIndexs = dragParent.childIndexs,

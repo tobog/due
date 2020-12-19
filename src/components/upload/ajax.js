@@ -44,7 +44,7 @@ export default function upload(option) {
             formData.append(key, params[key]);
         });
     }
-    if (chunck !== undefined) {
+    if (chunck !== void 0) {
         formData.append('chunck', chunck);
     }
     formData.append(option.filename, file);

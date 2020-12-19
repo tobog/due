@@ -6,7 +6,7 @@ $prefix-cls: #{$prefix}-tag;
     padding: 3px 8px;
     border: 1px solid $border;
     border-radius: 3px;
-    background: #fff;
+    background: $white;
     opacity: 1;
     overflow: hidden;
     color: $content;
@@ -51,12 +51,12 @@ $prefix-cls: #{$prefix}-tag;
     @each $key,
     $value in $colors-map {
         &-color-#{$key}:not(.#{$prefix-cls}-dot):not(.#{$prefix-cls}-border) {
-            color: #fff;
+            color: $white;
             background: $value;
             border-color: $value;
 
             .#{$prefix-cls}-icons-close {
-                color: #fff;
+                color: $white;
             }
         }
 

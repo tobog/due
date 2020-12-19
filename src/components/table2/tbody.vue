@@ -139,7 +139,7 @@ export default {
 			return !(isRowHidden || isColHidden);
 		},
 		createSpanAttrs(xAxis, yAxis, column, row) {
-			const result = { rowspan: undefined, colspan: undefined };
+			const result = { rowspan: void 0, colspan: void 0 };
 			let rowsSpan = column.rowsSpan, rowItem, colItem
 			if (typeof rowsSpan === 'function') rowsSpan = rowsSpan.call(this, yAxis, row, column);
 			if (rowsSpan instanceof Array) {

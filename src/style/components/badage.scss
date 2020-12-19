@@ -4,25 +4,27 @@ $prefix-cls: #{$prefix}-badge;
     position: relative;
     display: inline-block;
     z-index: 0;
+    overflow: visible;
 
     &-base {
         position: absolute;
         z-index: 10;
-        top: -8px;
-        right: 0;
+        top: -4px;
+        right: 1px;
         transform: translateX(50%);
         background-color: $error;
-        border-color: $error;
+        border: 1px solid $white;
         border-radius: 9999px;
-        padding: 3px;
+        padding: 4px;
         display: inline-flex;
     }
 
     &-label {
         padding: 3px 6px;
+        top: -8px;
         white-space: nowrap;
         font-size: $subFont;
-        color: #fff;
+        color: $white;
         line-height: 1;
         justify-content: center;
         align-items: center;
@@ -41,7 +43,7 @@ $prefix-cls: #{$prefix}-badge;
         }
 
         50% {
-            transform: scale(1.3, 1.3);
+            transform: scale(1.2, 1.2);
             opacity: 0.3;
         }
 
@@ -52,32 +54,28 @@ $prefix-cls: #{$prefix}-badge;
     }
 
     &-progress {
-        &::after {
-            box-shadow: 0 0 10px 1px $error, inset 0 0 20px $error;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            border-radius: 9999px;
-            border: 1px solid transparent;
-            border-color: inherit;
-            background-color: transparent;
-            content: "";
-            animation: #{$prefix-cls} 1.2s infinite ease-in-out;
-        }
+        box-shadow: 0 0 10px 1px $error, inset 0 0 20px $error;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        border-radius: 9999px;
+        border: 1px solid $white;
+        background-color: transparent;
+        animation: #{$prefix-cls} 1.2s infinite ease-in-out;
     }
-
 }
 
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls}-#{$key} {
         background-color: $value;
-        border-color: $value;
+        // border-color: $value;
 
-        &.#{$prefix-cls}-progress::after {
+        & > #{$prefix-cls}-progress {
             box-shadow: 0 0 10px 1px $value, inset 0 0 20px $value;
         }
     }

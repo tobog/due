@@ -16,7 +16,7 @@ function setStyle(element, styles = {}) {
 }
 
 export default class Popper {
-    constructor(reference, popper, options = {}) {
+    constructor (reference, popper, options = {}) {
         this._options = {
             placement: "bottom",
             gpu: false,
@@ -87,7 +87,10 @@ export default class Popper {
             this._reference = reference;
             this._onHoverClick();
         }
-        if (this._options.transfer) this._options.positionElement = document.body;
+        if(!this._throttleUpdate){
+            this._throttleUpdate = throttle(this._update.bind(this), this._options.throttle, true);
+        }
+        this._options.positionElement = this._options.transfer ? document.body : null;
         if (!(this._options.boundaryElement instanceof HTMLElement)) this._options.boundaryElement = null;
     }
     _on() {
@@ -163,9 +166,9 @@ export default class Popper {
     // }
     _resetPopperStyle(style = {}) {
         let _popper = this._popper,
-            initPopperWidth = _popper.dataset._initPopperWidth_;
-        if (initPopperWidth === undefined) {
-            initPopperWidth = _popper.dataset._initPopperWidth_ = _popper.style.width || "";
+            initPopperWidth = _popper.dataset.initPopperWidth;
+        if (initPopperWidth === void 0) {
+            initPopperWidth = _popper.dataset.initPopperWidth = _popper.style.width || "";
         }
         setStyle(_popper, { width: initPopperWidth, top: 0, opacity: 0, ...style, ...(this._options.style || {}) });
     }
@@ -180,7 +183,7 @@ export default class Popper {
         if (displayNone || this._performance(event)) return;
         this._running = true;
         // console.log('popper running')
-        await new Promise((resolve,reject)=>resolve());//阻塞更新视图后获取位置
+        await new Promise((resolve) => resolve());//阻塞更新视图后获取位置
         let data = {
             placement: this._options.placement,
             reference: Offset.getOffsetRect(this._reference, this._offsetParent),
@@ -226,7 +229,7 @@ export default class Popper {
         const style = this._popper.style,
             displayNone = this._isDisplayNone();
         clearTimeout(this.__delayTimeout);
-        if (bool === undefined) {
+        if (bool === void 0) {
             if (displayNone) {
                 this._delayUpdate();
                 return;
@@ -259,8 +262,9 @@ export default class Popper {
         style.display = "none";
         style.position = style.left = style.top = style.transform = "";
         this._off();
-        clearTimeout(this.__delayTimeout)
-        this.__delayTimeout = null;
+        clearTimeout(this.__delayTimeout);
+        this._throttleUpdate.cancel();
+        this._throttleUpdate = this.__delayTimeout = null;
         if (positionElement && transfer) {
             try {
                 this._homeComment = null;
@@ -546,7 +550,7 @@ export default class Popper {
                     position: "absolute",
                     zIndex: 3221,
                     transformOrigin: placement[0] === "top" ? "center bottom" : "",
-                    width: this._popper.dataset._initPopperWidth_ || popper.width,
+                    width: this._popper.dataset.initPopperWidth || popper.width,
                 },
                 style
             );

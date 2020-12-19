@@ -30,7 +30,7 @@ $prefix-cls: #{$prefix}-transfer;
         }
 
         &#{&}-active {
-            color: #fff;
+            color: $white;
             border-color: $primary;
             background-color: $primary;
         }

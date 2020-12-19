@@ -7,25 +7,15 @@ export default {
         isSelect() {
             return true
         },
-        showSuffix() {
-            return false
-        },
-        isInput() {
-            return this.filterable || this.search;
-        },
-        hasValidOpts() {
-            const hasTip = this.$slots.tip || this.tip;
-            return hasTip && this.optComponents.length && !this.optComponents.some(item => !item.hidden);
-        },
     },
     methods: {
-        handleBlur() {
-            if (!this.$refs.inputDrop.isActive) return;
-            if (!this.isReadonly) this.handleModel(this.getInputDom().value);
+        handleBlur(event,inputDom) {
+            if (!this.isReadonly) this.handleModel(inputDom.value);
             this.$nextTick(() => {
                 this.$emit("on-change", this.model, this.__attachData);
                 this.$emit("on-blur", this.model, this.__attachData);
-                this.close(true);
+                this.__attachData = "";
+                this.handleDispatch("on-validate", this.model);
             });
         },
         handleModel(value) {
@@ -34,7 +24,7 @@ export default {
             if (component) return;
             if (this.multiple) {
                 this.valueText = this.getValueText();
-                this.__attachData = this.getInputDom().value = "";
+                this.__attachData = this.$refs.inputBase.getInputDom().value = "";
                 return;
             }
             if (isValid) {
@@ -43,6 +33,6 @@ export default {
                 this.updateModel("");
             }
         },
-       
+
     },
 }

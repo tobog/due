@@ -5,7 +5,6 @@
 @import 'dropdown';
 @import 'formItem';
 @import 'icons';
-@import 'input';
 @import 'loading-bar';
 @import 'loading';
 @import 'modal';
@@ -21,6 +20,7 @@
 @import 'steps';
 @import 'switchs';
 @import 'table';
+@import 'color';
 
 @import 'tooltip';
 
@@ -48,7 +48,10 @@
 @import 'avatar';
 @import 'tabs';
 
-
 //其他
 @import 'affix';
 @import 'anchor';
+@import 'inputbase';
+@import 'fluid';
+@import 'resize';
+@import 'draggable';
