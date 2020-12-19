@@ -31,12 +31,12 @@ export default {
     computed: {
         getCode() {
             return `<Avatar v-bind=CODE icon="ios-person" />
-                    <Avatar v-bind="formData">U</Avatar>
-                    <Avatar v-bind="formData">USER</Avatar>
-                    <Avatar v-bind="formData" icon="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    <Avatar v-bind="formData" style="color: #f56a00;background-color: #fde3cf">U</Avatar>
-                    <Avatar v-bind="formData" style="background-color: #87d068" icon="ios-person" />
-                    <Avatar v-bind="formData" />`;
+                    <Avatar v-bind=CODE>U</Avatar>
+                    <Avatar v-bind=CODE>USER</Avatar>
+                    <Avatar v-bind=CODE icon="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+                    <Avatar v-bind=CODE style="color: #f56a00;background-color: #fde3cf">U</Avatar>
+                    <Avatar v-bind=CODE style="background-color: #87d068" icon="ios-person" />
+                    <Avatar v-bind=CODE />`;
         },
         getConfig() {
             return [

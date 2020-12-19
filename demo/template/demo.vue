@@ -111,7 +111,7 @@ export default {
             formData: {},
             isDark: false,
             styleCode: `
-                :root {
+                .demo-view {
                     --title: #fff;
                     --content: #e6e6e6;
                     --sub-content: #777; // 待优化
