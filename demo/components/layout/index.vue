@@ -181,7 +181,7 @@ export default {
                     default: 64,
                 },
                 {
-                    label: "收缩宽度",
+                    label: "收缩事件",
                     key: "Aside:on-change/update:visible",
                     tag: "-",
                     demoDefault: "-",

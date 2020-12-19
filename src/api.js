@@ -5,6 +5,7 @@ import utils from "./utils/index"
 
 const install = function(Vue, options = {}) {
     if (install.installed && !options.reset) return
+    console.log(options)
     global.__VUE__ = Vue
     const cssPrefix = options.cssPrefix || "due"
     const langPrefix = options.langPrefix || cssPrefix

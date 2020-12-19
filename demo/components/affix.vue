@@ -16,9 +16,9 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vAffix v-bind="config">
-                <div class="demo-affix">vAffix Demo</div>
-            </vAffix>
+            <Affix v-bind="config">
+                <div class="demo-affix">Affix Demo</div>
+            </Affix>
         </template>
     </Demo>
 </template>
@@ -35,7 +35,7 @@ export default {
                     showConfig: true,
                     label: "距离顶部",
                     key: "offsetTop",
-                    tag: "vInputNumber",
+                    tag: "InputNumber",
                     demoDefault: 10,
                     explain: "距离窗口顶部达到指定偏移量后触发",
                     dataType: "Number",
@@ -45,7 +45,7 @@ export default {
                     showConfig: true,
                     label: "距离底部",
                     key: "offsetBottom",
-                    tag: "vInputNumber",
+                    tag: "InputNumber",
                     demoDefault: 70,
                     explain: "距离窗口底部达到指定偏移量后触发",
                     dataType: "Number",
@@ -55,7 +55,7 @@ export default {
                     showConfig: true,
                     label: "层级",
                     key: "zIndex",
-                    tag: "vInputNumber",
+                    tag: "InputNumber",
                     demoDefault: 100,
                     explain: "fixed 定位的图层级别",
                     dataType: "Number",
