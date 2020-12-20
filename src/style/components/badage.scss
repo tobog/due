@@ -1,12 +1,14 @@
 $prefix-cls: #{$prefix}-badge;
 
 .#{$prefix-cls} {
+    @include baseStyle;
     position: relative;
     display: inline-block;
     z-index: 0;
     overflow: visible;
+    background-color: unset;
 
-    &-base {
+    &-inner {
         position: absolute;
         z-index: 10;
         top: -4px;
@@ -24,7 +26,7 @@ $prefix-cls: #{$prefix}-badge;
         top: -8px;
         white-space: nowrap;
         font-size: $subFont;
-        color: $white;
+        color: $whiteTitle;
         line-height: 1;
         justify-content: center;
         align-items: center;
@@ -34,6 +36,7 @@ $prefix-cls: #{$prefix}-badge;
         display: flex;
         position: static;
         transform: none;
+        top: 0;
     }
 
     @keyframes #{$prefix-cls} {
@@ -68,14 +71,61 @@ $prefix-cls: #{$prefix}-badge;
         background-color: transparent;
         animation: #{$prefix-cls} 1.2s infinite ease-in-out;
     }
+
+    &-size {
+        &-large {
+            .#{$prefix-cls} {
+                &-inner {
+                    padding: 6px;
+                    top: -6px;
+                }
+
+                &-label {
+                    padding: 4.5px 7px;
+                    top: -10px;
+                }
+            }
+        }
+
+        &-midiue {
+            .#{$prefix-cls} {
+                &-inner {
+                    padding: 4px;
+                    top: -4px;
+                }
+
+                &-label {
+                    padding: 4.5px 7px;
+                    top: -10px;
+                }
+            }
+        }
+
+        &-small {
+            font-size: $subFont;
+
+            .#{$prefix-cls} {
+                &-inner {
+                    padding: 3px;
+                    top: -2px;
+                }
+
+                &-label {
+                    padding: 2px 5px;
+                    top: -6px;
+                }
+            }
+        }
+    }
+
 }
 
-@each $key, $value in $colors-map {
+@each $key,
+$value in $colors-map {
     .#{$prefix-cls}-#{$key} {
         background-color: $value;
-        // border-color: $value;
 
-        & > #{$prefix-cls}-progress {
+        &>#{$prefix-cls}-progress {
             box-shadow: 0 0 10px 1px $value, inset 0 0 20px $value;
         }
     }

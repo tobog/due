@@ -12,9 +12,7 @@
             :class="[_tobogPrefix_ + '-icon']"
             @on-error="handleError"
         >
-            <template v-if="$slots.fallback">
-                <slot name="fallback" slot="fallback"></slot>
-            </template>
+            <slot v-if="$slots.fallback" name="fallback" slot="fallback"></slot>
         </Icons>
     </span>
 </template>
@@ -66,11 +64,12 @@ export default {
             ];
         },
         styles() {
-            let style = {};
-            let isNaN = parseInt(this.size);
-            if (isNaN === isNaN && ["small", "large"].indexOf(this.size) === -1) {
-                style.height = style.width = unit(this.size);
-                style.fontSize = unit(this.size, "px", 0.67);
+            const size = this.getGlobalData("size");
+            const style = {};
+            const isNaN = parseInt(size);
+            if (isNaN === isNaN || size === "auto") {
+                style.height = style.width = unit(size);
+                style.fontSize = unit(size, "px", 0.65);
             }
             return style;
         },
@@ -91,7 +90,7 @@ export default {
                 const avatarWidth = this.$el.getBoundingClientRect().width;
                 // add 4px gap for each side to get better performance
                 if (avatarWidth - 8 < this.childrenWidth) {
-                    this.scale = (avatarWidth - 8) / this.childrenWidth;
+                    this.scale = ((avatarWidth - 8) / this.childrenWidth).toFixed(2);
                 } else {
                     this.scale = 1;
                 }

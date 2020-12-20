@@ -25,6 +25,7 @@
     .demo-code pre {
         white-space: pre-wrap;
         margin: 0;
+        word-break: break-all;
     }
 
     .demo-table {
@@ -32,6 +33,11 @@
     }
     .demo-view[data-dark="true"] {
         background-color: #000;
+    }
+    .table-opt {
+        max-height: 100px;
+        max-width: 300px;
+        overflow: hidden;
     }
 }
 </style>
@@ -162,6 +168,10 @@ export default {
                 {
                     title: "可选值",
                     key: "options",
+                    render(h, data) {
+                        return <div class="table-opt">{(data.row.options || []).join(",")}</div>;
+                        // console.log(data);
+                    },
                 },
                 // {
                 //     title: "切换",

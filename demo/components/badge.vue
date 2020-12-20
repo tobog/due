@@ -7,176 +7,150 @@
     display: inline-block;
 }
 </style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Badge 徽标数)</h2>
             <h4 class="padding-top-10">主要用于通知未读数的角标，提醒用户点击。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <div>
-                <vSwitch v-model="show" class="margin-bottom-10">
-                    <span slot="open">开</span>
-                    <span slot="close">关</span>
-                </vSwitch>
-            </div>
-            <vBadge v-if="show" v-bind="formData">
+        </template>
+        <template v-slot="config">
+            <vBadge v-bind="config">
                 <span slot="label">label</span>
             </vBadge>
-            <vBadge v-if="show" v-bind="formData">
+            <vBadge v-bind="config">
                 <a href="#" class="demo-badge"></a>
             </vBadge>
-            <vBadge v-if="show" v-bind="formData">
+            <vBadge v-bind="config">
                 demo-badge
             </vBadge>
-            <vBadge v-if="show" v-bind="formData"> </vBadge>
-            <vBadge v-if="show" v-bind="formData"> </vBadge>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+            <vBadge v-bind="config"> </vBadge>
+            <vBadge v-bind="config"> </vBadge>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
+    data() {
+        return {};
+    },
     computed: {
         getCode() {
-            return `<vBadge v-bind="${this.getCodeString(this.formData)}">
+            return `<vBadge v-bind=CODE>
 						<a href="#" class="demo-badge"></a>
 					</vBadge>`;
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '显示的标签',
-                    key: 'label',
-                    // default: 20
-                },
-                {
-                    label: '自定义颜色',
-                    key: 'color',
-                },
-                {
-                    label: '封顶的标签',
-                    key: 'overLabel',
-                    default: 99,
-                },
-                {
-                    label: '位置偏移',
-                    key: 'offset',
-                    default: [],
-                },
-                {
-                    label: '类型',
-                    key: 'type',
-                    tag: 'vSelect',
-                    default: '',
-                    options: [
-                        {
-                            value: 'info',
-                            label: 'info',
-                        },
-                        {
-                            value: 'warning',
-                            label: 'warning',
-                        },
-                        {
-                            value: 'error',
-                            label: 'error',
-                        },
-                        {
-                            value: 'success',
-                            label: 'success',
-                        },
-                        {
-                            value: 'default',
-                            label: 'default',
-                        },
-                        {
-                            value: 'primary',
-                            label: 'primary',
-                        },
-                    ],
-                },
-                {
-                    label: '展示label',
-                    key: 'showLabel',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "展示label",
+                    key: "showLabel",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "控制label 显示",
+                    dataType: "Boolean",
                     default: true,
                 },
                 {
-                    label: '动画',
-                    key: 'progress',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "动画",
+                    key: "progress",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "动画",
+                    dataType: "Boolean",
                     default: false,
                 },
-            ];
-        },
-        compProps() {
-            return [
                 {
-                    prop: 'label',
-                    explain: '显示的标签',
-                    type: 'Number, String',
-                    default: '-',
+                    showConfig: true,
+                    label: "显示的标签",
+                    key: "label",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "显示的标签",
+                    dataType: "Number, String",
+                    default: "",
                 },
                 {
-                    prop: 'overLabel',
-                    explain: 'overLabel',
-                    type: 'Number',
-                    default: '99',
+                    showConfig: true,
+                    label: "自定义颜色",
+                    key: "color",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "自定义颜色",
+                    dataType: "String",
+                    default: "",
                 },
                 {
-                    prop: 'offset',
-                    explain: '设置状态点的位置偏移，格式为 [x, y]',
-                    type: 'Array',
-                    default: '-',
+                    showConfig: true,
+                    label: "封顶的标签",
+                    key: "overLabel",
+                    tag: "vInputNumber",
+                    demoDefault: "99",
+                    explain: "封顶的标签",
+                    dataType: "Number",
+                    default: "99",
                 },
                 {
-                    prop: 'type',
-                    explain: '使用预设的颜色，：success、primary、default、error、warning、info',
-                    type: 'String',
-                    default: '-',
+                    label: "位置偏移",
+                    key: "offset",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置状态点的位置偏移，格式为 [x, y]",
+                    dataType: "Array",
+                    default: "",
                 },
                 {
-                    prop: 'progress',
-                    explain: '动画progress',
-                    type: 'Boolean',
-                    default: '-',
+                    showConfig: true,
+                    label: "类型",
+                    key: "type",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "使用预设的颜色，：success、primary、default、error、warning、info",
+                    dataType: "String",
+                    default: "",
+                    options: this.getThemes,
                 },
                 {
-                    prop: 'showLabel',
-                    explain: '控制label 显示',
-                    type: 'Boolean',
-                    default: true,
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    prop: 'format',
-                    explain: '控制label格式',
-                    type: 'Function',
-                    default: '(label, overLabel)=>string',
+                    label: "控制label格式",
+                    key: "format",
+                    explain: "控制label格式",
+                    dataType: "Function",
+                    default: "(label, overLabel)=>string",
                 },
                 {
-                    prop: 'slot:default',
-                    explain: '显示内容',
-                    type: 'VNode',
-                    default: '-',
+                    label: "显示内容",
+                    key: "slot:default",
+                    explain: "显示内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    prop: 'slot:label',
-                    explain: '显示内容label',
-                    type: 'VNode',
-                    default: '-',
+                    label: "显示内容label",
+                    key: "slot:label",
+                    explain: "显示内容label",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "事件",
+                    key: "on-error",
+                    explain: "icon为外链接图片加载不成功时触发",
+                    dataType: "Function:Event",
+                    default: "error",
                 },
             ];
         },

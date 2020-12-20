@@ -1,5 +1,5 @@
 <template>
-    <span :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+    <span :class="classes" :data-vue-module="$options.name">
         <slot></slot>
         <span v-if="showLabel" :class="labelClasses" :style="labelStyle">
             <slot name="label">{{ format(label, overLabel) }}</slot>
@@ -9,9 +9,12 @@
 </template>
 
 <script>
-import { parseNumber, unit, validVal } from '../../utils/tool';
+import { parseNumber, unit, validVal } from "../../utils/tool";
+import globalMixin from "../../mixins/global";
 export default {
-    name: 'Badge',
+    name: "Badge",
+    componentName: "Badge",
+    mixins: [globalMixin],
     props: {
         label: Number,
         offset: Array,
@@ -32,12 +35,24 @@ export default {
                 return parseNumber(label) >= parseNumber(overLabel) ? `${overLabel}+` : label;
             },
         },
+        size: String,
     },
     computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_;
+            const size = this.getGlobalData("size");
+            return [
+                _tobogPrefix_,
+
+                {
+                    [`${_tobogPrefix_}-size-${size}`]: size,
+                },
+            ];
+        },
         labelClasses() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
-                `${_tobogPrefix_}-base`,
+                `${_tobogPrefix_}-inner`,
                 {
                     [`${_tobogPrefix_}-label`]: this.label || this.$slots.label,
                     [`${_tobogPrefix_}-only`]: !this.$slots.default,

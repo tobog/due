@@ -15,6 +15,7 @@
     //     --error-shadow: rgba(237, 63, 20, 0.2);
     // 字体颜色
     --title: #17233d;
+    --whiteTitle: #fff;
     --content: #515a6e;
     --sub-content: #808695; // 待优化
     --disable-content: #c0c4cc; // 待优化
@@ -54,6 +55,7 @@ $title:var(--title, #17233d) !default !global;
 $content:var(--content, #515a6e) !default !global;
 $sub-content:var(--sub-content, #808695) !default !global;
 $disable-content:var(--disable-content, #C0C4CC) !default !global;
+$whiteTitle:var(--whiteTitle, #fff) !default !global;
 
 $globalBack:var(--globalBack, #fff) !default !global;
 
