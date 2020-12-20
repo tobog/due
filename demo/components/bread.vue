@@ -72,16 +72,6 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "显示的标签",
-                    key: "label",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "显示的标签",
-                    dataType: "Number, String",
-                    default: "",
-                },
-                {
-                    showConfig: true,
                     label: "尺寸大小",
                     key: "size",
                     tag: "vInput",

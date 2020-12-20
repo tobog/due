@@ -12,6 +12,7 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
 .#{$prefix-cls-breaditem} {
     display: inline-block;
     list-style: none;
+
     &-link {
         color: inherit;
 
@@ -27,6 +28,7 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
 
     &-item {
         cursor: default;
+
         &:last-child {
             font-weight: 700;
             color: $title;

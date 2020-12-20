@@ -11,7 +11,8 @@
 
 <script>
 export default {
-    name: 'BreadItem',
+    name: "BreadItem",
+    componentName: "BreadItem",
     inheritAttrs: false,
     props: {
         sep: String,
@@ -30,13 +31,13 @@ export default {
     computed: {
         innerClasses() {
             const { to, href } = this.$attrs;
-            const type = to || href ? 'link' : 'item';
+            const type = to || href ? "link" : "item";
             return `${this._tobogPrefix_}-${type}`;
         },
         getTag() {
-            const { to, href, tag = 'span' } = this.$attrs;
-            if (to) return this.$router ? 'router-link' : 'a';
-            if (href) return 'a';
+            const { to, href, tag = "span" } = this.$attrs;
+            if (to) return this.$router ? "router-link" : "a";
+            if (href) return "a";
             return tag;
         },
     },
