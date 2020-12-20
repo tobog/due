@@ -1,12 +1,12 @@
 <template>
-    <span :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+    <li :class="[_tobogPrefix_]" :data-vue-module="$options.name">
         <component :is="getTag" v-bind="$attrs" :class="innerClasses">
             <slot></slot>
         </component>
         <span v-if="showSep" :class="[_tobogPrefix_ + '-sep']">
             <slot name="sep">{{ separator }}</slot>
         </span>
-    </span>
+    </li>
 </template>
 
 <script>

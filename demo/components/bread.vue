@@ -1,55 +1,32 @@
+<style lang="scss"></style>
 
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Breadcrumb 面包屑)</h2>
-			<h4 class="padding-top-10">显示网站的层级结构，告知用户当前所在位置，以及在需要向上级导航时使用。</h4>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<div>
-				<vSwitch v-model="show" class="margin-bottom-10">
-					<span slot="open">开</span>
-					<span slot="close">关</span>
-				</vSwitch>
-			</div>
-			<vBread v-if="show" v-bind="formData">
-				<vBreadItem href="/">
-					<vIcon type="ios-home-outline"></vIcon>
-				</vBreadItem>
-				<vBreadItem href="/">
-					<vIcon type="ios-home-outline"></vIcon>Home
-				</vBreadItem>
-				<vBreadItem to="/bread">
-					<vIcon type="social-buffer-outline"></vIcon>Components
-				</vBreadItem>
-				<vBreadItem>
-					<vIcon type="pound"></vIcon>vBread
-				</vBreadItem>
-				
-			</vBread>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
+            <h2>代码示例 (Breadcrumb 面包屑)</h2>
+            <h4 class="padding-top-10">显示网站的层级结构，告知用户当前所在位置，以及在需要向上级导航时使用。</h4>
+        </template>
+        <template v-slot="config">
+            <vBread v-bind="config">
+                <vBreadItem href="/">
+                    <vIcon type="ios-home-outline"></vIcon>
+                </vBreadItem>
+                <vBreadItem href="/"> <vIcon type="ios-home-outline"></vIcon>Home </vBreadItem>
+                <vBreadItem to="/bread"> <vIcon type="social-buffer-outline"></vIcon>Components </vBreadItem>
+                <vBreadItem> <vIcon type="pound"></vIcon>vBread </vBreadItem>
+            </vBread>
+        </template>
+    </Demo>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
-	computed: {
-		getCode() {
-			return `<vBread v-bind='${this.getCodeString(this.formData)}'>
+    data() {
+        return {};
+    },
+    computed: {
+        getCode() {
+            return `<vBread v-bind=CODE>
                         <vBreadItem href='/'>
                             <vIcon type='ios-home-outline'></vIcon>Home
                         </vBreadItem>
@@ -59,61 +36,119 @@ export default {
                         <vBreadItem>
                             <vIcon type='pound'></vIcon>vBread
                         </vBreadItem>
-                    </vBread>`
-		},
-		getBase() {
-			return [
-				{
-					label: "分隔符",
-					key: "sep",
-					default: '/'
-				},
-				{
-					label: "链接",
-					key: "to",
-					// default: ''
-				},
-				{
-					label: "链接",
-					key: "href",
-					// default: ''
-				},
-			];
-		},
-		compProps() {
-			return [
-				{
-					prop: 'BreadItem|Bread:sep',
-					explain: 'separator:自定义分隔符分隔符',
-					type: 'String | Element String',
-					default: '/',
-				},
-				{
-					prop: 'BreadItem:to',
-					explain: '链接，不传则没有链接，支持 vue-router 对象',
-					type: 'String | Object',
-					default: '-',
-				},
-				{
-					prop: 'BreadItem:href',
-					explain: 'a:链接',
-					type: 'String',
-					default: '',
-				},
-				{
-					prop: 'BreadItem:tag',
-					explain: 'to:router-link,href:a',
-					type: 'String',
-					default: 'span',
-				},
-				{
-					prop: 'BreadItem:$attrs',
-					explain: 'BreadItem:继承属性，target,tag...',
-					type: 'object',
-					default: '-',
-				},
-			];
-		}
-	},
+                    </vBread>`;
+        },
+        getConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "分隔符",
+                    key: "sep",
+                    tag: "vInput",
+                    demoDefault: "/",
+                    explain: "分隔符",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "链接",
+                    key: "to",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "链接",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "链接",
+                    key: "href",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "链接",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "显示的标签",
+                    key: "label",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "显示的标签",
+                    dataType: "Number, String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    label: "BreadItem|Bread:sep",
+                    key: "sep",
+                    explain: "separator:自定义分隔符分隔符",
+                    dataType: "String",
+                    default: "/",
+                },
+                {
+                    label: "BreadItem:to",
+                    key: "to",
+                    explain: "链接，不传则没有链接，支持 vue-router 对象",
+                    dataType: "String,Object",
+                    default: "-",
+                },
+                {
+                    label: "BreadItem:href",
+                    key: "href",
+                    explain: "a:链接",
+                    dataType: "String",
+                    default: "-",
+                },
+                {
+                    label: "BreadItem:tag",
+                    key: "tag",
+                    explain: "to:router-link,href:a",
+                    dataType: "String",
+                    default: "-",
+                },
+                {
+                    label: "BreadItem:$attrs",
+                    key: "$attrs",
+                    explain: "BreadItem:继承属性，target,tag...",
+                    dataType: "Object",
+                    default: "-",
+                },
+                {
+                    label: "显示内容",
+                    key: "BreadItem:slot:default",
+                    explain: "显示内容",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "分隔符",
+                    key: "BreadItem:slot:sep",
+                    explain: "分隔符",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "子元素",
+                    key: "Bread:slot:default",
+                    explain: "子元素：BreadItem",
+                    dataType: "VNode",
+                    default: "-",
+                },
+            ];
+        },
+    },
 };
 </script>

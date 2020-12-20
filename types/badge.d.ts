@@ -2,42 +2,54 @@ import { UIComponent, VNode } from "./component";
 
 export declare class Badge extends UIComponent {
     /**
-     * 显示的数字，大于overflowCount时，显示${overflowCount}+，为 0 时隐藏
-     */
-    count?: number | string;
-    /**
-     * 展示封顶的数字值
-     * @default 99
-     */
-    "overflow-count"?: number | string;
-    /**
-     * 不展示数字，只有一个小红点，如需隐藏 dot ，需要设置count为 0
+     * 是否显示标签
      * @default false
      */
-    dot?: boolean;
+    showLabel?: boolean;
     /**
-     * 自定义的class名称，dot 模式下无效
+     * 是否标签动画
+     * @default false
      */
-    "class-name"?: string;
+    progress?: boolean;
+    /**
+     * 自定义内容,显示的标签
+     */
+    label?: number | string;
+    /**
+     * 自定义标签颜色
+     */
+    color?: string;
+    /**
+     * 展示封顶的数字值
+     */
+    overLabel?: number;
+    /**
+     *尺寸大小
+     */
+    size?: number | string;
+    /**
+     * 控制label格式
+     */
+    format?: (label: number, overLabel: number) => string;
     /**
      * 使用预设的颜色，可选值为 success、primary、normal、error、warning、info
      */
     type?: "success" | "primary" | "normal" | "error" | "warning" | "info";
     /**
-     * 当数值为 0 时，是否展示 Badge
-     * @default false
-     */
-    "show-zero"?: boolean;
-    /**
-     * 设置 Badge 为状态点，可选值为 success、processing、default、error、warning
-     */
-    status?: "success" | "processing" | "default" | "error" | "warning";
-    /**
-     * 自定义内容，如果设置了 status，则为状态点的文本
-     */
-    text?: string;
-    /**
      * 设置状态点的位置偏移，格式为 [x, y]
      */
     offset?: number[];
+    /**
+     * slot插槽对象
+     */
+    $slots: {
+        /**
+         * 显示内容
+         */
+        default: VNode[];
+        /**
+         * 显示label内容
+         */
+        label: VNode[];
+    };
 }

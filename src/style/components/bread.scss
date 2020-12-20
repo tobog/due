@@ -2,12 +2,16 @@ $prefix-cls: #{$prefix}-bread;
 $prefix-cls-breaditem: #{$prefix}-breaditem;
 
 .#{$prefix-cls} {
+    @include baseStyle;
     color: $content;
     overflow: hidden;
-    font-size: $baseFont;
+    list-style: none;
+    background-color: unset;
 }
 
 .#{$prefix-cls-breaditem} {
+    display: inline-block;
+    list-style: none;
     &-link {
         color: inherit;
 

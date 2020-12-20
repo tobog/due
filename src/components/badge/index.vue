@@ -57,19 +57,20 @@ export default {
                     [`${_tobogPrefix_}-label`]: this.label || this.$slots.label,
                     [`${_tobogPrefix_}-only`]: !this.$slots.default,
                     [`${_tobogPrefix_}-${this.type}`]: !!this.type,
-                    // [`${_tobogPrefix_}-progress`]: this.progress,
                 },
             ];
         },
         progressStyle() {
             const style = {};
-            if (this.color) style.boxShadow = `0 0 10px 1px ${this.color}, inset 0 0 20px ${this.color}`;
+            const color = this.getGlobalData("color", "theme");
+            if (color) style.boxShadow = `0 0 10px 1px ${color}, inset 0 0 20px ${color}`;
             return style;
         },
         labelStyle() {
             const offset = this.offset;
             const style = {};
-            if (this.color) style.backgroundColor = this.color;
+            const color = this.getGlobalData("color", "theme");
+            if (color) style.backgroundColor = color;
             if (!Array.isArray(offset)) return style;
             if (validVal(offset[0])) style.top = unit(offset[0]);
             if (validVal(offset[1])) style.right = unit(offset[1]);

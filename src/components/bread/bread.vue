@@ -1,16 +1,32 @@
 <template>
-    <section :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+    <ul :class="classes" :data-vue-module="$options.name">
         <slot></slot>
-    </section>
+    </ul>
 </template>
 
 <script>
+import globalMixin from "../../mixins/global";
 export default {
-    name: 'Bread',
+    name: "Bread",
+    componentName: "Bread",
+    mixins: [globalMixin],
     props: {
         sep: {
             type: String,
-            default: '/',
+            default: "/",
+        },
+    },
+    computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_;
+            const size = this.getGlobalData("size");
+            return [
+                _tobogPrefix_,
+
+                {
+                    [`${_tobogPrefix_}-size-${size}`]: size,
+                },
+            ];
         },
     },
     methods: {
