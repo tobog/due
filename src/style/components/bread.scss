@@ -7,6 +7,14 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
     overflow: hidden;
     list-style: none;
     background-color: unset;
+    &-size {
+        &-small {
+            font-size: $subFont;
+        }
+        &-large {
+            font-size: $titleFont;
+        }
+    }
 }
 
 .#{$prefix-cls-breaditem} {
@@ -32,6 +40,9 @@ $prefix-cls-breaditem: #{$prefix}-breaditem;
         &:last-child {
             font-weight: 700;
             color: $title;
+            .#{$prefix-cls-breaditem}-sep {
+                display: none;
+            }
         }
     }
 }

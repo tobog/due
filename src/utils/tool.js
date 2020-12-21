@@ -1,4 +1,4 @@
-export { default as Color } from "color"
+export { default as Color } from "./color"
 
 export function oneOf(value, validList = []) {
     return validList.some((val) => {

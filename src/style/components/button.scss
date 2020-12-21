@@ -86,7 +86,7 @@ button.#{$prefix-cls} {
     }
 
     @each $key, $value in $colors-map {
-        &-#{$key} {
+        &-theme-#{$key} {
             @include btn-base(#fff, $value, $value);
             @include btn-active(#fff, $value, $value);
             &.#{$prefix-cls}-plain {

@@ -17,14 +17,14 @@
     </span>
 </template>
 <script>
-import Icons from "../icons/index";
-import { unit } from "../../utils/tool";
-import globalMixin from "../../mixins/global";
+import Icons from "../icons/index"
+import {unit} from "../../utils/tool"
+import globalMixin from "../../mixins/global"
 export default {
     name: "Avatar",
     componentName: "Avatar",
     mixins: [globalMixin],
-    components: { Icons },
+    components: {Icons},
     props: {
         shape: {
             type: String,
@@ -42,18 +42,18 @@ export default {
         return {
             scale: 1,
             childrenWidth: 0,
-        };
+        }
     },
     mounted() {
-        this.$nextTick(this.setScale);
+        this.$nextTick(this.setScale)
     },
     updated() {
-        this.setScale();
+        this.setScale()
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            const size = this.getGlobalData("size");
+            const _tobogPrefix_ = this._tobogPrefix_
+            const size = this.getGlobalData("size")
             return [
                 _tobogPrefix_,
 
@@ -61,44 +61,44 @@ export default {
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
                     [`${_tobogPrefix_}-size-${size}`]: size,
                 },
-            ];
+            ]
         },
         styles() {
-            const size = this.getGlobalData("size");
-            const style = {};
-            const isNaN = parseInt(size);
+            const style = {}
+            const size = this.getGlobalData("size")
+            const isNaN = parseInt(size)
             if (isNaN === isNaN || size === "auto") {
-                style.height = style.width = unit(size);
-                style.fontSize = unit(size, "px", 0.65);
+                style.height = style.width = unit(size)
+                style.fontSize = unit(size, "px", 0.65)
             }
-            return style;
+            return style
         },
         childrenStyle() {
             return {
                 msTransform: `scale(${this.scale})`,
                 WebkitTransform: `scale(${this.scale})`,
                 transform: `scale(${this.scale})`,
-            };
+            }
         },
     },
     methods: {
         setScale() {
-            if (!this.$slots.default) return;
+            if (!this.$slots.default) return
             if (this.$refs.children) {
                 // set children width again to make slot centered
-                this.childrenWidth = this.$refs.children.offsetWidth;
-                const avatarWidth = this.$el.getBoundingClientRect().width;
+                this.childrenWidth = this.$refs.children.offsetWidth
+                const avatarWidth = this.$el.getBoundingClientRect().width
                 // add 4px gap for each side to get better performance
                 if (avatarWidth - 8 < this.childrenWidth) {
-                    this.scale = ((avatarWidth - 8) / this.childrenWidth).toFixed(2);
+                    this.scale = ((avatarWidth - 8) / this.childrenWidth).toFixed(2)
                 } else {
-                    this.scale = 1;
+                    this.scale = 1
                 }
             }
         },
         handleError(e) {
-            this.$emit("on-error", e);
+            this.$emit("on-error", e)
         },
     },
-};
+}
 </script>

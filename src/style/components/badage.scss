@@ -117,15 +117,13 @@ $prefix-cls: #{$prefix}-badge;
             }
         }
     }
-
 }
 
-@each $key,
-$value in $colors-map {
-    .#{$prefix-cls}-#{$key} {
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-theme-#{$key} .#{$prefix-cls}-inner {
         background-color: $value;
 
-        &>#{$prefix-cls}-progress {
+        & > .#{$prefix-cls}-progress {
             box-shadow: 0 0 10px 1px $value, inset 0 0 20px $value;
         }
     }

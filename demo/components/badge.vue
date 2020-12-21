@@ -104,8 +104,8 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "类型",
-                    key: "type",
+                    label: "主题",
+                    key: "theme",
                     tag: "vSelect",
                     demoDefault: "",
                     explain: "使用预设的颜色，：success、primary、default、error、warning、info",

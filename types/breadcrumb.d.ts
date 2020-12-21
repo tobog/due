@@ -1,10 +1,10 @@
-import { UIComponent, VNode } from "./component";
+import {UIComponent, VNode} from "./component"
 export declare class Bread extends UIComponent {
     /**
      * 自定义分隔符
      * @default /
      */
-    sep?: string;
+    sep?: string
     /**
      * slot插槽对象
      */
@@ -12,28 +12,27 @@ export declare class Bread extends UIComponent {
         /**
          * 显示内容
          */
-        default: VNode[];
-    };
+        default: VNode[]
+    }
 }
 
 export declare class BreadItem extends UIComponent {
     /**
-     * 链接，不传则没有链接
+     * 自定义分隔符
+     * @default /
      */
-    to?: string | object;
+    sep?: string
     /**
-     * 路由跳转时，开启 replace 将不会向 history 添加新记录
-     * @default false
+     * 继承 组件$attrs,更具不同tag 动态设置属性（to,href,target...）等等
      */
-    replace?: boolean;
+    $attrs?: Object
     /**
-     * 相当于 a 链接的 target 属性
-     * @default _self
+     * slot插槽对象
      */
-    target?: "_blank" | "_self" | "_parent" | "_top";
-    /**
-     * 同 vue-router append
-     * @default false
-     */
-    append?: boolean;
+    $slots: {
+        /**
+         * 显示内容
+         */
+        default: VNode[]
+    }
 }

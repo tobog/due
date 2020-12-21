@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import globalMixin from "../../mixins/global";
+import globalMixin from "../../mixins/global"
 export default {
     name: "Bread",
     componentName: "Bread",
@@ -18,34 +18,34 @@ export default {
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            const size = this.getGlobalData("size");
+            const _tobogPrefix_ = this._tobogPrefix_
+            const size = this.getGlobalData("size")
             return [
                 _tobogPrefix_,
 
                 {
                     [`${_tobogPrefix_}-size-${size}`]: size,
                 },
-            ];
+            ]
         },
     },
     methods: {
         updateChildren() {
             this.$nextTick(() => {
                 const last = this.$children.length - 1,
-                    sep = this.sep;
+                    sep = this.sep
                 this.$children.forEach((child, index) => {
-                    child.showSep = true;
-                    if (last == index) child.showSep = false;
-                    if (!child.sep) child.separator = sep;
-                });
-            });
+                    child.showSep = true
+                    if (last == index) child.showSep = false
+                    if (!child.sep) child.separator = sep
+                })
+            })
         },
     },
     watch: {
         sep() {
-            this.updateChildren();
+            this.updateChildren()
         },
     },
-};
+}
 </script>

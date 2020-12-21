@@ -23,26 +23,26 @@ export default {
         return {
             separator: this.sep,
             showSep: true,
-        };
+        }
     },
     created() {
-        this.$parent.updateChildren();
+        this.$parent.updateChildren()
     },
     computed: {
         innerClasses() {
-            const { to, href } = this.$attrs;
-            const type = to || href ? "link" : "item";
-            return `${this._tobogPrefix_}-${type}`;
+            const {to, href} = this.$attrs
+            const type = to || href ? "link" : "item"
+            return `${this._tobogPrefix_}-${type}`
         },
         getTag() {
-            const { to, href, tag = "span" } = this.$attrs;
-            if (to) return this.$router ? "router-link" : "a";
-            if (href) return "a";
-            return tag;
+            const {to, href, tag = "span"} = this.$attrs
+            if (to) return this.$router ? "router-link" : "a"
+            if (href) return "a"
+            return tag
         },
     },
     beforeDestroy() {
-        this.$parent.updateChildren();
+        this.$parent.updateChildren()
     },
-};
+}
 </script>

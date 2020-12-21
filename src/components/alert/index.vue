@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import Color from "../../utils/color";
-import Icons from "../icons/index";
-import Transitions from "../base/transition";
-import globalMixin from "../../mixins/global";
+import Color from "../../utils/color"
+import Icons from "../icons/index"
+import Transitions from "../base/transition"
+import globalMixin from "../../mixins/global"
 
 export default {
     name: "Alert",
@@ -61,12 +61,12 @@ export default {
     data() {
         return {
             closed: false,
-        };
+        }
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            const size = this.getGlobalData("size");
+            const _tobogPrefix_ = this._tobogPrefix_
+            const size = this.getGlobalData("size")
             return [
                 _tobogPrefix_,
                 {
@@ -78,10 +78,10 @@ export default {
                     [`${_tobogPrefix_}-broadcast`]: this.broadcast,
                     [`${_tobogPrefix_}-size-${size}`]: !!size,
                 },
-            ];
+            ]
         },
         showDesc() {
-            return !!this.desc || !!this.$slots.desc;
+            return !!this.desc || !!this.$slots.desc
         },
         iconType() {
             const iconMap = {
@@ -90,25 +90,24 @@ export default {
                 warning: "alert",
                 error: "close-circle",
                 loading: "loading",
-            };
-            return iconMap[this.type] || this.type;
+            }
+            return iconMap[this.type] || this.type
         },
         handleStyle() {
-            const style = {};
-            const color = this.getGlobalData("color", "theme");
-            if (Color.isColor(color)) {
-                const color = new Color(color);
-                style.borderColor = color;
-                !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS());
+            const style = {}
+            if (this.color && Color.isColor(this.color)) {
+                const color = new Color(this.color)
+                style.borderColor = color
+                !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS())
             }
-            return style;
+            return style
         },
     },
     methods: {
         close() {
-            this.closed = true;
-            this.$emit("on-close");
+            this.closed = true
+            this.$emit("on-close")
         },
     },
-};
+}
 </script>

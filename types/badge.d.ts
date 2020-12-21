@@ -1,4 +1,4 @@
-import { UIComponent, VNode } from "./component";
+import { UIComponent, VNode,UIComponenTheme } from "./component";
 
 export declare class Badge extends UIComponent {
     /**
@@ -34,7 +34,7 @@ export declare class Badge extends UIComponent {
     /**
      * 使用预设的颜色，可选值为 success、primary、normal、error、warning、info
      */
-    type?: "success" | "primary" | "normal" | "error" | "warning" | "info";
+    theme?: UIComponenTheme;
     /**
      * 设置状态点的位置偏移，格式为 [x, y]
      */
