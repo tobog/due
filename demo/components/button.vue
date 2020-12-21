@@ -1,230 +1,209 @@
 <style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
-            <h2>代码示例 (Button 按钮)</h2>
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
+            <h2>代码示例 (Button and ButtonGroup 按钮)</h2>
             <h4 class="padding-top-10">基础组件，触发业务逻辑时使用。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vButton v-bind="formData" to="/button">vButton</vButton>
-                <vButton v-bind="formData" to="/button" icon="ios-alert-outline"></vButton>
-                <vButtonGroup v-bind="formData" class="margin-top-20">
-                    <vButton v-bind="formData">vButton</vButton>
-                    <vButton v-bind="formData">vButton</vButton>
-                    <vButton v-bind="formData">vButton</vButton>
-                    <vButton v-bind="formData" icon="ios-alert-outline"></vButton>
-                </vButtonGroup>
-                <vButtonGroup v-bind="formData" class="margin-top-20">
-                    <vButton v-bind="formData">vButton</vButton>
-                </vButtonGroup>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vButton v-bind="config" to="/button">vButton</vButton>
+            <vButton v-bind="config" to="/button" icon="ios-alert-outline"></vButton>
+            <vButtonGroup v-bind="config" class="margin-top-20">
+                <vButton v-bind="config">vButton</vButton>
+                <vButton v-bind="config">vButton</vButton>
+                <vButton v-bind="config">vButton</vButton>
+                <vButton v-bind="config" icon="ios-alert-outline"></vButton>
+            </vButtonGroup>
+            <vButtonGroup v-bind="config" class="margin-top-20">
+                <vButton v-bind="config">vButton</vButton>
+            </vButtonGroup>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
+    data() {
+        return {}
+    },
     computed: {
         getCode() {
-            return `<vButton v-bind="${this.getCodeString(this.formData)}">vButton</vButton>
-					<vButtonGroup v-bind="${this.getCodeString(this.formData)}" class="margin-top-20">
-						<vButton v-bind="${this.getCodeString(this.formData)}">vButton</vButton>
-						<vButton v-bind="${this.getCodeString(this.formData)}">vButton</vButton>
-					</vButtonGroup>`;
+            return `<Button v-bind=CODE>Button</Button>
+					<ButtonGroup v-bind=CODE class="margin-top-20">
+						<Button v-bind=CODE>Button</Button>
+						<Button v-bind=CODE>Button</Button>
+					</ButtonGroup>`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '纵向排列',
-                    key: 'vertical',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "纵向排列",
+                    key: "vertical",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "纵向排列",
+                    dataType: "Boolean",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "紧凑排列",
+                    key: "compact",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "紧凑排列",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '紧凑排列',
-                    key: 'compact',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "朴素按钮",
+                    key: "plain",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否朴素按钮",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    key: 'plain',
-                    label: '是否朴素按钮',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "幽灵属性",
+                    key: "ghost",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否幽灵属性",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '幽灵属性',
-                    key: 'ghost',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否禁用状态",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '禁用状态',
-                    key: 'disabled',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "长度100%",
+                    key: "long",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否长度100%",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '长度100%',
-                    key: 'long',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "loading",
+                    key: "loading",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "按钮为加载中状态",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: 'loading',
-                    key: 'loading',
-                    tag: 'vSwitch',
-                    default: false,
+                    showConfig: true,
+                    label: "按钮类型",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "按钮类型 按钮类型:可选值为 gray、primary、dashed、text、info、success、warning、error",
+                    dataType: "String",
+                    default: "",
+                    options: ["primary", "dashed", "text", "info", "success", "warning", "error", "default", "confirm"],
                 },
                 {
-                    label: '按钮类型',
-                    key: 'theme',
-                    tag: 'vSelect',
-                    options: ['primary', 'dashed', 'text', 'info', 'success', 'warning', 'error', 'default', 'confirm'],
+                    showConfig: true,
+                    label: "自定义颜色",
+                    key: "color",
+                    tag: "vColorPicker",
+                    demoDefault: "",
+                    explain: "自定义颜色",
+                    dataType: "String",
+                    default: "",
                 },
                 {
-                    label: '自定义颜色',
-                    key: 'color',
-                    tag: 'vInput',
+                    showConfig: true,
+                    label: "按钮形状",
+                    key: "shape",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "按钮形状",
+                    dataType: "String",
+                    default: "",
+                    options: ["circle", "round", "square"],
                 },
                 {
-                    label: '按钮形状',
-                    key: 'shape',
-                    tag: 'vSelect',
-                    options: ['circle', 'round', 'square'],
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    label: '按钮大小',
-                    key: 'size',
-                    tag: 'vInput',
-                    options: ['small', 'large', 'default'],
-                },
-                {
-                    label: 'icon',
-                    key: 'icon',
-                    tag: 'vSelect',
+                    showConfig: true,
+                    label: "按钮icon",
+                    key: "icon",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "按钮icon",
+                    dataType: "String",
                     options: this.iconslist,
                 },
-            ];
-        },
-        compProps() {
-            return [
                 {
-                    prop: 'ButtonGroup:vertical',
-                    explain: '是否纵向排列按钮组',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "ButtonGroup:vertical",
+                    key: "vertical",
+                    explain: "是否纵向排列按钮组",
+                    dataType: "Boolean",
+                    default: false,
                 },
                 {
-                    prop: 'BreadItem:compact',
-                    explain: '是否紧凑排列',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "ButtonGroup:compact",
+                    key: "compact",
+                    explain: "是否紧凑排列",
+                    dataType: "Boolean",
+                    default: "-",
                 },
                 {
-                    prop: 'ghost',
-                    explain: '幽灵属性',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "表单类型",
+                    key: "type",
+                    explain: "表单类型:可选值为button,reset,submit'",
+                    dataType: "String",
+                    default: "-",
                 },
                 {
-                    prop: 'plain',
-                    explain: '是否朴素按钮',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "继承属性",
+                    key: "$attrs",
+                    explain: "继承属性：tag，to，href 等...",
+                    dataType: "String",
+                    dataType: "-",
                 },
                 {
-                    prop: 'disabled',
-                    explain: '禁用状态',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "继承事件",
+                    key: "$listeners",
+                    explain: "继承事件",
+                    dataType: "String",
+                    dataType: "-",
                 },
                 {
-                    prop: 'long',
-                    explain: '是否长度100%',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "子元素",
+                    key: "slot:default",
+                    explain: "子元素",
+                    dataType: "VNode",
+                    default: "-",
                 },
-                {
-                    prop: 'loading',
-                    explain: '按钮为加载中状态',
-                    type: 'Boolean',
-                    default: 'false',
-                },
-                {
-                    prop: 'theme',
-                    explain: '按钮类型:可选值为 gray、primary、dashed、text、info、success、warning、error',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: 'type',
-                    explain: '表单类型:可选值为button,reset,submit',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: 'shape',
-                    explain: '按钮形状:可选值为circle',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: 'size',
-                    explain: '按钮大小:small, large, default',
-                    type: 'String',
-                    default: 'default',
-                },
-                {
-                    prop: 'icon',
-                    explain: '图标',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: 'to',
-                    explain: 'router-link标签模式 渲染',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: 'href',
-                    explain: 'a 标签模式 渲染',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: '$listeners',
-                    explain: '继承事件',
-                    type: 'String',
-                    default: '-',
-                },
-                {
-                    prop: '$attrs',
-                    explain: '继承属性：tag，to，href 等。。。',
-                    type: 'String',
-                    default: '-',
-                },
-            ];
+            ]
         },
     },
-};
+}
 </script>

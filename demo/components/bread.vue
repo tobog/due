@@ -26,17 +26,17 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vBread v-bind=CODE>
-                        <vBreadItem href='/'>
+            return `<Bread v-bind=CODE>
+                        <BreadItem href='/'>
                             <vIcon type='ios-home-outline'></vIcon>Home
-                        </vBreadItem>
-                        <vBreadItem to='/bread'>
+                        </BreadItem>
+                        <BreadItem to='/bread'>
                             <vIcon type='social-buffer-outline'></vIcon>Components
-                        </vBreadItem>
-                        <vBreadItem>
-                            <vIcon type='pound'></vIcon>vBread
-                        </vBreadItem>
-                    </vBread>`;
+                        </BreadItem>
+                        <BreadItem>
+                            <vIcon type='pound'></vIcon>Bread
+                        </BreadItem>
+                    </Bread>`;
         },
         getConfig() {
             return [

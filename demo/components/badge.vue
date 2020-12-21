@@ -37,9 +37,9 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vBadge v-bind=CODE>
+            return `<Badge v-bind=CODE>
 						<a href="#" class="demo-badge"></a>
-					</vBadge>`;
+					</Badge>`;
         },
         getConfig() {
             return [

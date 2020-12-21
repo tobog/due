@@ -27,6 +27,7 @@ button.#{$prefix-cls} {
 }
 
 .#{$prefix-cls} {
+    @include baseStyle;
     -webkit-appearance: initial;
     -webkit-appearance: unset;
     margin: 0;
@@ -72,8 +73,8 @@ button.#{$prefix-cls} {
     &,
     &-text,
     &-dashed {
-        @include btn-base($content, #fff, $border);
-        @include btn-active($primary, #fff, $primary);
+        @include btn-base($content, $globalBack, $border);
+        @include btn-active($primary, $globalBack, $primary);
     }
 
     &-dashed {

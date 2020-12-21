@@ -73,7 +73,7 @@
             </vCol>
         </vRow>
         <div class="demo-code">
-            <pre>
+            <pre v-highlight>
 				<code v-text="getFormatCode" class="html"></code>
 			</pre>
         </div>
