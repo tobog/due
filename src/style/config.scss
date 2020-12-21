@@ -20,7 +20,7 @@
     --sub-content: #808695; // 待优化
     --disable-content: #c0c4cc; // 待优化
     // 背景、边框、阴影等 // 待优化
-    --globalBack: #fff;
+    --componentBack: #fff;
     //     --disabled: #f7f7f7;
     --border: #dcdee2;
     //     --divider: #e8eaec;
@@ -57,7 +57,7 @@ $sub-content:var(--sub-content, #808695) !default !global;
 $disable-content:var(--disable-content, #C0C4CC) !default !global;
 $whiteTitle:var(--whiteTitle, #fff) !default !global;
 
-$globalBack:var(--globalBack, #fff) !default !global;
+$componentBack:var(--componentBack, #fff) !default !global;
 
 // $disabled:var(--disabled, #f7f7f7) !default !global;
 $border:var(--border, #dcdee2) !default !global;
@@ -75,7 +75,7 @@ $back:var(--back, #f8f8f9) !default !global;
 $prefix: "due" !default !global;
 
 // 背景主题
-// $globalBack: #fff !default !global;
+// $componentBack: #fff !default !global;
 
 
 // 颜色配置
@@ -185,7 +185,7 @@ $media-map: (xs: (max-width: 768px,
 $lineHeight:1.12;
 
 @mixin baseStyle {
-    background-color: $globalBack;
+    background-color: $componentBack;
     line-height: $lineHeight;
     font-size: $baseFont;
     color: $title;

@@ -4,21 +4,21 @@ $prefix-cls-group: #{$prefix}-buttongroup;
 @mixin btn-base($color, $bgc, $border) {
     color: $color;
     background-color: $bgc;
-    border-color: rgba($border, 0.8);
+    border-color: $border;
 }
 
 @mixin btn-active($color, $bgc, $border) {
     &:focus {
         color: $color;
-        background-color: rgba($bgc, 0.8);
-        border-color: rgba($border, 0.8);
-        box-shadow: 0 0 0 2px rgba($border, 0.3);
+        background-color: $bgc;
+        border-color: $border;
+        box-shadow: 0 0 5px -1px $border;
     }
 
     &:hover {
         color: $color;
-        background-color: rgba($bgc, 0.8);
-        border-color: rgba($border, 0.8);
+        background-color: $bgc;
+        border-color: $border;
     }
 }
 
@@ -45,26 +45,33 @@ button.#{$prefix-cls} {
     text-align: center;
     vertical-align: middle;
     display: inline-block;
+
     &-long {
-       width: 100%;
+        width: 100%;
     }
-    & > * {
+
+    &>* {
         vertical-align: middle;
     }
-    & > .#{$prefix}-icons {
+
+    &>.#{$prefix}-icons {
         margin-right: 4px;
         font-size: 1.2em;
     }
-    &-only > .#{$prefix}-icons {
+
+    &-only>.#{$prefix}-icons {
         margin-right: 0;
     }
+
     &-square {
         border-radius: 0;
     }
+
     &-circle {
-        & > .#{$prefix}-icons {
+        &>.#{$prefix}-icons {
             margin: 0;
         }
+
         padding: 0;
         width: 32px;
         border-radius: 50%;
@@ -73,8 +80,8 @@ button.#{$prefix-cls} {
     &,
     &-text,
     &-dashed {
-        @include btn-base($content, $globalBack, $border);
-        @include btn-active($primary, $globalBack, $primary);
+        @include btn-base($content, $componentBack, $border);
+        @include btn-active($primary, $componentBack, $primary);
     }
 
     &-dashed {
@@ -86,21 +93,26 @@ button.#{$prefix-cls} {
         background-color: transparent !important;
     }
 
-    @each $key, $value in $colors-map {
+    @each $key,
+    $value in $colors-map {
         &-theme-#{$key} {
             @include btn-base(#fff, $value, $value);
             @include btn-active(#fff, $value, $value);
+
             &.#{$prefix-cls}-plain {
                 background-color: rgba($value, 0.05);
                 color: $value;
+
                 &:hover,
                 &:focus {
                     background-color: rgba($value, 0.8);
                     color: $white;
                 }
             }
+
             &.#{$prefix-cls}-ghost {
                 color: $value;
+
                 &:hover,
                 &:focus {
                     background-color: rgba($value, 0.05);
@@ -112,10 +124,12 @@ button.#{$prefix-cls} {
     &-custome-color:hover {
         opacity: 0.7;
     }
+
     &-custome-color:focus {
         box-shadow: none;
     }
-    &-custome-size > * {
+
+    &-custome-size>* {
         transform: translateY(-4px);
     }
 
@@ -133,6 +147,7 @@ button.#{$prefix-cls} {
             padding: 0 10px;
             font-size: $subFont;
             line-height: 22px;
+
             &.#{$prefix-cls}-circle {
                 width: 24px;
                 padding: 0;
@@ -142,6 +157,7 @@ button.#{$prefix-cls} {
         &-large {
             padding: 0 22px;
             line-height: 38px;
+
             &.#{$prefix-cls}-circle {
                 width: 40px;
                 padding: 0;
@@ -184,6 +200,7 @@ button.#{$prefix-cls} {
             &:focus {
                 z-index: 2;
             }
+
             &:first-child:not(:last-child) {
                 border-top-left-radius: $radius;
                 border-bottom-left-radius: $radius;
@@ -199,6 +216,7 @@ button.#{$prefix-cls} {
     &#{&}-compact#{&}-square .#{$prefix-cls} {
         border-radius: 0 !important;
     }
+
     &#{&}-compact#{&}-round .#{$prefix-cls} {
         &:first-child {
             border-top-left-radius: 9999px;
@@ -238,6 +256,7 @@ button.#{$prefix-cls} {
             &:focus {
                 z-index: 2;
             }
+
             &:first-child:not(:last-child) {
                 border-top-left-radius: $radius;
                 border-top-right-radius: $radius;
@@ -248,9 +267,11 @@ button.#{$prefix-cls} {
                 border-bottom-right-radius: $radius;
             }
         }
+
         &.#{$prefix-cls-group}-square .#{$prefix-cls} {
             border-radius: 0 !important;
         }
+
         &.#{$prefix-cls-group}-round .#{$prefix-cls} {
             &:first-child {
                 border-top-left-radius: 9999px;

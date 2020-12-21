@@ -25,7 +25,7 @@
 <script>
 export default {
     data() {
-        return {}
+        return {};
     },
     computed: {
         getCode() {
@@ -33,7 +33,7 @@ export default {
 					<ButtonGroup v-bind=CODE class="margin-top-20">
 						<Button v-bind=CODE>Button</Button>
 						<Button v-bind=CODE>Button</Button>
-					</ButtonGroup>`
+					</ButtonGroup>`;
         },
         getConfig() {
             return [
@@ -202,8 +202,8 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ]
+            ];
         },
     },
-}
+};
 </script>
