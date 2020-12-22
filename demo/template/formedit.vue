@@ -1,7 +1,7 @@
 <style lang="scss">
 .demo-form-edit {
     .due-formitem {
-        height: 40px;
+        min-height: 40px;
         margin-bottom: 10px;
     }
 }

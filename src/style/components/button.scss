@@ -8,17 +8,17 @@ $prefix-cls-group: #{$prefix}-buttongroup;
 }
 
 @mixin btn-active($color, $bgc, $border) {
+    &:hover {
+        color: $color;
+        background-color: $bgc;
+        border-color: $border;
+        opacity: 0.8;
+    }
     &:focus {
         color: $color;
         background-color: $bgc;
         border-color: $border;
         box-shadow: 0 0 5px -1px $border;
-    }
-
-    &:hover {
-        color: $color;
-        background-color: $bgc;
-        border-color: $border;
     }
 }
 
@@ -45,21 +45,22 @@ button.#{$prefix-cls} {
     text-align: center;
     vertical-align: middle;
     display: inline-block;
+    overflow: hidden;
 
     &-long {
         width: 100%;
     }
 
-    &>* {
+    & > * {
         vertical-align: middle;
     }
 
-    &>.#{$prefix}-icons {
+    & > .#{$prefix}-icons {
         margin-right: 4px;
         font-size: 1.2em;
     }
 
-    &-only>.#{$prefix}-icons {
+    &-only > .#{$prefix}-icons {
         margin-right: 0;
     }
 
@@ -68,69 +69,74 @@ button.#{$prefix-cls} {
     }
 
     &-circle {
-        &>.#{$prefix}-icons {
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        & > * {
             margin: 0;
         }
-
         padding: 0;
         width: 32px;
+        height: 32px;
         border-radius: 50%;
     }
 
-    &,
-    &-text,
-    &-dashed {
-        @include btn-base($content, $componentBack, $border);
-        @include btn-active($primary, $componentBack, $primary);
-    }
+    @include btn-base($content, $componentBack, $border);
+    @include btn-active($primary, $componentBack, $primary);
 
-    &-dashed {
+    &-type-dashed {
         border-style: dashed;
     }
 
-    &-text {
+    &-type-text {
         border-color: transparent !important;
         background-color: transparent !important;
     }
 
-    @each $key,
-    $value in $colors-map {
+    @each $key, $value in $colors-map {
         &-theme-#{$key} {
-            @include btn-base(#fff, $value, $value);
-            @include btn-active(#fff, $value, $value);
+            @include btn-base($white, $value, $value);
+            @include btn-active($white, $value, $value);
 
             &.#{$prefix-cls}-plain {
-                background-color: rgba($value, 0.05);
+                background-color: rgba($value, 0.08);
                 color: $value;
 
                 &:hover,
                 &:focus {
-                    background-color: rgba($value, 0.8);
+                    background-color: $value;
                     color: $white;
                 }
             }
-
+            &.#{$prefix-cls}-type-text,
             &.#{$prefix-cls}-ghost {
                 color: $value;
 
                 &:hover,
                 &:focus {
-                    background-color: rgba($value, 0.05);
+                    background-color: rgba($value, 0.08);
+                    opacity: 1;
                 }
             }
         }
     }
-
-    &-custome-color:hover {
-        opacity: 0.7;
-    }
-
-    &-custome-color:focus {
-        box-shadow: none;
-    }
-
-    &-custome-size>* {
-        transform: translateY(-4px);
+    &-custome {
+        &-color {
+            &:focus {
+                box-shadow: none;
+            }
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+        &-size.#{$prefix-cls}-circle {
+            display: inline-flex !important;
+            justify-content: center;
+            align-items: center;
+            & > * {
+                line-height: 1;
+            }
+        }
     }
 
     &-ghost {

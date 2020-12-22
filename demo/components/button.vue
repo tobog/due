@@ -25,7 +25,7 @@
 <script>
 export default {
     data() {
-        return {};
+        return {}
     },
     computed: {
         getCode() {
@@ -33,7 +33,7 @@ export default {
 					<ButtonGroup v-bind=CODE class="margin-top-20">
 						<Button v-bind=CODE>Button</Button>
 						<Button v-bind=CODE>Button</Button>
-					</ButtonGroup>`;
+					</ButtonGroup>`
         },
         getConfig() {
             return [
@@ -110,13 +110,24 @@ export default {
                 {
                     showConfig: true,
                     label: "按钮类型",
+                    key: "type",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "按钮类型 按钮类型:可选值为dashed,text,default",
+                    dataType: "String",
+                    default: "",
+                    options: ["dashed", "text", "default"],
+                },
+                {
+                    showConfig: true,
+                    label: "按钮主题",
                     key: "theme",
                     tag: "vSelect",
                     demoDefault: "",
-                    explain: "按钮类型 按钮类型:可选值为 gray、primary、dashed、text、info、success、warning、error",
+                    explain: "按钮类型 按钮类型:可选值为 gray、primary、info、success、warning、error",
                     dataType: "String",
                     default: "",
-                    options: ["primary", "dashed", "text", "info", "success", "warning", "error", "default", "confirm"],
+                    options: ["primary", "info", "success", "warning", "error", "default", "confirm"],
                 },
                 {
                     showConfig: true,
@@ -202,8 +213,8 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

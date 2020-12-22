@@ -3,7 +3,7 @@
         :is="getTag"
         :data-vue-module="$options.name"
         :class="classes"
-        :type="type"
+        :type="htmlType"
         :style="styles"
         @click="handleClick"
         v-on="getListeners"
@@ -37,7 +37,8 @@ export default {
         loading: Boolean,
         disabled: Boolean,
         plain: Boolean,
-        type: {
+        type: String, //solid,dashed,text
+        htmlType: {
             type: String,
             default: "button",
         },
@@ -61,6 +62,7 @@ export default {
                     [`${_tobogPrefix_}-loading`]: this.icon === "loading" || this.loading,
                     [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
+                    [`${_tobogPrefix_}-type-${this.type}`]: this.type === "dashed" || this.type === "text",
                     [`${_tobogPrefix_}-size-${this.size}`]: !this.styles.lineHeight,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-long`]: this.long,
@@ -68,7 +70,7 @@ export default {
                     [`${_tobogPrefix_}-plain`]: this.plain,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-custome-color`]: !!this.styles.color,
-                    [`${_tobogPrefix_}-custome-size`]: this.shape === "circle" && !!this.styles.lineHeight,
+                    [`${_tobogPrefix_}-custome-size`]: !!this.styles.lineHeight,
                 },
             ]
         },
@@ -85,8 +87,8 @@ export default {
                 style.lineHeight = unit(size)
                 style.paddingLeft = style.paddingRight = style.fontSize = unit(size, "px", 0.5)
                 if (this.shape === "circle") {
-                    style.paddingLeft = style.paddingRight = 0
                     style.width = style.height = style.lineHeight
+                    style.paddingLeft = style.paddingRight = 0
                 }
             }
             if (this.color && Color.isColor(this.color)) {
@@ -96,7 +98,7 @@ export default {
                     style.backgroundColor = "transparent"
                     style.borderColor = style.color = value
                 } else if (this.plain) {
-                    style.backgroundColor = data.setAlpha(0.05).toCSS()
+                    style.backgroundColor = data.setAlpha(0.08).toCSS()
                     style.borderColor = style.color = value
                 } else {
                     style.color = "#fff"
@@ -108,16 +110,16 @@ export default {
     },
     methods: {
         async handleClick(e) {
-            if (this._runningClick) return
+            if (this.__runningClick) return
             const click = this.$listeners["click"]
             if (typeof click === "function") {
                 try {
-                    this._runningClick = true
+                    this.__runningClick = true
                     await click(e)
                 } catch (err) {
                     console.error(err)
                 } finally {
-                    this._runningClick = false
+                    this.__runningClick = false
                 }
             }
         },

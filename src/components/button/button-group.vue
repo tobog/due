@@ -5,20 +5,18 @@
 </template>
 <script>
 export default {
-    name: 'ButtonGroup',
+    name: "ButtonGroup",
+    componentName: "ButtonGroup",
     inheritAttrs: false,
     props: {
-        shape: {
-            type: String,
-            // default: 'round', //round ,square
-        },
+        shape: String,
         vertical: Boolean,
         compact: Boolean,
         type: String, //消除type：button问题
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 {
                     [_tobogPrefix_]: !this.vertical,
@@ -26,8 +24,8 @@ export default {
                     [`${_tobogPrefix_}-compact`]: this.compact,
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>
