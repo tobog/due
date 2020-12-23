@@ -304,8 +304,7 @@ $timeTest: 0.5s;
                 }
             }
         }
-
-        &-right {
+        &-inside#{&}-right {
             left: unset;
             left: initial;
             right: 12px - $padding;

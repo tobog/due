@@ -14,25 +14,27 @@
             </span>
         </template>
         <aside v-if="dots && childLen" :class="dotsClasses">
-            <span
-                v-for="index in childLen"
-                :key="index"
-                :class="[_tobogPrefix_ + '-dot']"
-                :data-radius="radiusDot"
-                @click="slide('click', index)"
-                @mouseenter="slide('hover', index)"
-            ></span>
+            <slot name="dot" :slide="slide">
+                <span
+                    v-for="index in childLen"
+                    :key="index"
+                    :class="[_tobogPrefix_ + '-dot']"
+                    :data-radius="radiusDot"
+                    @click="slide('click', index)"
+                    @mouseenter="slide('hover', index)"
+                ></span>
+            </slot>
         </aside>
     </section>
 </template>
 <script>
-import Icons from "../icons/index";
-import Carousel from "../../utils/carousel";
+import Icons from "../icons/index"
+import Carousel from "../../utils/carousel"
 
 export default {
     name: "Carousel",
     componentName: "Carousel",
-    components: { Icons },
+    components: {Icons},
     props: {
         value: {
             type: Number,
@@ -52,7 +54,7 @@ export default {
         },
         interval: {
             type: Number,
-            default: 1000,
+            default: 2000,
         },
         arrow: {
             type: String,
@@ -68,6 +70,7 @@ export default {
             //     return oneOf(value, ['inside', 'outside', 'none']);
             // }
         },
+        dotType: String, //round,default,page,bullet
         radiusDot: {
             type: Boolean,
             default: false,
@@ -97,16 +100,17 @@ export default {
         // 			dots: true
         // 		}
         // 	},
-        // ]
+        // ],
+        // scrolltrigger
     },
     data() {
         return {
             childLen: 0,
             model: this.value,
-        };
+        }
     },
     mounted() {
-        this.init();
+        this.init()
     },
     computed: {
         getConfig() {
@@ -119,10 +123,10 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-            };
+            }
         },
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
@@ -131,31 +135,31 @@ export default {
                     [`${_tobogPrefix_}-${this.direction}`]:
                         this.direction === "vertical" || this.direction === "horizontal",
                 },
-            ];
+            ]
         },
         arrowClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-arrow`,
                 {
                     [`${_tobogPrefix_}-arrow-${this.arrow}`]: !!this.arrow,
                 },
-            ];
+            ]
         },
         dotsClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-dots`,
                 `${_tobogPrefix_}-dots-${this.dots}`,
                 {
                     [`${_tobogPrefix_}-dots-${this.getDotPosition}`]: !!this.getDotPosition,
                 },
-            ];
+            ]
         },
         getDotPosition() {
-            if (this.dotPosition) return this.dotPosition;
-            if (this.direction === "vertical") return "right";
-            return false;
+            if (this.dotPosition) return this.dotPosition
+            if (this.direction === "vertical") return "right"
+            return false
         },
     },
     methods: {
@@ -163,66 +167,66 @@ export default {
             this.$nextTick(() => {
                 this._Carousel = new Carousel(this.$el, this.getConfig, (that, index) => {
                     const childLen = that._children.length,
-                        oldValue = this.model;
-                    if (childLen != this.childLen) this.childLen = childLen;
+                        oldValue = this.model
+                    if (childLen != this.childLen) this.childLen = childLen
                     if (index != oldValue) {
-                        this.model = index;
-                        this.$emit("input", index);
-                        this.$emit("on-change", index, oldValue);
+                        this.model = index
+                        this.$emit("input", index)
+                        this.$emit("on-change", index, oldValue)
                     }
-                });
-                this._Carousel.slide(this.model);
-            });
+                })
+                this._Carousel.slide(this.model)
+            })
         },
         play(isPre) {
-            this._Carousel.step(isPre);
+            this._Carousel.step(isPre)
         },
         playControl() {
-            this._Carousel.play();
+            this._Carousel.play()
         },
         pause() {
-            this._Carousel.pause();
+            this._Carousel.pause()
         },
         slide(event, index) {
             if (event === this.trigger) {
-                this._Carousel.slide(index - 1);
+                this._Carousel.slide(index - 1)
             }
         },
         handelMouseup(e) {
-            const xAxis = this.direction === "vertical" ? e.clientY - this._xAxis : e.clientX - this._xAxis;
-            console.log(xAxis);
+            const xAxis = this.direction === "vertical" ? e.clientY - this._xAxis : e.clientX - this._xAxis
+            console.log(xAxis)
             if (xAxis > 60) {
-                this.play(true);
+                this.play(true)
             }
             if (xAxis < -60) {
-                this.play(false);
+                this.play(false)
             }
-            this._xAxis = 0;
+            this._xAxis = 0
         },
         handleMousedown(e) {
-            this._xAxis = this.direction === "vertical" ? e.clientY : e.clientX;
+            this._xAxis = this.direction === "vertical" ? e.clientY : e.clientX
         },
         // use when slot changed
         updateConfig() {
             this.$nextTick(() => {
-                this._Carousel && this._Carousel.update(this.getConfig);
-            });
+                this._Carousel && this._Carousel.update(this.getConfig)
+            })
         },
     },
     watch: {
         getConfig() {
-            this.updateConfig();
+            this.updateConfig()
         },
         value(val) {
             if (val != this.model) {
-                this.model = val;
-                this._Carousel && this._Carousel.slide(val);
+                this.model = val
+                this._Carousel && this._Carousel.slide(val)
             }
         },
     },
     beforeDestroy() {
-        this._Carousel && this._Carousel.destroy();
-        this._Carousel = null;
+        this._Carousel && this._Carousel.destroy()
+        this._Carousel = null
     },
-};
+}
 </script>

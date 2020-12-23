@@ -10,7 +10,7 @@
     color: #fff;
     font-size: 20px;
     background: #506b9e;
-    border: 10px solid #fff;
+    border: 1px solid #fff;
 }
 </style>
 
@@ -23,7 +23,7 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vCarousel v-model="val" v-bind="config" style="height:300px;border:1px solid red;">
+            <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
                 <vCarouselItem>
                     <div class="demo-vcarousel">1</div>
                 </vCarouselItem>
@@ -46,6 +46,19 @@
                     <div class="demo-vcarousel">7</div>
                 </vCarouselItem>
             </vCarousel>
+            <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
+                <vCarouselItem>
+                    <div class="demo-vcarousel">1</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">2</div>
+                </vCarouselItem>
+            </vCarousel>
+            <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
+                <vCarouselItem>
+                    <div class="demo-vcarousel">1</div>
+                </vCarouselItem>
+            </vCarousel>
         </template>
     </Demo>
 </template>
@@ -59,23 +72,23 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vCarousel v-model="val" v-bind=CODE>
-						<vCarouselItem>
+            return `<Carousel v-model="val" v-bind=CODE>
+						<CarouselItem>
 							<div class="demo-vcarousel">1</div>
-						</vCarouselItem>
-						<vCarouselItem>
+						</CarouselItem>
+						<CarouselItem>
 							<div class="demo-vcarousel">2</div>
-						</vCarouselItem>
-						<vCarouselItem>
+						</CarouselItem>
+						<CarouselItem>
 							<div class="demo-vcarousel">3</div>
-						</vCarouselItem>
-						<vCarouselItem>
+						</CarouselItem>
+						<CarouselItem>
 							<div class="demo-vcarousel">4</div>
-						</vCarouselItem>
-						<vCarouselItem>
+						</CarouselItem>
+						<CarouselItem>
 							<div class="demo-vcarousel">5</div>
-						</vCarouselItem>
-					</vCarousel>`
+						</CarouselItem>
+					</Carousel>`
         },
         getConfig() {
             return [
@@ -124,10 +137,10 @@ export default {
                     label: "间隔时间",
                     key: "interval",
                     tag: "vInputNumber",
-                    demoDefault: 16,
+                    demoDefault: 2000,
                     explain: "间隔时间",
                     dataType: "Number",
-                    default: "",
+                    default: 2000,
                 },
                 {
                     showConfig: true,
