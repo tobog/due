@@ -13,71 +13,53 @@
     border: 10px solid #fff;
 }
 </style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Carousel 走马灯)</h2>
             <h4 class="padding-top-10">
                 常用于一组图片或卡片轮播，当内容空间不足时，可以用走马灯的形式进行收纳，进行轮播展现。
             </h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vCarousel v-model="val" v-bind="formData" style="height:300px;border:1px solid red;">
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">1</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">2</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">3</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">4</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">5</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">6</div>
-                    </vCarouselItem>
-                    <vCarouselItem>
-                        <div class="demo-vcarousel">7</div>
-                    </vCarouselItem>
-                </vCarousel>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vCarousel v-model="val" v-bind="config" style="height:300px;border:1px solid red;">
+                <vCarouselItem>
+                    <div class="demo-vcarousel">1</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">2</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">3</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">4</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">5</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">6</div>
+                </vCarouselItem>
+                <vCarouselItem>
+                    <div class="demo-vcarousel">7</div>
+                </vCarouselItem>
+            </vCarousel>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
             val: 0,
-        };
+        }
     },
     computed: {
         getCode() {
-            return `<vCarousel v-model="val" v-bind="${this.getCodeString(this.formData)}">
+            return `<vCarousel v-model="val" v-bind=CODE>
 						<vCarouselItem>
 							<div class="demo-vcarousel">1</div>
 						</vCarouselItem>
@@ -93,154 +75,160 @@ export default {
 						<vCarouselItem>
 							<div class="demo-vcarousel">5</div>
 						</vCarouselItem>
-					</vCarousel>`;
+					</vCarousel>`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '反向',
-                    key: 'reverse',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "反向",
+                    key: "reverse",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否反向",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '自动播放',
-                    key: 'autoplay',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "自动播放",
+                    key: "autoplay",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否自动播放",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '循环',
-                    key: 'loop',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "循环",
+                    key: "loop",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否循环",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '间隔时间',
-                    key: 'interval',
-                    tag: 'vInputNumber',
-                    default: 1000,
-                },
-                {
-                    label: '模式',
-                    key: 'mode',
-                    tag: 'vSelect',
-                    default: 'carousel',
-                    options: ['carousel', 'fade', 'card', 'scroll'],
-                },
-                {
-                    label: '方向',
-                    key: 'direction',
-                    tag: 'vSelect',
-                    default: 'horizontal',
-                    options: ['horizontal', 'vertical'],
-                },
-                {
-                    label: '指示点位置',
-                    key: 'dotPosition',
-                    tag: 'vSelect',
-                    default: 'bottom',
-                    options: ['top', 'bottom', 'right', 'left'],
-                },
-                {
-                    label: '左右箭头',
-                    key: 'arrow',
-                    tag: 'vSelect',
-                    options: ['hover', 'always', 'never'],
-                    default: 'always',
-                },
-                {
-                    label: '圆形指示器',
-                    key: 'radiusDot',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "圆形指示器",
+                    key: "radiusDot",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否圆形指示器",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '指示器的位置',
-                    key: 'dots',
-                    tag: 'vSelect',
-                    default: 'inside',
-                    options: ['inside', 'outside', 'none'],
+                    showConfig: true,
+                    label: "间隔时间",
+                    key: "interval",
+                    tag: "vInputNumber",
+                    demoDefault: 16,
+                    explain: "间隔时间",
+                    dataType: "Number",
+                    default: "",
                 },
                 {
-                    label: '指示器触发方式',
-                    key: 'trigger',
-                    tag: 'vSelect',
-                    default: 'click',
-                    options: ['click', 'hover'],
-                },
-            ];
-        },
-        compProps() {
-            return [
-                {
-                    prop: 'value',
-                    explain: '幻灯片的索引，从 0 开始，可以使用 v-model 双向绑定数据',
-                    type: 'Number',
-                    default: '0',
+                    showConfig: true,
+                    label: "模式",
+                    key: "mode",
+                    tag: "vSelect",
+                    demoDefault: "carousel",
+                    explain: "模式:carousel, fade, card, scroll",
+                    dataType: "Number",
+                    default: "carousel",
+                    options: ["carousel", "fade", "card", "scroll"],
                 },
                 {
-                    prop: 'reverse',
-                    explain: '是否反向',
-                    type: 'Boolean',
-                    default: 'false',
+                    showConfig: true,
+                    label: "方向",
+                    key: "direction",
+                    tag: "vSelect",
+                    demoDefault: "horizontal",
+                    explain: "方向",
+                    dataType: "String",
+                    default: "horizontal",
+                    options: ["horizontal", "vertical"],
                 },
                 {
-                    prop: 'autoplay',
-                    explain: '自动播放',
-                    type: 'Boolean',
-                    default: 'false',
+                    showConfig: true,
+                    label: "方向",
+                    key: "direction",
+                    tag: "vSelect",
+                    demoDefault: "horizontal",
+                    explain: "方向",
+                    dataType: "String",
+                    default: "horizontal",
+                    options: ["horizontal", "vertical"],
                 },
                 {
-                    prop: 'loop',
-                    explain: '是否开启循环',
-                    type: 'Boolean',
-                    default: 'false',
+                    showConfig: true,
+                    label: "指示点位置",
+                    key: "dotPosition",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "指示点位置：top, bottom, right, left",
+                    dataType: "String",
+                    default: "",
+                    options: ["top", "bottom", "right", "left"],
                 },
                 {
-                    prop: 'interval',
-                    explain: '间隔时间',
-                    type: 'Boolean',
-                    default: '1000',
+                    showConfig: true,
+                    label: "箭头触发方式",
+                    key: "arrow",
+                    tag: "vSelect",
+                    demoDefault: "always",
+                    explain: "左右箭头触发方式:hover, always, never",
+                    dataType: "String",
+                    default: "always",
+                    options: ["hover", "always", "never"],
                 },
                 {
-                    prop: 'modal',
-                    explain: '模式:carousel, fade',
-                    type: 'Boolean',
-                    default: 'carousel',
+                    showConfig: true,
+                    label: "指示器的位置",
+                    key: "dots",
+                    tag: "vSelect",
+                    demoDefault: "inside",
+                    explain: "左右箭头显示方式:inside, outside, none",
+                    dataType: "String",
+                    default: "inside",
+                    options: ["inside", "outside", "none"],
                 },
                 {
-                    prop: 'arrow',
-                    explain: '切换箭头的显示时机，可选值为 hover（悬停），always（一直显示），never（不显示）',
-                    type: 'String',
-                    default: 'always',
+                    showConfig: true,
+                    label: "指示器触发方式",
+                    key: "trigger",
+                    tag: "vSelect",
+                    demoDefault: "click",
+                    explain: "指示器触发方式:click, hover",
+                    dataType: "String",
+                    default: "click",
+                    options: ["click", "hover"],
                 },
                 {
-                    prop: 'radiusDot',
-                    explain: '圆形指示器',
-                    type: 'Boolean',
-                    default: 'false',
+                    label: "幻灯片的索引",
+                    key: "value",
+                    explain: "幻灯片的索引，从 0 开始，可以使用 v-model 双向绑定数据",
+                    dataType: "Number",
+                    default: "0",
                 },
                 {
-                    prop: 'dots',
-                    explain: '指示器的位置，可选值为 inside （内部），outside（外部），none（不显示）',
-                    type: 'String',
-                    default: 'inside',
+                    label: "事件",
+                    key: "on-change",
+                    explain: "幻灯片切换时触发，目前激活的幻灯片的索引，原幻灯片的索引",
+                    dataType: "Function:Event",
+                    default: "(oldValue, value)=>{}",
                 },
                 {
-                    prop: 'trigger',
-                    explain: '指示器的触发方式，可选值为 click（点击），hover（悬停）',
-                    type: 'String',
-                    default: 'click',
+                    label: "主体内容",
+                    key: "slot",
+                    explain: "CarouselItem子元素",
+                    dataType: "VNode",
+                    default: "-",
                 },
-                {
-                    prop: 'on-change',
-                    explain: '幻灯片切换时触发，目前激活的幻灯片的索引，原幻灯片的索引',
-                    type: 'Function:Event',
-                    default: '(oldValue, value)=>{}',
-                },
-            ];
+            ]
         },
     },
-};
+}
 </script>

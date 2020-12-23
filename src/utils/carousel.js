@@ -9,7 +9,7 @@ export default class Carousel {
         } else if (typeof callback === 'function') {
             this._callback = callback;
         }
-        const _prefix = options.prefix || "ui-carousel"
+        const _prefix = options.prefix || "carousel"
         this.el = el;
         this._prefix = _prefix;
         this._itemClass = `${_prefix}-item`;

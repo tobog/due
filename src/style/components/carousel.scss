@@ -16,55 +16,6 @@ $timeTest: 0.5s;
     }
 
     // scroll
-    // &-scroll {
-    //     position: relative;
-
-    //     &bar {
-    //         position: absolute;
-    //         bottom: 0;
-    //         height: 0;
-    //         left: 0;
-    //         right: 0;
-    //         z-index: 10;
-    //         background-color: $white;
-    //     }
-
-    //     .#{$prefix-cls}-list {
-    //         white-space: nowrap;
-    //         overflow-y: hidden;
-    //         overflow-x: scroll;
-    //         height: calc(100% + 20px);
-    //     }
-
-    //     .#{$prefix-cls}-item {
-    //         display: inline-flex;
-    //         position: relative !important;
-    //         transition: none;
-    //     }
-
-    //     .#{$prefix-cls}-dots {
-    //         bottom: 18px !important;
-    //     }
-
-    //     // .#{$prefix-cls}-active {
-    //     //     transition: none;
-    //     // }
-
-    //     .#{$prefix-cls}-next,
-    //     .#{$prefix-cls}-pre {
-    //         transition: transform $timeTest ease;
-
-    //         &.#{$prefix-cls}-left {
-    //             transform: translate3d(-100%, 0, 0);
-    //         }
-
-    //         &.#{$prefix-cls}-right {
-    //             transform: translate3d(100%, 0, 0);
-    //         }
-    //     }
-    // }
-
-    // scroll
     &-scroll {
         .#{$prefix-cls} {
             &-list {
@@ -103,6 +54,7 @@ $timeTest: 0.5s;
         height: 100%;
         margin: 0;
         padding: 0;
+        list-style: none;
         flex-wrap: nowrap;
     }
 
@@ -116,6 +68,9 @@ $timeTest: 0.5s;
         overflow: hidden;
         position: absolute;
         top: 0;
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
     &-next,
@@ -285,7 +240,7 @@ $timeTest: 0.5s;
             cursor: pointer;
 
             &::before {
-                content: '';
+                content: "";
                 transition: all 0.4s ease;
                 display: block;
                 width: 16px;

@@ -69,3 +69,6 @@ media  整体组件
 ## bug
 1. formedit demo tooltip=>clickout bug
 2. ColorPicter 缺少清除，没有透明度下高度比例不好看（高偏低），按钮偏大
+
+
+4. 基于swiper 设计动画组件 Animation

@@ -86,7 +86,13 @@ export default {
     },
     computed: {
         getCode() {
-            return ``
+            return `<Card v-bind=CODE class="demo-card">
+                        <div>
+                            Tech evangelists are currently pounding their pulpits about all things AI, machine learning,
+                            analytics—anything
+                        </div>
+                    </Card>
+            `
         },
         getConfig() {
             return [
@@ -153,7 +159,7 @@ export default {
                 {
                     showConfig: true,
                     label: "标题前的图标",
-                    key: "size",
+                    key: "icon",
                     tag: "vSelect",
                     demoDefault: "",
                     explain: "标题前的图标",

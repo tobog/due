@@ -44,6 +44,7 @@ import Icons from "../icons/index"
 import {unit} from "../../utils/tool"
 export default {
     name: "Card",
+    componentName: "Card",
     inheritAttrs: false,
     components: {Icons},
     props: {

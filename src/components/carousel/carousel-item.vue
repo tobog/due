@@ -1,21 +1,22 @@
 <template>
-    <div :class="[_tobogPrefix_ + '-item']">
+    <li :class="[_tobogPrefix_]">
         <slot></slot>
-    </div>
+    </li>
 </template>
 <script>
 export default {
-    name: "Carousel",
+    name: "Carousel-Item",
+    componentName: "CarouselItem",
     mounted() {
-        this.update();
+        this.update()
     },
     methods: {
         update() {
-            this.$parent && this.$parent.updateConfig && this.$parent.updateConfig();
+            this.$parent && this.$parent.updateConfig && this.$parent.updateConfig()
         },
     },
     beforeDestroy() {
-        this.update();
+        this.update()
     },
-};
+}
 </script>

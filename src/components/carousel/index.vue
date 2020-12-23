@@ -1,9 +1,9 @@
 <template>
-    <section :class="wrapClasses" @mouseleave="playControl" @mouseenter="pause">
+    <section :class="classes" @mouseleave="playControl" @mouseenter="pause">
         <div :class="[_tobogPrefix_ + '-outer']">
-            <div :class="[_tobogPrefix_ + '-list']" @mouseup="handelMouseup" @mousedown="handleMousedown">
+            <ul :class="[_tobogPrefix_ + '-list']" @mouseup="handelMouseup" @mousedown="handleMousedown">
                 <slot></slot>
-            </div>
+            </ul>
         </div>
         <template v-if="arrow">
             <span :class="arrowClasses" data-left @click="play(true)" ref="arrowLeft">
@@ -31,6 +31,7 @@ import Carousel from "../../utils/carousel";
 
 export default {
     name: "Carousel",
+    componentName: "Carousel",
     components: { Icons },
     props: {
         value: {
@@ -120,7 +121,7 @@ export default {
                 direction: this.direction,
             };
         },
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,
