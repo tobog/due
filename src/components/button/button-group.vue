@@ -13,7 +13,7 @@ export default {
         vertical: Boolean,
         compact: Boolean,
         type: String, //消除type：button问题
-        size: [String, Number],
+        size: String,
         theme: String,
     },
     computed: {
