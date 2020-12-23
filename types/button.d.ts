@@ -1,91 +1,106 @@
-// Type definitions for iview 3.3.1
-// Project: https://github.com/iview/iview
-// Definitions by: yangdan
-// Definitions: https://github.com/yangdan8/iview.git
-import Vue from 'vue';
+import {UIComponent, VNode, UIComponenTheme, UIComponentSize} from "./component"
 
-export declare class Button extends Vue {
-  /**
-   * 按钮类型，可选值为 default、primary、dashed、text、info、success、warning、error或者不设置
-   * @default default
-   */
-  type?: '' | 'default' | 'primary' | 'dashed' | 'text' | 'info' | 'success' | 'warning' | 'error';
-  /**
-   * 幽灵属性，使按钮背景透明
-   * @default false
-   */
-  ghost?: boolean;
-  /**
-   * 按钮大小，可选值为large、small、default或者不设置
-   * @default default
-   */
-  size?: '' | 'large' | 'small' | 'default';
-  /**
-   * 按钮形状，可选值为circle或者不设置
-   */
-  shape?: '' | 'circle';
-  /**
-   * 开启后，按钮的长度为 100%
-   * @default false
-   */
-  long?: boolean;
-  /**
-   * 设置button原生的type，可选值为button、submit、reset
-   * @default button
-   */
-  'html-type'?: 'button' | 'submit' | 'reset';
-  /**
-   * 设置按钮为禁用状态
-   * @default false
-   */
-  disabled?: boolean;
-  /**
-   * 设置按钮为加载中状态
-   * @default false
-   */
-  loading?: boolean;
-  /**
-   * 设置按钮的图标类型
-   */
-  icon?: string;
-  /**
-   * 设置按钮的自定义图标
-   */
-  'custom-icon'?: string;
-  /**
-   * 跳转的链接，支持 vue-router 对象
-   */
-  to?: string | object;
-  /**
-   * 路由跳转时，开启 replace 将不会向 history 添加新记录
-   * @default false
-   */
-  replace?: boolean;
-  /**
-   * 相当于 a 链接的 target 属性
-   * @default _self
-   */
-  target?: '_blank' | '_self' | '_parent' | '_top';
-  /**
-   * 同 vue-router append
-   * @default false
-   */
-  append?: boolean;
+export declare class Button extends UIComponent {
+    /**
+     * 按钮主题，可选值为"success" | "primary" | "normal" | "error" | "warning" | "info"或者不设置
+     */
+    theme?: UIComponenTheme
+    /**
+     * 幽灵属性，使按钮背景透明
+     * @default false
+     */
+    ghost?: boolean
+    /**
+     * 按钮大小，可选值为"large" | "medium" | "normal" | "small"或者12,12px
+     * @default normal
+     */
+    size?: UIComponentSize | Number | String
+    /**
+     * 按钮形状，可选值为"round" | "circle" | "square"
+     */
+    shape?: "round" | "circle" | "square"
+    /**
+     * 开启后，按钮的长度为 100%
+     * @default false
+     */
+    long?: boolean
+    /**
+     * 设置button原生的type，可选值为button、submit、reset等等
+     * @default button
+     */
+    type?: "button" | "submit" | "reset"
+    /**
+     * 设置按钮为禁用状态
+     * @default false
+     */
+    disabled?: boolean
+    /**
+     * 设置按钮为加载中状态
+     * @default false
+     */
+    loading?: boolean
+    /**
+     * 设置按钮的图标类型
+     */
+    icon?: string
+    /**
+     * 自定义颜色
+     */
+    color?: string
+    /**
+     * 朴素按钮
+     */
+    plain?: string
+    /**
+     * 边框类型，可选值为dashed"|"text"|"default"
+     */
+    borderType?: "dashed" | "text" | "default"
+    /**
+     * slot插槽对象
+     */
+    $slots: {
+        /**
+         * 显示内容
+         */
+        default: VNode[]
+        /**
+         * 自定义图标类型
+         */
+        icon: VNode[]
+    }
 }
 
-export declare class ButtonGroup extends Vue {
-  /**
-   * 按钮组合大小，可选值为large、small、default或者不设置
-   * @default default
-   */
-  size?: 'large' | 'small' | 'default';
-  /**
-   * 按钮组合形状，可选值为circle或者不设置
-   */
-  shape?: '' | 'circle';
-  /**
-   * 是否纵向排列按钮组
-   * @default false
-   */
-  vertical?: boolean;
+export declare class ButtonGroup extends UIComponent {
+    /**
+     * 组合按钮形状，可选值为"round" | "circle" | "square"
+     */
+    shape?: "round" | "circle" | "square"
+    /**
+     * 组合按钮大小，可选值为"large" | "medium" | "normal" | "small
+     * @default normal
+     */
+    size?: UIComponentSize
+    /**
+     * 是否纵向排列按钮组
+     * @default false
+     */
+    vertical?: boolean
+    /**
+     * 是否紧凑排列
+     * @default false
+     */
+    compact?: boolean
+    /**
+     * 按钮主题，可选值为"success" | "primary" | "normal" | "error" | "warning" | "info"或者不设置
+     */
+    theme?: UIComponenTheme
+    /**
+     * slot插槽对象
+     */
+    $slots: {
+        /**
+         * Button 子元素
+         */
+        default: VNode[]
+    }
 }

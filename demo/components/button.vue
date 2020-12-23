@@ -16,6 +16,12 @@
                 <vButton v-bind="config" icon="ios-alert-outline"></vButton>
             </vButtonGroup>
             <vButtonGroup v-bind="config" class="margin-top-20">
+                <vButton>vButton</vButton>
+                <vButton>vButton</vButton>
+                <vButton>vButton</vButton>
+                <vButton icon="ios-alert-outline"></vButton>
+            </vButtonGroup>
+            <vButtonGroup v-bind="config" class="margin-top-20">
                 <vButton v-bind="config">vButton</vButton>
             </vButtonGroup>
         </template>
@@ -43,7 +49,7 @@ export default {
                     key: "vertical",
                     tag: "vSwitch",
                     demoDefault: false,
-                    explain: "纵向排列",
+                    explain: "ButtonGroupd的属性：是否纵向排列按钮组",
                     dataType: "Boolean",
                     default: "",
                 },
@@ -53,7 +59,7 @@ export default {
                     key: "compact",
                     tag: "vSwitch",
                     demoDefault: false,
-                    explain: "紧凑排列",
+                    explain: "ButtonGroupd的属性：紧凑排列",
                     dataType: "Boolean",
                     default: false,
                 },
@@ -109,8 +115,8 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "按钮类型",
-                    key: "type",
+                    label: "边框类型",
+                    key: "borderType",
                     tag: "vSelect",
                     demoDefault: "",
                     explain: "按钮类型 按钮类型:可选值为dashed,text,default",
@@ -124,7 +130,7 @@ export default {
                     key: "theme",
                     tag: "vSelect",
                     demoDefault: "",
-                    explain: "按钮类型 按钮类型:可选值为 gray、primary、info、success、warning、error",
+                    explain: "按钮主题(ButtonGroupd和Button):可选值为 gray、primary、info、success、warning、error",
                     dataType: "String",
                     default: "",
                     options: ["primary", "info", "success", "warning", "error", "default", "confirm"],
@@ -156,7 +162,8 @@ export default {
                     key: "size",
                     tag: "vInput",
                     demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    explain:
+                        "设置大小(ButtonGroupd和Button)，可选值为：small,normal(default),midiue,large,或者设置具体数值",
                     dataType: "String | Number",
                     default: "",
                     options: this.getSize,
@@ -170,20 +177,6 @@ export default {
                     explain: "按钮icon",
                     dataType: "String",
                     options: this.iconslist,
-                },
-                {
-                    label: "ButtonGroup:vertical",
-                    key: "vertical",
-                    explain: "是否纵向排列按钮组",
-                    dataType: "Boolean",
-                    default: false,
-                },
-                {
-                    label: "ButtonGroup:compact",
-                    key: "compact",
-                    explain: "是否紧凑排列",
-                    dataType: "Boolean",
-                    default: "-",
                 },
                 {
                     label: "表单类型",
@@ -209,6 +202,13 @@ export default {
                 {
                     label: "子元素",
                     key: "slot:default",
+                    explain: "子元素",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "子元素icon",
+                    key: "slot:icon",
                     explain: "子元素",
                     dataType: "VNode",
                     default: "-",

@@ -3,7 +3,7 @@
         :is="getTag"
         :data-vue-module="$options.name"
         :class="classes"
-        :type="htmlType"
+        :type="type"
         :style="styles"
         @click="handleClick"
         v-on="getListeners"
@@ -37,8 +37,8 @@ export default {
         loading: Boolean,
         disabled: Boolean,
         plain: Boolean,
-        type: String, //solid,dashed,text
-        htmlType: {
+        borderType: String, //solid,dashed,text
+        type: {
             type: String,
             default: "button",
         },
@@ -62,8 +62,9 @@ export default {
                     [`${_tobogPrefix_}-loading`]: this.icon === "loading" || this.loading,
                     [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
-                    [`${_tobogPrefix_}-type-${this.type}`]: this.type === "dashed" || this.type === "text",
-                    [`${_tobogPrefix_}-size-${this.size}`]: !this.styles.lineHeight,
+                    [`${_tobogPrefix_}-border-${this.borderType}`]:
+                        this.borderType === "dashed" || this.borderType === "text",
+                    [`${_tobogPrefix_}-size-${this.size}`]: this.size && !this.styles.lineHeight,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-long`]: this.long,
                     [`${_tobogPrefix_}-only`]: this.isOnly,

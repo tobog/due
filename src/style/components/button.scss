@@ -84,42 +84,15 @@ button.#{$prefix-cls} {
     @include btn-base($content, $componentBack, $border);
     @include btn-active($primary, $componentBack, $primary);
 
-    &-type-dashed {
+    &-border-dashed {
         border-style: dashed;
     }
 
-    &-type-text {
+    &-border-text {
         border-color: transparent !important;
         background-color: transparent !important;
     }
 
-    @each $key, $value in $colors-map {
-        &-theme-#{$key} {
-            @include btn-base($white, $value, $value);
-            @include btn-active($white, $value, $value);
-
-            &.#{$prefix-cls}-plain {
-                background-color: rgba($value, 0.08);
-                color: $value;
-
-                &:hover,
-                &:focus {
-                    background-color: $value;
-                    color: $white;
-                }
-            }
-            &.#{$prefix-cls}-type-text,
-            &.#{$prefix-cls}-ghost {
-                color: $value;
-
-                &:hover,
-                &:focus {
-                    background-color: rgba($value, 0.08);
-                    opacity: 1;
-                }
-            }
-        }
-    }
     &-custome {
         &-color {
             &:focus {
@@ -152,10 +125,21 @@ button.#{$prefix-cls} {
         &-small {
             padding: 0 10px;
             font-size: $subFont;
-            line-height: 22px;
+            line-height: 26px;
 
             &.#{$prefix-cls}-circle {
-                width: 24px;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+            }
+        }
+        &-midiue {
+            padding: 0 16px;
+            line-height: 34px;
+
+            &.#{$prefix-cls}-circle {
+                width: 36px;
+                height: 36px;
                 padding: 0;
             }
         }
@@ -163,9 +147,12 @@ button.#{$prefix-cls} {
         &-large {
             padding: 0 22px;
             line-height: 38px;
-
+            & > .#{$prefix}-icons {
+                font-size: 1.4em;
+            }
             &.#{$prefix-cls}-circle {
                 width: 40px;
+                height: 40px;
                 padding: 0;
             }
         }
@@ -194,9 +181,9 @@ button.#{$prefix-cls} {
     -webkit-appearance: none !important;
 
     &#{&}-compact {
-        padding-left: 2px;
+        padding-left: 1px;
 
-        .#{$prefix-cls} {
+        & > .#{$prefix-cls} {
             position: relative;
             z-index: 0;
             border-radius: 0;
@@ -207,23 +194,24 @@ button.#{$prefix-cls} {
                 z-index: 2;
             }
 
-            &:first-child:not(:last-child) {
+            &:first-child {
                 border-top-left-radius: $radius;
                 border-bottom-left-radius: $radius;
             }
 
-            &:last-child:not(:first-child) {
+            &:last-child {
                 border-top-right-radius: $radius;
                 border-bottom-right-radius: $radius;
             }
         }
     }
-
-    &#{&}-compact#{&}-square .#{$prefix-cls} {
+    &#{&}-square > .#{$prefix-cls} {
         border-radius: 0 !important;
     }
-
-    &#{&}-compact#{&}-round .#{$prefix-cls} {
+    &#{&}-round > .#{$prefix-cls} {
+        border-radius: 9999px;
+    }
+    &#{&}-compact#{&}-round > .#{$prefix-cls} {
         &:first-child {
             border-top-left-radius: 9999px;
             border-bottom-left-radius: 9999px;
@@ -244,60 +232,98 @@ button.#{$prefix-cls} {
             }
         }
     }
-}
+    &-vertical {
+        &.#{$prefix-cls-group}-compact {
+            padding-left: 0;
+            padding-top: 1px;
 
-.#{$prefix-cls-group}-vertical {
-    &.#{$prefix-cls-group}-compact {
-        padding-left: 0;
-        padding-top: 1px;
+            & > .#{$prefix-cls} {
+                display: block;
+                border-radius: 0 !important;
+                margin-top: -1px;
+                margin-left: 0;
 
-        .#{$prefix-cls} {
-            display: block;
-            border-radius: 0;
-            position: relative;
-            z-index: 0;
-            margin-top: -1px;
+                &:first-child {
+                    border-top-left-radius: $radius !important;
+                    border-top-right-radius: $radius !important;
+                }
 
-            &:hover,
-            &:focus {
-                z-index: 2;
+                &:last-child {
+                    border-bottom-left-radius: $radius !important;
+                    border-bottom-right-radius: $radius !important;
+                }
             }
+            &.#{$prefix-cls-group}-round > .#{$prefix-cls} {
+                &:first-child {
+                    border-top-left-radius: 9999px !important;
+                    border-top-right-radius: 9999px !important;
+                }
 
-            &:first-child:not(:last-child) {
-                border-top-left-radius: $radius;
-                border-top-right-radius: $radius;
-            }
-
-            &:last-child:not(:first-child) {
-                border-bottom-left-radius: $radius;
-                border-bottom-right-radius: $radius;
+                &:last-child {
+                    border-bottom-left-radius: 9999px !important;
+                    border-bottom-right-radius: 9999px !important;
+                }
             }
         }
 
-        &.#{$prefix-cls-group}-square .#{$prefix-cls} {
-            border-radius: 0 !important;
-        }
+        &:not(.#{$prefix-cls-group}-compact) {
+            .#{$prefix-cls} {
+                display: block;
+                margin-bottom: 8px;
 
-        &.#{$prefix-cls-group}-round .#{$prefix-cls} {
-            &:first-child {
-                border-top-left-radius: 9999px;
-                border-top-right-radius: 9999px;
-            }
-
-            &:last-child {
-                border-bottom-left-radius: 9999px;
-                border-bottom-right-radius: 9999px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
             }
         }
     }
+}
 
-    &:not(.#{$prefix-cls-group}-compact) {
-        .#{$prefix-cls} {
-            display: block;
-            margin-bottom: 8px;
+.#{$prefix-cls-group} {
+    &-size {
+        &-small > .#{$prefix-cls} {
+            padding: 0 10px;
+            font-size: $subFont;
+            line-height: 26px;
+        }
+        &-midiue > .#{$prefix-cls} {
+            padding: 0 16px;
+            line-height: 34px;
+        }
+        &-large > .#{$prefix-cls} {
+            padding: 0 22px;
+            line-height: 38px;
+            & > .#{$prefix}-icons {
+                font-size: 1.4em;
+            }
+        }
+    }
+}
 
-            &:last-child {
-                margin-bottom: 0;
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-theme-#{$key},
+    .#{$prefix-cls-group}-theme-#{$key} > .#{$prefix-cls} {
+        @include btn-base($white, $value, $value);
+        @include btn-active($white, $value, $value);
+
+        &.#{$prefix-cls}-plain {
+            background-color: rgba($value, 0.08);
+            color: $value;
+
+            &:hover,
+            &:focus {
+                background-color: $value;
+                color: $white;
+            }
+        }
+        &.#{$prefix-cls}-border-text,
+        &.#{$prefix-cls}-ghost {
+            color: $value;
+
+            &:hover,
+            &:focus {
+                background-color: rgba($value, 0.08);
+                opacity: 1;
             }
         }
     }
