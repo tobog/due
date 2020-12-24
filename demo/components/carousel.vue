@@ -24,26 +24,8 @@
         </template>
         <template v-slot="config">
             <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
-                <vCarouselItem>
-                    <div class="demo-vcarousel">1</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">2</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">3</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">4</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">5</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">6</div>
-                </vCarouselItem>
-                <vCarouselItem>
-                    <div class="demo-vcarousel">7</div>
+                <vCarouselItem v-for="i in 30">
+                    <div class="demo-vcarousel">{{ i }}</div>
                 </vCarouselItem>
             </vCarousel>
             <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
@@ -94,6 +76,16 @@ export default {
             return [
                 {
                     showConfig: true,
+                    label: "展示指示器",
+                    key: "showDot",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否展示指示器",
+                    dataType: "Boolean",
+                    default: true,
+                },
+                {
+                    showConfig: true,
                     label: "反向",
                     key: "reverse",
                     tag: "vSwitch",
@@ -119,16 +111,6 @@ export default {
                     tag: "vSwitch",
                     demoDefault: false,
                     explain: "是否循环",
-                    dataType: "Boolean",
-                    default: false,
-                },
-                {
-                    showConfig: true,
-                    label: "圆形指示器",
-                    key: "radiusDot",
-                    tag: "vSwitch",
-                    demoDefault: false,
-                    explain: "是否圆形指示器",
                     dataType: "Boolean",
                     default: false,
                 },
@@ -166,17 +148,6 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "方向",
-                    key: "direction",
-                    tag: "vSelect",
-                    demoDefault: "horizontal",
-                    explain: "方向",
-                    dataType: "String",
-                    default: "horizontal",
-                    options: ["horizontal", "vertical"],
-                },
-                {
-                    showConfig: true,
                     label: "指示点位置",
                     key: "dotPosition",
                     tag: "vSelect",
@@ -199,14 +170,14 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "指示器的位置",
-                    key: "dots",
+                    label: "指示器类型",
+                    key: "dotType",
                     tag: "vSelect",
-                    demoDefault: "inside",
-                    explain: "左右箭头显示方式:inside, outside, none",
+                    demoDefault: "default",
+                    explain: "指示器类型:round,default,page,bullet",
                     dataType: "String",
                     default: "inside",
-                    options: ["inside", "outside", "none"],
+                    options: ["round", "default", "page", "bullet"],
                 },
                 {
                     showConfig: true,

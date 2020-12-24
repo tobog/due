@@ -5,24 +5,44 @@
                 <slot></slot>
             </ul>
         </div>
-        <template v-if="arrow">
-            <span :class="arrowClasses" data-left @click="play(true)" ref="arrowLeft">
+        <template v-if="arrow && arrow !== 'never'">
+            <span
+                :class="arrowClasses"
+                :data-disabled="!loop && model == 0"
+                data-type="left"
+                @click="play(true)"
+                ref="arrowLeft"
+            >
                 <Icons type="ios-arrow-back"></Icons>
             </span>
-            <span :class="arrowClasses" data-right @click="play(false)" ref="arrowRight">
+            <span
+                :class="arrowClasses"
+                :data-disabled="!loop && model == childrenLen - 1"
+                data-type="right"
+                @click="play(false)"
+                ref="arrowRight"
+            >
                 <Icons type="ios-arrow-forward"></Icons>
             </span>
         </template>
-        <aside v-if="dots && childLen" :class="dotsClasses">
-            <slot name="dot" :slide="slide">
-                <span
-                    v-for="index in childLen"
-                    :key="index"
-                    :class="[_tobogPrefix_ + '-dot']"
-                    :data-radius="radiusDot"
-                    @click="slide('click', index)"
-                    @mouseenter="slide('hover', index)"
-                ></span>
+        <aside v-if="showDot && childrenLen" :class="dotsClasses">
+            <slot name="dot" :slide="slide" :value="model">
+                <template v-if="dotType !== 'page'">
+                    <span
+                        v-for="index in childrenLen"
+                        :key="index"
+                        :class="[_tobogPrefix_ + '-dot']"
+                        :data-type="dotType"
+                        v-on:[getTriggerEvent]="slide(index)"
+                        >{{ dotType === "bullet" ? index : "" }}</span
+                    >
+                </template>
+                <span v-else :class="[_tobogPrefix_ + '-dot']" data-type="page">
+                    <template v-if="direction !== 'vertical' && dotPosition !== 'left' && dotPosition !== 'right'">
+                        {{ model + 1 }}&nbsp;/&nbsp;{{ childrenLen }}
+                    </template>
+                    <template v-else> {{ model + 1 }}<br />—&nbsp;<br />{{ childrenLen }} </template>
+                </span>
             </slot>
         </aside>
     </section>
@@ -58,22 +78,15 @@ export default {
         },
         arrow: {
             type: String,
-            default: "always",
-            // validator (value) {
-            //     return oneOf(value, ['hover', 'always', 'never']);
-            // }
+            default: "always", //'hover', 'always', 'never'
         },
-        dots: {
-            type: String,
-            default: "inside",
-            // validator (value) {
-            //     return oneOf(value, ['inside', 'outside', 'none']);
-            // }
+        dotType: {
+            type: String, // round,default,page,bullet
+            default: "",
         },
-        dotType: String, //round,default,page,bullet
-        radiusDot: {
+        showDot: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         trigger: {
             type: String,
@@ -105,7 +118,7 @@ export default {
     },
     data() {
         return {
-            childLen: 0,
+            childrenLen: 0,
             model: this.value,
         }
     },
@@ -113,6 +126,11 @@ export default {
         this.init()
     },
     computed: {
+        getTriggerEvent() {
+            if (this.trigger === "click") return "click"
+            if (this.trigger === "hover") return "mouseenter"
+            return null
+        },
         getConfig() {
             return {
                 reverse: this.reverse,
@@ -131,7 +149,6 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-${this.mode}`]: !!this.mode,
-                    [`${_tobogPrefix_}-outside`]: this.dots === "outside",
                     [`${_tobogPrefix_}-${this.direction}`]:
                         this.direction === "vertical" || this.direction === "horizontal",
                 },
@@ -150,7 +167,6 @@ export default {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-dots`,
-                `${_tobogPrefix_}-dots-${this.dots}`,
                 {
                     [`${_tobogPrefix_}-dots-${this.getDotPosition}`]: !!this.getDotPosition,
                 },
@@ -166,9 +182,9 @@ export default {
         init() {
             this.$nextTick(() => {
                 this._Carousel = new Carousel(this.$el, this.getConfig, (that, index) => {
-                    const childLen = that._children.length,
+                    const childrenLen = that._children.length,
                         oldValue = this.model
-                    if (childLen != this.childLen) this.childLen = childLen
+                    if (childrenLen != this.childrenLen) this.childrenLen = childrenLen
                     if (index != oldValue) {
                         this.model = index
                         this.$emit("input", index)
@@ -179,6 +195,12 @@ export default {
             })
         },
         play(isPre) {
+            if (
+                (!this.loop && isPre && this.model == 0) ||
+                (!this.loop && !isPre && this.model == this.childrenLen - 1)
+            ) {
+                return
+            }
             this._Carousel.step(isPre)
         },
         playControl() {
@@ -187,10 +209,8 @@ export default {
         pause() {
             this._Carousel.pause()
         },
-        slide(event, index) {
-            if (event === this.trigger) {
-                this._Carousel.slide(index - 1)
-            }
+        slide(index) {
+            this._Carousel.slide(index - 1)
         },
         handelMouseup(e) {
             const xAxis = this.direction === "vertical" ? e.clientY - this._xAxis : e.clientX - this._xAxis
