@@ -1,6 +1,12 @@
 <template>
     <div :class="classes">
-        <template v-if="filterType !== 'flat' || !flatFilterData">
+        <div
+            v-if="!nodeList.length || (filterType === 'flat' && flatFilterData && !flatFilterData.length)"
+            :class="[_tobogPrefix_ + '-nodata']"
+        >
+            {{ langs("caspanel.noDataText", noDataText) }}
+        </div>
+        <template v-else-if="filterType !== 'flat' || !flatFilterData">
             <CaspanelItem
                 index="0"
                 :modelList="modelList"
@@ -41,9 +47,8 @@
             :data="flatFilterData"
             :modelList="modelList"
             :selection="selection"
-            :render="renderSearch"
-            :size="size"
-            :theme="theme"
+            :render="renderFlat"
+            :noDataText="noDataText"
             @on-select="select"
             @on-check="handleCheck"
         >
@@ -56,10 +61,11 @@ import CaspanelItem from "./caspanel-item";
 import CaspanelSearch from "./caspanel-search";
 import linkList from "../../mixins/linkList";
 import globalMixin from "../../mixins/global";
+import langMinix from "../../mixins/lang";
 export default {
     name: "Caspanel",
     componentName: "Caspanel",
-    mixins: [linkList, globalMixin],
+    mixins: [linkList, globalMixin, langMinix],
     components: { CaspanelItem, CaspanelSearch },
     props: {
         value: {
@@ -76,8 +82,12 @@ export default {
         render: Function,
         theme: String,
         size: String,
-        renderSearch: Function,
+        renderFlat: Function,
         filterType: String,
+        noDataText: {
+            type: String,
+            default: "无匹配数据",
+        },
     },
     data() {
         return {
@@ -92,11 +102,12 @@ export default {
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_,
-                size = this.getGlobalData("size");
+                size = this.getGlobalData("size"),
+                theme = this.getGlobalData("theme");
             return [
                 `${_tobogPrefix_}-list`,
                 {
-                    [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-size-${size}`]: !!size,
                 },
             ];
@@ -158,6 +169,7 @@ export default {
         handleSearch(labels) {
             if (this.filterType === "flat") {
                 this.flatFilterData = this.getFlatDataByLabel(labels);
+                this.$emit("on-updateDrop");
                 return;
             }
             this.flatFilterData = null;
@@ -174,7 +186,6 @@ export default {
                     result = value;
                 }
             }
-            console.log(result);
             this.$emit("on-search", result);
         },
         handleChange(isOver, selection) {

@@ -94,6 +94,12 @@ $prefix-cls-panel: #{$prefix}-caspanel;
 
 
     }
+
+    &-nodata {
+        text-align: center;
+        padding: 12px;
+        color: $disable-content;
+    }
 }
 
 @each $key,

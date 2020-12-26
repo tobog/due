@@ -69,6 +69,7 @@
             :identifier="identifier"
             :parentId="parentId"
             :filterType="filterType"
+            :noDataText="noDataText"
             @input="handleChange"
             @on-search="handleSearch"
             @hook:created="updateValueText += 1"
@@ -117,7 +118,7 @@ export default {
         },
         asyncData: Function,
         render: Function,
-        renderSearch: Function,
+        renderFlat: Function,
         selection: String,
         trigger: {
             type: String,
@@ -127,6 +128,7 @@ export default {
             type: Boolean,
             default: true,
         },
+        noDataText: String,
         filterType: String, // default(cascader),flat(平铺)
     },
     data() {

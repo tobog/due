@@ -1,5 +1,5 @@
 <template>
-    <ul v-if="data && data.length" :class="[_tobogPrefix_ + '-wrapper']">
+    <ul v-if="data && data.length > 0" :class="[_tobogPrefix_ + '-wrapper']">
         <li v-for="(node, index) in data" :key="index" :class="classes(node)" @click="select(node)">
             <span :class="[_tobogPrefix_ + '-content']">
                 <slot :data="node" :index="index">
@@ -20,6 +20,7 @@
 <script>
 import Icons from "../icons/index";
 import Render from "./render";
+
 export default {
     name: "Caspanel-Search",
     componentName: "CaspanelSearch",
@@ -42,8 +43,6 @@ export default {
         },
         selection: String, //multiple,single
         render: Function,
-        size: String,
-        theme: String,
     },
     filters: {
         labelFormat(val) {
