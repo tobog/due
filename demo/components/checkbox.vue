@@ -1,291 +1,242 @@
 <style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Checkbox 多选框)</h2>
             <h4 class="padding-top-10">基本组件-多选框。主要用于一组可选项多项选择，或者单独用于标记切换某种状态</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vCheckBox v-model="val1" true-value="3" v-bind="formData"></vCheckBox>
-                <vCheckBox v-model="val" true-value="1" v-bind="formData"></vCheckBox>
-                <vCheckBox v-model="val" true-value="2" v-bind="formData"></vCheckBox>
-                <vCheckBox v-model="val" true-value="3" v-bind="formData"></vCheckBox>
-                <vCheckBox v-model="val" :true-value="4" v-bind="formData"></vCheckBox>
-                <div class="margin-top-10">vCheckBoxGroup</div>
-                <vCheckBoxGroup v-model="val2" max="3" min="1">
-                    <vCheckBox v-model="val1" true-value="3" v-bind="formData"></vCheckBox>
-                    <vCheckBox v-model="val" true-value="1" v-bind="formData"></vCheckBox>
-                    <vCheckBox v-model="val" true-value="2" v-bind="formData"></vCheckBox>
-                    <vCheckBox v-model="val" :true-value="4" v-bind="formData"></vCheckBox>
-                </vCheckBoxGroup>
-            </section>
-            <span class="padding-10 inline-block">val1:{{ val1 }}</span>
-            <span class="padding-10 inline-block">val:{{ val }}</span>
-            <span class="padding-10 inline-block">val2:{{ val2 }}</span>
-            <!-- <span class="padding-10 inline-block">val3:{{ val3 }}</span> -->
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vCheckBox v-model="val1" true-value="3" v-bind="config"></vCheckBox>
+            <vCheckBox v-model="val" true-value="1" v-bind="config"></vCheckBox>
+            <vCheckBox v-model="val" true-value="2" v-bind="config"></vCheckBox>
+            <vCheckBox v-model="val" true-value="3" v-bind="config"></vCheckBox>
+            <vCheckBox v-model="val" :true-value="4" v-bind="config"></vCheckBox>
+            <div class="margin-top-10">vCheckBoxGroup</div>
+            <vCheckBoxGroup v-model="val2" max="3" min="1">
+                <vCheckBox v-model="val1" true-value="3" v-bind="config"></vCheckBox>
+                <vCheckBox v-model="val" true-value="1" v-bind="config"></vCheckBox>
+                <vCheckBox v-model="val" true-value="2" v-bind="config"></vCheckBox>
+                <vCheckBox v-model="val" :true-value="4" v-bind="config"></vCheckBox>
+            </vCheckBoxGroup>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
-            val1: '',
             val: [],
             val2: [],
-            val3: [],
+            val1: "",
         };
     },
-    created() {
-        setTimeout(() => {
-            this.val.push(2);
-        }, 6000);
-    },
+    methods: {},
     computed: {
         getCode() {
-            return `<vCheckBox v-model="val1" true-value="0"
-						 v-bind="${this.getCodeString(this.formData)}">
-					</vCheckBox>
-					<vCheckBox v-model="val" true-value="1"
-						 v-bind="${this.getCodeString(this.formData)}">
-					</vCheckBox>
-					<vCheckBox v-model="val" true-value="2"
-						 v-bind="${this.getCodeString(this.formData)}">
-					</vCheckBox>
-					<vCheckBox v-model="val" true-value="3"
-						 v-bind="${this.getCodeString(this.formData)}">
-					</vCheckBox>
-					<vCheckBox v-model="val" true-value="4"
-						 v-bind="${this.getCodeString(this.formData)}">
-                    </vCheckBox>
-                    <vCheckBoxGroup v-model="val2" max="3" min="1">
-                        vCheckBoxList
-                    </vCheckBoxGroup>
+            return `<CheckBox v-model="val" true-value="1"
+						 v-bind=CODE>
+					</CheckBox>
+					<CheckBox v-model="val" true-value="2"
+						 v-bind=CODE>
+					</CheckBox
+                    <CheckBoxGroup v-model="val2" max="3" min="1">
+                        CheckBoxList
+                    </CheckBoxGroup>
 					`;
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '半选',
-                    key: 'indeterminate',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "半选",
+                    key: "indeterminate",
+                    demoDefault: false,
+                    explain: "是否半选,设置 indeterminate 状态，只负责样式控制",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '幽灵模式',
-                    key: 'ghost',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "幽灵模式",
+                    key: "ghost",
+                    demoDefault: false,
+                    explain: "是否幽灵模式",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '禁用',
-                    key: 'disabled',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "禁用",
+                    key: "disabled",
+                    demoDefault: false,
+                    explain: "是否禁用当前项",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '仅读',
-                    key: 'readonly',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "仅读",
+                    key: "readonly",
+                    demoDefault: false,
+                    explain: "是否仅读",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '严格匹配',
-                    key: 'strict',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "严格匹配",
+                    key: "strict",
+                    demoDefault: false,
+                    explain: "是否严格匹配",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '显示边框',
-                    key: 'border',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "显示边框",
+                    key: "border",
+                    demoDefault: false,
+                    explain: "是否显示边框",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: 'radio样式显示',
-                    key: 'radio',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "radio样式显示",
+                    key: "radio",
+                    demoDefault: false,
+                    explain: "是否radio样式显示",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '反选',
-                    key: 'reverse',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "反选",
+                    key: "reverse",
+                    demoDefault: false,
+                    explain: "是否反选",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: 'label',
-                    key: 'label',
-                    tag: 'vInput',
-                    default: 'label',
+                    showConfig: true,
+                    label: "显示文字",
+                    key: "label",
+                    demoDefault: "测试label",
+                    explain: "显示文字",
+                    dataType: "String",
+                    tag: "vInput",
+                    default: "",
                 },
                 {
-                    label: '选中时的值',
-                    key: 'trueValue',
-                    tag: 'vInput',
+                    showConfig: true,
+                    label: "选中时的值",
+                    key: "trueValue",
+                    demoDefault: true,
+                    explain: "选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用",
+                    dataType: "Boolean|String",
+                    tag: "vInput",
                     default: true,
                 },
                 {
-                    label: '不选中时的值',
-                    key: 'falseValue',
-                    tag: 'vInput',
+                    showConfig: true,
+                    label: "不选中时的值",
+                    key: "falseValue",
+                    demoDefault: false,
+                    explain: "没有选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用",
+                    dataType: "Boolean|String",
+                    tag: "vInput",
                     default: undefined,
                 },
                 {
-                    label: '多选框的尺寸',
-                    key: 'size',
-                    tag: 'vInput',
-                    default: '',
+                    showConfig: true,
+                    label: "多选框的尺寸",
+                    key: "size",
+                    demoDefault: "",
+                    explain: "多选框的尺寸",
+                    dataType: "Number|String",
+                    tag: "vInput",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    label: '自定义颜色',
-                    key: 'color',
-                    tag: 'vInput',
-                    default: '',
+                    showConfig: true,
+                    label: "图标",
+                    key: "trueIcon",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "图标",
+                    dataType: "String",
+                    default: "",
+                    options: this.iconslist,
                 },
                 {
-                    label: '主题',
-                    key: 'theme',
-                    tag: 'vSelect',
-                    default: '',
+                    showConfig: true,
+                    label: "主题颜色",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题颜色",
+                    dataType: "String",
+                    default: "",
                     options: this.getThemes,
                 },
                 {
-                    label: '图标',
-                    key: 'trueIcon',
-                    tag: 'vSelect',
-                    options: this.iconslist,
-                },
-            ];
-        },
-        compProps() {
-            return [
-                {
-                    explain: '表单名称',
-                    prop: 'name',
-                    type: 'String',
-                    default: '-',
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    explain: '可以使用 v-model 双向绑定数据',
-                    prop: 'value',
-                    type: 'String, Number, Boolean, Array',
-                    default: 'false',
+                    label: "表单名称",
+                    key: "name",
+                    explain: "form 表单名称",
+                    dataType: "String",
+                    default: "",
                 },
                 {
-                    explain: 'label',
-                    prop: 'label',
-                    type: 'String',
-                    default: '-',
+                    label: "value",
+                    key: "value",
+                    explain: "可以使用 v-model 双向绑定数据",
+                    dataType: "String, Number, Boolean, Array",
+                    default: "",
+                },
+
+                {
+                    label: "事件",
+                    key: "on-change",
+                    explain: "在选项状态发生改变时触发，通过修改外部的数据改变时不会触发",
+                    dataType: "Function:Event",
+                    default: "(value, event)=>{}",
                 },
                 {
-                    explain: '选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用',
-                    prop: 'trueValue',
-                    type: 'String, Number, Boolean',
-                    default: true,
+                    label: "自定义文字",
+                    key: "slot:default",
+                    explain: "自定义文字",
+                    dataType: "VNode",
+                    default: "-",
                 },
                 {
-                    explain: '没有选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用',
-                    prop: 'falseValue',
-                    type: 'String, Number, Boolean',
-                    default: undefined,
-                },
-                {
-                    explain: '设置 indeterminate 状态，只负责样式控制',
-                    prop: 'indeterminate',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否禁用当前项',
-                    prop: 'disabled',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否显示边框',
-                    prop: 'border',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否仅读',
-                    prop: 'readonly',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否严格匹配value',
-                    prop: 'strict',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否radio样式显示',
-                    prop: 'radio',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '是否反选',
-                    prop: 'reverse',
-                    type: 'Boolean',
-                    default: false,
-                },
-                {
-                    explain: '主题颜色可选值为 gray、primary、dashed、text、info、success、warning、error',
-                    prop: 'theme',
-                    type: 'String',
-                    default: '',
-                },
-                {
-                    explain: '自定义颜色',
-                    prop: 'colro',
-                    type: 'String',
-                    default: '',
-                },
-                {
-                    prop: 'on-change',
-                    explain: '在选项状态发生改变时触发，通过修改外部的数据改变时不会触发',
-                    type: 'Function:Event',
-                    default: '(value, event)=>{}',
-                },
-                {
-                    explain: '多选框的尺寸',
-                    prop: 'size',
-                    type: 'String,Number',
-                    default: '',
-                },
-                {
-                    explain: 'label 自定义',
-                    prop: 'slot:default',
-                    type: 'VNode',
-                    default: '',
-                },
-                {
-                    explain: '自定义 checkbox 样式',
-                    prop: 'slot:content',
-                    type: 'VNode：isChecked',
-                    default: '',
+                    label: "自定义checkbox样式",
+                    key: "slot:content",
+                    explain: "自定义 checkbox 样式",
+                    dataType: "VNode:isChecked",
+                    default: "-",
                 },
             ];
         },
