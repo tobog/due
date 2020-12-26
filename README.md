@@ -14,7 +14,7 @@ medio 响应式组件或指令
 
 
 ## 更新
-1. button 增加异步点击，样式优化
+<!-- 1. button 增加异步点击，样式优化 -->
 2. 添加动画组件
 3. input焦点粘贴bug 
 4. scroll-text 左右滚动
@@ -23,13 +23,13 @@ medio 响应式组件或指令
 7. movedirect 有方向速度等组件
 8. 优化动态宽高比例用 padding-bottom:10%或者size：em
 9. 增加dropBase 仅仅提供下拉基础
-10. 增加 Theme组件，Media 组件
+<!-- 10. 增加 Theme组件，Media 组件 -->
 11. 增加音乐可视化组件，录屏组件
 12. 增加图片放大组件
 13. 增加粘贴复制组件
-14. resize 组件
+<!-- 14. resize 组件 -->
 15. 引导组件
-16. 瀑布流布局
+<!-- 16. 瀑布流布局 -->
 17. https://bilif.github.io/react-drag-grid/
 18. 表单验证时机 类型
 19. 优化组件name findComponentUpward 优化使用内部name 过滤，特提供全局配置，防止其他组件库影响
@@ -72,3 +72,10 @@ media  整体组件
 
 
 4. 基于swiper 设计动画组件 Animation
+
+
+
+
+## 下一版本
+1. 统一所有组件theme和color
+2. 在已有选项的条件下,接口搜索更新备选数据后,选中变化和没有变化下如何处理老数据已有的选中的选项

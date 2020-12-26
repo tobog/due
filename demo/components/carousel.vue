@@ -200,9 +200,9 @@ export default {
                 {
                     label: "事件",
                     key: "on-change",
-                    explain: "幻灯片切换时触发，目前激活的幻灯片的索引，原幻灯片的索引",
+                    explain: "幻灯片切换时触发，目前激活的幻灯片的索引，原幻灯片的索引,v-model 绑定的事件",
                     dataType: "Function:Event",
-                    default: "(oldValue, value)=>{}",
+                    default: "(value,oldValue)=>{}",
                 },
                 {
                     label: "主体内容",

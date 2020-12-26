@@ -55,6 +55,10 @@ export default {
     name: "Carousel",
     componentName: "Carousel",
     components: {Icons},
+    model:{
+        prop:'value',
+        event:'on-change'
+    },
     props: {
         value: {
             type: Number,
@@ -187,7 +191,6 @@ export default {
                     if (childrenLen != this.childrenLen) this.childrenLen = childrenLen
                     if (index != oldValue) {
                         this.model = index
-                        this.$emit("input", index)
                         this.$emit("on-change", index, oldValue)
                     }
                 })

@@ -16,16 +16,16 @@
     </component>
 </template>
 <script>
-import Icons from "../icons/index"
-import Color from "../../utils/color"
-import {unit} from "../../utils/tool"
-import globalMixin from "../../mixins/global"
+import Icons from "../icons/index";
+import Color from "../../utils/color";
+import { unit } from "../../utils/tool";
+import globalMixin from "../../mixins/global";
 export default {
     name: "Button",
     componentName: "Button",
     mixins: [globalMixin],
     inheritAttrs: false,
-    components: {Icons},
+    components: { Icons },
     props: {
         size: [String, Number],
         theme: String,
@@ -45,17 +45,18 @@ export default {
     },
     computed: {
         getTag() {
-            const {to, href, tag = "button"} = this.$attrs
-            if (to) return this.$router ? "router-link" : "a"
-            if (href) return "a"
-            return tag
+            const { to, href, tag = "button" } = this.$attrs;
+            if (to) return this.$router ? "router-link" : "a";
+            if (href) return "a";
+            return tag;
         },
         isOnly() {
-            const hasIcon = this.$slots.icon || this.icon || this.loading
-            return !!((hasIcon && !this.$slots.default) || (!hasIcon && this.$slots.default))
+            const hasIcon = this.$slots.icon || this.icon || this.loading;
+            return !!((hasIcon && !this.$slots.default) || (!hasIcon && this.$slots.default));
         },
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_
+            const _tobogPrefix_ = this._tobogPrefix_,
+                size = this.getGlobalData("size");
             return [
                 _tobogPrefix_,
                 {
@@ -64,7 +65,7 @@ export default {
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
                     [`${_tobogPrefix_}-border-${this.borderType}`]:
                         this.borderType === "dashed" || this.borderType === "text",
-                    [`${_tobogPrefix_}-size-${this.size}`]: this.size && !this.styles.lineHeight,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !this.styles.lineHeight,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-long`]: this.long,
                     [`${_tobogPrefix_}-only`]: this.isOnly,
@@ -73,57 +74,57 @@ export default {
                     [`${_tobogPrefix_}-custome-color`]: !!this.styles.color,
                     [`${_tobogPrefix_}-custome-size`]: !!this.styles.lineHeight,
                 },
-            ]
+            ];
         },
         getListeners() {
-            const listeners = {...this.$listeners}
-            delete listeners["click"]
-            return listeners
+            const listeners = { ...this.$listeners };
+            delete listeners["click"];
+            return listeners;
         },
         styles() {
             const style = {},
                 size = this.getGlobalData("size"),
-                isNaN = parseInt(size)
+                isNaN = parseInt(size);
             if (isNaN === isNaN) {
-                style.lineHeight = unit(size)
-                style.paddingLeft = style.paddingRight = style.fontSize = unit(size, "px", 0.5)
+                style.lineHeight = unit(size);
+                style.paddingLeft = style.paddingRight = style.fontSize = unit(size, "px", 0.5);
                 if (this.shape === "circle") {
-                    style.width = style.height = style.lineHeight
-                    style.paddingLeft = style.paddingRight = 0
+                    style.width = style.height = style.lineHeight;
+                    style.paddingLeft = style.paddingRight = 0;
                 }
             }
             if (this.color && Color.isColor(this.color)) {
-                const data = new Color(this.color)
-                const value = data.toCSS()
+                const data = new Color(this.color);
+                const value = data.toCSS();
                 if (this.ghost) {
-                    style.backgroundColor = "transparent"
-                    style.borderColor = style.color = value
+                    style.backgroundColor = "transparent";
+                    style.borderColor = style.color = value;
                 } else if (this.plain) {
-                    style.backgroundColor = data.setAlpha(0.08).toCSS()
-                    style.borderColor = style.color = value
+                    style.backgroundColor = data.setAlpha(0.08).toCSS();
+                    style.borderColor = style.color = value;
                 } else {
-                    style.color = "#fff"
-                    style.backgroundColor = style.borderColor = value
+                    style.color = "#fff";
+                    style.backgroundColor = style.borderColor = value;
                 }
             }
-            return style
+            return style;
         },
     },
     methods: {
         async handleClick(e) {
-            if (this.__runningClick) return
-            const click = this.$listeners["click"]
+            if (this.__runningClick) return;
+            const click = this.$listeners["click"];
             if (typeof click === "function") {
                 try {
-                    this.__runningClick = true
-                    await click(e)
+                    this.__runningClick = true;
+                    await click(e);
                 } catch (err) {
-                    console.error(err)
+                    console.error(err);
                 } finally {
-                    this.__runningClick = false
+                    this.__runningClick = false;
                 }
             }
         },
     },
-}
+};
 </script>

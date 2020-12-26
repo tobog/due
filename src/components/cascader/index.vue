@@ -7,13 +7,14 @@
         :data-vue-module="$options.name"
         :transfer="transfer"
         :disabled="isReadonly"
+        :class="[_tobogPrefix_ + '-wrapper']"
         :reference="ready ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
     >
         <InputBase
             ref="inputBase"
-            :type="type"
-            :class="[_tobogPrefix_]"
+            type="text"
+            :class="[_tobogPrefix_ + '-input']"
             :value="getValueText"
             :valueData="model"
             :prefix="prefix"
@@ -26,6 +27,7 @@
             :multiple="selection === 'multiple'"
             :collapse="collapse"
             :active="visible"
+            :size="size"
             :isInput="filterable"
             v-bind="$attrs"
             @hook:created="ready = true"
@@ -59,12 +61,15 @@
             :class="[_tobogPrefix_ + '-caspanel']"
             :value="model"
             :data="data"
+            :theme="theme"
+            :size="size"
             :selection="selection"
             :trigger="trigger"
             :asyncData="asyncData"
             :render="render"
             :identifier="identifier"
             :parentId="parentId"
+            :filterType="filterType"
             @input="handleChange"
             @on-search="handleSearch"
             @hook:created="updateValueText += 1"
@@ -84,6 +89,7 @@ import mixin from "../input/base/mixin";
 import Caspanel from "./caspanel";
 export default {
     name: "Cascader",
+    componentName: "Cascader",
     mixins: [mixin],
     components: { Caspanel, DropBase, InputBase },
     props: {
@@ -112,6 +118,7 @@ export default {
         },
         asyncData: Function,
         render: Function,
+        renderSearch: Function,
         selection: String,
         trigger: {
             type: String,
@@ -121,6 +128,7 @@ export default {
             type: Boolean,
             default: true,
         },
+        filterType: String, // default(cascader),flat(平铺)
     },
     data() {
         return {
@@ -137,14 +145,14 @@ export default {
         getValueText() {
             if (!this.$refs.caspanel && this.updateValueText) return;
             const data = this.$refs.caspanel.getDataByValue(this.model);
-            const levelFn = (data) => {
+            const levelFn = (item) => {
                 let result = [];
                 if (this.showAllLevels) {
-                    result = data.map((node) => (node.data.label == void 0 ? node.data.value : node.data.label));
+                    result = item.map((node) => (node.data.label == void 0 ? node.data.value : node.data.label));
                 } else {
-                    data = data[data.length - 1];
-                    if (data) {
-                        result = [data.data.label == void 0 ? data.data.value : data.data.label];
+                    item = item[item.length - 1];
+                    if (item) {
+                        result = [item.data.label == void 0 ? item.data.value : item.data.label];
                     }
                 }
                 return result.join(" / ");
@@ -161,7 +169,7 @@ export default {
             return this.$refs.caspanel.getDataByValue(data);
         },
         handleKeydown(event) {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 if (this.__model) {
                     this.updateModel(this.__model);
                     this.__model = null;
@@ -185,8 +193,8 @@ export default {
             const value = event.target.value || "";
             this.visible = true;
             if (!value && this.selection !== "multiple") this.updateModel([]);
-            if (!this.$refs.caspanel) return;
-            this.$refs.caspanel.handleSearch(value.split("/"));
+            this.$refs.caspanel &&
+                this.$refs.caspanel.handleSearch(value.split("/"));
         },
         handleBlur(event) {
             // console.log("==============");
@@ -219,7 +227,7 @@ export default {
         updateModel(val) {
             if (val === this.model) return;
             if (!val) val = [];
-            if (val && !Array.isArray(val)) val = [val];
+            if (!Array.isArray(val)) val = [val];
             if (this.selection === "multiple" && val[0] != null && !Array.isArray(val[0])) val = [val];
             this.model = val;
             this.$emit("input", this.model);
@@ -227,6 +235,7 @@ export default {
         },
         handleVisible(val) {
             this.updateValueText += 1;
+            this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null);
             this.$emit("on-visible-change", val);
         },
         updatedDrop() {

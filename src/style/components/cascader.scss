@@ -2,6 +2,8 @@ $prefix-cls: #{$prefix}-cascader;
 $prefix-cls-panel: #{$prefix}-caspanel;
 
 .#{$prefix-cls-panel} {
+    @include baseStyle;
+
     &-list {
         display: flex !important;
         justify-content: flex-start;
@@ -12,9 +14,10 @@ $prefix-cls-panel: #{$prefix}-caspanel;
         min-height: 100px;
     }
 
+    &-search,
     &-item {
         &-wrapper {
-            display: inline-flex;
+            // display: inline-flex;
             min-width: 100px;
             max-height: 100%;
             min-height: inherit;
@@ -23,19 +26,20 @@ $prefix-cls-panel: #{$prefix}-caspanel;
             list-style: none;
             border-right: 1px solid $border;
             overflow: auto;
-            justify-content: flex-start;
-            flex-direction: column;
+            // justify-content: flex-start;
+            // flex-direction: column;
         }
 
         margin: 0;
         display: flex;
         align-items: center;
-        padding: 6px 6px 6px 12px;
+        padding: 0 6px 0 12px;
+        height:28px;
         color: $content;
         white-space: nowrap;
         list-style: none;
         cursor: pointer;
-        transition: background 0.2s ease-in-out;
+        transition: backgroundColor 0.2s ease-in-out;
 
         &-content {
             padding-right: 6px;
@@ -62,16 +66,43 @@ $prefix-cls-panel: #{$prefix}-caspanel;
 
         &-disabled {
             cursor: not-allowed;
-            color: rgba($sub-content, 0.5);
+            color: $disable-content;
             background: none !important;
         }
     }
+
+    &-size {
+        &-small {
+            font-size: $subFont;
+        }
+
+        &-midiue {
+
+            .#{$prefix-cls-panel}-search,
+            .#{$prefix-cls-panel}-item {
+                height: 32px;
+            }
+        }
+
+        &-large {
+
+            .#{$prefix-cls-panel}-search,
+            .#{$prefix-cls-panel}-item {
+                height: 34px;
+            }
+        }
+
+
+    }
 }
 
-@each $key, $value in $colors-map {
-    .#{$prefix-cls-panel}-#{$key} {
+@each $key,
+$value in $colors-map {
+    .#{$prefix-cls-panel}-theme-#{$key} {
         .#{$prefix-cls-panel} {
-            &-item {
+
+            &-item,
+            &-search {
                 &:hover {
                     background: rgba($value, 0.1);
                 }
