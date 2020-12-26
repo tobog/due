@@ -2,8 +2,6 @@ $prefix-cls: #{$prefix}-cascader;
 $prefix-cls-panel: #{$prefix}-caspanel;
 
 .#{$prefix-cls-panel} {
-    @include baseStyle;
-
     &-list {
         display: flex !important;
         justify-content: flex-start;
@@ -17,6 +15,7 @@ $prefix-cls-panel: #{$prefix}-caspanel;
     &-search,
     &-item {
         &-wrapper {
+            @include baseStyle;
             // display: inline-flex;
             min-width: 100px;
             max-height: 100%;

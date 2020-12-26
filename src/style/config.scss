@@ -25,7 +25,7 @@
     --border: #dcdee2;
     //     --divider: #e8eaec;
 
-    //     --hover: #ebf7ff;
+    --hover: #ebf7ff;
     //     --transparent: transparent;
 
     --back: #f8f8f9;
@@ -63,7 +63,7 @@ $componentBack:var(--componentBack, #fff) !default !global;
 $border:var(--border, #dcdee2) !default !global;
 // $divider:var(--divider, #e8eaec) !default !global;
 
-// $hover:var(--hover, #ebf7ff) !default !global;
+$hover:var(--hover, #ebf7ff) !default !global;
 // $transparent:var(--transparent, transparent) !default !global;
 
 $back:var(--back, #f8f8f9) !default !global;
@@ -102,7 +102,7 @@ $disabled: #e6e6e6 !default !global;
 // $border: #dcdee2 !default !global;
 $divider: #e8eaec !default !global;
 
-$hover: #ebf7ff !default !global;
+// $hover: #ebf7ff !default !global;
 $transparent: transparent !default !global;
 
 // $back: #f8f8f9 !default !global;

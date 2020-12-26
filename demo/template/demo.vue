@@ -123,8 +123,9 @@ export default {
                     --sub-content: #777; // 待优化
                     --disable-content: #56565a;
                     --componentBack:#151518;
-                    --border:gray;
+                    --border:#555;
                     --back: #151518;
+                    --hover: #000;
             }`,
         };
     },
