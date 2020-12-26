@@ -64,10 +64,10 @@ export default {
         select(node) {
             if (node.some((item) => item.data.disabled)) return;
             if (this.selection === "multiple" || this.selection === "single") {
-                this.$emit("on-check", node);
+                this.$emit("on-check", node[node.length - 1]);
+                // debugger;
                 return;
             }
-                   debugger;
             this.$emit("on-select", node, 0, "flat");
         },
         isSelected(node) {

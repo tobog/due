@@ -10,6 +10,7 @@
         :class="[_tobogPrefix_ + '-wrapper']"
         :reference="ready ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
+        @on-visible-change="handleVisible"
     >
         <InputBase
             ref="inputBase"
@@ -36,9 +37,7 @@
             @on-clear="handleClear"
             @on-remove-item="handleClearTag"
             @on-blur="handleBlur"
-            @on-visible-change="handleVisible"
             @on-keydown="handleKeydown"
-            @on-change="handleChange"
             @on-icon-click="handleIconClick"
         >
             <template v-if="prepend" slot="prepend">
@@ -193,11 +192,9 @@ export default {
             const value = event.target.value || "";
             this.visible = true;
             if (!value && this.selection !== "multiple") this.updateModel([]);
-            this.$refs.caspanel &&
-                this.$refs.caspanel.handleSearch(value.split("/"));
+            this.$refs.caspanel && this.$refs.caspanel.handleSearch(value.split("/"));
         },
         handleBlur(event) {
-            // console.log("==============");
             if (this.__model) {
                 this.updateModel(this.__model);
                 this.__model = null;
@@ -235,8 +232,14 @@ export default {
         },
         handleVisible(val) {
             this.updateValueText += 1;
-            this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null);
             this.$emit("on-visible-change", val);
+            clearTimeout(this.__caspanelTime);
+            this.$nextTick(() => {
+                if (this.selection === "multiple") this.$refs.inputBase.getInputDom().value = "";
+                this.__caspanelTime = setTimeout(() => {
+                    this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null);
+                }, 200);
+            });
         },
         updatedDrop() {
             this.$nextTick(() => {
@@ -251,6 +254,10 @@ export default {
                 this.updateModel(val);
             },
         },
+    },
+    beforeDestroy() {
+        clearTimeout(this.__caspanelTime);
+        this.__caspanelTime = null;
     },
 };
 </script>

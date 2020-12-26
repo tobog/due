@@ -45,6 +45,7 @@
             :size="size"
             :theme="theme"
             @on-select="select"
+            @on-check="handleCheck"
         >
         </CaspanelSearch>
     </div>
@@ -104,7 +105,6 @@ export default {
     methods: {
         initModelStatus() {
             const data = this.getDataByValue(this.value);
-            this.flatFilterData = null;
             if (this.selection === "multiple") {
                 this.nodeList.forEach((node) => {
                     this.$set(node.data, "selected", false);
@@ -158,7 +158,6 @@ export default {
         handleSearch(labels) {
             if (this.filterType === "flat") {
                 this.flatFilterData = this.getFlatDataByLabel(labels);
-                console.log(this.flatFilterData, "=================");
                 return;
             }
             this.flatFilterData = null;
@@ -198,14 +197,13 @@ export default {
                         : [data.index];
                     result = linkParentIndexs.map((index) => this.nodeList[index].data.value);
                 }
-                this.flatFilterData = null;
             } else {
                 result = this.modelList.map((node) => node.data.value);
-                this.flatFilterData = null;
             }
             this.$emit("input", result);
         },
         handleCheck(node) {
+            // debugger;
             const data = node.data,
                 isOnlySelf = this.getSelectOnlySelf(data.selectOnlySelf),
                 val = !data.selected,
