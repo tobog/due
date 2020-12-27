@@ -241,6 +241,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
                 linear-gradient(45deg, $border 25%, transparent 0, transparent 75%, $border 0);
             background-position: 0 0, 6px 6px;
             background-size: 2 * 6px 2 * 6px;
+            overflow: hidden;
             & > span {
                 height: 0;
                 display: block;
