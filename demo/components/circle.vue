@@ -89,7 +89,7 @@ export default {
                 {
                     showConfig: true,
                     label: "进度环颜色",
-                    key: "strokeColor",
+                    key: "trackColor",
                     demoDefault: "#eaeef2",
                     explain: "进度环颜色",
                     dataType: "String",
