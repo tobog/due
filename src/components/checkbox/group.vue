@@ -1,5 +1,5 @@
 <template>
-    <section :class="wrapClasses" :data-vue-module="$options.name">
+    <section :class="classes" :data-vue-module="$options.name">
         <slot>
             <template v-if="hasOpts">
                 <CheckBox v-for="opt in options" :key="opt.value" v-bind="opt"></CheckBox>
@@ -32,7 +32,7 @@ export default {
         // reverse: Boolean,
         // ghost: Boolean,
         theme: String,
-        color: String,
+        // color: String,
         min: [Number, String], // 仅是组合
         max: [Number, String],
     },
@@ -73,7 +73,7 @@ export default {
         hasOpts() {
             return Array.isArray(this.options) && this.options.length;
         },
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,

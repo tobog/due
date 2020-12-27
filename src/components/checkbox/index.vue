@@ -1,6 +1,6 @@
 <template>
     <div
-        :class="wrapClasses"
+        :class="classes"
         :data-vue-module="$options.name"
         :tabindex="_uid"
         :style="getBorderStyle"
@@ -16,7 +16,7 @@
                 </template>
             </span>
         </slot>
-        <span v-if="showLabel" :class="[_tobogPrefix_ + '-label']">
+        <span v-if="$slots.default || showLabel" :class="[_tobogPrefix_ + '-label']">
             <slot>{{ label }}</slot>
         </span>
         <input
@@ -37,15 +37,21 @@
 </template>
 
 <script>
-import emitter from '../../utils/emitter';
-import Icons from '../icons/index';
-import Color from '../../utils/color';
-import { findComponentUpward } from '../../utils/findComponent';
-import { unit, validVal } from '../../utils/tool';
+import emitter from "../../utils/emitter";
+import Icons from "../icons/index";
+import Color from "../../utils/color";
+import { findComponentUpward } from "../../utils/findComponent";
+import { unit, validVal } from "../../utils/tool";
+import globalMixin from "../../mixins/global";
 export default {
-    name: 'CheckBox',
+    name: "CheckBox",
+    componentName: "CheckBox",
     components: { Icons },
-    mixins: [emitter],
+    mixins: [emitter, globalMixin],
+    model: {
+        prop: "value",
+        event: '"on-change',
+    },
     props: {
         name: String,
         label: String,
@@ -66,30 +72,25 @@ export default {
         border: Boolean,
         readonly: Boolean,
         strict: Boolean,
-        size: {
-            type: [String, Number],
-            // default: 'default', //small,large
-        },
+        size: [String, Number],
         radio: Boolean,
         reverse: Boolean,
         ghost: Boolean,
         theme: String,
-        color: String,
         trueIcon: String,
         // min: [Number, String], // 仅是组合
         // max: [Number, String],
     },
     beforeCreate() {
-        this._checkBoxGroup_ = findComponentUpward(this, 'CheckBoxGroup');
+        this._checkBoxGroup_ = findComponentUpward(this, "CheckBoxGroup");
     },
     data() {
         return {
-            model:
-                this.falseValue === void 0 ? this.value : Array.isArray(this.value) ? `${this.value}` : this.value,
+            model: this.falseValue === void 0 ? this.value : Array.isArray(this.value) ? `${this.value}` : this.value,
         };
     },
     created() {
-        this.handleDispatch('on-change', this.model);
+        this.handleDispatch("on-change", this.model);
     },
     watch: {
         value: {
@@ -103,12 +104,12 @@ export default {
             deep: true,
             handler(val) {
                 this.handleGroupModel();
-                this.$emit('input', val);
-                this.handleDispatch('on-change', val);
-                this.handleDispatch('on-validate', val);
+                this.$emit("on-change", val);
+                this.handleDispatch("on-change", val);
+                this.handleDispatch("on-validate", val, "change");
             },
         },
-        getGroupModel: {
+        "_checkBoxGroup_.model": {
             deep: true,
             handler() {
                 this.handleGroupModel(true);
@@ -116,18 +117,16 @@ export default {
         },
     },
     computed: {
-        getGroupModel() {
-            return this._checkBoxGroup_ && this._checkBoxGroup_.model;
-        },
         showLabel() {
-            return this.$slots.default || validVal(this.label);
+            return validVal(this.label);
         },
         getBorderStyle() {
             let style = {},
-                color =
-                    this.color ||
-                    this.theme ||
-                    (this._checkBoxGroup_ && (this._checkBoxGroup_.color || this._checkBoxGroup_.theme));
+                color = this.getGlobalData(
+                    "theme",
+                    "theme",
+                    this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme)
+                );
             if (this.border || ((this.indeterminate || this.isChecked) && Color.isColor(color))) {
                 const data = new Color(color);
                 const value = data.toCSS();
@@ -136,18 +135,21 @@ export default {
             return style;
         },
         getInnerStyle() {
-            let size = this.size || (this._checkBoxGroup_ && this._checkBoxGroup_.size),
-                style = {},
-                color =
-                    this.color ||
-                    this.theme ||
-                    (this._checkBoxGroup_ && (this._checkBoxGroup_.color || this._checkBoxGroup_.theme));
+            let style = {},
+                color = this.getGlobalData(
+                    "theme",
+                    "theme",
+                    this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme)
+                ),
+                size = this.getGlobalData(
+                    "size",
+                    "size",
+                    this.size || (this._checkBoxGroup_ && this._checkBoxGroup_.size)
+                );
 
-            if (size && size !== 'auto') {
-                if (size === 'small') size = 12;
-                if (size === 'large') size = 18;
+            if (parseInt(size) === parseInt(size)) {
                 style.width = style.height = unit(size);
-                style.fontSize = unit(size, 'px', 0.9);
+                style.fontSize = unit(size, "px", 0.9);
             }
             if ((this.indeterminate || this.isChecked) && Color.isColor(color)) {
                 const data = new Color(color);
@@ -160,7 +162,7 @@ export default {
             }
             return style;
         },
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             const theme = this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme);
             return [
@@ -168,7 +170,7 @@ export default {
                 {
                     [`${_tobogPrefix_}-radio`]: this.radio,
                     [`${_tobogPrefix_}-border`]: this.border,
-                    [`${_tobogPrefix_}-${theme}`]: !!theme,
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-checked`]: this.isChecked,
                     [`${_tobogPrefix_}-indeterminate`]: this.indeterminate,
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
@@ -200,13 +202,12 @@ export default {
             this.$refs.input.click();
         },
         handleChange(event) {
-            this.$emit('input', this.model);
-            this.$emit('on-change', this.model, event);
-            this.handleDispatch('on-validate', this.model);
+            this.$emit("on-change", this.model, event);
+            this.handleDispatch("on-validate", this.model, "change");
             this._checkBoxGroup_ && this._checkBoxGroup_.handleChange(event);
         },
         handleGroupModel(isToModel) {
-            const groupModel = this.getGroupModel,
+            const groupModel = this._checkBoxGroup_ && this._checkBoxGroup_.model,
                 val = this.model,
                 trueValue = this.trueValue,
                 bool = Array.isArray(val);
@@ -244,21 +245,18 @@ export default {
                 }
             } else {
                 if (checkIndex > -1 && groupCheckIndex === -1) {
-                    // groupModel.push(trueValue);
                     this._checkBoxGroup_ && this._checkBoxGroup_.handleModel(true, trueValue);
                 }
                 if (checkIndex === -1 && groupCheckIndex > -1) {
-                    // groupModel.splice(groupCheckIndex, 1);
                     this._checkBoxGroup_ && this._checkBoxGroup_.handleModel(false, groupCheckIndex);
                 }
             }
         },
-
         handleDispatch(...args) {
             if (this.__parentComponent__) {
                 this.__parentComponent__.$emit(...args);
             } else {
-                this.__parentComponent__ = this.dispatch('FormItem', ...args);
+                this.__parentComponent__ = this.dispatch("FormItem", ...args);
             }
         },
     },
