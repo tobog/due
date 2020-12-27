@@ -1,7 +1,7 @@
 <template>
-    <section :class="classes" :data-vue-module="$options.name">
+    <ul :class="classes" :data-vue-module="$options.name">
         <slot></slot>
-    </section>
+    </ul>
 </template>
 <script>
 export default {

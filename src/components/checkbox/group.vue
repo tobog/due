@@ -13,6 +13,11 @@ import emitter from '../../utils/emitter';
 import CheckBox from './index';
 export default {
     name: 'CheckBoxGroup',
+    componentName: 'CheckBoxGroup',
+    model: {
+        prop: "value",
+        event: '"on-change',
+    },
     mixins: [emitter],
     components: { CheckBox },
     props: {
@@ -56,9 +61,9 @@ export default {
             deep: true,
             handler(val) {
                 if (this.readonly) return;
-                this.$emit('input', val);
+                this.$emit('on-change', val);
                 this.handleDispatch('on-change', val);
-                this.handleDispatch('on-validate', val);
+                this.handleDispatch('on-validate', val,'change');
             },
         },
     },
@@ -105,9 +110,8 @@ export default {
             }
         },
         handleChange(event) {
-            this.$emit('input', this.model);
             this.$emit('on-change', this.model, event);
-            this.handleDispatch('on-validate', this.model);
+            this.handleDispatch('on-validate', this.model,'change');
         },
         handleDispatch(...args) {
             if (this.__parentComponent__) {

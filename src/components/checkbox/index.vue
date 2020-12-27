@@ -164,7 +164,16 @@ export default {
         },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
-            const theme = this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme);
+            const theme = this.getGlobalData(
+                "theme",
+                "theme",
+                this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme)
+            );
+            const size = this.getGlobalData(
+                "size",
+                "size",
+                this.size || (this._checkBoxGroup_ && this._checkBoxGroup_.size)
+            );
             return [
                 _tobogPrefix_,
                 {
@@ -176,6 +185,7 @@ export default {
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
+                    [`${_tobogPrefix_}-size-${size}`]: !!size,
                 },
             ];
         },

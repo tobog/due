@@ -147,11 +147,31 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
             }
         }
     }
+
+    &-size {
+        &-small {
+            font-size: $subFont;
+
+            .#{$prefix-cls}-inner {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        &-large {
+            .#{$prefix-cls}-inner {
+                font-size: 1.2em;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
 }
 
 @each $key,
 $value in $colors-map {
     .#{$prefix-cls}-theme-#{$key} {
+
         &.#{$prefix-cls}-indeterminate:not(.#{$prefix-cls}-disabled),
         &.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled) {
             >.#{$prefix-cls}-inner {

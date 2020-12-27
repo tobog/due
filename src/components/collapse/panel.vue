@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses" :data-vue-module="$options.name">
+    <li :class="wrapClasses" :data-vue-module="$options.name">
         <template v-if="custom">
             <slot :toggle="toggle" :active="isActive"></slot>
         </template>
@@ -12,7 +12,7 @@
                 <slot name="content"></slot>
             </aside>
         </Transitions>
-    </div>
+    </li>
 </template>
 
 <script>

@@ -12,7 +12,7 @@
             <vCheckBox v-model="val" true-value="2" v-bind="config"></vCheckBox>
             <vCheckBox v-model="val" true-value="3" v-bind="config"></vCheckBox>
             <vCheckBox v-model="val" :true-value="4" v-bind="config"></vCheckBox>
-            <div class="margin-top-10">vCheckBoxGroup</div>
+            <div class="margin-20">vCheckBoxGroup</div>
             <vCheckBoxGroup v-model="val2" max="3" min="1">
                 <vCheckBox v-model="val1" true-value="3" v-bind="config"></vCheckBox>
                 <vCheckBox v-model="val" true-value="1" v-bind="config"></vCheckBox>
@@ -83,7 +83,7 @@ export default {
                     label: "仅读",
                     key: "readonly",
                     demoDefault: false,
-                    explain: "是否仅读",
+                    explain: "CheckBoxGroup,CheckBox是否仅读",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
@@ -163,7 +163,7 @@ export default {
                     label: "多选框的尺寸",
                     key: "size",
                     demoDefault: "",
-                    explain: "多选框的尺寸",
+                    explain: "CheckBoxGroup,CheckBox多选框的尺寸",
                     dataType: "Number|String",
                     tag: "vInput",
                     default: "",
@@ -186,7 +186,7 @@ export default {
                     key: "theme",
                     tag: "vSelect",
                     demoDefault: "",
-                    explain: "主题颜色",
+                    explain: "CheckBoxGroup,CheckBox主题颜色",
                     dataType: "String",
                     default: "",
                     options: this.getThemes,
@@ -212,15 +212,35 @@ export default {
                 {
                     label: "value",
                     key: "value",
-                    explain: "可以使用 v-model 双向绑定数据",
+                    explain: "CheckBoxGroup,CheckBox可以使用 v-model 双向绑定数据",
                     dataType: "String, Number, Boolean, Array",
                     default: "",
                 },
-
+                {
+                    label: "CheckBoxGroup:min",
+                    key: "min",
+                    explain: "最小选中个数",
+                    dataType: "Number, String",
+                    default: "",
+                },
+                {
+                    label: "CheckBoxGroup:max",
+                    key: "max",
+                    explain: "最大选中个数",
+                    dataType: "Number, String",
+                    default: "",
+                },
+                {
+                    label: "CheckBoxGroup:options",
+                    key: "options",
+                    explain: "子元素数据结构",
+                    dataType: "Array",
+                    default: "",
+                },
                 {
                     label: "事件",
                     key: "on-change",
-                    explain: "在选项状态发生改变时触发，通过修改外部的数据改变时不会触发",
+                    explain: "CheckBoxGroup，CheckBox在选项状态发生改变时触发，通过修改外部的数据改变时不会触发",
                     dataType: "Function:Event",
                     default: "(value, event)=>{}",
                 },
@@ -236,6 +256,13 @@ export default {
                     key: "slot:content",
                     explain: "自定义 checkbox 样式",
                     dataType: "VNode:isChecked",
+                    default: "-",
+                },
+                {
+                    label: "子元素",
+                    key: "CheckBoxGroup:slot",
+                    explain: "子元素",
+                    dataType: "VNode",
                     default: "-",
                 },
             ];
