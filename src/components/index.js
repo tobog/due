@@ -71,7 +71,7 @@ import Datepicker from "./date/datepicker"
 import DatePanel from "./date/index"
 
 import Collapse from "./collapse/index"
-import Panel from "./collapse/panel"
+import CollapseItem from "./collapse/item"
 import Split from "./split/index"
 import Drop from "./base/drop"
 import Dropdown from "./dropdown/index"
@@ -160,7 +160,7 @@ export default {
     Datepicker,
     DatePanel,
     Collapse,
-    Panel,
+    CollapseItem,
     Split,
     Drop,
     Dropdown,

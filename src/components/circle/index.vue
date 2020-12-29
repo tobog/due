@@ -1,11 +1,12 @@
 <template>
-    <section :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+    <section :class="classes" :data-vue-module="$options.name">
         <svg
             viewBox="0 0 100 100"
             :style="circleSize"
             :stroke="trackColor"
             :stroke-width="trackWidth"
             :stroke-linecap="strokeLinecap"
+            :class="[_tobogPrefix_ + '-svg']"
             fill-opacity="0"
             v-bind="$attrs"
         >
@@ -28,9 +29,12 @@
     </section>
 </template>
 <script>
-import { unit } from "../../utils/tool";
+import {unit, isParseNumber} from "../../utils/tool"
+import globalMixin from "../../mixins/global"
 export default {
-    name: "SvgCircle",
+    name: "Circle",
+    componentName: "Circle",
+    mixins: [globalMixin],
     inheritAttrs: false,
     props: {
         name: String,
@@ -72,54 +76,67 @@ export default {
     },
 
     computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_,
+                size = this.getGlobalData("size")
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
+                },
+            ]
+        },
         getStrokeColor() {
             if (Array.isArray(this.strokeColor)) {
                 const data = this.strokeColor.find((item) => {
-                    return this.percent < item.percent;
-                });
-                return (data && data.color) || "#eaeef2";
+                    return this.percent < item.percent
+                })
+                return (data && data.color) || this.strokeColor;
             }
-            return this.strokeColor;
+            return this.strokeColor
         },
         getStrokeDash() {
             if (this.dashboard) {
-                const length = this.len / this.getRadix;
+                const length = this.len / this.getRadix
                 return {
-                    "stroke-dasharray": `${length * 0.8},${length}`,
+                    strokeDasharray: `${length * 0.8},${length}`,
                     transform: `rotate(126deg)`,
-                };
+                }
             }
-            return {};
+            return {}
         },
         handleStyle() {
             return {
                 strokeDasharray: this.handleDasharray,
                 transition: "all 1s linear",
                 transform: this.dashboard ? "rotate(-234deg)" : "rotate(-90deg)",
-            };
+            }
         },
         handleDasharray() {
-            const len = this.len;
-            let percent = (this.percent / 100) * len;
-            percent = percent > len ? len : percent;
-            return `${percent} ${len / this.getRadix}`;
+            const len = this.len
+            let percent = (this.percent / 100) * len
+            percent = percent > len ? len : percent
+            return `${percent} ${len / this.getRadix}`
         },
         circleSize() {
-            const size = unit(this.size, "px");
-            return {
-                width: size,
-                height: size,
-            };
+            if (isParseNumber(this.size)) {
+                const size = unit(this.size, "px")
+                return {
+                    width: size,
+                    height: size,
+                }
+            }
+            return {}
         },
         radius() {
-            return 50 - this.strokeWidth / 2;
+            return 50 - this.strokeWidth / 2
         },
         getRadix() {
-            return this.dashboard ? 0.8 : 1;
+            return this.dashboard ? 0.8 : 1
         },
         len() {
-            return Math.PI * 2 * this.radius * this.getRadix;
+            return Math.PI * 2 * this.radius * this.getRadix
         },
     },
-};
+}
 </script>

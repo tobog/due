@@ -1,5 +1,5 @@
 <template>
-    <li :class="wrapClasses" :data-vue-module="$options.name">
+    <li :class="classes" :data-vue-module="$options.name">
         <template v-if="custom">
             <slot :toggle="toggle" :active="isActive"></slot>
         </template>
@@ -16,10 +16,11 @@
 </template>
 
 <script>
-import Icons from '../icons/index';
-import Transitions from '../base/transition';
+import Icons from "../icons/index"
+import Transitions from "../base/transition"
 export default {
-    name: 'Panel',
+    name: "CollapseItem",
+    componentName: "CollapseItem",
     components: {
         Icons,
         Transitions,
@@ -31,39 +32,35 @@ export default {
         disabled: Boolean,
         icon: {
             type: String,
-            default: 'ios-arrow-forward',
+            default: "ios-arrow-forward",
         },
     },
     data() {
         return {
             isActive: false,
-        };
+        }
     },
     computed: {
-        nameUid() {
-            if (this.name == null) return this._uid;
-            return this.name;
-        },
-        wrapClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-active`]: this.isActive,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                 },
-            ];
+            ]
         },
     },
     methods: {
         toggle() {
-            if (this.disabled) return;
+            if (this.disabled) return
             this.$parent.toggle({
-                name: this.nameUid,
+                name: this.name == null ? this._index : this.name,
                 isActive: this.isActive,
-            });
-            this.isActive = !this.isActive;
+            })
+            this.isActive = !this.isActive
         },
     },
-};
+}
 </script>

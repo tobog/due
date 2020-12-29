@@ -1,11 +1,13 @@
-$prefix-cls-collapse: #{$prefix}-collapse;
-$prefix-cls-panel: #{$prefix}-panel;
+$prefix-cls: #{$prefix}-collapse;
+$prefix-cls-panel: #{$prefix}-collapseitem;
 
-.#{$prefix-cls-collapse} {
+.#{$prefix-cls} {
+    @include baseStyle;
     background-color: $back;
     border-radius: $radius;
     border: 1px solid $border;
     overflow: overlay;
+    list-style: none;
 
     .#{$prefix-cls-panel}:first-child > .#{$prefix-cls-panel}-header {
         border-top: none;
@@ -19,7 +21,7 @@ $prefix-cls-panel: #{$prefix}-panel;
         .#{$prefix-cls-panel}-active > .#{$prefix-cls-panel}-header {
             border-bottom: 0;
         }
-        .#{$prefix-cls-collapse}-simple {
+        .#{$prefix-cls}-simple {
             border-bottom: 0;
         }
 
@@ -32,6 +34,7 @@ $prefix-cls-panel: #{$prefix}-panel;
 }
 
 .#{$prefix-cls-panel} {
+    list-style: none;
     &-active > &-header {
         border-bottom-color: $border;
 
@@ -41,7 +44,7 @@ $prefix-cls-panel: #{$prefix}-panel;
     }
     &-header {
         max-width: 100%;
-        min-height: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         color: $title;
@@ -64,10 +67,30 @@ $prefix-cls-panel: #{$prefix}-panel;
         color: $content;
         padding: 8px;
         overflow: auto;
-        background-color: $white;
+        background-color: $componentBack;
     }
     &-disabled > &-header,
     &-disabled > &-content {
         color: $sub-content;
+    }
+}
+
+.#{$prefix-cls} {
+    &-size-small {
+        font-size: $subFont;
+        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+            height: 32px;
+        }
+    }
+    &-size-midiue {
+        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+            height: 42px;
+        }
+    }
+    &-size-large {
+        font-size: $titleFont;
+        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+            height: 48px;
+        }
     }
 }

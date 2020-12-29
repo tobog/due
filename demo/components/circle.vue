@@ -5,12 +5,13 @@
         <template slot="header">
             <h2>代码示例 (Circle 进度环)</h2>
             <h4 class="padding-top-10">
-                图表类组件。一般有两种用途：1.显示某项任务进度的百分比；2.统计某些指标的占比。
+                图表类组件。一般有两种用途：1.显示某项任务进度的百分比；2.统计某些指标的占比。 3.
+                Circle已被html默认标签，请勿自己使用，你可以使用dueCircle等方法修改组件名称
             </h4>
         </template>
         <template v-slot="config">
-            <vCircle v-model="val" v-bind="config">{{ config.percent }}%</vCircle>
-            <vCircle v-model="val" v-bind="config">
+            <vCircle v-bind="config">{{ config.percent }}%</vCircle>
+            <vCircle v-bind="config">
                 <vIcon type="ios-checkmark" size="60" style="color:#5cb85c"></vIcon>
             </vCircle>
             <vCircle v-bind="config" stroke-color="#ff5500">
@@ -24,15 +25,15 @@
 export default {
     data() {
         return {
-            val: 30,
+            val: 0,
             val2: [],
             val1: "",
-        };
+        }
     },
     methods: {},
     computed: {
         getCode() {
-            return `<Circle v-bind=CODE></Circle>`;
+            return `<Circle v-bind=CODE></Circle>`
         },
         getConfig() {
             return [
@@ -54,17 +55,18 @@ export default {
                     explain: "百分比",
                     dataType: "Number",
                     tag: "vInputNumber",
-                    default: "",
+                    default: 0,
                 },
                 {
                     showConfig: true,
-                    label: "宽高",
+                    label: "尺寸大小",
                     key: "size",
+                    tag: "vInput",
                     demoDefault: 120,
-                    explain: "宽高",
-                    dataType: "Number",
-                    tag: "vInputNumber",
+                    explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                    dataType: "String | Number",
                     default: 120,
+                    options: this.getSize,
                 },
                 {
                     showConfig: true,
@@ -81,27 +83,27 @@ export default {
                     label: "进度环颜色",
                     key: "strokeColor",
                     demoDefault: "#2db7f5",
-                    explain: "进度环颜色",
-                    dataType: "String",
+                    explain: "进度环颜色，当为数组是时[{percent:30,color:red}] 显示不同颜色",
+                    dataType: "String | Array",
                     tag: "vColorPicker",
                     default: "#2db7f5",
                 },
                 {
                     showConfig: true,
-                    label: "进度环颜色",
+                    label: "轨道颜色",
                     key: "trackColor",
                     demoDefault: "#eaeef2",
-                    explain: "进度环颜色",
+                    explain: "轨道颜色",
                     dataType: "String",
                     tag: "vColorPicker",
                     default: "#eaeef2",
                 },
                 {
                     showConfig: true,
-                    label: "进度环线宽",
+                    label: "轨道线宽",
                     key: "trackWidth",
                     demoDefault: 5,
-                    explain: "进度环线宽",
+                    explain: "轨道线宽",
                     dataType: "Number",
                     tag: "vInputNumber",
                     default: 5,
@@ -118,17 +120,6 @@ export default {
                     options: ["square", "round", "butt", "inherit"],
                 },
 
-                // {
-                //     showConfig: true,
-                //     label: "尺寸大小",
-                //     key: "size",
-                //     tag: "vInput",
-                //     demoDefault: 120,
-                //     explain: "设置大小，可选值为：small,normal(default),midiue,large,或者设置具体数值",
-                //     dataType: "String | Number",
-                //     default: "",
-                //     options: this.getSize,
-                // },
                 {
                     label: "表单名称",
                     key: "name",
@@ -143,8 +134,8 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

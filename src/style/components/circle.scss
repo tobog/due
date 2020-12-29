@@ -1,11 +1,16 @@
-$prefix-cls: #{$prefix}-svgcircle;
+$prefix-cls: #{$prefix}-circle;
 
 .#{$prefix-cls} {
+    @include baseStyle;
     display: inline-block;
     position: relative;
     z-index: 0;
     overflow: hidden;
-
+    background-color: transparent;
+    &-svg {
+        width: 120px;
+        height: 120px;
+    }
     &-inner {
         width: 100%;
         text-align: center;
@@ -14,5 +19,21 @@ $prefix-cls: #{$prefix}-svgcircle;
         top: 50%;
         transform: translateY(-50%) scale(1.2);
         line-height: 1;
+    }
+    &-size-small &-svg {
+        width: 100px;
+        height: 100px;
+    }
+    &-size-small &-svg {
+        width: 100px;
+        height: 100px;
+    }
+    &-size-midiue &-svg {
+        width: 140px;
+        height: 140px;
+    }
+    &-size-large &-svg {
+        width: 160px;
+        height: 160px;
     }
 }

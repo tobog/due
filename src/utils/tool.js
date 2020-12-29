@@ -29,6 +29,11 @@ export function parseNumber(val) {
     return val === val ? val : 0
 }
 
+export function isParseNumber(val) {
+    val = parseFloat(val)
+    return val === val
+}
+
 export function typeOf(data) {
     const toString = Object.prototype.toString,
         map = {
@@ -54,7 +59,7 @@ export function throttle(fn, wait = 1200, immediate) {
     const useRAF = !wait && wait !== 0 && typeof window.requestAnimationFrame === "function"
     let last = 0,
         timeout
-    const throttle = function(...args) {
+    const throttle = function (...args) {
         if (useRAF) {
             window.cancelAnimationFrame(timeout)
             return (timeout = window.requestAnimationFrame(() => {
@@ -82,7 +87,7 @@ export function throttle(fn, wait = 1200, immediate) {
         last = now
         fn.apply(this, args)
     }
-    throttle.cancel = function() {
+    throttle.cancel = function () {
         clearTimeout(timeout)
         window.cancelAnimationFrame(timeout)
         timeout = null
@@ -94,16 +99,16 @@ export function throttle(fn, wait = 1200, immediate) {
 export function debounce(fn, wait = 200, immediate) {
     if (typeof fn !== "function") throw "argument[0] must be the function"
     let timeout = null
-    const debounce = function(...args) {
+    const debounce = function (...args) {
         clearTimeout(timeout)
         const context = this
         if (immediate && !timeout) fn.apply(context, args)
-        timeout = setTimeout(function() {
+        timeout = setTimeout(function () {
             if (!immediate) fn.apply(context, args)
             timeout = null
         }, wait)
     }
-    debounce.cancel = function() {
+    debounce.cancel = function () {
         clearTimeout(timeout)
         timeout = null
     }
@@ -113,7 +118,7 @@ export function debounce(fn, wait = 200, immediate) {
 export function deepCopy(data, callback, env = "JS") {
     if (typeof callback !== "function") {
         env = callback
-        callback = function(key, val) {
+        callback = function (key, val) {
             return val
         }
     }
@@ -122,12 +127,12 @@ export function deepCopy(data, callback, env = "JS") {
         type = typeOf(data)
     if (type === "array") {
         target = []
-        data.forEach(function(val, index) {
+        data.forEach(function (val, index) {
             target.push(deepCopy(callback(index, val, this)))
         }, data)
     } else if (type === "object") {
         target = {}
-        Object.keys(data).forEach(function(key) {
+        Object.keys(data).forEach(function (key) {
             target[key] = deepCopy(callback(key, this[key], this))
         }, data)
     } else {
@@ -139,18 +144,18 @@ export function deepCopy(data, callback, env = "JS") {
 export function deepMerge(
     target,
     source,
-    callback = function(val) {
+    callback = function (val) {
         return val
     }
 ) {
     const targetType = typeOf(target),
         sourceType = typeOf(source)
     if (targetType === "object" && targetType === sourceType) {
-        Reflect.ownKeys(source).forEach(function(key) {
+        Reflect.ownKeys(source).forEach(function (key) {
             target[key] = deepMerge(target[key], this[key])
         }, source)
     } else if (targetType === "array" && targetType === sourceType) {
-        source.forEach(function(val, index) {
+        source.forEach(function (val, index) {
             target[index] = deepMerge(target[index], val)
         })
     } else {
