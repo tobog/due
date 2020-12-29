@@ -5,6 +5,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
     width: 240px;
     outline: 1px solid $border;
     overflow: hidden;
+    background-color: $white;
     &-basic {
         font-size: 0;
         padding-bottom: 60%;
@@ -90,7 +91,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
             overflow: visible;
             cursor: pointer !important;
             &:before {
-                content: '';
+                content: "";
                 display: inline-block;
                 width: 16px;
                 height: 16px;
@@ -265,7 +266,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
         padding: 6px 3px;
         border-top: 1px solid $border;
         & > *:last-child {
-            margin-left: 12px;
+            margin-left: 8px;
         }
     }
 }

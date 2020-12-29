@@ -11,7 +11,7 @@
     >
         <div ref="inner" :class="colorClasses" :style="getStyle">
             <div :class="[_tobogPrefix_ + '-input-inner']">
-                <span :style="{ backgroundColor: model }"> </span>
+                <span :style="{backgroundColor: model}"> </span>
                 <Icons :class="[_tobogPrefix_ + '-input-icon']" type="ios-arrow-down" center></Icons>
             </div>
         </div>
@@ -25,21 +25,23 @@
             @hook:created="ready = true"
         >
             <div v-if="!autoClose" :class="[_tobogPrefix_ + '-btn']">
-                <Button @click.stop="handleCancel">{{ langs("colorPicker.cancel", "取消") }}</Button>
-                <Button @click.stop="handleConfirm" theme="primary">{{ langs("colorPicker.confirm", "确定") }}</Button>
+                <Button size="small" @click.stop="handleCancel">{{ langs("colorPicker.cancel", "取消") }}</Button>
+                <Button size="small" @click.stop="handleConfirm" theme="primary">{{
+                    langs("colorPicker.confirm", "确定")
+                }}</Button>
             </div>
         </Color>
         <input v-if="name || name === 0" type="hidden" :value="model" />
     </DropBase>
 </template>
 <script>
-import DropBase from "../base/dropBase";
-import Color from "./index";
-import Button from "../button";
-import Icons from "../icons/index";
-import emitter from "../../utils/emitter";
-import { unit } from "../../utils/tool";
-import langMinix from "../../mixins/lang";
+import DropBase from "../base/dropBase"
+import Color from "./index"
+import Button from "../button"
+import Icons from "../icons/index"
+import emitter from "../../utils/emitter"
+import {unit} from "../../utils/tool"
+import langMinix from "../../mixins/lang"
 export default {
     name: "ColorPicker",
     mixins: [emitter, langMinix],
@@ -65,76 +67,76 @@ export default {
             model: this.value,
             visible: false,
             ready: false,
-        };
+        }
     },
     created() {
-        this.handleDispatch("on-validate", this.model);
+        this.handleDispatch("on-validate", this.model)
     },
     computed: {
         colorClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-input`,
                 {
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                 },
-            ];
+            ]
         },
         getStyle() {
-            let style = {};
-            let size = this.size;
+            let style = {}
+            let size = this.size
             if (size && size !== "auto") {
-                if (size === "small") size = 32;
-                if (size === "large") size = 52;
-                style.width = unit(size);
+                if (size === "small") size = 32
+                if (size === "large") size = 52
+                style.width = unit(size)
             }
-            return style;
+            return style
         },
     },
     methods: {
         handleCancel() {
-            this.model = this.value;
-            this.$emit("on-cancel", this.model);
-            this.visible = false;
+            this.model = this.value
+            this.$emit("on-cancel", this.model)
+            this.visible = false
         },
         handleConfirm() {
-            this.handleInput();
-            this.$emit("on-confirm", this.model);
-            this.visible = false;
+            this.handleInput()
+            this.$emit("on-confirm", this.model)
+            this.visible = false
         },
 
         handleInput() {
-            this.visible = false;
-            this.$emit("input", this.model);
-            this.$emit("on-change", this.model);
-            this.handleDispatch("on-validate", this.model);
+            this.visible = false
+            this.$emit("input", this.model)
+            this.$emit("on-change", this.model)
+            this.handleDispatch("on-validate", this.model)
         },
         handleVisibleChange(val) {
-            this.$emit("on-visible-change", val);
+            this.$emit("on-visible-change", val)
         },
         handleDispatch(...args) {
             if (this.__parentComponent__) {
-                this.__parentComponent__.$emit(...args);
+                this.__parentComponent__.$emit(...args)
             } else {
-                this.__parentComponent__ = this.dispatch("FormItem", ...args);
+                this.__parentComponent__ = this.dispatch("FormItem", ...args)
             }
         },
     },
     watch: {
         visible(val) {
-            if (val || this.value === this.model || this.autoClose) return;
-            this.model = this.value;
+            if (val || this.value === this.model || this.autoClose) return
+            this.model = this.value
         },
         model() {
-            if (this.disabled) return;
-            this.$emit("on-active-change", this.model);
-            if (!this.autoClose) return;
-            this.handleInput();
+            if (this.disabled) return
+            this.$emit("on-active-change", this.model)
+            if (!this.autoClose) return
+            this.handleInput()
         },
         value(val) {
-            if (val === this.model) return;
-            this.model = val;
+            if (val === this.model) return
+            this.model = val
         },
     },
-};
+}
 </script>

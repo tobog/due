@@ -123,11 +123,11 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "CollapseItem图标",
+                    label: "图标",
                     key: "icon",
                     demoDefault: "ios-arrow-forward",
-                    explain: "图标",
-                    dataType: "Boolean",
+                    explain: "CollapseItem图标",
+                    dataType: "String",
                     tag: "vSelect",
                     default: "ios-arrow-forward",
                     options: this.iconslist,
@@ -183,7 +183,7 @@ export default {
                 {
                     label: "事件",
                     key: "on-change",
-                    explain: "form 表单名称",
+                    explain: "v-model(on-change) 双向绑定",
                     dataType: "Function：Event",
                     default: "value=>{}",
                 },
