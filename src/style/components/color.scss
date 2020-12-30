@@ -6,6 +6,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
     outline: 1px solid $border;
     overflow: hidden;
     background-color: $white;
+    min-height: 270px;
     &-basic {
         font-size: 0;
         padding-bottom: 60%;
