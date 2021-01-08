@@ -3,116 +3,116 @@
  *
  * @class clipBoard
  */
-// class clipBoard {
-//     constructor(element, options) {
-//         this.options = options || {}
-//         this.ele = element
-//         if (this.options.copy) {
-//             this.copyd()
-//         }
-//         if (this.options.cut) {
-//             this.cut()
-//         }
-//         if (this.options.paste) {
-//             this.paste()
-//         }
-//     }
-//     async copyd(value) {
-//         if (typeof this.options.beforeCopy === "function") {
-//             await this.options.beforeCopy()
-//         }
-//         value = value || this.ele.value || this.ele.innerText
-//         if (this.options.copy) {
-//             value = await this.options.copy()
-//         }
-//         // for modern browsers
-//         if (document.execCommand) {
-//             let element = document.createElement("SPAN")
-//             element.textContent = value
-//             element.style.position = "absolute"
-//             element.style.zIndex = -100
-//             element.style.opacity = -0
-//             document.body.appendChild(element)
-//             if (document.selection) {
-//                 let range = document.body.createTextRange()
-//                 range.moveToElementText(element)
-//                 range.select()
-//             } else if (window.getSelection) {
-//                 let range = document.createRange()
-//                 range.selectNode(element)
-//                 window.getSelection().removeAllRanges()
-//                 window.getSelection().addRange(range)
-//             }
-//             document.execCommand("copy")
-//             document.body.removeChild(element)
-//         }
-//         // for ie
-//         if (window.clipboardData) {
-//             window.clipboardData.setData("text", value)
-//         }
-//         // after copy
-//         if (typeof this.options.afterCopy) {
-//             await this.options.afterCopy()
-//         }
-//     }
-//     async cut() {
-//         if (this.ele.type !== "text" && this.ele.type !== "textarea") {
-//             return
-//         }
-//         if (typeof this.options.beforeCut) {
-//             await this.options.beforeCut()
-//         }
-//         if (document.execCommand) {
-//             if (document.selection) {
-//                 let range = document.body.createTextRange()
-//                 range.moveToElementText(this.ele)
-//                 range.select()
-//             } else if (window.getSelection) {
-//                 this.ele.select()
-//             }
-//             document.execCommand("cut")
-//         }
-//         // for ie
-//         if (window.clipboardData) {
-//             window.clipboardData.setData("text", this.ele.value)
-//             this.ele.value = ""
-//         }
-//         // after cur=t
-//         if (typeof this.options.afterCut) {
-//             await this.options.afterCut()
-//         }
-//     }
-//     async paste() {
-//         if (this.ele.type !== "text" && this.ele.type !== "textarea") {
-//             return
-//         }
-//         if (typeof this.options.beforePaste) {
-//             await this.options.beforePaste()
-//         }
-//         if (document.execCommand) {
-//             let element = this.ele
-//             if (element.setSelectionRange) {
-//                 element.focus()
-//                 element.setSelectionRange(element.value.length, element.value.length)
-//             } else if (element.createTextRange) {
-//                 let range = element.createTextRange()
-//                 range.collapse(true)
-//                 range.moveEnd("character", element.value.length)
-//                 range.moveStart("character", element.value.length)
-//                 range.select()
-//             }
-//             document.execCommand("paste")
-//         }
-//         // for ie
-//         if (!document.execCommand && window.clipboardData) {
-//             this.ele.value += window.clipboardData.getData("text")
-//         }
-//         // after Paste
-//         if (typeof this.options.afterPaste) {
-//             await this.options.afterPaste()
-//         }
-//     }
-// }
+class clipBoard1 {
+    constructor(element, options) {
+        this.options = options || {}
+        this.ele = element
+        if (this.options.copy) {
+            this.copyd()
+        }
+        if (this.options.cut) {
+            this.cut()
+        }
+        if (this.options.paste) {
+            this.paste()
+        }
+    }
+    async copyd(value) {
+        if (typeof this.options.beforeCopy === "function") {
+            await this.options.beforeCopy()
+        }
+        value = value || this.ele.value || this.ele.innerText
+        if (this.options.copy) {
+            value = await this.options.copy()
+        }
+        // for modern browsers
+        if (document.execCommand) {
+            let element = document.createElement("SPAN")
+            element.textContent = value
+            element.style.position = "absolute"
+            element.style.zIndex = -100
+            element.style.opacity = -0
+            document.body.appendChild(element)
+            if (document.selection) {
+                let range = document.body.createTextRange()
+                range.moveToElementText(element)
+                range.select()
+            } else if (window.getSelection) {
+                let range = document.createRange()
+                range.selectNode(element)
+                window.getSelection().removeAllRanges()
+                window.getSelection().addRange(range)
+            }
+            document.execCommand("copy")
+            document.body.removeChild(element)
+        }
+        // for ie
+        if (window.clipboardData) {
+            window.clipboardData.setData("text", value)
+        }
+        // after copy
+        if (typeof this.options.afterCopy) {
+            await this.options.afterCopy()
+        }
+    }
+    async cut() {
+        if (this.ele.type !== "text" && this.ele.type !== "textarea") {
+            return
+        }
+        if (typeof this.options.beforeCut) {
+            await this.options.beforeCut()
+        }
+        if (document.execCommand) {
+            if (document.selection) {
+                let range = document.body.createTextRange()
+                range.moveToElementText(this.ele)
+                range.select()
+            } else if (window.getSelection) {
+                this.ele.select()
+            }
+            document.execCommand("cut")
+        }
+        // for ie
+        if (window.clipboardData) {
+            window.clipboardData.setData("text", this.ele.value)
+            this.ele.value = ""
+        }
+        // after cur=t
+        if (typeof this.options.afterCut) {
+            await this.options.afterCut()
+        }
+    }
+    async paste() {
+        if (this.ele.type !== "text" && this.ele.type !== "textarea") {
+            return
+        }
+        if (typeof this.options.beforePaste) {
+            await this.options.beforePaste()
+        }
+        if (document.execCommand) {
+            let element = this.ele
+            if (element.setSelectionRange) {
+                element.focus()
+                element.setSelectionRange(element.value.length, element.value.length)
+            } else if (element.createTextRange) {
+                let range = element.createTextRange()
+                range.collapse(true)
+                range.moveEnd("character", element.value.length)
+                range.moveStart("character", element.value.length)
+                range.select()
+            }
+            document.execCommand("paste")
+        }
+        // for ie
+        if (!document.execCommand && window.clipboardData) {
+            this.ele.value += window.clipboardData.getData("text")
+        }
+        // after Paste
+        if (typeof this.options.afterPaste) {
+            await this.options.afterPaste()
+        }
+    }
+}
 
 class ClipboardAction {
     constructor(options) {
@@ -271,7 +271,6 @@ class Clipboard {
     }
     defaultTarget(trigger) {
         const selector = getAttributeValue("target", trigger)
-
         if (selector) {
             return document.querySelector(selector)
         }
