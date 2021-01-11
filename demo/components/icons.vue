@@ -18,6 +18,9 @@
         &:hover {
             background: #ebf7ff;
         }
+        /deep/ .due-icons {
+            font-size: 26px;
+        }
     }
 }
 </style>
@@ -88,19 +91,19 @@ export default {
     data() {
         return {
             iconName: "",
-        };
+        }
     },
     computed: {
         getFilterIcon() {
-            if (!this.iconName) return this.iconslist;
-            return this.iconslist.filter((item) => item.indexOf(this.iconName) > -1);
+            if (!this.iconName) return this.iconslist
+            return this.iconslist.filter((item) => item.indexOf(this.iconName) > -1)
         },
         getCode() {
             return `<vIcon v-bind="${this.getCodeString(this.formData)}">vIcon</vIcon>
 					<vIcon
 						style="width:90px"
 						type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-					></vIcon>`;
+					></vIcon>`
         },
         getBase() {
             return [
@@ -131,7 +134,7 @@ export default {
                     default: "ios-archive-outline",
                     options: this.iconslist,
                 },
-            ];
+            ]
         },
         compProps() {
             return [
@@ -165,8 +168,8 @@ export default {
                     type: "VNode",
                     default: "-",
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

@@ -6,6 +6,7 @@
         :transfer="transfer"
         :disabled="disabled"
         :class="[_tobogPrefix_]"
+        :dropClass="[_tobogPrefix_ + '-drop']"
         :data-vue-module="$options.name"
         @on-visible-change="handleVisibleChange"
     >
@@ -14,6 +15,7 @@
                 <span :style="{backgroundColor: model}"> </span>
                 <Icons :class="[_tobogPrefix_ + '-input-icon']" type="ios-arrow-down" center></Icons>
             </div>
+            <!-- <Icons v-if="!clearable" :class="[_tobogPrefix_ + '-clear-icon']" type="ios-close" @click="handleClear"></Icons> -->
         </div>
         <Color
             slot="drop"
@@ -44,6 +46,7 @@ import {unit} from "../../utils/tool"
 import langMinix from "../../mixins/lang"
 export default {
     name: "ColorPicker",
+    componentName: "ColorPicker",
     mixins: [emitter, langMinix],
     components: {
         DropBase,
@@ -61,6 +64,7 @@ export default {
         transfer: Boolean,
         name: String,
         autoClose: Boolean,
+        // clearable: Boolean,
     },
     data() {
         return {
@@ -94,6 +98,10 @@ export default {
         },
     },
     methods: {
+        // handleClear(){
+        //     this.model = ''
+        //     this.$emit("on-clear")
+        // },
         handleCancel() {
             this.model = this.value
             this.$emit("on-cancel", this.model)

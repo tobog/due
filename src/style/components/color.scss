@@ -5,7 +5,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
     width: 240px;
     outline: 1px solid $border;
     overflow: hidden;
-    background-color: $white;
+    background-color: $componentBack;
     min-height: 270px;
     &-basic {
         font-size: 0;
@@ -57,11 +57,21 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
         background-position: 0 0, 6px 6px;
         background-size: 2 * 6px 2 * 6px;
         & > span {
-            display: inline-block;
+            display: inline-flex;
             width: 100%;
             height: 100%;
             border-radius: inherit;
+            justify-content: center;
+            align-items: center;
+            &:hover .#{$prefix-cls}-copy {
+                color: $white;
+                opacity: 1;
+            }
         }
+    }
+    &-copy {
+        opacity: 0;
+        // transition: all 0.2s;
     }
     &-sliders {
         flex: auto;
@@ -224,6 +234,9 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
 .#{$prefix-cls-picker} {
     display: inline-block;
     position: relative;
+    &-drop {
+        overflow: visible;
+    }
     &-input {
         display: inline-block;
         box-sizing: border-box;
@@ -257,6 +270,17 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+    }
+    &-clear-icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.5em;
+        transform: translate(40%, -40%);
+        display: none;
+    }
+    &-input:hover &-clear-icon {
+        display: block;
     }
     &-disabled {
         cursor: not-allowed;

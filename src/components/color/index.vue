@@ -8,9 +8,14 @@
         <div :class="[_tobogPrefix_ + `-inner`]">
             <div :class="[_tobogPrefix_ + `-demo`]">
                 <span
+                    ref="copy"
+                    :data-clipboard-text="getModel"
                     :style="{
                         background: `rgba(${getRGBA[0]},${getRGBA[1]},${getRGBA[2]},${getRGBA[3]})`,
                     }"
+                    @mouseleave="copySuccessed = false"
+                >
+                    <Icons :type="copySuccessed ? 'checkmark' : 'copy'" :class="[_tobogPrefix_ + `-copy`]"></Icons
                 ></span>
             </div>
             <div :class="[_tobogPrefix_ + `-sliders`]">
@@ -61,8 +66,14 @@
 <script>
 import {DragMove} from "../../utils/dom"
 import Color from "../../utils/color"
+import Clipboard from "../../utils/clipBoard"
+import Icons from "../icons"
 export default {
     name: "Color",
+    componentName: "Color",
+    components: {
+        Icons,
+    },
     props: {
         value: String,
         type: String, //hex,rgb,hsl,hsv,
@@ -74,12 +85,20 @@ export default {
             model: [0, 100, 100, 1], //hsva
             ready: false,
             demoType: this.type || "rgb",
+            copySuccessed: false,
         }
     },
     mounted() {
         this.$nextTick(() => {
             this.dragMove()
             this.ready = true
+            this._clipBoard = new Clipboard(this.$refs.copy, {
+                container: this.$el,
+                copy: (value) => {
+                    console.log(value, "copySuccessed---------")
+                    this.copySuccessed = true
+                },
+            })
         })
     },
     computed: {
@@ -248,8 +267,8 @@ export default {
             handler(value) {
                 // 纠正Color 类转化不精确问题
                 if (this.__innerModel === value) return
-                console.log(this.value, "------------")
-                const val = Color.parse(this.value || "", "hsva")
+                console.log(value, "------------")
+                const val = Color.parse(value || "", "hsva")
                 if (val.join("") === this.model.join("") || val.length < 3) return
                 this.model = val
             },
@@ -271,7 +290,8 @@ export default {
         this._colorDragMove && this._colorDragMove.destroy()
         this._alphaDragMove && this._alphaDragMove.destroy()
         this._basicDragMove && this._basicDragMove.destroy()
-        this._colorDragMove = this._alphaDragMove = this._basicDragMove = null
+        this._clipBoard && this._clipBoard.destroy()
+        this._clipBoard = this._colorDragMove = this._alphaDragMove = this._basicDragMove = null
     },
 }
 </script>

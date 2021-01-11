@@ -20,7 +20,7 @@
 export default {
     data() {
         return {
-            val: 0,
+            value: '0',
         }
     },
     methods: {},

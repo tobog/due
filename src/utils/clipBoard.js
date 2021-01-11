@@ -1,248 +1,21 @@
-/**
- *
- *
- * @class clipBoard
- */
-class clipBoard1 {
-    constructor(element, options) {
-        this.options = options || {}
-        this.ele = element
-        if (this.options.copy) {
-            this.copyd()
-        }
-        if (this.options.cut) {
-            this.cut()
-        }
-        if (this.options.paste) {
-            this.paste()
-        }
-    }
-    async copyd(value) {
-        if (typeof this.options.beforeCopy === "function") {
-            await this.options.beforeCopy()
-        }
-        value = value || this.ele.value || this.ele.innerText
-        if (this.options.copy) {
-            value = await this.options.copy()
-        }
-        // for modern browsers
-        if (document.execCommand) {
-            let element = document.createElement("SPAN")
-            element.textContent = value
-            element.style.position = "absolute"
-            element.style.zIndex = -100
-            element.style.opacity = -0
-            document.body.appendChild(element)
-            if (document.selection) {
-                let range = document.body.createTextRange()
-                range.moveToElementText(element)
-                range.select()
-            } else if (window.getSelection) {
-                let range = document.createRange()
-                range.selectNode(element)
-                window.getSelection().removeAllRanges()
-                window.getSelection().addRange(range)
-            }
-            document.execCommand("copy")
-            document.body.removeChild(element)
-        }
-        // for ie
-        if (window.clipboardData) {
-            window.clipboardData.setData("text", value)
-        }
-        // after copy
-        if (typeof this.options.afterCopy) {
-            await this.options.afterCopy()
-        }
-    }
-    async cut() {
-        if (this.ele.type !== "text" && this.ele.type !== "textarea") {
-            return
-        }
-        if (typeof this.options.beforeCut) {
-            await this.options.beforeCut()
-        }
-        if (document.execCommand) {
-            if (document.selection) {
-                let range = document.body.createTextRange()
-                range.moveToElementText(this.ele)
-                range.select()
-            } else if (window.getSelection) {
-                this.ele.select()
-            }
-            document.execCommand("cut")
-        }
-        // for ie
-        if (window.clipboardData) {
-            window.clipboardData.setData("text", this.ele.value)
-            this.ele.value = ""
-        }
-        // after cur=t
-        if (typeof this.options.afterCut) {
-            await this.options.afterCut()
-        }
-    }
-    async paste() {
-        if (this.ele.type !== "text" && this.ele.type !== "textarea") {
-            return
-        }
-        if (typeof this.options.beforePaste) {
-            await this.options.beforePaste()
-        }
-        if (document.execCommand) {
-            let element = this.ele
-            if (element.setSelectionRange) {
-                element.focus()
-                element.setSelectionRange(element.value.length, element.value.length)
-            } else if (element.createTextRange) {
-                let range = element.createTextRange()
-                range.collapse(true)
-                range.moveEnd("character", element.value.length)
-                range.moveStart("character", element.value.length)
-                range.select()
-            }
-            document.execCommand("paste")
-        }
-        // for ie
-        if (!document.execCommand && window.clipboardData) {
-            this.ele.value += window.clipboardData.getData("text")
-        }
-        // after Paste
-        if (typeof this.options.afterPaste) {
-            await this.options.afterPaste()
-        }
-    }
-}
-
-class ClipboardAction {
-    constructor(options) {
-        this.resolveOptions(options)
-        this.initSelection()
+import { EventListener } from './dom'
+export default class Clipboard {
+    constructor (trigger, options) {
+        this.events = {};
+        this.resolveOptions(options);
+        this.onClick = this.onClick.bind(this);
+        this.listenClick(trigger);
     }
     resolveOptions(options = {}) {
-        this.action = options.action
-        this.container = options.container
-        this.emitter = options.emitter
-        this.target = options.target
-        this.text = options.text
-        this.trigger = options.trigger
-        this.selectedText = ""
-    }
-    select(ele) {
-        let succeeded
-        let value = this.text ? this.text : ele.value || ele.innerText
-        if (document.execCommand) {
-            this.fakeElem = document.createElement("textarea")
-            this.fakeElem.style.position = "fixed"
-            this.fakeElem.style.zIndex = -99999
-            this.fakeElem.style.opacity = 0
-            this.fakeElem.style.height = 0
-            this.fakeElem.style.width = 0
-            this.fakeElem.style.overflow = "hidden"
-            this.fakeElem.setAttribute("readonly", "")
-            this.fakeElem.value = value
-            this.container.appendChild(this.fakeElem)
-            if (document.selection) {
-                let range = document.body.createTextRange()
-                range.moveToElementText(this.fakeElem)
-                range.select()
-            } else if (window.getSelection) {
-                let range = document.createRange()
-                range.selectNode(this.fakeElem)
-                window.getSelection().removeAllRanges()
-                window.getSelection().addRange(range)
-            }
-            try {
-                succeeded = document.execCommand(this.action)
-            } catch (err) {
-                succeeded = false
-            }
-        } else if (window.clipboardData) {
-            window.clipboardData.setData("text", value)
-            succeeded = true
-        }
-        this.handleResult(succeeded);
-    }
-    selectFake() {
-        this.removeFake()
-        this.fakeHandlerCallback = () => this.removeFake()
-        this.fakeHandler = this.container.addEventListener("click", this.fakeHandlerCallback) || true
-        this.selectedText = this.select(this.fakeElem)
-    }
-    removeFake() {
-        if (this.fakeHandler) {
-            this.container.removeEventListener("click", this.fakeHandlerCallback)
-            this.fakeHandler = null
-            this.fakeHandlerCallback = null
-        }
-
-        if (this.fakeElem) {
-            this.container.removeChild(this.fakeElem)
-            this.fakeElem = null
-        }
-    }
-    handleResult(succeeded) {
-        this.emitter.emit(succeeded ? "success" : "error", {
-            action: this.action,
-            text: this.selectedText,
-            trigger: this.trigger,
-            clearSelection: this.clearSelection.bind(this),
-        })
-    }
-    clearSelection() {
-        if (this.trigger) {
-            this.trigger.focus()
-        }
-        document.activeElement.blur()
-        window.getSelection().removeAllRanges()
-    }
-    set action(action = "copy") {
-        this._action = action
-
-        if (this._action !== "copy" && this._action !== "cut") {
-            throw new Error('Invalid "action" value, use either "copy" or "cut"')
-        }
-    }
-    get action() {
-        return this._action
-    }
-    set target(target) {
-        if (target !== undefined) {
-            if (target && typeof target === "object" && target.nodeType === 1) {
-                if (this.action === "copy" && target.hasAttribute("disabled")) {
-                    throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute')
-                }
-
-                if (this.action === "cut" && (target.hasAttribute("readonly") || target.hasAttribute("disabled"))) {
-                    throw new Error(
-                        'Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes'
-                    )
-                }
-
-                this._target = target
-            } else {
-                throw new Error('Invalid "target" value, use a valid Element')
-            }
-        }
-    }
-    get target() {
-        return this._target
-    }
-    destroy() {
-        this.removeFake()
-    }
-}
-
-class Clipboard {
-    constructor(trigger, options) {
-        this.resolveOptions(options)
-        this.listenClick(trigger)
-    }
-    resolveOptions(options = {}) {
+        this.container = typeof options.container === "object" ? options.container : document.body;
         this.action = typeof options.action === "function" ? options.action : this.defaultAction
         this.target = typeof options.target === "function" ? options.target : this.defaultTarget
-        this.text = typeof options.text === "function" ? options.text : this.defaultText
-        this.container = typeof options.container === "object" ? options.container : document.body
+        this.text = typeof options.text === "function" ? options.text : this.defaultText;
+        const events = ['copy', 'cut', 'paste', 'beforeCopy', 'beforeCut', 'beforePaste'];
+        events.forEach((key) => {
+            this.on(key, options[key])
+        });
+
     }
     static isSupported(action = ["copy", "cut"]) {
         const actions = typeof action === "string" ? [action] : action
@@ -253,39 +26,187 @@ class Clipboard {
         return support
     }
     onClick(e) {
-        const trigger = e.delegateTarget || e.currentTarget
-        if (this.clipboardAction) {
-            this.clipboardAction = null
+        const trigger = e.delegateTarget || e.currentTarget;
+        console.log(e)
+        const action = this.action(trigger) || 'copy';
+        const text = this.text(trigger);
+        const target = this.target(trigger, this.container);
+        if (action === 'copy') {
+            this.copy(text || target)
+        } else if (action === 'cut') {
+            this.cut(target)
+        } else if (action === 'paste') {
+            this.paste(target)
         }
-        this.clipboardAction = new ClipboardAction({
-            action: this.action(trigger),
-            target: this.target(trigger),
-            text: this.text(trigger),
-            container: this.container,
-            trigger: trigger,
-            emitter: this,
-        })
+    }
+    copy(value) {
+        let succeeded;
+        this._emit('beforeCopy');
+        if (value instanceof HTMLElement) {
+            value = value.value || value.innerText;
+        }
+        if (document.execCommand) {
+            const fakeEle = createFakeEle(value)
+            this.container.appendChild(fakeEle)
+            if (document.selection) {
+                let range = document.body.createTextRange()
+                range.moveToElementText(fakeEle)
+                range.select()
+            } else if (window.getSelection) {
+                let range = document.createRange()
+                range.selectNode(fakeEle)
+                window.getSelection().removeAllRanges()
+                window.getSelection().addRange(range)
+            }
+            try {
+                succeeded = document.execCommand("copy")
+            } catch (err) {
+                succeeded = false
+            }
+            this.container.removeChild(fakeEle)
+        } else if (window.clipboardData) {
+            succeeded = window.clipboardData.setData("text", value)
+        }
+        this._emit(succeeded ? 'copy' : 'error', value);
+        return succeeded;
+    }
+    cut(ele) {
+        if (!ele) return;
+        this._emit('beforeCut');
+        let element = ele, isFakeEle = false, succeeded;
+        if (element.type !== "text" && element.type !== "textarea") {
+            element = createFakeEle(ele.value || ele.innerText);
+            isFakeEle = true;
+            this.container.appendChild(element);
+        }
+        let value = element.value;
+        if (document.execCommand) {
+            if (document.selection) {
+                let range = document.body.createTextRange()
+                range.moveToElementText(element)
+                range.select()
+            } else if (window.getSelection) {
+                let range = document.createRange()
+                range.selectNode(element)
+                window.getSelection().removeAllRanges()
+                window.getSelection().addRange(range)
+            }
+            try {
+                succeeded = document.execCommand("cut");
+                isFakeEle && (ele.innerHTML = '');
+            } catch (err) {
+                succeeded = false
+            }
+        } else if (window.clipboardData) {
+            succeeded == window.clipboardData.setData("text", value)
+            ele[isFakeEle ? 'innerHTML' : 'value'] = '';
+        }
+        isFakeEle && this.container.removeChild(element);
+        this._emit(succeeded ? 'cut' : 'error', value);
+        return succeeded;
+    }
+    paste(ele) {
+        if (!ele) return;
+        let succeeded;
+        this._emit('beforePaste')
+        if (document.execCommand) {
+            let element = null;
+            if (!ele.setSelectionRange && !ele.createTextRange) {
+                element = createFakeEle('');;
+                this.container.appendChild(element);
+            }
+            if (ele.setSelectionRange) {
+                ele.focus()
+                ele.setSelectionRange(ele.value.length, ele.value.length)
+            } else if (ele.createTextRange) {
+                let range = ele.createTextRange()
+                range.collapse(true)
+                range.moveEnd("character", ele.value.length)
+                range.moveStart("character", ele.value.length)
+                range.select()
+            }
+            try {
+                succeeded = document.execCommand("paste")
+            } catch (err) {
+                succeeded = false
+            }
+            if (element && succeeded) {
+                ele.innerText = element.value;
+                this.container.removeChild(element);
+            }
+
+        } else if (window.clipboardData) {
+            const value = window.clipboardData.getData("text")
+            if (ele.type !== "text" && ele.type !== "textarea") {
+                ele.innerText = value;
+            } else {
+                ele.value += value;
+            }
+            succeeded = true;
+        }
+        this._emit(succeeded ? 'paste' : 'error', ele.value || ele.innerText);
+        return succeeded;
     }
     defaultAction(trigger) {
         return getAttributeValue("action", trigger)
     }
-    defaultTarget(trigger) {
+    defaultTarget(trigger, container) {
         const selector = getAttributeValue("target", trigger)
         if (selector) {
-            return document.querySelector(selector)
+            return (container || document).querySelector(selector)
         }
     }
     defaultText(trigger) {
         return getAttributeValue("text", trigger)
     }
-    destroy() {
-        this.listener.destroy()
+    on(eventName, fn) {
+        if (typeof fn === 'function') {
+            if (this.events[eventName]) {
+                this.events[eventName].push(fn)
 
-        if (this.clipboardAction) {
-            this.clipboardAction.destroy()
-            this.clipboardAction = null
+            } else {
+                this.events[eventName] = [fn];
+            }
         }
     }
+    _emit(eventName, ...args) {
+        const fns = this.events[eventName];
+        if (fns) {
+            for (let index = 0, len = fns.length; index < len; index++) {
+                fns[index].call(this, ...args);
+            }
+        }
+    }
+    listenClick(trigger) {
+        this.destroy();
+        this._trigger = trigger;
+        EventListener.on(this._trigger, 'click', this.onClick);
+    }
+    destroy() {
+        if (!this._trigger) return
+        EventListener.off(this._trigger, 'click', this.onClick);
+        this._trigger = null;
+    }
+}
+
+
+
+/**
+ * Helper function to retrieve attribute value.
+ * @param {String} value
+ * @return {Element} element
+ */
+function createFakeEle(value) {
+    const fakeEle = document.createElement("textarea")
+    fakeEle.style.position = "absolute"
+    fakeEle.style.zIndex = -99999
+    fakeEle.style.opacity = 0
+    fakeEle.style.height = 0
+    fakeEle.style.width = 0
+    fakeEle.style.overflow = "hidden"
+    fakeEle.setAttribute("readonly", "")
+    fakeEle.value = value;
+    return fakeEle;
 }
 
 /**

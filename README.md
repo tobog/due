@@ -1,3 +1,4 @@
+
 # youe
 
 ## http://www.tobog.cn/youe/index.html#/
@@ -80,3 +81,4 @@ media  整体组件
 1. 统一所有组件theme和color
 2. 在已有选项的条件下,接口搜索更新备选数据后,选中变化和没有变化下如何处理老数据已有的选中的选项
 3. 添加transfer全局变量
+4. canvas 图片跨域
