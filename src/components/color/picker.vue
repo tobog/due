@@ -42,12 +42,13 @@ import Color from "./index"
 import Button from "../button"
 import Icons from "../icons/index"
 import emitter from "../../utils/emitter"
-import {unit} from "../../utils/tool"
+import {unit,isParseNumber} from "../../utils/tool"
 import langMinix from "../../mixins/lang"
+import globalMixin from "../../mixins/global"
 export default {
     name: "ColorPicker",
     componentName: "ColorPicker",
-    mixins: [emitter, langMinix],
+    mixins: [emitter, langMinix, globalMixin],
     components: {
         DropBase,
         Color,
@@ -78,21 +79,20 @@ export default {
     },
     computed: {
         colorClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_
+            const _tobogPrefix_ = this._tobogPrefix_,
+                size = this.getGlobalData("size");
             return [
                 `${_tobogPrefix_}-input`,
                 {
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                 },
             ]
         },
         getStyle() {
             let style = {}
-            let size = this.size
-            if (size && size !== "auto") {
-                if (size === "small") size = 32
-                if (size === "large") size = 52
-                style.width = unit(size)
+            if (isParseNumber(this.size)) {
+                style.width = unit(this.size)
             }
             return style
         },
