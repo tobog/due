@@ -16,33 +16,19 @@ export default {
         format: String,
         showWeek: Boolean,
         firstDayOfWeek: Number,
+        formatter: Function
     },
     data() {
         return {
-            focusDate: {}
+
         };
     },
     computed: {
-        isDay() {
-            return this.status === 'day'
-        },
-        isMonth() {
-            return this.status === 'month'
-        },
-        isYear() {
-            return this.status === 'year'
-        },
-        isTimes() {
-            return this.status === 'times'
-        },
         wrapClasses() {
             return this._tobogPrefix_ + this.prefix;
         },
         hasSectionMethod() {
             return typeof this.sectionMethod === "function";
-        },
-        dateslen() {
-            return this.dates.length;
         },
         linkedDates() {
             let dates = [];
@@ -57,22 +43,19 @@ export default {
         }
     },
     methods: {
-        handleEqual: compareEqual,
+        handleFormatter(val, cell, type) {
+            return typeof this.formatter === 'function' ? this.formatter(val, cell, type) : val
+        },
+        // handleEqual: compareEqual,
         handleCell(date, type) {
-            // date.day == 13 && console.log(date.day, this.linkedDates, this.handleSelected(date, type))
             return {
                 date,
-                selected: this.handleSelected(date, type),
+                selected: this.linkedDates.some(item =>  compareEqual(item, type, date)),
                 disabled: this.hasSectionMethod && this.sectionMethod({ ...date }, type),
                 inRange: this.handleSection(date, this.rangeDate),
-                now: this.handleEqual(date, type, this.today),
-                focus: this.handleEqual(date, type, this.foucsDate)
+                now: compareEqual(date, type, this.today),
+                focus: compareEqual(date, type, this.foucsDate)
             };
-        },
-        handleSelected(date, type) {
-            return this.linkedDates.some(item => {
-                return this.handleEqual(item, type, date);
-            });
         },
         handleSection(date, compare) {
             if (

@@ -82,3 +82,15 @@ media  整体组件
 2. 在已有选项的条件下,接口搜索更新备选数据后,选中变化和没有变化下如何处理老数据已有的选中的选项
 3. 添加transfer全局变量
 4. canvas 图片跨域
+
+
+
+## 其他重要任务
+1. mobile react components
+1. react components
+2. mobile vue components ***
+3. mobile flutter components ***
+4. 在线面试
+5. 类似jenkins
+6. vscode - fecs 格式化 **
+7. chorme - cookie 代理 **

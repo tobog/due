@@ -1,20 +1,26 @@
 <template>
     <div :class="wrapClasses">
-        <span :class="getCellCls(cell)" v-for="cell in cells" @click="handleClick(cell, 'day')">
-            <em>{{ langs('datepicker.month', cell.date.month + '月', { month: cell.date.month }) }}</em>
+        <span :class="getCellCls(cell)" v-for="cell in cells" @click="handleClick(cell, 'day')" :key="cell.date.month">
+            <em>{{
+                handleFormatter(
+                    langs("datepicker.month", cell.date.month + "月", {month: cell.date.month}),
+                    cell,
+                    "month"
+                )
+            }}</em>
         </span>
     </div>
 </template>
 
 <script>
-import mixins from './mixins';
-
+import mixins from "./mixins"
 export default {
-    name: 'Date',
+    name: "Date",
+    componentName: "DateMonth",
     mixins: [mixins],
     computed: {
         cells() {
-            const cells = [];
+            const cells = []
             for (let index = 1; index < 13; index++) {
                 cells.push(
                     this.handleCell(
@@ -22,12 +28,12 @@ export default {
                             ...this.calendar,
                             month: index,
                         },
-                        'month'
+                        "month"
                     )
-                );
+                )
             }
-            return cells;
+            return cells
         },
     },
-};
+}
 </script>
