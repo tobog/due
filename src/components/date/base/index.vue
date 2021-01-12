@@ -1,6 +1,6 @@
 <template>
     <div :class="wrapClasses" :data-vue-module="$options.name">
-        <Header :status="status" :calendar="initCalendar" @on-selected="selected" />
+        <Header  :minDate="minDate" :maxDate="maxDate"  :status="status" :calendar="initCalendar" @on-selected="selected" />
         <component
             v-if="status !== 'times'"
             :class="[_tobogPrefix_ + '-content']"

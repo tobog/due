@@ -9,7 +9,7 @@
         <template v-slot="config">
             <vDatePanel :options="{shortcuts}" v-model="value1" v-bind="config"></vDatePanel>
             <!-- <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker> -->
-            {{value1}}-{{value}}
+            <div>{{ value1 }}-{{ value }}</div>
         </template>
     </Demo>
 </template>
@@ -19,7 +19,7 @@ export default {
     data() {
         return {
             value: "",
-            value1:'',
+            value1: "",
             shortcuts: [
                 {
                     text: "Today",

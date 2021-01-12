@@ -16,7 +16,9 @@ export default {
         format: String,
         showWeek: Boolean,
         firstDayOfWeek: Number,
-        formatter: Function
+        cellFormatter: Function,
+        minDate: [String, Date],
+        maxDate: [String, Date],
     },
     data() {
         return {
@@ -44,7 +46,7 @@ export default {
     },
     methods: {
         handleFormatter(val, cell, type) {
-            return typeof this.formatter === 'function' ? this.formatter(val, cell, type) : val
+            return typeof this.cellFormatter === 'function' ? this.cellFormatter(val, cell, type) : val
         },
         // handleEqual: compareEqual,
         handleCell(date, type) {
