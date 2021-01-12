@@ -6,7 +6,7 @@ export default {
         },
     },
     props: {
-        size: String, // small normal(default),midiue,large
+        size: String, // small normal(default),medium,large
         theme: String,
     },
     methods: {

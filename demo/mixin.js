@@ -994,7 +994,7 @@ export default {
             return ["xs", "sm", "md", "lg", "xl", "xxl"];
         },
         getSize() {
-            return ["small", "normal", "midiue", "large"];
+            return ["small", "normal", "medium", "large"];
         },
     },
 };

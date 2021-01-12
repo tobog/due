@@ -294,4 +294,15 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
             margin-left: 8px;
         }
     }
+
+    &-size-small#{&}-input {
+        width: 32px;
+    }
+    &-size-medium#{&}-input {
+        width: 42px;
+    }
+    &-size-large#{&}-input {
+        width: 46px;
+        padding: 5px;
+    }
 }

@@ -3,12 +3,12 @@ import Vue from 'vue';
 
 export { Affix } from './affix';
 export { Alert } from './alert';
-export { Anchor, AnchorLink } from './anchor';
+export { Anchor } from './anchor';
 export { AutoComplete } from './auto-complete';
 export { Avatar } from './avatar';
 export { BackTop } from './back-top';
 export { Badge } from './badge';
-export { Breadcrumb, BreadcrumbItem } from './breadcrumb';
+export { Bread, BreadItem } from './breadcrumb';
 export { Button, ButtonGroup } from './button';
 export { Card } from './card';
 export { Carousel, CarouselItem } from './carousel';

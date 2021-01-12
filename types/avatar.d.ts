@@ -7,10 +7,10 @@ export declare class Avatar extends UIComponent {
      */
     shape?: "circle" | "square" | "rounded";
     /**
-     * 设置头像的大小，可选值为 large,small,normal(default),midiue
+     * 设置头像的大小，可选值为 large,small,normal(default),medium
      * @default normal
      */
-    size?: "large" | "small" | "normal" | "midiue";
+    size?: "large" | "small" | "normal" | "medium";
     /**
      * 图片类头像的资源地址或者头像的图标类型，参考 Icon 组件
      */

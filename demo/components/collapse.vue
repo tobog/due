@@ -148,7 +148,7 @@ export default {
                     key: "size",
                     tag: "vInput",
                     demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),midiue,large",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
                     dataType: "String",
                     default: "",
                     options: this.getSize,

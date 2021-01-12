@@ -25,7 +25,7 @@ export declare class Anchor extends UIComponent {
      * 尺寸大小(仅字体)
      * @default null
      */
-    size?: "small" | "normal(default)" | "midiue" | "large";
+    size?: "small" | "normal(default)" | "medium" | "large";
     /**
      * 指定滚动的容器
      */

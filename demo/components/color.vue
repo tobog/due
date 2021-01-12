@@ -20,14 +20,14 @@
 export default {
     data() {
         return {
-            value: '0',
+            value: "0",
         }
     },
     methods: {},
     computed: {
         getCode() {
             return `<Color v-model="value" v-bind=CODE></Color>
-                    <ColorPicker v-model="value" v-bind="this.formData"></ColorPicker>
+                    <ColorPicker v-model="value" v-bind=CODE></ColorPicker>
                     `
         },
         getConfig() {
@@ -89,7 +89,7 @@ export default {
                     key: "size",
                     tag: "vInput",
                     demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),midiue,large",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
                     dataType: "String",
                     default: "",
                     options: this.getSize,
@@ -112,6 +112,14 @@ export default {
                     demoDefault: "",
                     explain: "v-model(on-change) 双向绑定",
                     dataType: "String",
+                    default: "",
+                },
+                {
+                    label: "自定义颜色预设",
+                    key: "colors",
+                    demoDefault: "",
+                    explain: "自定义颜色预设,仅在predefined为true时",
+                    dataType: "Array",
                     default: "",
                 },
                 {

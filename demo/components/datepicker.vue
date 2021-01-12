@@ -1,162 +1,193 @@
 <style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
-            <div tabindex="1" @focusin="focusin" @focusout="focusout">
-                <input type="text" />
-                <input type="text" />
-                <span>ffffffffff</span>
-            </div>
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (DatePicker 日期选择器)</h2>
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
+        </template>
+        <template v-slot="config">
+            <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker>
+            <div :style="{background: value, height: '30px'}">
                 {{ value }}
-                <!-- <vDatePanel :options="{ shortcuts: this.shortcuts }" v-model="value" v-bind="formData"></vDatePanel> -->
-                <vDatepicker :options="{ shortcuts: this.shortcuts }" v-model="value" v-bind="formData"></vDatepicker>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+            </div>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
-            focusin: (event) => {
-                console.log("focusin", event.timeStamp);
-            },
-            focusout: (event) => {
-                console.log("focusout", event.timeStamp);
-            },
             value: "",
             shortcuts: [
                 {
                     text: "Today",
                     value() {
-                        return new Date();
+                        return new Date()
                     },
                 },
-
                 {
                     text: "One week",
                     value() {
-                        const date = new Date();
-                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                        return date;
+                        const date = new Date()
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+                        return date
                     },
                 },
             ],
-        };
+        }
     },
+    methods: {},
     computed: {
         getCode() {
-            return `<vDatepicker v-model="value" v-bind="${this.getCodeString(this.formData)}">
-					</vDatepicker>`;
+            return `<vDatepicker v-model="value" v-bind=CODE>
+					</vDatepicker>`
         },
-        getBase() {
+        getConfig() {
             return [
-                 {
-                    label: '禁用状态',
-                    key: 'disabled',
-                    tag: 'vSwitch',
+                {
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    demoDefault: false,
+                    explain: "是否有禁用状态",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: 'Drop置body下',
-                    key: 'transfer',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "弹层位置",
+                    key: "transfer",
+                    demoDefault: false,
+                    explain:
+                        "是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: '自动关闭',
-                    key: 'autoClose',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "自动关闭",
+                    key: "autoClose",
+                    demoDefault: false,
+                    explain: "是否自动关闭",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "多个日期",
                     key: "multiple",
+                    demoDefault: false,
+                    explain: "开启后，可以选择多个日期",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "双面板",
                     key: "doublePanel",
+                    demoDefault: true,
+                    explain: "是否双面板",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "确认关闭",
                     key: "confirm",
+                    demoDefault: true,
+                    explain: "是否确认关闭",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "仅读",
                     key: "readonly",
+                    demoDefault: false,
+                    explain: "是否仅读",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: "仅读",
-                    key: "readonly",
-                    tag: "vSwitch",
-                    default: false,
-                },
-                {
+                    showConfig: true,
                     label: "标签显示",
                     key: "isTag",
+                    demoDefault: true,
+                    explain: "是否标签显示",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
+                    label: "标签显示",
+                    key: "isTag",
+                    demoDefault: true,
+                    explain: "是否标签显示",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: true,
+                },
+                {
+                    showConfig: true,
                     label: "可清除",
                     key: "clearable",
+                    demoDefault: true,
+                    explain: "是否可清除",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "显示星期数",
                     key: "showWeek",
+                    demoDefault: true,
+                    explain: "是否显示星期数",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
-                    label: "展示的日期格式",
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+
+                {
+                    showConfig: true,
+                    label: "日期格式",
                     key: "format",
                     tag: "vInput",
+                    demoDefault: "",
+                    explain: "展示的日期格式,(Y,M,D,H,m,s)",
+                    dataType: "String",
                     default: "",
                 },
                 {
-                    label: "折叠日期",
-                    key: "collapse",
-                    tag: "vInput",
-                    default: 0,
-                },
-                {
+                    showConfig: true,
                     label: "显示类型",
                     key: "type",
                     tag: "vSelect",
-                    default: "datetimerange",
+                    demoDefault: "datetimerange",
+                    explain: "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month",
+                    dataType: "String",
+                    default: "",
                     options: [
                         "date",
                         "daterange",
@@ -170,79 +201,86 @@ export default {
                         "hoursrange",
                     ],
                 },
-            ];
-        },
-        compProps() {
-            return [
                 {
-                    explain: "可以使用 v-model 双向绑定数据",
-                    prop: "value",
-                    type: "Array, String, Date",
+                    showConfig: true,
+                    label: "折叠日期",
+                    key: "collapse",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    explain: "折叠日期个数",
+                    dataType: "Number",
+                    default: 0,
+                },
+                {
+                    label: "当前值",
+                    key: "value",
+                    demoDefault: "",
+                    explain: "v-model(input) 双向绑定",
+                    dataType: "Array, String, Date",
                     default: "",
                 },
                 {
-                    prop: "multiple",
-                    explain: "开启后，可以选择多个日期",
-                    type: "Boolean",
-                    default: "fasle",
-                },
-                {
-                    prop: "type",
-                    explain: "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month",
-                    type: Boolean,
-                    default: false,
-                },
-                {
-                    prop: "format",
-                    explain: "展示的日期格式",
-                    type: "String",
-                    default: "-",
-                },
-                {
-                    prop: "confirm",
-                    explain: "手动确认关闭",
-                    type: "Boolean",
-                    default: "-",
-                },
-                {
-                    prop: "showWeek",
-                    explain: "开启后，可以选择多个日期",
-                    type: "Boolean",
-                    default: "false",
-                },
-                {
-                    prop: "startDate",
+                    label: "默认开始日期",
+                    key: "startDate",
+                    demoDefault: "",
                     explain: "默认开始日期",
-                    type: "[String, Date, Object, Number]",
+                    dataType: "String, Date, Object, Number",
                     default: "Date.now()",
                 },
                 {
-                    prop: "options",
+                    label: "额外配置",
+                    key: "options",
+                    demoDefault: "",
                     explain: "选择器额外配置，比如不可选日期与快捷选项",
-                    type: "Object",
-                    default: "-",
-                },
-                {
-                    prop: "$attrs",
-                    explain: "继承input 属性",
-                    type: "String",
+                    dataType: "Object",
                     default: "",
                 },
                 {
-                    prop: "invalid",
+                    label: "是否可用",
+                    key: "invalid",
+                    demoDefault: "",
                     explain: "当前日期不可用",
-                    type: "Function",
+                    dataType: "Function",
                     default: "Boolean:(dateObje,type)=>{}",
                 },
-
                 {
-                    prop: "on-change/on-blur/on-foucs/on-clear",
-                    explain: "事件",
-                    type: "Function:this.model, news, event=>{}",
-                    default: "-",
+                    label: "继承属性",
+                    key: "$attrs",
+                    demoDefault: "",
+                    explain: "继承input 属性",
+                    dataType: "Object",
+                    default: "",
                 },
-            ];
+                {
+                    label: "事件",
+                    key: "on-change",
+                    explain: "日期发生变化触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-blur",
+                    explain: "失去焦点触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-foucs",
+                    explain: "获取焦点触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-clear",
+                    explain: "清除时触发",
+                    dataType: "Function：Event",
+                    default: "(visible)=>{}",
+                },
+            ]
         },
     },
-};
+}
 </script>

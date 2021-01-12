@@ -53,7 +53,8 @@
         </div>
         <div v-if="predefined" :class="[_tobogPrefix_ + `-palettes-wrapper`]">
             <div :class="[_tobogPrefix_ + `-palettes`]">
-                <span v-for="index in 19" :key="index" tabindex="-1" @click="() => handleSwitchColor(index)"></span>
+                <span v-for="index in 19" :key="index" tabindex="-1" @click="handleSwitchColor(index)"></span>
+                <span v-for="color in colors" :key="color" tabindex="-1" @click="handleSwitchColor(color)"></span>
             </div>
             <!-- <div :class="[_tobogPrefix_ + `-sort`]" @click="handleSwitch">
                 <span></span>
@@ -79,6 +80,13 @@ export default {
         type: String, //hex,rgb,hsl,hsv,
         alpha: Boolean,
         predefined: Boolean,
+        colors: {
+            type: Array,
+            default() {
+                return []
+            },
+        },
+        size: [Number, String],
     },
     data() {
         return {
@@ -211,7 +219,7 @@ export default {
             if (index > 3) index = 0
             this.demoType = data[index]
         },
-        handleSwitchColor(index) {
+        handleSwitchColor(value) {
             let colors = {
                 1: "#f44336",
                 2: "#e91e63",
@@ -233,7 +241,7 @@ export default {
                 18: "#9e9e9e",
                 19: "#607d8b",
             }
-            colors = Color.parse(colors[index], "hsv")
+            colors = Color.parse(colors[value] || value, "hsv")
             this.$set(this.model, 0, colors[0])
             this.$set(this.model, 1, colors[1])
             this.$set(this.model, 2, colors[2])

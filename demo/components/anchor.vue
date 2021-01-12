@@ -80,7 +80,7 @@ export default {
                     key: "size",
                     tag: "vSelect",
                     demoDefault: "",
-                    explain: "尺寸大小，可选值为：small,normal(default),midiue,large",
+                    explain: "尺寸大小，可选值为：small,normal(default),medium,large",
                     dataType: "String",
                     default: "inf",
                     options: this.getSize,

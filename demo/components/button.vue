@@ -163,7 +163,7 @@ export default {
                     tag: "vInput",
                     demoDefault: "",
                     explain:
-                        "设置大小(ButtonGroupd和Button)，可选值为：small,normal(default),midiue,large,或者设置具体数值",
+                        "设置大小(ButtonGroupd和Button)，可选值为：small,normal(default),medium,large,或者设置具体数值",
                     dataType: "String | Number",
                     default: "",
                     options: this.getSize,

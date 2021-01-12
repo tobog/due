@@ -161,9 +161,9 @@ export default {
             const format = this.format,
                 type = this.type;
             if (format) {
-                let objIndex = { y: 0, m: 0, d: 0, H: 0, M: 0, S: 0 },
+                let objIndex = { y: 0, M: 0, d: 0, H: 0, m: 0, s: 0 },
                     range = false;
-                format.replace(/(y|m|d|H|M|S)+/g, function(match, reg) {
+                format.replace(/(y|M|d|H|m|s)+/g, function(match, reg) {
                     if (objIndex[reg] >= 1) range = true;
                     objIndex[reg] += 1;
                     return match;
@@ -190,7 +190,7 @@ export default {
             let format = this.formats;
             if (format.indexOf("dd") > -1) {
                 this.status = "day";
-            } else if (format.indexOf("mm") > -1) {
+            } else if (format.indexOf("MM") > -1) {
                 this.status = "month";
             } else if (format.indexOf("yy") > -1) {
                 this.status = "year";

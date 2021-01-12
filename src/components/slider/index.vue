@@ -34,7 +34,7 @@
                 :key="index"
                 :style="handleSpotStyle(index, 1)"
                 :class="[_tobogPrefix_ + '-spot']"
-                @click.stop="() => handleClickPercent(1, index)"
+                @click.stop="handleClickPercent(1, index)"
             ></span>
         </template>
         <template v-if="marks && marks.length">
@@ -43,7 +43,7 @@
                 :key="mark.value || index"
                 :style="handleSpotStyle(mark, 2)"
                 :class="[_tobogPrefix_ + '-mark']"
-                @click.stop="() => handleClickPercent(2, mark)"
+                @click.stop="handleClickPercent(2, mark)"
             >
                 <span
                     v-if="typeof mark.render === 'function'"

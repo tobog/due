@@ -17,7 +17,7 @@
                 :value="!!node.data.selected"
                 :disabled="node.data.disabled"
                 :indeterminate="node.data.indeterminate"
-                @click.native="() => handleCheck(node)"
+                @click.native="handleCheck(node)"
             />
             <span :class="[_tobogPrefix_ + '-content']">
                 <slot :data="node" :index="index">

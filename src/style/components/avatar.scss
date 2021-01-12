@@ -33,7 +33,7 @@ $prefix-cls: #{$prefix}-avatar;
             @include avatar-size(40px, 32px);
         }
 
-        &-midiue {
+        &-medium {
             @include avatar-size(36px, 28px);
         }
 

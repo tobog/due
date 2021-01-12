@@ -13,24 +13,24 @@
             </li>
         </ul>
         <ul
-            v-if="hasTimesChild('MM')"
+            v-if="hasTimesChild('mm')"
             ref="minutes"
             :class="_tobogPrefix_ + '-list'"
             :style="scrollStyle('minutes')"
             @mouseenter.stop="handleScroll('minutes')"
         >
-            <li :class="getCellCls(item)" v-for="item in minutesCells" @click="handleClick(item, 'MM')">
+            <li :class="getCellCls(item)" v-for="item in minutesCells" @click="handleClick(item, 'mm')">
                 {{ formatTime(item.date.minutes) }}
             </li>
         </ul>
         <ul
-            v-if="hasTimesChild('SS')"
+            v-if="hasTimesChild('ss')"
             ref="seconds"
             :class="_tobogPrefix_ + '-list'"
             :style="scrollStyle('seconds')"
             @mouseenter.stop="handleScroll('seconds')"
         >
-            <li :class="getCellCls(item)" v-for="item in secondsCells" @click="handleClick(item, 'SS')">
+            <li :class="getCellCls(item)" v-for="item in secondsCells" @click="handleClick(item, 'ss')">
                 {{ formatTime(item.date.seconds) }}
             </li>
         </ul>
@@ -64,8 +64,8 @@ export default {
         this.scrollStatic = {};
         this.initRefsStyle();
         if (this.hasTimesChild("HH")) this.initPosition("hours", 24);
-        if (this.hasTimesChild("MM")) this.initPosition("minutes", 60);
-        if (this.hasTimesChild("SS")) this.initPosition("seconds", 60);
+        if (this.hasTimesChild("mm")) this.initPosition("minutes", 60);
+        if (this.hasTimesChild("ss")) this.initPosition("seconds", 60);
     },
     watch: {
         visible(val) {
@@ -177,9 +177,9 @@ export default {
             if (cell && cell.disabled) return;
             this.foucsDate = cell.date;
             if (
-                type === "SS" ||
-                (type === "MM" && !this.hasTimesChild("SS")) ||
-                (type === "HH" && !this.hasTimesChild("MM") && !this.hasTimesChild("SS"))
+                type === "ss" ||
+                (type === "mm" && !this.hasTimesChild("ss")) ||
+                (type === "HH" && !this.hasTimesChild("mm") && !this.hasTimesChild("ss"))
             ) {
                 type = "times";
             } else {

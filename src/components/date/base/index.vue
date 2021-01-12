@@ -59,7 +59,7 @@ export default {
         value: [String, Array, Date],
         format: {
             type: String,
-            default: "yy-mm-dd HH:MM:SS",
+            default: "yy-MM-dd HH:mm:ss",
         },
         multiple: {
             type: Boolean,
@@ -162,9 +162,9 @@ export default {
             const format = this.format;
             return {
                 day: /dd/.test(format),
-                month: /mm/.test(format),
+                month: /MM/.test(format),
                 year: /yy/.test(format),
-                times: /SS|MM|HH/.test(format),
+                times: /ss|mm|HH/.test(format),
             };
         },
         endState() {
@@ -172,12 +172,12 @@ export default {
             switch (true) {
                 case format.indexOf("dd") > -1:
                     return "day";
-                case format.indexOf("mm") > -1:
+                case format.indexOf("MM") > -1:
                     return "month";
                 case format.indexOf("yy") > -1:
                     return "year";
-                case format.indexOf("SS") > -1:
-                case format.indexOf("MM") > -1:
+                case format.indexOf("ss") > -1:
+                case format.indexOf("mm") > -1:
                 case format.indexOf("HH") > -1:
                     return "times";
                 default:
@@ -190,15 +190,15 @@ export default {
         getTimeRefs() {
             const refs = [],
                 format = this.format;
-            ["HH", "MM", "SS"].forEach((val) => {
+            ["HH", "mm", "ss"].forEach((val) => {
                 if (format.indexOf(val) > -1) {
                     refs.push(val);
                 }
             });
             return refs.map((val) => {
                 if (val === "HH") return "hours";
-                if (val === "MM") return "minutes";
-                if (val === "SS") return "seconds";
+                if (val === "mm") return "minutes";
+                if (val === "ss") return "seconds";
             });
         },
         linkedDates() {

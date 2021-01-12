@@ -1,10 +1,6 @@
-// Type definitions for iview 3.3.1
-// Project: https://github.com/iview/iview
-// Definitions by: yangdan
-// Definitions: https://github.com/yangdan8/iview.git
-import Vue, { VNode } from 'vue';
+import {UIComponent, VNode, UIComponentSize} from "./component"
 
-export declare class DatePicker extends Vue {
+export declare class DatePicker extends UIComponent {
   /**
    * 显示类型，可选值为 date、daterange、datetime、datetimerange、year、month'|'默认值date
    */

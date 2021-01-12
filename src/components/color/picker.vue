@@ -22,6 +22,8 @@
             v-model="model"
             :type="type"
             :alpha="alpha"
+            :size="size"
+            :colors="colors"
             :predefined="predefined"
             :class="[_tobogPrefix_ + '-panel']"
             @hook:created="ready = true"
@@ -42,7 +44,7 @@ import Color from "./index"
 import Button from "../button"
 import Icons from "../icons/index"
 import emitter from "../../utils/emitter"
-import {unit,isParseNumber} from "../../utils/tool"
+import {unit, isParseNumber} from "../../utils/tool"
 import langMinix from "../../mixins/lang"
 import globalMixin from "../../mixins/global"
 export default {
@@ -65,6 +67,8 @@ export default {
         transfer: Boolean,
         name: String,
         autoClose: Boolean,
+        size: [String, Number],
+        colors:Array
         // clearable: Boolean,
     },
     data() {
@@ -80,7 +84,7 @@ export default {
     computed: {
         colorClasses() {
             const _tobogPrefix_ = this._tobogPrefix_,
-                size = this.getGlobalData("size");
+                size = this.getGlobalData("size")
             return [
                 `${_tobogPrefix_}-input`,
                 {
@@ -90,9 +94,10 @@ export default {
             ]
         },
         getStyle() {
-            let style = {}
-            if (isParseNumber(this.size)) {
-                style.width = unit(this.size)
+            let style = {},
+                size = this.getGlobalData("size")
+            if (isParseNumber(size)) {
+                style.width = unit(size)
             }
             return style
         },
