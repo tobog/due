@@ -48,6 +48,7 @@ import Icons from "../../icons/index"
 import mixins from "./mixins"
 export default {
     name: "DateHeader",
+    componentName: "DateHeader",
     mixins: [mixins],
     components: {
         Icons,

@@ -1,6 +1,6 @@
 <template>
     <div :class="wrapClasses" :data-vue-module="$options.name">
-        <Header  :minDate="minDate" :maxDate="maxDate"  :status="status" :calendar="initCalendar" @on-selected="selected" />
+        <Header :status="status" :calendar="initCalendar" @on-selected="selected" />
         <component
             v-if="status !== 'times'"
             :class="[_tobogPrefix_ + '-content']"
@@ -48,6 +48,7 @@ import Header from "./header"
 
 export default {
     name: "Date",
+    componentName: "Date",
     components: {
         Header,
         Year,
@@ -76,8 +77,8 @@ export default {
             default: 0,
         },
         visible: Boolean,
-        minDate: [String, Date],
-        maxDate: [String, Date],
+        // minDate: [String, Date],
+        // maxDate: [String, Date],
     },
     data() {
         return {

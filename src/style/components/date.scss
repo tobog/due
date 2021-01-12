@@ -280,7 +280,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
 
 .#{$prefix-cls-picter} {
 
-    &-wrapper>&-panel,
+    &-wrapper &-panel,
     &-drop-wrapper {
         overflow: hidden;
     }

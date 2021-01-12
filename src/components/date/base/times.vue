@@ -1,6 +1,6 @@
 <template>
-    <section :class="_tobogPrefix_" @mouseleave.stop="handleScroll(null)" :style="{ paddingLeft: scrollSize + 'px' }">
-        <header :style="{ marginLeft: -scrollSize + 'px' }">{{ langs("datepicker.time", "时间") }}</header>
+    <section :class="_tobogPrefix_" @mouseleave.stop="handleScroll(null)" :style="{paddingLeft: scrollSize + 'px'}">
+        <header :style="{marginLeft: -scrollSize + 'px'}">{{ langs("datepicker.time", "时间") }}</header>
         <ul
             v-if="hasTimesChild('HH')"
             ref="hours"
@@ -38,11 +38,12 @@
 </template>
 
 <script>
-import Dates, { compareEqual } from "../../../utils/dates";
-import { getScrollBarSize } from "../../../utils/dom";
-import langMinix from "../../../mixins/lang";
+import Dates, {compareEqual} from "../../../utils/dates"
+import {getScrollBarSize} from "../../../utils/dom"
+import langMinix from "../../../mixins/lang"
 export default {
     name: "DateTimes",
+    componentName: "DateTimes",
     mixins: [langMinix],
     props: {
         value: Object,
@@ -56,140 +57,139 @@ export default {
             scrollSize: getScrollBarSize(),
             calendarType: null,
             foucsDate: this.value,
-        };
+        }
     },
 
     mounted() {
-        // this.scrollSize = getScrollBarSize();
-        this.scrollStatic = {};
-        this.initRefsStyle();
-        if (this.hasTimesChild("HH")) this.initPosition("hours", 24);
-        if (this.hasTimesChild("mm")) this.initPosition("minutes", 60);
-        if (this.hasTimesChild("ss")) this.initPosition("seconds", 60);
+        this._scrollStatic = {}
+        this.initRefsStyle()
+        if (this.hasTimesChild("HH")) this.initPosition("hours", 24)
+        if (this.hasTimesChild("mm")) this.initPosition("minutes", 60)
+        if (this.hasTimesChild("ss")) this.initPosition("seconds", 60)
     },
     watch: {
         visible(val) {
-            this.setScroll();
+            this.setScroll()
         },
     },
     beforeUpdate() {
-        this.setScroll();
+        this.setScroll()
     },
     computed: {
         hoursCells() {
-            return this.handleCells("hours", 24);
+            return this.handleCells("hours", 24)
         },
         minutesCells() {
-            return this.handleCells("minutes", 60);
+            return this.handleCells("minutes", 60)
         },
         secondsCells() {
-            return this.handleCells("seconds", 60);
+            return this.handleCells("seconds", 60)
         },
         hasSectionMethod() {
-            return typeof this.sectionMethod === "function";
+            return typeof this.sectionMethod === "function"
         },
     },
     methods: {
         formatTime: Dates.formatTime,
         getScroll() {
-            const scrollStatic = {};
-            ["hours", "minutes", "seconds"].forEach((key) => {
-                const ref = this.$refs[key];
+            const scrollStatic = {}
+            ;["hours", "minutes", "seconds"].forEach((key) => {
+                const ref = this.$refs[key]
                 if (ref) {
-                    scrollStatic[key] = ref.scrollTop;
+                    scrollStatic[key] = ref.scrollTop
                 }
-            });
-            this.scrollStatic = scrollStatic;
+            })
+            this._scrollStatic = scrollStatic
         },
         setScroll() {
             this.$nextTick(() => {
                 this.$nextTick(() => {
-                    const scrollStatic = this.scrollStatic;
-                    if (!scrollStatic) return;
-                    ["hours", "minutes", "seconds"].forEach((key) => {
+                    const _scrollStatic = this._scrollStatic
+                    if (!_scrollStatic) return
+                    ;["hours", "minutes", "seconds"].forEach((key) => {
                         const ref = this.$refs[key],
-                            scrollTop = scrollStatic[key];
+                            scrollTop = _scrollStatic[key]
                         if (ref && scrollTop !== void 0) {
-                            ref.scrollTop = scrollTop;
+                            ref.scrollTop = scrollTop
                         }
-                    });
-                });
-            });
+                    })
+                })
+            })
         },
         hasTimesChild(type = "HH") {
-            return this.format.indexOf(type) > -1;
+            return this.format.indexOf(type) > -1
         },
         handleScroll(type) {
-            this.calendarType = type;
+            this.calendarType = type
         },
         initRefsStyle() {
             const refs = this.$refs,
                 keys = Object.keys(refs),
-                size = 100 / (keys.length || 1) + "%";
+                size = 100 / (keys.length || 1) + "%"
             keys.forEach((item) => {
-                refs[item].style.width = size;
-            });
+                refs[item].style.width = size
+            })
         },
         initPosition(type, size = 24) {
             this.$nextTick(() => {
-                const ref = this.$refs[type];
-                if (!ref) return;
+                const ref = this.$refs[type]
+                if (!ref) return
                 const clientHeight = ref.clientHeight,
                     scrollHeight = ref.scrollHeight,
                     height = scrollHeight / size,
-                    scrollTop = height * this.value[type] - clientHeight / 2 + height / 2;
+                    scrollTop = height * this.value[type] - clientHeight / 2 + height / 2
                 if (scrollTop > 0) {
-                    ref.scrollTop = scrollTop;
-                    this.scrollStatic[type] = scrollTop;
+                    ref.scrollTop = scrollTop
+                    this._scrollStatic[type] = scrollTop
                 }
-            });
+            })
         },
         scrollStyle(type) {
             if (type !== this.calendarType)
                 return {
                     paddingRight: `${this.scrollSize}px`,
-                };
+                }
             return {
                 overflowY: "auto",
                 overflowX: "hidden",
                 paddingRight: 0,
-            };
+            }
         },
         handleCell(date, type) {
             return {
                 date,
                 selected: compareEqual(date, type, this.value),
-                disabled: this.hasSectionMethod && this.sectionMethod({ ...date }, type),
+                disabled: this.hasSectionMethod && this.sectionMethod({...date}, type),
                 focus: compareEqual(date, type, this.foucsDate) && this.foucsDate.key === type,
-            };
+            }
         },
 
         handleCells(key = "seconds", range = 60) {
-            const cells = [];
+            const cells = []
             for (let i = 0; i < range; i++) {
                 cells.push({
-                    ...this.handleCell({ ...this.value, [key]: i }, key),
-                });
+                    ...this.handleCell({...this.value, [key]: i}, key),
+                })
             }
-            return cells;
+            return cells
         },
         handleClick(cell, type) {
-            if (cell && cell.disabled) return;
-            this.foucsDate = cell.date;
+            if (cell && cell.disabled) return
+            this.foucsDate = cell.date
             if (
                 type === "ss" ||
                 (type === "mm" && !this.hasTimesChild("ss")) ||
                 (type === "HH" && !this.hasTimesChild("mm") && !this.hasTimesChild("ss"))
             ) {
-                type = "times";
+                type = "times"
             } else {
-                type = void 0;
+                type = void 0
             }
-            this.getScroll();
-            this.$emit("on-selected", { ...cell }, type);
+            this.getScroll()
+            this.$emit("on-selected", {...cell}, type)
         },
         getCellCls(cell) {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-cell`,
                 {
@@ -197,8 +197,8 @@ export default {
                     [`${_tobogPrefix_}-cell-disabled`]: cell.disabled,
                     [`${_tobogPrefix_}-cell-focus`]: cell.focus,
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

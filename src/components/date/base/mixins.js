@@ -17,8 +17,8 @@ export default {
         showWeek: Boolean,
         firstDayOfWeek: Number,
         cellFormatter: Function,
-        minDate: [String, Date],
-        maxDate: [String, Date],
+        // minDate: [String, Date],
+        // maxDate: [String, Date],
     },
     data() {
         return {

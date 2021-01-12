@@ -8,7 +8,7 @@
         </template>
         <template v-slot="config">
             <vDatePanel :options="{shortcuts}" v-model="value1" v-bind="config"></vDatePanel>
-            <!-- <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker> -->
+            <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker>
             <div>{{ value1 }}-{{ value }}</div>
         </template>
     </Demo>

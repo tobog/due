@@ -10,6 +10,7 @@
 import mixins from "./mixins"
 export default {
     name: "Date",
+    componentName: "DateYear",
     mixins: [mixins],
     computed: {
         start() {

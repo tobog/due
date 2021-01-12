@@ -1,7 +1,7 @@
 <template>
     <DropBase
         ref="dropBase"
-        dropStyle="overflow:hidden;width:auto;"
+        dropStyle="width:auto;"
         isOutRef
         isToggle
         :class="[_tobogPrefix_ + '-wrapper']"
