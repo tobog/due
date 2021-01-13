@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 export default {
@@ -11,7 +11,10 @@ export default {
         content: String,
         delay: [Number, String],
         gpu: Boolean,
-        trigger: String, //click hover,other,
+        trigger: {
+            type: String,
+            default: "other",
+        }, //click hover,other,
         always: Boolean,
         offset: {
             type: [String, Number],
@@ -26,4 +29,4 @@ export default {
             default: void 0,
         },
     },
-}
+};

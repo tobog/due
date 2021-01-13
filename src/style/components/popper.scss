@@ -2,7 +2,7 @@ $prefix-cls: #{$prefix}-popper;
 
 .#{$prefix-cls} {
     &:not(&-drop) {
-        display: none;
+        // display: none;
         visibility: visible;
         position: absolute;
         z-index: 100;
@@ -23,11 +23,15 @@ $prefix-cls: #{$prefix}-popper;
         max-width: calc(100vw - 12px);
     }
 
+    &-popper {
+        display: none;
+    }
+
     &-drop {
         transform-origin: center 0;
         position: absolute;
         max-height: 100vh;
-        overflow: visible; 
+        overflow: visible;
         padding: 0;
         margin: 0;
         background-color: $white;
@@ -43,7 +47,8 @@ $prefix-cls: #{$prefix}-popper;
             transform-origin: 0 bottom;
         }
     }
-    &-drop > &-content {
+
+    &-drop>&-content {
         border-radius: $radius;
         padding: 0;
         margin: 0;
@@ -52,7 +57,8 @@ $prefix-cls: #{$prefix}-popper;
         max-height: inherit;
         overflow: auto; // 有问题
     }
-    &-drop > &-arrow {
+
+    &-drop>&-arrow {
         border-color: $white;
     }
 
@@ -67,52 +73,52 @@ $prefix-cls: #{$prefix}-popper;
         z-index: 10;
     }
 
-    &[data-placement^="top"] > &-arrow {
+    &[data-placement^="top"]>&-arrow {
         bottom: -3px;
         transform: translateX(-50%) rotate(45deg);
         left: 12px;
     }
 
-    &[data-placement="top-center"] > &-arrow {
+    &[data-placement="top-center"]>&-arrow {
         left: 50%;
         // transform: translateX(-50%) rotate(45deg)
     }
 
-    &[data-placement^="bottom"] > &-arrow {
+    &[data-placement^="bottom"]>&-arrow {
         top: -3px;
         left: 12px;
         transform: translateX(-50%) rotate(-135deg);
     }
 
-    &[data-placement="bottom-center"] > &-arrow {
+    &[data-placement="bottom-center"]>&-arrow {
         left: 50%;
         // transform: translateX(-50%) rotate(-135deg);
     }
 
-    &[data-placement^="left"] > &-arrow {
+    &[data-placement^="left"]>&-arrow {
         top: 12px;
         transform: translateY(-50%) rotate(-45deg);
         right: -3px;
     }
 
-    &[data-placement="left-center"] > &-arrow {
+    &[data-placement="left-center"]>&-arrow {
         top: 50%;
         // transform: translateY(-50%) rotate(-45deg);
     }
 
-    &[data-placement^="right"] > &-arrow {
+    &[data-placement^="right"]>&-arrow {
         top: 12px;
         transform: translateY(-50%) rotate(135deg);
         left: -3px;
     }
 
-    &[data-placement="right-center"] > &-arrow {
+    &[data-placement="right-center"]>&-arrow {
         top: 50%;
         // transform: translateY(-50%) rotate(135deg);
     }
 
-    &[data-placement="left-bottom"] > &-arrow,
-    &[data-placement="right-bottom"] > &-arrow {
+    &[data-placement="left-bottom"]>&-arrow,
+    &[data-placement="right-bottom"]>&-arrow {
         bottom: 12px;
         top: unset;
         top: initial;
