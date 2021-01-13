@@ -47,7 +47,7 @@ export default {
     mixins: [langMinix],
     props: {
         value: Object,
-        sectionMethod: Function,
+        disableMethod: Function,
         steps: Array,
         format: String,
         visible: Boolean,
@@ -85,8 +85,8 @@ export default {
         secondsCells() {
             return this.handleCells("seconds", 60)
         },
-        hasSectionMethod() {
-            return typeof this.sectionMethod === "function"
+        hasDisableMethod() {
+            return typeof this.disableMethod === "function"
         },
     },
     methods: {
@@ -159,7 +159,7 @@ export default {
             return {
                 date,
                 selected: compareEqual(date, type, this.value),
-                disabled: this.hasSectionMethod && this.sectionMethod({...date}, type),
+                disabled: this.hasDisableMethod && this.disableMethod({...date}, type),
                 focus: compareEqual(date, type, this.foucsDate) && this.foucsDate.key === type,
             }
         },

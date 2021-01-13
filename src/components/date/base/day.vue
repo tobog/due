@@ -57,7 +57,7 @@ export default {
             for (let index = day, end = day - preWeek; index > end; index--) {
                 const date = {...this.calendar, day: index, month: preMonth, year: preYear}
                 cells.unshift({
-                    disabled: this.hasSectionMethod && this.sectionMethod(date, "day"),
+                    disabled: this.hasDisableMethod && this.disableMethod(date, "day"),
                     type: "pre",
                     date,
                 })
@@ -68,7 +68,7 @@ export default {
                 cells.push({
                     type: "next",
                     date,
-                    disabled: this.hasSectionMethod && this.sectionMethod(date, "day"),
+                    disabled: this.hasDisableMethod && this.disableMethod(date, "day"),
                 })
             }
             return cells

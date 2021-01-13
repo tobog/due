@@ -21,7 +21,7 @@
                 :weeks="weeks"
                 :startDate="startDates[0]"
                 :value="dates"
-                :sectionMethod="sectionMethod"
+                :disableMethod="disableMethod"
                 :firstDayOfWeek="firstDayOfWeek"
                 :visible="visible"
                 @on-selected="selected"
@@ -40,7 +40,7 @@
                 :weeks="weeks"
                 :startDate="startDates[1]"
                 :value="dates"
-                :sectionMethod="sectionMethod"
+                :disableMethod="disableMethod"
                 :firstDayOfWeek="firstDayOfWeek"
                 :visible="visible"
                 @on-selected="selected"
@@ -80,9 +80,9 @@ import DateBase from "./base";
 import Button from "../button/index";
 import Dates from "../../utils/dates";
 import langMinix from "../../mixins/lang";
-import { stat } from "fs";
 export default {
     name: "DatePanel",
+    componentName: "DatePanel",
     inheritAttrs: false,
     mixins: [langMinix],
     components: {
@@ -131,7 +131,7 @@ export default {
             },
         },
         weeks: Array,
-        sectionMethod: Function,
+        disableMethod: Function,
         firstDayOfWeek: {
             type: Number,
             default: 0,

@@ -43,7 +43,7 @@
 					@on-selected="selected"
 					@on-sync-update="handleCalendar"
 					:value="dates"
-					:sectionMethod="sectionMethod"
+					:disableMethod="disableMethod"
 				/>
 				<DateBase
 					v-if="range"
@@ -60,7 +60,7 @@
 					@on-selected="selected"
 					@on-sync-update="handleCalendar"
 					:value="dates"
-					:sectionMethod="sectionMethod"
+					:disableMethod="disableMethod"
 				/>
 			</div>
 			<aside v-if="confirm||hasDateTimes" :class="[_tobogPrefix_+'-footer']">
@@ -141,7 +141,7 @@ export default {
 			},
 		},
 		weeks: Array,
-		sectionMethod: Function
+		disableMethod: Function
 	},
 
 	data() {

@@ -27,6 +27,7 @@
             :active="visible"
             :isInput="true"
             :multiple="isTag && multiple"
+            :size="size"
             v-bind="$attrs"
             @hook:created="ready = true"
             @on-focus="handleFocus"
@@ -63,7 +64,7 @@
             :startDate="startDate"
             :weeks="weeks"
             :showWeek="showWeek"
-            :sectionMethod="sectionMethod"
+            :disableMethod="disableMethod"
             :firstDayOfWeek="firstDayOfWeek"
             :visible="visible"
             :doublePanel="doublePanel"
@@ -77,15 +78,16 @@
 </template>
 
 <script>
-import DatePanel from "./index";
-import DropBase from "../base/dropBase";
-import InputBase from "../input/base";
-import mixin from "../input/base/mixin";
-import Button from "../button/index";
-import Dates from "../../utils/dates";
-import langMinix from "../../mixins/lang";
+import DatePanel from "./index"
+import DropBase from "../base/dropBase"
+import InputBase from "../input/base"
+import mixin from "../input/base/mixin"
+import Button from "../button/index"
+import Dates from "../../utils/dates"
+import langMinix from "../../mixins/lang"
 export default {
     name: "DatePicter",
+    componentName: "DatePicter",
     inheritAttrs: false,
     mixins: [langMinix, mixin],
     components: {
@@ -95,7 +97,7 @@ export default {
         Button,
     },
     props: {
-         doublePanel: {
+        doublePanel: {
             type: Boolean,
             default: true,
         },
@@ -119,7 +121,7 @@ export default {
         options: {
             type: Object,
             default() {
-                return {};
+                return {}
             },
         },
         multiple: {
@@ -133,91 +135,92 @@ export default {
         startDate: {
             type: [String, Date, Object, Number],
             default() {
-                return Date.now();
+                return Date.now()
             },
         },
         weeks: Array,
-        sectionMethod: Function,
+        disableMethod: Function,
         firstDayOfWeek: {
             type: Number,
             default: 0,
         },
         isTag: Boolean,
+        size: [String, Number],
     },
 
     data() {
         return {
             visible: false,
             model: this.value,
-        };
+        }
     },
     computed: {
         getValueText() {
-            return !this.isTag && Array.isArray(this.model) ? this.model.join(",") : this.model;
+            return !this.isTag && Array.isArray(this.model) ? this.model.join(",") : this.model
         },
     },
     methods: {
         handleFocus(event) {
-            this.$emit("on-focus", this.model, event);
+            this.$emit("on-focus", this.model, event)
         },
         handleInputText(event) {
-            let val = event.target.value;
+            let val = event.target.value
             if (!val) {
-                this.model = "";
+                this.model = ""
             }
-            this.$emit("input", val);
+            this.$emit("input", val)
         },
         handleClear(type) {
-            this.model = "";
-            this.__dates = null;
-            this.$refs.dropBase.cancelChange();
-            this.$emit("input", this.model, null);
-            this.$emit("on-clear");
-            if (type === "autoClose") this.visible = false;
+            this.model = ""
+            this.__dates = null
+            this.$refs.dropBase.cancelChange()
+            this.$emit("input", this.model, null)
+            this.$emit("on-clear")
+            if (type === "autoClose") this.visible = false
         },
         handleClearTag(index) {
-            const data = [...this.model];
-            const item = data.splice(index, 1);
-            this.model = data;
-            Array.isArray(this.__dates) && this.__dates.splice(index, 1);
-            this.$refs.dropBase.cancelChange();
-            this.$emit("input", this.model, this.__dates);
-            this.$emit("on-remove-item", item, index);
+            const data = [...this.model]
+            const item = data.splice(index, 1)
+            this.model = data
+            Array.isArray(this.__dates) && this.__dates.splice(index, 1)
+            this.$refs.dropBase.cancelChange()
+            this.$emit("input", this.model, this.__dates)
+            this.$emit("on-remove-item", item, index)
         },
 
         handleBlur() {
             this.$nextTick(() => {
-                this.$emit("on-change", this.model, this.__dates);
-                this.$emit("on-blur", this.model, this.__dates);
-                this.handleDispatch("on-validate", this.model);
-            });
+                this.$emit("on-change", this.model, this.__dates)
+                this.$emit("on-blur", this.model, this.__dates)
+                this.handleDispatch("on-validate", this.model)
+            })
         },
         handleInput(val, dates) {
             // console.log(this.model);
-            this.model = val;
-            this.__dates = dates;
-            this.$emit("input", this.model, dates);
+            this.model = val
+            this.__dates = dates
+            this.$emit("input", this.model, dates)
         },
         handleConfirm(val, dates) {
-            this.model = val;
-            this.__dates = dates;
-            this.$emit("input", this.model, dates);
-            this.$emit("on-confirm", this.model, dates);
-            this.$refs.inputBase.setInputFocus(); //有问题无法失去焦点
-            this.$refs.dropBase.cancelChange();
-            this.visible = false;
+            this.model = val
+            this.__dates = dates
+            this.$emit("input", this.model, dates)
+            this.$emit("on-confirm", this.model, dates)
+            this.$refs.inputBase.setInputFocus() //有问题无法失去焦点
+            this.$refs.dropBase.cancelChange()
+            this.visible = false
         },
         handleStatusChange(obj) {
-            this.$emit("on-status-change", obj);
+            this.$emit("on-status-change", obj)
         },
         handleVisible(val) {
-            this.$emit("on-visible-change", val);
+            this.$emit("on-visible-change", val)
         },
     },
     watch: {
         value(val) {
-            this.model = val;
+            this.model = val
         },
     },
-};
+}
 </script>

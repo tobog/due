@@ -6,7 +6,7 @@ export default {
         calendar: Object,
         dates: Array,
         multiple: Boolean,
-        sectionMethod: Function,
+        disableMethod: Function,
         today: Object,
         range: Boolean,
         foucsDate: Object,
@@ -29,8 +29,8 @@ export default {
         wrapClasses() {
             return this._tobogPrefix_ + this.prefix;
         },
-        hasSectionMethod() {
-            return typeof this.sectionMethod === "function";
+        hasDisableMethod() {
+            return typeof this.disableMethod === "function";
         },
         linkedDates() {
             let dates = [];
@@ -53,7 +53,7 @@ export default {
             return {
                 date,
                 selected: this.linkedDates.some(item =>  compareEqual(item, type, date)),
-                disabled: this.hasSectionMethod && this.sectionMethod({ ...date }, type),
+                disabled: this.hasDisableMethod && this.disableMethod({ ...date }, type),
                 inRange: this.handleSection(date, this.rangeDate),
                 now: compareEqual(date, type, this.today),
                 focus: compareEqual(date, type, this.foucsDate)

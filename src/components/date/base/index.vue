@@ -10,7 +10,7 @@
             :dates="dates"
             :is="componentId"
             :calendar="initCalendar"
-            :sectionMethod="sectionMethod"
+            :disableMethod="disableMethod"
             :today="getToday"
             :range="range"
             :rangeDate="rangeDate"
@@ -29,7 +29,7 @@
             :class="[_tobogPrefix_ + '-content']"
             :key="status"
             :is="componentId"
-            :sectionMethod="sectionMethod"
+            :disableMethod="disableMethod"
             :value="getTimeValue"
             :visible="visible"
             @on-selected="selected"
@@ -48,7 +48,7 @@ import Header from "./header"
 
 export default {
     name: "Date",
-    componentName: "Date",
+    componentName: "DateBase",
     components: {
         Header,
         Year,
@@ -69,7 +69,7 @@ export default {
             default: 0,
         },
         startDate: [Number, Date, String],
-        sectionMethod: Function,
+        disableMethod: Function,
         showWeek: Boolean,
         weeks: Array,
         firstDayOfWeek: {
