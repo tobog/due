@@ -253,6 +253,7 @@ export default class Popper {
         const popper = this._popper;
         this._clickInstance && this._clickInstance.destroy();
         this._hoverInstance && this._hoverInstance.destroy();
+        this._clickInstance = this._hoverInstance = null;
         if (!popper) return;
         const style = popper.style,
             { positionElement, transfer } = this._options;
