@@ -7,13 +7,15 @@ $prefix-cls: #{$prefix}-popper;
         position: absolute;
         z-index: 100;
         width: auto;
+        padding: 0;
+        margin: 0;
         color: $white;
         min-height: 34px;
         padding: 6px 12px;
         text-align: left;
         background-color: $darkback;
         box-shadow: 0 0 3px $darkback;
-        border-radius: 3px;
+        border-radius: $radius;
         white-space: normal;
         // max-width: 100%;
         outline: none !important;
@@ -25,13 +27,13 @@ $prefix-cls: #{$prefix}-popper;
         transform-origin: 0 0;
         position: absolute;
         max-height: 100vh;
-        overflow: auto;
+        overflow: visible;
         padding: 0;
         margin: 0;
         background-color: $white;
         box-sizing: border-box;
         border-radius: $radius;
-        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 3px -1px $darkback;
         z-index: 100;
         outline: none;
 
@@ -41,6 +43,17 @@ $prefix-cls: #{$prefix}-popper;
             transform-origin: 0 bottom;
         }
     }
+    &-drop > &-content {
+        border-radius: $radius;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+    &-drop > &-arrow {
+        border-color: $white;
+    }
 
     &-arrow {
         width: 0;
@@ -49,14 +62,14 @@ $prefix-cls: #{$prefix}-popper;
         border-top-color: transparent !important;
         border-left-color: transparent !important;
         position: absolute;
-        // transform-origin: center center;
-        // z-index: 1;
+        box-shadow: 1px 1px 3px -2px $darkback;
+        z-index: 10;
     }
 
     &[data-placement^="top"] > &-arrow {
         bottom: -3px;
         transform: translateX(-50%) rotate(45deg);
-        left: 9px;
+        left: 12px;
     }
 
     &[data-placement="top-center"] > &-arrow {
@@ -66,7 +79,7 @@ $prefix-cls: #{$prefix}-popper;
 
     &[data-placement^="bottom"] > &-arrow {
         top: -3px;
-        left: 9px;
+        left: 12px;
         transform: translateX(-50%) rotate(-135deg);
     }
 
@@ -76,7 +89,7 @@ $prefix-cls: #{$prefix}-popper;
     }
 
     &[data-placement^="left"] > &-arrow {
-        top: 9px;
+        top: 12px;
         transform: translateY(-50%) rotate(-45deg);
         right: -3px;
     }
@@ -87,7 +100,7 @@ $prefix-cls: #{$prefix}-popper;
     }
 
     &[data-placement^="right"] > &-arrow {
-        top: 9px;
+        top: 12px;
         transform: translateY(-50%) rotate(135deg);
         left: -3px;
     }
@@ -99,7 +112,7 @@ $prefix-cls: #{$prefix}-popper;
 
     &[data-placement="left-bottom"] > &-arrow,
     &[data-placement="right-bottom"] > &-arrow {
-        bottom: 9px;
+        bottom: 12px;
         top: unset;
         top: initial;
     }
@@ -108,7 +121,7 @@ $prefix-cls: #{$prefix}-popper;
     &[data-placement="bottom-right"] &-arrow {
         left: unset;
         left: initial;
-        right: 9px;
+        right: 12px;
     }
 }
 

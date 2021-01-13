@@ -9,9 +9,11 @@
             <span
                 v-if="showArrow === void 0 && type !== 'drop' ? true : showArrow"
                 :class="[_tobogPrefix_ + '-arrow']"
-                data-arrow="arrow"
+                data-arrow="true"
             ></span>
-            <slot>{{ content }}</slot>
+            <div :class="[_tobogPrefix_ + '-content']">
+                <slot>{{ content }}</slot>
+            </div>
         </div>
     </transition>
 </template>
@@ -82,8 +84,6 @@ export default {
                 {
                     [`${_tobogPrefix_}-gpu`]: this.gpu,
                     [`${_tobogPrefix_}-drop`]: this.type === "drop",
-                    [`${_tobogPrefix_}-show-arrow`]:
-                        this.showArrow === void 0 && this.type !== "drop" ? true : this.showArrow,
                 },
             ]
         },

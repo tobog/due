@@ -16,7 +16,7 @@ $prefix-cls: #{$prefix}-tooltip;
         background-color: $white;
         box-shadow: 0 0 3px 1px $border;
 
-        &>[data-arrow=arrow] {
+        &>[data-arrow=true] {
             border-color: $white;
             box-shadow: 1px 1px 2px $border;
         }
@@ -30,7 +30,7 @@ $value in $colors-map {
         background-color: $value;
         box-shadow: 0 0 3px 1px $value;
 
-        &>[data-arrow=arrow] {
+        &>[data-arrow=true] {
             border-color: $value;
             box-shadow: 1px 1px 3px $value;
         }

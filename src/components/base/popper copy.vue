@@ -1,7 +1,7 @@
 <template>
     <transition name="fade" appear :data-vue-module="$options.name">
         <div ref="popper" :class="[_tobogPrefix_]">
-            <span :class="[_tobogPrefix_ + '-arrow']" data-arrow="arrow"></span>
+            <span :class="[_tobogPrefix_ + '-arrow']" data-arrow="true"></span>
             <slot>{{ content }}</slot>
         </div>
     </transition>

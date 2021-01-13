@@ -10,7 +10,6 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
     }
 
     &-list {
-        & > *,
         .#{$prefix}-dropdownitem {
             line-height: normal;
             padding: 7px 16px;

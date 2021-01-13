@@ -547,7 +547,7 @@ export default class Popper {
                     display: "inline-block",
                     opacity: '',
                     position: "absolute",
-                    zIndex: 3221,
+                    zIndex: 1000,
                     transformOrigin: placement[0] === "top" ? "center bottom" : "",
                     width: this._popper.dataset.initPopperWidth || popper.width,
                 },
