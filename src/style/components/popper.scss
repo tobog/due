@@ -27,7 +27,7 @@ $prefix-cls: #{$prefix}-popper;
         transform-origin: center 0;
         position: absolute;
         max-height: 100vh;
-        overflow: visible;
+        overflow: auto; 
         padding: 0;
         margin: 0;
         background-color: $white;
@@ -49,7 +49,8 @@ $prefix-cls: #{$prefix}-popper;
         margin: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
+        max-height: 100%;
+        overflow: auto; // 有问题
     }
     &-drop > &-arrow {
         border-color: $white;
