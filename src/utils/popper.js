@@ -52,6 +52,7 @@ export default class Popper {
         }
     }
     _handleShowHide(bool, event) {
+        // console.log(bool, event,'-------------')
         if (this._options.always) {
             this.toggle(true);
             return;
@@ -60,8 +61,8 @@ export default class Popper {
             this.toggle(false);
             return
         }
-        if (this._options.trigger === 'click' && event.type === 'click') {
-            if (this._popper.contains(event.target)) {
+        if (this._options.trigger === 'click' && (event.type === 'click' || event.type === 'focusin')) {
+            if (!bool) {
                 this.toggle(true);
                 return
             }

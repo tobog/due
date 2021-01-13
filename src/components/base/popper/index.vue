@@ -106,7 +106,13 @@ export default {
     methods: {
         initPopper() {
             this.$nextTick(() => {
-                if (this._Popper) return
+                if (this._Popper) {
+                    this._Popper.update(this.getReference(), this.$el, this.options)
+                    if (this.always) {
+                        this._Popper.toggle(true)
+                    }
+                    return;
+                }
                 this._Popper = new Popper(this.getReference(), this.$el, this.options)
                 if (this.always) {
                     this._Popper.toggle(true)
@@ -116,13 +122,6 @@ export default {
         handleChange(...args) {
             this.$emit("on-visible-change", ...args)
         },
-        updatePopper() {
-            if (!this._Popper) return
-            this._Popper.update(this.getReference(), this.$el, this.options)
-            if (this.always) {
-                this._Popper.toggle(true)
-            }
-        },
         getReference() {
             if (this.reference instanceof HTMLElement) return this.reference
             return (this.$parent.$refs || {})[this.reference] || getElement(this.reference)
@@ -130,10 +129,10 @@ export default {
     },
     watch: {
         options() {
-            this.updatePopper()
+            this.initPopper()
         },
         reference() {
-            this.updatePopper()
+            this.initPopper()
         },
     },
     beforeDestroy() {
