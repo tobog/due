@@ -9,7 +9,7 @@ export default {
         placement: String, //top,left,bottom,right,center,fix
         transitionName: String,
         content: String,
-        delay: Number,
+        delay: [Number, String],
         gpu: Boolean,
         trigger: String, //click hover,other,
         always: Boolean,

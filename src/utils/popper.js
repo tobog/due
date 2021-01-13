@@ -209,7 +209,8 @@ export default class Popper {
         }
         this._running = false;
     }
-    _delayUpdate() {
+    async _delayUpdate() {
+        await this._getOnchange('on-change-visible');
         if (this._options.delay > 0) {
             clearTimeout(this.__delayTimeout);
             this.__delayTimeout = setTimeout(() => {
@@ -228,7 +229,7 @@ export default class Popper {
         clearTimeout(this.__delayTimeout);
         if (bool === void 0) {
             if (displayNone) {
-                this._delayUpdate();
+                await this._delayUpdate();
                 return;
             }
             this._popper.style.display = 'none';
@@ -236,7 +237,7 @@ export default class Popper {
             return
         }
         if (displayNone && (bool === true || bool === 'show')) {
-            this._delayUpdate();
+            await this._delayUpdate();
             return
         }
         if (!displayNone && (bool === false || bool === 'hide')) {

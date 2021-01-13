@@ -16,6 +16,7 @@
                 v-bind="$attrs"
                 @hook:created="ready = true"
                 @scroll="handleScroll"
+                @on-visible-change="handleVisibleChange"
             >
                 <slot name="drop"></slot>
             </Popper>
@@ -117,7 +118,7 @@ export default {
             })
         },
         async handleTriggerOut(status, event, index) {
-            // console.log(status, index, event.type, "-???????????????")
+            console.log(status, index, event.type, "-???????????????")
             clearTimeout(this.__outvisibleTimeOut)
             if (this.__outvisible || this.disabled) {
                 this.__outvisible = null
@@ -189,6 +190,9 @@ export default {
                 EventListener.off(ele, "click,foucsin", this.__handleActiveTriggerOut)
                 EventListener.on(ele, "click,foucsin", this.__handleActiveTriggerOut)
             }
+        },
+        handleVisibleChange(...args){
+            console.log(...args)
         },
     },
     watch: {
