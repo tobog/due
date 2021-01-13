@@ -5,9 +5,7 @@ export default {
         el.__bindPopper = function (el, value = {}) {
             if (el.__vuePopper || !document) return;
             let { reference, options = {} } = value;
-            options = { ...options };
-            if (!options.trigger) options.trigger = 'other'
-            el.__vuePopper = new Popper(reference, el, options);
+            el.__vuePopper = new Popper(reference, el, { ...options });
             el.__bindPopper = null;
             if (options.always) {
                 el.__vuePopper.toggle(true)
@@ -19,9 +17,7 @@ export default {
         if (el.__vuePopper) {
             let { reference, options = {} } = value || {};
             if (!reference || el.style.display === 'none') return;
-            options = { ...options };
-            if (!options.trigger) options.trigger = 'other'
-            el.__vuePopper.update(reference, el, options);
+            el.__vuePopper.update(reference, el, { ...options });
             if (options.always) {
                 el.__vuePopper.toggle(true)
             }
@@ -29,7 +25,7 @@ export default {
             el.__bindPopper(el, value);
         }
     },
-    unbind(el) {
+    unbind(el,{value}) {
         el.__vuePopper && el.__vuePopper.destroy();
         el.__vuePopper = el.__bindPopper = null;
     }

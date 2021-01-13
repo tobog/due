@@ -52,8 +52,7 @@ export default class Popper {
         }
     }
     _handleShowHide(bool, event) {
-        const { trigger, always } = this._options;
-        if (always) {
+        if (this._options.always) {
             this.toggle(true);
             return;
         }
@@ -61,7 +60,7 @@ export default class Popper {
             this.toggle(false);
             return
         }
-        if (trigger === 'click' && event.type === 'click') {
+        if (this._options.trigger === 'click' && event.type === 'click') {
             if (this._popper.contains(event.target)) {
                 this.toggle(true);
                 return
@@ -69,7 +68,7 @@ export default class Popper {
             this.toggle();
             return;
         }
-        if (trigger === 'hover') {
+        if (this._options.trigger === 'hover') {
             this.toggle(true)
         }
     }
@@ -211,30 +210,28 @@ export default class Popper {
         this._running = false;
     }
     _delayUpdate() {
-        const delay = this._options.delay || 0,
-            style = this._popper.style;
-        if (delay > 0) {
+        if (this._options.delay > 0) {
             clearTimeout(this.__delayTimeout);
             this.__delayTimeout = setTimeout(() => {
-                style.display = 'inline-block';
+                this._popper.style.display = 'inline-block'
                 this._update();
                 this.__delayTimeout = null;
-            }, delay);
-            return
+            }, this._options.delay);
+            return;
         }
-        style.display = 'inline-block';
+        this._popper.style.display = 'inline-block'
         this._update();
     }
-    toggle(bool) {
-        const style = this._popper.style,
-            displayNone = this._isDisplayNone();
+    async toggle(bool) {
+        await Promise.resolve();
+        const displayNone = this._isDisplayNone();
         clearTimeout(this.__delayTimeout);
         if (bool === void 0) {
             if (displayNone) {
                 this._delayUpdate();
                 return;
             }
-            style.display = 'none';
+            this._popper.style.display = 'none';
             this._getOnchange('on-change-hide');
             return
         }
@@ -243,7 +240,7 @@ export default class Popper {
             return
         }
         if (!displayNone && (bool === false || bool === 'hide')) {
-            style.display = 'none';
+            this._popper.style.display = 'none';
             this._getOnchange('on-change-hide');
         }
     }

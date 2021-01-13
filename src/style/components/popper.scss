@@ -24,6 +24,7 @@ $prefix-cls: #{$prefix}-popper;
     }
 
     &-drop {
+        display: block;
         transform-origin: 0 0;
         position: absolute;
         max-height: 100vh;
@@ -62,7 +63,7 @@ $prefix-cls: #{$prefix}-popper;
         border-top-color: transparent !important;
         border-left-color: transparent !important;
         position: absolute;
-        box-shadow: 1px 1px 3px -2px $darkback;
+        box-shadow: 1px 1px 3px -1.5px $darkback;
         z-index: 10;
     }
 
