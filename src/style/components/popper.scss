@@ -24,8 +24,7 @@ $prefix-cls: #{$prefix}-popper;
     }
 
     &-drop {
-        display: block;
-        transform-origin: 0 0;
+        transform-origin: center 0;
         position: absolute;
         max-height: 100vh;
         overflow: visible;

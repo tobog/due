@@ -178,7 +178,6 @@ export default class Popper {
         if (this._running || !this._reference || !this._popper) return;
         const displayNone = this._isDisplayNone();
         if (!displayNone) this._repalceComment();
-        // console.log('popper running before')
         if (displayNone || this._performance(event)) return;
         this._running = true;
         // console.log('popper running')
@@ -209,8 +208,8 @@ export default class Popper {
         }
         this._running = false;
     }
-    async _delayUpdate() {
-        await this._getOnchange('on-change-visible');
+    _delayUpdate() {
+        this._getOnchange('on-change-visible');
         if (this._options.delay > 0) {
             clearTimeout(this.__delayTimeout);
             this.__delayTimeout = setTimeout(() => {
@@ -229,7 +228,7 @@ export default class Popper {
         clearTimeout(this.__delayTimeout);
         if (bool === void 0) {
             if (displayNone) {
-                await this._delayUpdate();
+                this._delayUpdate();
                 return;
             }
             this._popper.style.display = 'none';
@@ -237,7 +236,7 @@ export default class Popper {
             return
         }
         if (displayNone && (bool === true || bool === 'show')) {
-            await this._delayUpdate();
+            this._delayUpdate();
             return
         }
         if (!displayNone && (bool === false || bool === 'hide')) {
