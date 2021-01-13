@@ -4,24 +4,34 @@ export default {
     bind(el, { value,/* modifiers, arg*/ }) {
         el.__bindPopper = function (el, value = {}) {
             if (el.__vuePopper || !document) return;
-            const { reference, options = {} } = value;
-            el.__vuePopper = new Popper(reference, el, { ...options, trigger: 'other' });
+            let { reference, options = {} } = value;
+            options = { ...options };
+            if (!options.trigger) options.trigger = 'other'
+            el.__vuePopper = new Popper(reference, el, options);
             el.__bindPopper = null;
+            if (options.always) {
+                el.__vuePopper.toggle(true)
+            }
         }
         el.__bindPopper(el, value);
     },
     componentUpdated(el, { value }) {
         if (el.__vuePopper) {
-            const { reference, options = {} } = value || {};
+            let { reference, options = {} } = value || {};
             if (!reference || el.style.display === 'none') return;
-            el.__vuePopper.update(reference, el, { ...options, trigger: 'other' });
+            options = { ...options };
+            if (!options.trigger) options.trigger = 'other'
+            el.__vuePopper.update(reference, el, options);
+            if (options.always) {
+                el.__vuePopper.toggle(true)
+            }
         } else {
             el.__bindPopper(el, value);
         }
     },
     unbind(el) {
         el.__vuePopper && el.__vuePopper.destroy();
-        el.__vuePopper = null;
+        el.__vuePopper = el.__bindPopper = null;
     }
 }
 

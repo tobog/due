@@ -1,29 +1,6 @@
+
 $prefix-cls-drop: #{$prefix}-drop;
-
-
 $prefix-cls-dropdown: #{$prefix}-dropdown;
-
-
-.#{$prefix-cls-drop} {
-    transform-origin: 0 0;
-    position: absolute;
-    max-height: 100vh;
-    overflow: auto;
-    padding: 0;
-    background-color: $white;
-    box-sizing: border-box;
-    border-radius: 3px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
-    z-index: 100;
-    outline: none;
-
-    &[data-placement^='top'],
-    &[data-placement$='-bottom'],
-    &[data-placement^='fix'] {
-        transform-origin: 0 bottom;
-    }
-
-}
 
 
 .#{$prefix-cls-dropdown} {
@@ -33,8 +10,7 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
     }
 
     &-list {
-
-        &>*,
+        & > *,
         .#{$prefix}-dropdownitem {
             line-height: normal;
             padding: 7px 16px;
@@ -59,7 +35,7 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
         }
     }
 
-    .#{$prefix-cls-drop}-visible>&-button .#{$prefix}-icons {
+    .#{$prefix-cls-drop}-visible > &-button .#{$prefix}-icons {
         transform: rotate(180deg);
     }
 }

@@ -1,10 +1,11 @@
 <template>
-    <div :class="wrapClasses" :data-vue-module="dataVueModule || $options.name">
+    <div :class="classes" :data-vue-module="dataVueModule || $options.name">
         <slot :toggle="toggle"></slot>
         <template v-if="$slots.drop">
-            <Drop
+            <Popper
                 ref="drop"
                 v-show="show"
+                type="drop"
                 :transfer="transfer"
                 :placement="placement"
                 :updateIndex="updateIndex"
@@ -16,13 +17,13 @@
                 @scroll="handleScroll"
             >
                 <slot name="drop"></slot>
-            </Drop>
+            </Popper>
         </template>
     </div>
 </template>
 <script>
 import { ClickOut, HoverOut, EventListener } from "../../utils/dom";
-import Drop from "./drop";
+import Popper from "./popper";
 
 export default {
     name: "DropBase",
@@ -32,7 +33,7 @@ export default {
         event: "change",
     },
     components: {
-        Drop,
+        Popper,
     },
     props: {
         placement: String,
@@ -78,7 +79,7 @@ export default {
                 ? `width:${width}px;${dropStyle}`
                 : { width: `${width}px`, ...dropStyle };
         },
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,

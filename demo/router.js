@@ -167,8 +167,8 @@ export default new Router({
                     },
                 },
                 {
-                    path: "drop",
-                    component: () => import("./components/drop"),
+                    path: "popper",
+                    component: () => import("./components/popper"),
                     meta: {
                         label: "下拉组件",
                     },

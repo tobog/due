@@ -67,6 +67,7 @@
             :disableMethod="disableMethod"
             :firstDayOfWeek="firstDayOfWeek"
             :visible="visible"
+            :cellFormatter="cellFormatter"
             :doublePanel="doublePanel"
             @input="handleInput"
             @on-clear="handleClear('autoClose')"
@@ -146,6 +147,7 @@ export default {
         },
         isTag: Boolean,
         size: [String, Number],
+        cellFormatter:Function
     },
 
     data() {

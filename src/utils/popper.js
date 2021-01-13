@@ -75,7 +75,7 @@ export default class Popper {
     }
     _setConfig(reference, popper, options = {}) {
         this._options = Object.assign(this._options, options);
-        const placement = this._options.placement;
+        const placement = this._options.placement || "bottom";
         if (typeof placement === 'string') {
             this._options.placement = placement.split('-');
         }
@@ -87,7 +87,7 @@ export default class Popper {
             this._reference = reference;
             this._onHoverClick();
         }
-        if(!this._throttleUpdate){
+        if (!this._throttleUpdate) {
             this._throttleUpdate = throttle(this._update.bind(this), this._options.throttle, true);
         }
         this._options.positionElement = this._options.transfer ? document.body : null;
@@ -293,15 +293,14 @@ export default class Popper {
     placementOverflow(data) {
         let basePlacement = data.placement[0] || "bottom", //left,right,top,bottom
             shiftPlacement = data.placement[1], //left,right,top,bottom
-            offset = this._options.offset / 1 + 2;
+            offset = this._options.offset * 1 + 2,
+            boundaries = this._boundaries = this.getBoundaries(this._options.boundaryElement)
         if (!this._options.responsive) {
             if ((basePlacement === "left" || basePlacement === "right") && (!shiftPlacement || shiftPlacement === basePlacement)) shiftPlacement = "top";
             data.placement = [basePlacement, shiftPlacement];
             return data;
         }
-        let boundaries = this._boundaries = this.getBoundaries(this._options.boundaryElement),
-            // popper = data.popper,
-            referenceRect = data.reference.rect,
+        let referenceRect = data.reference.rect,
             popperRect = data.popper,
             basePosition = {
                 top: referenceRect.top - popperRect.height - offset >= boundaries.top,
@@ -349,7 +348,7 @@ export default class Popper {
         return data;
     }
     offset(data) {
-        let offset = this._options.offset / 1,
+        let offset = this._options.offset * 1,
             placement = data.placement[0];
         if (placement === "left") {
             data.left -= offset;

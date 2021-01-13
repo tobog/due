@@ -59,13 +59,14 @@ media  整体组件
 8. tooltip 出现反复出现和消失解决方案再加一个为元素覆盖间隙
 
 
+
 9. 添加指令，和修饰符，如v-loading.fullscreen="bool"
 10. 优化dropdown
 11. scrollPosition 组件和指令
 12. excel 导入导出
 13. scrollPerance 性能
 14. table cell 宽度依据表头元素设置宽度据右左中对齐
-
+15. drop 通过display 状态开启性能和显示bug
 
 ## bug
 1. formedit demo tooltip=>clickout bug

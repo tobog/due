@@ -71,7 +71,7 @@ import DatePanel from "./date/index"
 import Collapse from "./collapse/index"
 import CollapseItem from "./collapse/item"
 import Split from "./split/index"
-import Drop from "./base/drop"
+import Popper from './base/popper'
 import Dropdown from "./dropdown/index"
 import DropdownItem from "./dropdown/dropdownItem"
 
@@ -92,6 +92,7 @@ import TabPane from "./tabs/panel"
 import Anchor from "./anchor"
 import Color from "./color"
 import ColorPicker from "./color/picker"
+
 export default {
     Config,
     Fluid,
@@ -160,7 +161,7 @@ export default {
     Collapse,
     CollapseItem,
     Split,
-    Drop,
+    Popper,
     Dropdown,
     DropdownItem,
     // DropWrapper,

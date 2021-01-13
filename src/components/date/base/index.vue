@@ -19,6 +19,7 @@
             :showWeek="showWeek"
             :format="format"
             :weeks="weeks"
+            :cellFormatter="cellFormatter"
             :firstDayOfWeek="firstDayOfWeek"
             @on-selected="selected"
             @on-range-change="handleRangeChange"
@@ -32,6 +33,7 @@
             :disableMethod="disableMethod"
             :value="getTimeValue"
             :visible="visible"
+            :cellFormatter="cellFormatter"
             @on-selected="selected"
         />
     </div>
@@ -57,7 +59,7 @@ export default {
         Times,
     },
     props: {
-        value: [String, Array, Date],
+        value: [String, Array, Date, Number],
         format: {
             type: String,
             default: "yy-MM-dd HH:mm:ss",
@@ -77,6 +79,7 @@ export default {
             default: 0,
         },
         visible: Boolean,
+        cellFormatter: Function,
         // minDate: [String, Date],
         // maxDate: [String, Date],
     },

@@ -4,6 +4,7 @@
 		<slot></slot>
 		<template v-if="ready">
 			<Popper
+				type="popper"
 				:gpu="gpu"
 				:reference="getReference"
 				:placement="placement"

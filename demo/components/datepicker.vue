@@ -3,7 +3,7 @@
 <template>
     <Demo :config="getConfig" :code="getCode">
         <template slot="header">
-            <h2>代码示例 (DatePicker 日期选择器)</h2>
+            <h2>代码示例 (DatePicker 日期选择器,DatePanel面板)</h2>
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
         </template>
         <template v-slot="config">
@@ -41,8 +41,9 @@ export default {
     methods: {},
     computed: {
         getCode() {
-            return `<vDatepicker v-model="value" v-bind=CODE>
-					</vDatepicker>`
+            return `<Datepicker v-model="value" v-bind=CODE></Datepicker>
+                    <DatePanel v-model="value" v-bind=CODE></DatePanel>
+            `
         },
         getConfig() {
             return [
@@ -63,16 +64,6 @@ export default {
                     demoDefault: false,
                     explain:
                         "是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: false,
-                },
-                {
-                    showConfig: true,
-                    label: "自动关闭",
-                    key: "autoClose",
-                    demoDefault: false,
-                    explain: "是否自动关闭",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
@@ -129,16 +120,6 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "标签显示",
-                    key: "isTag",
-                    demoDefault: true,
-                    explain: "是否标签显示",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: true,
-                },
-                {
-                    showConfig: true,
                     label: "可清除",
                     key: "clearable",
                     demoDefault: true,
@@ -164,7 +145,7 @@ export default {
                     demoDefault: 0,
                     explain: "首次星期,如星期一或者星期日开始顺序,DateBase|DatePanel|DatePicter属性",
                     dataType: "Boolean",
-                    tag: "vSwitch",
+                    tag: "vInputNumber",
                     default: 0,
                 },
                 {
@@ -173,7 +154,6 @@ export default {
                     demoDefault: '',
                     explain: "自定义星期名称,DateBase|DatePanel|DatePicter属性",
                     dataType: "Boolean",
-                    tag: "vSwitch",
                     default: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
                 },
                 {
@@ -255,7 +235,7 @@ export default {
                 },
                 {
                     label: "是否可用",
-                    key: "sectionMethod",
+                    key: "disableMethod",
                     demoDefault: "",
                     explain: "当前日期不可用",
                     dataType: "Function",
@@ -273,7 +253,7 @@ export default {
                     label: "继承属性",
                     key: "$attrs",
                     demoDefault: "",
-                    explain: "继承input 属性",
+                    explain: "继承Input 属性，参考Input组件",
                     dataType: "Object",
                     default: "",
                 },

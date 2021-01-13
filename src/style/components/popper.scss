@@ -1,27 +1,46 @@
 $prefix-cls: #{$prefix}-popper;
 
 .#{$prefix-cls} {
-    display: none;
-    visibility: visible;
-    position: absolute;
-    z-index: 1060;
-    width: auto;
-    color: $white;
-    min-height: 34px;
-    padding: 6px 12px;
-    text-align: left;
-    background-color: $darkback;
-    box-shadow: 0 0 3px $darkback;
-    border-radius: 3px;
-    white-space: normal;
-    // max-width: 100%;
-    outline: none !important;
-    box-sizing: border-box !important;
-    max-width: calc(100vw - 12px);
+    &:not(&-drop) {
+        display: none;
+        visibility: visible;
+        position: absolute;
+        z-index: 100;
+        width: auto;
+        color: $white;
+        min-height: 34px;
+        padding: 6px 12px;
+        text-align: left;
+        background-color: $darkback;
+        box-shadow: 0 0 3px $darkback;
+        border-radius: 3px;
+        white-space: normal;
+        // max-width: 100%;
+        outline: none !important;
+        box-sizing: border-box !important;
+        max-width: calc(100vw - 12px);
+    }
 
-    // &-gpu {
-    //     max-width: 100vw;
-    // }
+    &-drop {
+        transform-origin: 0 0;
+        position: absolute;
+        max-height: 100vh;
+        overflow: auto;
+        padding: 0;
+        margin: 0;
+        background-color: $white;
+        box-sizing: border-box;
+        border-radius: $radius;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+        outline: none;
+
+        &[data-placement^="top"],
+        &[data-placement$="-bottom"],
+        &[data-placement^="fix"] {
+            transform-origin: 0 bottom;
+        }
+    }
 
     &-arrow {
         width: 0;
@@ -30,67 +49,63 @@ $prefix-cls: #{$prefix}-popper;
         border-top-color: transparent !important;
         border-left-color: transparent !important;
         position: absolute;
+        // transform-origin: center center;
         // z-index: 1;
-
     }
-}
 
-
-
-.#{$prefix-cls} {
-    &[data-placement^='top'] .#{$prefix-cls}-arrow {
+    &[data-placement^="top"] > &-arrow {
         bottom: -3px;
         transform: translateX(-50%) rotate(45deg);
         left: 9px;
     }
 
-    &[data-placement='top-center'] .#{$prefix-cls}-arrow {
+    &[data-placement="top-center"] > &-arrow {
         left: 50%;
         // transform: translateX(-50%) rotate(45deg)
     }
 
-    &[data-placement^='bottom'] .#{$prefix-cls}-arrow {
+    &[data-placement^="bottom"] > &-arrow {
         top: -3px;
         left: 9px;
         transform: translateX(-50%) rotate(-135deg);
     }
 
-    &[data-placement='bottom-center'] .#{$prefix-cls}-arrow {
+    &[data-placement="bottom-center"] > &-arrow {
         left: 50%;
         // transform: translateX(-50%) rotate(-135deg);
     }
 
-    &[data-placement^='left'] .#{$prefix-cls}-arrow {
+    &[data-placement^="left"] > &-arrow {
         top: 9px;
         transform: translateY(-50%) rotate(-45deg);
         right: -3px;
     }
 
-    &[data-placement='left-center'] .#{$prefix-cls}-arrow {
+    &[data-placement="left-center"] > &-arrow {
         top: 50%;
         // transform: translateY(-50%) rotate(-45deg);
     }
 
-    &[data-placement^='right'] .#{$prefix-cls}-arrow {
+    &[data-placement^="right"] > &-arrow {
         top: 9px;
         transform: translateY(-50%) rotate(135deg);
         left: -3px;
     }
 
-    &[data-placement='right-center'] .#{$prefix-cls}-arrow {
+    &[data-placement="right-center"] > &-arrow {
         top: 50%;
         // transform: translateY(-50%) rotate(135deg);
     }
 
-    &[data-placement='left-bottom'] .#{$prefix-cls}-arrow,
-    &[data-placement='right-bottom'] .#{$prefix-cls}-arrow {
+    &[data-placement="left-bottom"] > &-arrow,
+    &[data-placement="right-bottom"] > &-arrow {
         bottom: 9px;
         top: unset;
         top: initial;
     }
 
-    &[data-placement='top-right'] .#{$prefix-cls}-arrow,
-    &[data-placement='bottom-right'] .#{$prefix-cls}-arrow {
+    &[data-placement="top-right"] &-arrow,
+    &[data-placement="bottom-right"] &-arrow {
         left: unset;
         left: initial;
         right: 9px;
