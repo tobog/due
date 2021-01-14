@@ -23,7 +23,7 @@ medio 响应式组件或指令
 6. mask 蒙版和剪切
 7. movedirect 有方向速度等组件
 8. 优化动态宽高比例用 padding-bottom:10%或者size：em
-9. 增加dropBase 仅仅提供下拉基础
+<!-- 9. 增加dropBase 仅仅提供下拉基础 -->
 <!-- 10. 增加 Theme组件，Media 组件 -->
 11. 增加音乐可视化组件，录屏组件
 12. 增加图片放大组件
@@ -66,11 +66,11 @@ media  整体组件
 12. excel 导入导出
 13. scrollPerance 性能
 14. table cell 宽度依据表头元素设置宽度据右左中对齐
-15. drop 通过display 状态开启性能和显示bug
+<!-- 15. drop 通过display 状态开启性能和显示bug -->
 
 ## bug
 1. formedit demo tooltip=>clickout bug
-2. ColorPicter 缺少清除，没有透明度下高度比例不好看（高偏低），按钮偏大
+<!-- 2. ColorPicter 缺少清除，没有透明度下高度比例不好看（高偏低），按钮偏大 -->
 
 
 4. 基于swiper 设计动画组件 Animation
@@ -83,6 +83,8 @@ media  整体组件
 2. 在已有选项的条件下,接口搜索更新备选数据后,选中变化和没有变化下如何处理老数据已有的选中的选项
 3. 添加transfer全局变量
 4. canvas 图片跨域
+5. 通过scroll 优化轮播
+6. box-showdom 100vmax 实现 剪切和蒙版 
 
 
 
