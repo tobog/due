@@ -6,7 +6,7 @@
                 ref="drop"
                 v-show="show"
                 type="drop"
-                trigger="other"
+                trigger="custom"
                 :transfer="transfer"
                 :placement="placement"
                 :updateIndex="updateIndex"
@@ -16,7 +16,6 @@
                 v-bind="$attrs"
                 @hook:created="ready = true"
                 @scroll="handleScroll"
-                @on-visible-change="handleVisibleChange"
             >
                 <slot name="drop"></slot>
             </Popper>
@@ -24,7 +23,7 @@
     </div>
 </template>
 <script>
-import {ClickOut, HoverOut, EventListener} from "../../utils/dom"
+import {ClickOut, HoverOut, EventListener, getElement} from "../../utils/dom"
 import Popper from "./popper/index"
 
 export default {
@@ -32,7 +31,7 @@ export default {
     inheritAttrs: false,
     model: {
         prop: "visible",
-        event: "change",
+        event: "on-change",
     },
     components: {
         Popper,
@@ -41,7 +40,7 @@ export default {
         placement: String,
         dropStyle: [Object, String],
         transfer: Boolean,
-        reference: HTMLElement,
+        reference: [String, HTMLElement],
         visible: Boolean,
         disabled: Boolean,
         isOutRef: Boolean,
@@ -49,32 +48,33 @@ export default {
         autoClose: Boolean,
         dropClass: [Object, String, Array],
         dataVueModule: String,
-        performance: {
-            type: Boolean,
-            default: true,
-        },
+        // performance: {
+        //     type: Boolean,
+        //     default: true,
+        // },
         trigger: {
             type: String,
             default: "click", // 'click','hover','custom'
         },
-        visibleControlFn: Function,
+        visibleControl: Function,
     },
     data() {
         return {
             show: this.visible || false,
             updateIndex: 0,
             ready: false,
-            performanceBind: this.visible || !this.performance, // 仅关闭情况下
+            // unPerformance: this.visible || !this.performance, // 仅关闭情况下
         }
     },
     computed: {
         getReference() {
             if (this.reference instanceof HTMLElement) return this.reference
+            if (this.reference && typeof this.reference === "string") return getElement(this.reference)
             if (this.ready && !this.isOutRef) return this.$el
             return null
         },
         getDropStyle() {
-            const dropStyle = this.dropStyle || (this.show && !this.show) || {},
+            const dropStyle = this.dropStyle || {},
                 ref = (!this.show && !this._isMounted && {}) || this.getReference || {},
                 width = ref.offsetWidth
             return typeof dropStyle === "string" ? `width:${width}px;${dropStyle}` : {width: `${width}px`, ...dropStyle}
@@ -93,7 +93,6 @@ export default {
         bindTriggerOut() {
             if (this.trigger === "custom") return
             this.$nextTick(() => {
-                if (!this.performanceBind) return
                 const drop = (this.$refs.drop || {}).$el,
                     reference = this.getReference
                 if (!drop || !reference) return
@@ -125,8 +124,8 @@ export default {
                 return
             }
             // console.log(status, index, event.type, event.target.innerText, "************");
-            if (typeof this.visibleControlFn === "function") {
-                const result = await this.visibleControlFn(status)
+            if (typeof this.visibleControl === "function") {
+                const result = await this.visibleControl(status)
                 if (result === void 0) return
                 status = !result
             }
@@ -170,54 +169,50 @@ export default {
             clearTimeout(this.__outvisibleTimeOut)
             this.__outvisibleTimeOut = setTimeout(() => {
                 this.__outvisible = false
+                this.__outvisibleTimeOut = null
             }, 300)
         },
         //提高性能，在用到时在绑定实例
-        activeBind(ele, oldEle) {
-            if (this.trigger === "custom") return
-            if (this.performanceBind) return
-            this.__handleActiveTriggerOut = (event) => {
-                console.log("__handleActiveTriggerOut", "==========")
-                this.handleTriggerOut(false, event, 2)
-                this.performanceBind = true
-                EventListener.off(event.currentTarget, "click,foucsin", this.__handleActiveTriggerOut)
-                this.__handleActiveTriggerOut = null
-            }
-            if (oldEle) {
-                EventListener.off(oldEle, "click,foucsin", this.__handleActiveTriggerOut)
-            }
-            if (ele) {
-                EventListener.off(ele, "click,foucsin", this.__handleActiveTriggerOut)
-                EventListener.on(ele, "click,foucsin", this.__handleActiveTriggerOut)
-            }
-        },
-        handleVisibleChange(...args){
-            console.log(...args)
-        },
+        // activeBind(ele, oldEle) {
+        //     if (this.trigger === "custom" || this.unPerformance) return
+        //     this.__handleActiveTriggerOut = (event) => {
+        //         console.log("__handleActiveTriggerOut", "==========",event.currentTarget)
+        //         this.handleTriggerOut(false, event, 2)
+        //         this.unPerformance = true
+        //         EventListener.off(event.currentTarget, "click,foucsin", this.__handleActiveTriggerOut)
+        //         this.__handleActiveTriggerOut = null
+        //     }
+        //     if (oldEle) {
+        //         EventListener.off(oldEle, "click,foucsin", this.__handleActiveTriggerOut)
+        //     }
+        //     if (ele) {
+        //         EventListener.off(ele, "click,foucsin", this.__handleActiveTriggerOut)
+        //         EventListener.on(ele, "click,foucsin", this.__handleActiveTriggerOut)
+        //     }
+        // },
     },
     watch: {
-        getReference(val, old) {
-            this.activeBind(val, old)
+        getReference() {
+            // this.activeBind(val, old)
             this.bindTriggerOut()
         },
-        // reference() {
-        //     this.activeBind(val, old);
-        //     this.bindTriggerOut();
-        // },
         transfer() {
             this.bindTriggerOut()
         },
-        performanceBind(val) {
-            setTimeout(this.bindTriggerOut)
-        },
+        // unPerformance(val) {
+        //     setTimeout(this.bindTriggerOut)
+        // },
         show(val) {
             this.$emit("on-visible-change", val)
             this.$emit("update:visible", val)
-            this.$emit("change", val)
+            this.$emit("on-change", val)
         },
         visible(val) {
             if (val === this.show) return
-            if (val) this.__outvisible = true
+            if (val) {
+                this.__outvisible = true
+                this._eleClickOut && this._eleClickOut.toggleBindDocument(true)
+            }
             this.show = val
         },
     },

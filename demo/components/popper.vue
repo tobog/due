@@ -4,7 +4,7 @@
     <Demo :config="getConfig" :code="getCode">
         <template slot="header">
             <h2>代码示例 (Popper 组件)</h2>
-            <h4 class="padding-top-10">提供下拉,提示框，用于定位元素</h4>
+            <h4 class="padding-top-10">提供下拉,提示框，用于定位元素位置</h4>
         </template>
         <template v-slot="config">
             <vButton @hook:created="ready += 1" @click="value = !value" ref="btn">Popper</vButton>

@@ -8,6 +8,7 @@
         :class="[_tobogPrefix_]"
         :dropClass="[_tobogPrefix_ + '-drop']"
         :data-vue-module="$options.name"
+        v-bind="popperConfig"
         @on-visible-change="handleVisibleChange"
     >
         <div ref="inner" :class="colorClasses" :style="getStyle">
@@ -68,8 +69,9 @@ export default {
         name: String,
         autoClose: Boolean,
         size: [String, Number],
-        colors:Array
+        colors: Array,
         // clearable: Boolean,
+        popperConfig: Object,
     },
     data() {
         return {

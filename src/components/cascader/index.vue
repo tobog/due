@@ -10,6 +10,7 @@
         :class="[_tobogPrefix_ + '-wrapper']"
         :reference="ready ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
+        v-bind="popperConfig"
         @on-visible-change="handleVisible"
     >
         <InputBase
@@ -83,15 +84,15 @@
 </template>
 
 <script>
-import DropBase from "../base/dropBase";
-import InputBase from "../input/base";
-import mixin from "../input/base/mixin";
-import Caspanel from "./caspanel";
+import DropBase from "../base/dropBase"
+import InputBase from "../input/base"
+import mixin from "../input/base/mixin"
+import Caspanel from "./caspanel"
 export default {
     name: "Cascader",
     componentName: "Cascader",
     mixins: [mixin],
-    components: { Caspanel, DropBase, InputBase },
+    components: {Caspanel, DropBase, InputBase},
     props: {
         filterable: Boolean,
         autoClose: Boolean,
@@ -99,13 +100,13 @@ export default {
         value: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         data: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         identifier: {
@@ -129,137 +130,138 @@ export default {
             default: true,
         },
         noDataText: String,
-        filterType: String, // default(cascader),flat(平铺)
+        filterType: String, // default(cascader),flat(平铺),
+        popperConfig: Object,
     },
     data() {
         return {
             model: [],
             visible: false,
             updateValueText: 1,
-        };
+        }
     },
     created() {
-        this.updateModel(this.value);
-        this.handleDispatch("on-change", this.model);
+        this.updateModel(this.value)
+        this.handleDispatch("on-change", this.model)
     },
     computed: {
         getValueText() {
-            if (!this.$refs.caspanel && this.updateValueText) return;
-            const data = this.$refs.caspanel.getDataByValue(this.model);
+            if (!this.$refs.caspanel && this.updateValueText) return
+            const data = this.$refs.caspanel.getDataByValue(this.model)
             const levelFn = (item) => {
-                let result = [];
+                let result = []
                 if (this.showAllLevels) {
-                    result = item.map((node) => (node.data.label == void 0 ? node.data.value : node.data.label));
+                    result = item.map((node) => (node.data.label == void 0 ? node.data.value : node.data.label))
                 } else {
-                    item = item[item.length - 1];
+                    item = item[item.length - 1]
                     if (item) {
-                        result = [item.data.label == void 0 ? item.data.value : item.data.label];
+                        result = [item.data.label == void 0 ? item.data.value : item.data.label]
                     }
                 }
-                return result.join(" / ");
-            };
-            if (this.selection === "multiple") {
-                return data.map(levelFn);
+                return result.join(" / ")
             }
-            return levelFn(data);
+            if (this.selection === "multiple") {
+                return data.map(levelFn)
+            }
+            return levelFn(data)
         },
     },
     methods: {
         getDataByValue(data = this.model) {
-            if (!this.$refs.caspanel) return;
-            return this.$refs.caspanel.getDataByValue(data);
+            if (!this.$refs.caspanel) return
+            return this.$refs.caspanel.getDataByValue(data)
         },
         handleKeydown(event) {
             if (event.keyCode === 13) {
                 if (this.__model) {
-                    this.updateModel(this.__model);
-                    this.__model = null;
+                    this.updateModel(this.__model)
+                    this.__model = null
                 }
-                this.visible = false;
+                this.visible = false
             }
             if (this.selection === "multiple" && event.keyCode === 46 && !event.target.value) {
-                this.handleClearTag(this.model.length - 1);
+                this.handleClearTag(this.model.length - 1)
             }
         },
         handleChange(val) {
-            this.updateModel(val);
+            this.updateModel(val)
             if (this.autoClose) {
-                this.visible = false;
+                this.visible = false
             }
         },
         handleSearch(val) {
-            this.__model = val;
+            this.__model = val
         },
         handleInput(event) {
-            const value = event.target.value || "";
-            this.visible = true;
-            if (!value && this.selection !== "multiple") this.updateModel([]);
-            this.$refs.caspanel && this.$refs.caspanel.handleSearch(value.split("/"));
+            const value = event.target.value || ""
+            this.visible = true
+            if (!value && this.selection !== "multiple") this.updateModel([])
+            this.$refs.caspanel && this.$refs.caspanel.handleSearch(value.split("/"))
         },
         handleBlur(event) {
             if (this.__model) {
-                this.updateModel(this.__model);
-                this.__model = null;
+                this.updateModel(this.__model)
+                this.__model = null
             }
             this.$nextTick(() => {
-                this.updateValueText += 1;
-                this.$emit("on-change", this.model, event);
-                this.$emit("on-blur", this.model, event);
-                this.handleDispatch("on-validate", this.model);
-            });
+                this.updateValueText += 1
+                this.$emit("on-change", this.model, event)
+                this.$emit("on-blur", this.model, event)
+                this.handleDispatch("on-validate", this.model)
+            })
         },
         handleFocus(event) {
-            this.$emit("on-focus", this.model, event);
+            this.$emit("on-focus", this.model, event)
         },
         handleClearTag(index) {
-            const data = [...this.model];
-            const item = data.splice(index, 1);
-            this.updateModel(data);
-            this.$refs.dropBase.cancelChange();
-            this.$emit("on-remove-item", item, index);
+            const data = [...this.model]
+            const item = data.splice(index, 1)
+            this.updateModel(data)
+            this.$refs.dropBase.cancelChange()
+            this.$emit("on-remove-item", item, index)
         },
         handleClear() {
-            this.updateModel([]);
-            this.$refs.dropBase.cancelChange();
-            this.$emit("on-clear");
+            this.updateModel([])
+            this.$refs.dropBase.cancelChange()
+            this.$emit("on-clear")
         },
         updateModel(val) {
-            if (val === this.model) return;
-            if (!val) val = [];
-            if (!Array.isArray(val)) val = [val];
-            if (this.selection === "multiple" && val[0] != null && !Array.isArray(val[0])) val = [val];
-            this.model = val;
-            this.$emit("input", this.model);
-            this.handleDispatch("on-change", this.model);
+            if (val === this.model) return
+            if (!val) val = []
+            if (!Array.isArray(val)) val = [val]
+            if (this.selection === "multiple" && val[0] != null && !Array.isArray(val[0])) val = [val]
+            this.model = val
+            this.$emit("input", this.model)
+            this.handleDispatch("on-change", this.model)
         },
         handleVisible(val) {
-            this.updateValueText += 1;
-            this.$emit("on-visible-change", val);
-            clearTimeout(this.__caspanelTime);
+            this.updateValueText += 1
+            this.$emit("on-visible-change", val)
+            clearTimeout(this.__caspanelTime)
             this.$nextTick(() => {
-                if (this.selection === "multiple") this.$refs.inputBase.getInputDom().value = "";
+                if (this.selection === "multiple") this.$refs.inputBase.getInputDom().value = ""
                 this.__caspanelTime = setTimeout(() => {
-                    this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null);
-                }, 200);
-            });
+                    this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null)
+                }, 200)
+            })
         },
         updatedDrop() {
             this.$nextTick(() => {
-                this.$refs.dropBase.updatedDrop();
-            });
+                this.$refs.dropBase.updatedDrop()
+            })
         },
     },
     watch: {
         value: {
             deep: true,
             handler(val) {
-                this.updateModel(val);
+                this.updateModel(val)
             },
         },
     },
     beforeDestroy() {
-        clearTimeout(this.__caspanelTime);
-        this.__caspanelTime = null;
+        clearTimeout(this.__caspanelTime)
+        this.__caspanelTime = null
     },
-};
+}
 </script>

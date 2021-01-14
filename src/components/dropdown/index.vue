@@ -2,7 +2,7 @@
     <DropBase
         ref="dropBase"
         isOutRef
-        dropStyle="overflow:hidden;width:auto;"
+        dropStyle="width:auto;"
         :isToggle="trigger === 'click'"
         :trigger="trigger"
         :class="[_tobogPrefix_ + '-wrapper']"
@@ -13,14 +13,19 @@
         :reference="(ready && $refs.ref) || null"
         @hook:created="ready = true"
         @on-clickout="handleClick"
-        v-bind="$attrs"
         v-model="show"
+        v-bind="$attrs"
     >
-        <div ref="ref" :class="[_tobogPrefix_]">
+        <div ref="ref" :class="classes">
             <slot>
-                <Button :class="[_tobogPrefix_ + '-button']" theme="primary" v-if="innerLabel" icon="arrow-dropdown">{{
-                    innerLabel
-                }}</Button>
+                <Button
+                    v-if="innerLabel"
+                    :size="size"
+                    :class="[_tobogPrefix_ + '-button']"
+                    :theme="theme || 'primary'"
+                    icon="arrow-dropdown"
+                    >{{ innerLabel }}</Button
+                >
             </slot>
         </div>
         <slot slot="drop" name="list"></slot>
@@ -28,10 +33,11 @@
 </template>
 
 <script>
-import DropBase from "../base/dropBase";
-import Button from "../button/index";
+import DropBase from "../base/dropBase"
+import Button from "../button/index"
 export default {
     name: "Dropdown",
+    componentName: "Dropdown",
     components: {
         Button,
         DropBase,
@@ -44,6 +50,7 @@ export default {
         label: [String, Number],
         autoLabel: Boolean,
         trigger: {
+            type: String,
             // validator(value) {
             // 	return ['click', 'hover', 'custom'].indexOf(value) > -1;
             // },
@@ -53,62 +60,51 @@ export default {
             type: String,
             default: "bottom",
         },
-        visible: {
-            type: Boolean,
-            default: false,
-        },
-        transfer: {
-            type: Boolean,
-            default: false,
-        },
+        visible: Boolean,
+        transfer: Boolean,
         autoClose: Boolean,
+        size: [String, Number],
+        theme: String,
     },
     data() {
         return {
             show: this.visible || false,
-            children: [],
             innerLabel: this.label,
             ready: false,
-        };
+        }
     },
     created() {
-        this.$on("on-select", this.getSelected);
+        this.$on("on-select", this.getSelected)
     },
-    // mounted() {
-    //     this.show = this.visible || false
-    // },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-visible`]: this.show,
                 },
-            ];
+            ]
         },
     },
     watch: {
         show(val) {
-            if (val == this.visible) return;
-            this.$emit("on-visible-change", val);
+            if (val == this.visible) return
+            this.$emit("on-visible-change", val)
         },
         visible(val) {
-            this.show = val;
+            this.show = val
         },
     },
     methods: {
         handleClick(status, event) {
-            this.$emit("on-clickout", status, event);
+            this.$emit("on-clickout", status, event)
         },
         getSelected(name) {
-            if (this.autoClose) this.show = false;
-            if (this.autoLabel) this.innerLabel = name;
-            this.$emit("on-change", name);
+            if (this.autoClose) this.show = false
+            if (this.autoLabel) this.innerLabel = name
+            this.$emit("on-change", name)
         },
     },
-    // beforeDestroy() {
-    //     if (this._ancestor_) this._ancestor_.$emit("on-remove-child", this)
-    // },
-};
+}
 </script>

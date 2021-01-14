@@ -1,7 +1,5 @@
-
 $prefix-cls-drop: #{$prefix}-drop;
 $prefix-cls-dropdown: #{$prefix}-dropdown;
-
 
 .#{$prefix-cls-dropdown} {
     &-wrapper {
@@ -29,13 +27,15 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
         align-items: center;
 
         .#{$prefix}-icons {
-            width: 7px;
+            margin: 0;
             transition: transform 0.2s linear;
+            transform: translateX(5px);
+            transform-origin: center center;
         }
     }
 
-    .#{$prefix-cls-drop}-visible > &-button .#{$prefix}-icons {
-        transform: rotate(180deg);
+    &-visible > &-button .#{$prefix}-icons {
+        transform: translateX(5px) rotate(180deg);
     }
 }
 

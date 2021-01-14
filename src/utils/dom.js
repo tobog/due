@@ -47,7 +47,7 @@ export function scrollTop(el, to = 0, endCallback) {
     const from = el.scrollTop;
     const scrollHeight = el.scrollHeight;
     const step = Math.max(Math.ceil(Math.abs(from - to) / 10), 10);
-    const scroll = function(start, end, step) {
+    const scroll = function (start, end, step) {
         let d;
         if (start > end) {
             d = start - step <= end ? end : start - step;
@@ -130,19 +130,19 @@ export function transformStyle(transform = "") {
 
     return matrix.length > 6
         ? {
-              translateX: parseFloat(matrix[11] || 0),
-              translateY: parseFloat(matrix[12] || 0),
-              // scaleX: parseFloat(matrix[0]),
-              // scaleY: parseFloat(matrix[12]),
-              // rotate: parseFloat(matrix[12]),
-          }
+            translateX: parseFloat(matrix[11] || 0),
+            translateY: parseFloat(matrix[12] || 0),
+            // scaleX: parseFloat(matrix[0]),
+            // scaleY: parseFloat(matrix[12]),
+            // rotate: parseFloat(matrix[12]),
+        }
         : {
-              translateX: parseFloat(matrix[4] || 0),
-              translateY: parseFloat(matrix[5] || 0),
-              // scaleX: parseFloat(matrix[0]),
-              // scaleY: parseFloat(matrix[3]),
-              // rotate: parseFloat(matrix[12]),
-          };
+            translateX: parseFloat(matrix[4] || 0),
+            translateY: parseFloat(matrix[5] || 0),
+            // scaleX: parseFloat(matrix[0]),
+            // scaleY: parseFloat(matrix[3]),
+            // rotate: parseFloat(matrix[12]),
+        };
 }
 
 export function getElement(target, container) {
@@ -225,12 +225,12 @@ let _AnimationFrame;
 function InitAnimationFrame() {
     if (!window) return;
     const requestFrame =
-            window.requestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            function(fn) {
-                return window.setTimeout(fn, 1000 / 60);
-            },
+        window.requestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        function (fn) {
+            return window.setTimeout(fn, 1000 / 60);
+        },
         cancelFrame =
             window.cancelAnimationFrame ||
             window.mozCancelAnimationFrame ||
@@ -246,11 +246,11 @@ function InitAnimationFrame() {
     });
 }
 export const AnimationFrame = {
-    requestFrame: function(fn) {
+    requestFrame: function (fn) {
         if (!_AnimationFrame && !InitAnimationFrame()) return;
         return _AnimationFrame.requestFrame(fn);
     },
-    cancelFrame: function(id) {
+    cancelFrame: function (id) {
         if (!_AnimationFrame && !InitAnimationFrame()) return;
         return _AnimationFrame.cancelFrame(id);
     },
@@ -261,7 +261,7 @@ function InitEventListener() {
     if (!document) return;
     if (document.addEventListener) {
         return (_EventListener = {
-            on: function(element, events, handler) {
+            on: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -269,7 +269,7 @@ function InitEventListener() {
                     });
                 }
             },
-            off: function(element, events, handler) {
+            off: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -277,10 +277,10 @@ function InitEventListener() {
                     });
                 }
             },
-            once: function(element, events, handler) {
+            once: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
-                    let onceHandler = function(event, ...agrs) {
+                    let onceHandler = function (event, ...agrs) {
                         event.currentTarget.removeEventListener(event.type, onceHandler, false);
                         return handler.call(this, event, ...agrs);
                     };
@@ -293,7 +293,7 @@ function InitEventListener() {
     }
     if (document.attachEvent) {
         return (_EventListener = {
-            on: function(element, events, handler) {
+            on: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -302,7 +302,7 @@ function InitEventListener() {
                     });
                 }
             },
-            off: function(element, events, handler) {
+            off: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -310,10 +310,10 @@ function InitEventListener() {
                     });
                 }
             },
-            once: function(element, events, handler) {
+            once: function (element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
-                    let onceHandler = function(event, ...agrs) {
+                    let onceHandler = function (event, ...agrs) {
                         event.currentTarget.detachEvent("on" + event, onceHandler);
                         return handler.call(this, event, ...agrs);
                     };
@@ -325,7 +325,7 @@ function InitEventListener() {
         });
     }
     return (_EventListener = {
-        on: function(element, events, handler) {
+        on: function (element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
                 eventList.forEach((event) => {
@@ -333,7 +333,7 @@ function InitEventListener() {
                 });
             }
         },
-        off: function(element, events, handler) {
+        off: function (element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
                 eventList.forEach((event) => {
@@ -341,10 +341,10 @@ function InitEventListener() {
                 });
             }
         },
-        once: function(element, events, handler) {
+        once: function (element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
-                let onceHandler = function(event, ...agrs) {
+                let onceHandler = function (event, ...agrs) {
                     event.currentTarget["on" + event] = null;
                     return handler.call(this, event, ...agrs);
                 };
@@ -357,15 +357,15 @@ function InitEventListener() {
 }
 
 export const EventListener = {
-    on: function(element, events, handler) {
+    on: function (element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.on(element, events, handler);
     },
-    off: function(element, events, handler) {
+    off: function (element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.off(element, events, handler);
     },
-    once: function(element, events, handler) {
+    once: function (element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.once(element, events, handler);
     },
@@ -386,144 +386,144 @@ export const EventListener = {
 //     EventListener.on(obj, type, func);
 // };
 
-export const ObserverDomSize = function() {
-    let stylesCreated = false,
-        attachEvent = document.attachEvent;
-    const { requestFrame, cancelFrame } = AnimationFrame;
-    const resetTriggers = function(element) {
-            // scrollLeft 改变会触发scroll事件
-            var triggers = element.__resizeTriggers__;
-            if (!triggers) return;
-            var expand = triggers.firstElementChild,
-                contract = triggers.lastElementChild,
-                expandChild = expand.firstElementChild;
-            contract.scrollLeft = contract.scrollWidth;
-            contract.scrollTop = contract.scrollHeight;
-            expandChild.style.cssText +=
-                ";width:" + expand.offsetWidth + 2 + "px;height:" + expand.offsetHeight + 2 + "px;";
-            // expandChild.style.width = expand.offsetWidth + 2 + "px";
-            // expandChild.style.height = expand.offsetHeight + 2 + "px";
-            expand.scrollLeft = expand.scrollWidth;
-            expand.scrollTop = expand.scrollHeight;
-        },
-        checkTriggers = function(element) {
-            return (
-                element.offsetWidth != element.__resizeLast__.width ||
-                element.offsetHeight != element.__resizeLast__.height
-            );
-        },
-        scrollListener = function(e) {
-            // console.log(e.target);
-            resetTriggers(this);
-            if (this.__resizeRAF__) cancelFrame(this.__resizeRAF__);
-            this.__resizeRAF__ = requestFrame(() => {
-                if (checkTriggers(this)) {
-                    this.__resizeLast__.width = this.offsetWidth;
-                    this.__resizeLast__.height = this.offsetHeight;
-                    this.__resizeListeners__.forEach(function(fn) {
-                        fn.call(this, e);
-                    }, this);
-                }
-            });
-        },
-        // prefixStyle = function() {
-        //     let elm = document.createElement("fakeelement"),
-        //         animation = true,
-        //         animationstring = "animation",
-        //         keyframeprefix = "",
-        //         animationstartevent = "animationstart",
-        //         domPrefixes = ["webkit", "moz", "o", "ms"];
-        //     if (elm.style.AnimationName !== void 0) animation = false;
-        //     if (animation) {
-        //         for (let i = 0, len = domPrefixes.length; i < len; i++) {
-        //             let pfx = domPrefixes[i];
-        //             if (elm.style[pfx + "AnimationName"] !== void 0) {
-        //                 animationstring = pfx + "Animation";
-        //                 keyframeprefix = "-" + pfx + "-";
-        //                 animationstartevent = pfx + "AnimationStart";
-        //                 animation = false;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return {
-        //         animationstring,
-        //         keyframeprefix,
-        //         animationstartevent
-        //     };
-        // },
-        createStyles = function() {
-            // const {
-            //     animationstring,
-            //     keyframeprefix,
-            //     animationstartevent
-            // } = prefixStyle();
-            if (!stylesCreated) {
-                // const css = `@${keyframeprefix}keyframes ${animationName} { from { opacity: 1; } to { opacity: 1; } }
-                // .vview-custome-resize-triggers{${keyframeprefix}animation: 1ms ${animationName};visibility: vi; opacity: 1;height: 100px; width: 100%;position: relative;}
-                // .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before
-                // { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; }
-                // .vview-custome-resize-triggers > div { background: #eee; overflow: auto; } .vview-contract-resize-trigger:before { width: 200%; height: 200%; }
-                // .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
-                // `,
-                const css = ` .vview-custome-resize-triggers{visibility: hidden; opacity: 0;height: 0; width: 0;}
-                .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before 
-                { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; } 
-                .vview-custome-resize-triggers > div { overflow: auto; } .vview-contract-resize-trigger:before { width: 200%; height: 200%; }
-                .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
-                `,
-                    head = document.head || document.getElementsByTagName("head")[0],
-                    style = document.createElement("style");
-                style.type = "text/css";
-                if (style.styleSheet) {
-                    style.styleSheet.cssText = css;
-                } else {
-                    style.appendChild(document.createTextNode(css));
-                }
-                head.appendChild(style);
-                stylesCreated = true;
-            }
-        },
-        addResizeListener = function(element, fn) {
-            if (attachEvent) {
-                element.attachEvent("onresize", fn);
-            } else {
-                if (!element.__resizeTriggers__) {
-                    if (getStyle(element, "position") === "static") element.style.position = "relative";
-                    createStyles();
-                    element.__resizeLast__ = {};
-                    element.__resizeListeners__ = [];
-                    const resizeTriggers = (element.__resizeTriggers__ = document.createElement("div"));
-                    resizeTriggers.className = "vview-custome-resize-triggers";
-                    resizeTriggers.innerHTML =
-                        '<div class="vview-expand-resize-trigger"><div></div></div><div class="vview-contract-resize-trigger"></div>';
-                    element.appendChild(resizeTriggers);
-                    setTimeout(function() {
-                        resetTriggers(element);
-                        element.addEventListener("scroll", scrollListener, true);
-                        element.__resizeListeners__.push(fn);
-                    }, 200);
-                }
-            }
-        },
-        removeResizeListener = function(element, fn) {
-            if (attachEvent) {
-                element.detachEvent("onresize", fn);
-            } else {
-                const resizeListeners = element.__resizeListeners__ || [];
-                resizeListeners.splice(resizeListeners.indexOf(fn), 1);
-                if (!resizeListeners.length) {
-                    element.removeEventListener("scroll", scrollListener);
-                    element.__resizeTriggers__ = !element.removeChild(element.__resizeTriggers__);
-                }
-            }
-        };
-    return {
-        addResizeListener,
-        removeResizeListener,
-        reset: resetTriggers,
-    };
-};
+// export const ObserverDomSize = function () {
+//     let stylesCreated = false,
+//         attachEvent = document.attachEvent;
+//     const { requestFrame, cancelFrame } = AnimationFrame;
+//     const resetTriggers = function (element) {
+//         // scrollLeft 改变会触发scroll事件
+//         var triggers = element.__resizeTriggers__;
+//         if (!triggers) return;
+//         var expand = triggers.firstElementChild,
+//             contract = triggers.lastElementChild,
+//             expandChild = expand.firstElementChild;
+//         contract.scrollLeft = contract.scrollWidth;
+//         contract.scrollTop = contract.scrollHeight;
+//         expandChild.style.cssText +=
+//             ";width:" + expand.offsetWidth + 2 + "px;height:" + expand.offsetHeight + 2 + "px;";
+//         // expandChild.style.width = expand.offsetWidth + 2 + "px";
+//         // expandChild.style.height = expand.offsetHeight + 2 + "px";
+//         expand.scrollLeft = expand.scrollWidth;
+//         expand.scrollTop = expand.scrollHeight;
+//     },
+//         checkTriggers = function (element) {
+//             return (
+//                 element.offsetWidth != element.__resizeLast__.width ||
+//                 element.offsetHeight != element.__resizeLast__.height
+//             );
+//         },
+//         scrollListener = function (e) {
+//             // console.log(e.target);
+//             resetTriggers(this);
+//             if (this.__resizeRAF__) cancelFrame(this.__resizeRAF__);
+//             this.__resizeRAF__ = requestFrame(() => {
+//                 if (checkTriggers(this)) {
+//                     this.__resizeLast__.width = this.offsetWidth;
+//                     this.__resizeLast__.height = this.offsetHeight;
+//                     this.__resizeListeners__.forEach(function (fn) {
+//                         fn.call(this, e);
+//                     }, this);
+//                 }
+//             });
+//         },
+//         // prefixStyle = function() {
+//         //     let elm = document.createElement("fakeelement"),
+//         //         animation = true,
+//         //         animationstring = "animation",
+//         //         keyframeprefix = "",
+//         //         animationstartevent = "animationstart",
+//         //         domPrefixes = ["webkit", "moz", "o", "ms"];
+//         //     if (elm.style.AnimationName !== void 0) animation = false;
+//         //     if (animation) {
+//         //         for (let i = 0, len = domPrefixes.length; i < len; i++) {
+//         //             let pfx = domPrefixes[i];
+//         //             if (elm.style[pfx + "AnimationName"] !== void 0) {
+//         //                 animationstring = pfx + "Animation";
+//         //                 keyframeprefix = "-" + pfx + "-";
+//         //                 animationstartevent = pfx + "AnimationStart";
+//         //                 animation = false;
+//         //                 break;
+//         //             }
+//         //         }
+//         //     }
+//         //     return {
+//         //         animationstring,
+//         //         keyframeprefix,
+//         //         animationstartevent
+//         //     };
+//         // },
+//         createStyles = function () {
+//             // const {
+//             //     animationstring,
+//             //     keyframeprefix,
+//             //     animationstartevent
+//             // } = prefixStyle();
+//             if (!stylesCreated) {
+//                 // const css = `@${keyframeprefix}keyframes ${animationName} { from { opacity: 1; } to { opacity: 1; } }
+//                 // .vview-custome-resize-triggers{${keyframeprefix}animation: 1ms ${animationName};visibility: vi; opacity: 1;height: 100px; width: 100%;position: relative;}
+//                 // .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before
+//                 // { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; }
+//                 // .vview-custome-resize-triggers > div { background: #eee; overflow: auto; } .vview-contract-resize-trigger:before { width: 200%; height: 200%; }
+//                 // .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
+//                 // `,
+//                 const css = ` .vview-custome-resize-triggers{visibility: hidden; opacity: 0;height: 0; width: 0;}
+//                 .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before 
+//                 { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; } 
+//                 .vview-custome-resize-triggers > div { overflow: auto; } .vview-contract-resize-trigger:before { width: 200%; height: 200%; }
+//                 .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
+//                 `,
+//                     head = document.head || document.getElementsByTagName("head")[0],
+//                     style = document.createElement("style");
+//                 style.type = "text/css";
+//                 if (style.styleSheet) {
+//                     style.styleSheet.cssText = css;
+//                 } else {
+//                     style.appendChild(document.createTextNode(css));
+//                 }
+//                 head.appendChild(style);
+//                 stylesCreated = true;
+//             }
+//         },
+//         addResizeListener = function (element, fn) {
+//             if (attachEvent) {
+//                 element.attachEvent("onresize", fn);
+//             } else {
+//                 if (!element.__resizeTriggers__) {
+//                     if (getStyle(element, "position") === "static") element.style.position = "relative";
+//                     createStyles();
+//                     element.__resizeLast__ = {};
+//                     element.__resizeListeners__ = [];
+//                     const resizeTriggers = (element.__resizeTriggers__ = document.createElement("div"));
+//                     resizeTriggers.className = "vview-custome-resize-triggers";
+//                     resizeTriggers.innerHTML =
+//                         '<div class="vview-expand-resize-trigger"><div></div></div><div class="vview-contract-resize-trigger"></div>';
+//                     element.appendChild(resizeTriggers);
+//                     setTimeout(function () {
+//                         resetTriggers(element);
+//                         element.addEventListener("scroll", scrollListener, true);
+//                         element.__resizeListeners__.push(fn);
+//                     }, 200);
+//                 }
+//             }
+//         },
+//         removeResizeListener = function (element, fn) {
+//             if (attachEvent) {
+//                 element.detachEvent("onresize", fn);
+//             } else {
+//                 const resizeListeners = element.__resizeListeners__ || [];
+//                 resizeListeners.splice(resizeListeners.indexOf(fn), 1);
+//                 if (!resizeListeners.length) {
+//                     element.removeEventListener("scroll", scrollListener);
+//                     element.__resizeTriggers__ = !element.removeChild(element.__resizeTriggers__);
+//                 }
+//             }
+//         };
+//     return {
+//         addResizeListener,
+//         removeResizeListener,
+//         reset: resetTriggers,
+//     };
+// };
 
 let _Mutation;
 function _setMutation() {
@@ -531,13 +531,13 @@ function _setMutation() {
         MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver || window.MsMutationObserver;
     if (mutationObserver) {
         _Mutation = {
-            observer: function(dom, options = {}, callbck) {
+            observer: function (dom, options = {}, callbck) {
                 let instance = new mutationObserver(callbck);
                 dom._mutationObserver_ = instance;
                 instance.observe(dom, options);
                 return instance;
             },
-            destroy: function(dom) {
+            destroy: function (dom) {
                 if (dom._mutationObserver_) {
                     dom._mutationObserver_.disconnect();
                     dom._mutationObserver_ = null;
@@ -546,23 +546,23 @@ function _setMutation() {
         };
     } else {
         _Mutation = {
-            observer: function(dom, options = {}, callbck) {
+            observer: function (dom, options = {}, callbck) {
                 EventListener.on(dom, "DOMAttrModified", callbck);
                 return dom;
             },
-            destroy: function(dom, callbck) {
+            destroy: function (dom, callbck) {
                 if (dom) EventListener.off(dom, "DOMAttrModified", callbck);
             },
         };
     }
 }
 export const Mutation = {
-    observer: function(dom, options = {}, callbck) {
+    observer: function (dom, options = {}, callbck) {
         if (!_Mutation) _setMutation();
         _Mutation.observer(dom, options, callbck);
         return dom;
     },
-    destroy: function(dom, callbck) {
+    destroy: function (dom, callbck) {
         if (dom) {
             if (!_Mutation) _setMutation();
             _Mutation.destroy(dom, callbck);
@@ -598,13 +598,13 @@ export const Fullscreen = {
         const dataset = dom.dataset;
         dataset.fullscreen = 1;
         if (isInner || !Fullscreen._request) {
-            const setStyle = function(dom, style) {
+            const setStyle = function (dom, style) {
                 const keys = Object.keys(style);
                 const styles = dom.style;
-                keys.forEach(function(key) {
+                keys.forEach(function (key) {
                     dataset["screen" + key] = styles[key];
                 }, style);
-                keys.forEach(function(key) {
+                keys.forEach(function (key) {
                     styles[key] = this[key];
                 }, style);
             };
@@ -636,7 +636,7 @@ export const Fullscreen = {
             if (Fullscreen._changeEvent) {
                 Fullscreen._handleChange =
                     Fullscreen._handleChange ||
-                    function(e) {
+                    function (e) {
                         if (Fullscreen._isFullscreen()) {
                             console.log("进入全屏");
                         } else {
@@ -666,9 +666,9 @@ export const Fullscreen = {
             }
         }
         if (dataset.innerscreen || !Fullscreen._exit) {
-            const setStyle = function(dom, keys) {
+            const setStyle = function (dom, keys) {
                 const styles = dom.style;
-                keys.forEach(function(key) {
+                keys.forEach(function (key) {
                     styles[key] = dataset["screen" + key];
                 });
             };
@@ -802,7 +802,7 @@ export function getClientSize(type) {
 }
 
 export class DragMove {
-    constructor(element, options, callback) {
+    constructor (element, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -811,19 +811,19 @@ export class DragMove {
             callback =
                 typeof callback === "function"
                     ? callback
-                    : function(obj) {
-                          if (obj.cancel || !obj.element) return;
-                          const { data, distance, element, style, isTransform } = obj;
-                          const styles = element.style;
-                          if (isTransform) {
-                              styles.transform = `translate(${data.translateX + distance[0]}px,${data.translateY +
-                                  distance[1]}px)`;
-                          } else {
-                              style.forEach((key, index) => {
-                                  styles[key] = parseFloat(data[key]) + distance[index] + "px";
-                              });
-                          }
-                      };
+                    : function (obj) {
+                        if (obj.cancel || !obj.element) return;
+                        const { data, distance, element, style, isTransform } = obj;
+                        const styles = element.style;
+                        if (isTransform) {
+                            styles.transform = `translate(${data.translateX + distance[0]}px,${data.translateY +
+                                distance[1]}px)`;
+                        } else {
+                            style.forEach((key, index) => {
+                                styles[key] = parseFloat(data[key]) + distance[index] + "px";
+                            });
+                        }
+                    };
         }
         this._options = {
             style: ["translateX", "translateY"],
@@ -893,13 +893,13 @@ export class DragMove {
             const eleData = element
                 ? Offset.boundingClientRect(element)
                 : {
-                      left: clientX,
-                      right: clientX,
-                      top: clientY,
-                      bottom: clientY,
-                      width: 0,
-                      height: 0,
-                  };
+                    left: clientX,
+                    right: clientX,
+                    top: clientY,
+                    bottom: clientY,
+                    width: 0,
+                    height: 0,
+                };
             const { left = 0, right = 0, top = 0, bottom = 0 } = this._options.boundaryPoint || {};
             return {
                 left: [
@@ -1100,7 +1100,7 @@ export class DragMove {
 }
 
 export class ClickOut {
-    constructor(elements, options, callback) {
+    constructor (elements, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -1113,6 +1113,7 @@ export class ClickOut {
         this._callback = typeof callback === "function" && callback;
         this._handler = this._handleCallback.bind(this);
         this._isBind = false;
+        this._clickoutCount = 0;
         this._binding();
     }
     _setElements(elements) {
@@ -1125,14 +1126,21 @@ export class ClickOut {
         const cb = (target) => {
             const index = this._elements.findIndex((element) => element.contains(target)) + 1;
             // if (!index && this._firstClickCount) this._firstClickCount -= 1;
-            console.log(!index);
+            this._clickoutCount = !index ? (this._clickoutCount + 1) : 0;
+            if (index) {
+                this.toggleBindDocument(true);
+            }
+            if (this._clickoutCount > 6) {
+                this.toggleBindDocument();
+                this._clickoutCount = 0;
+            }
             this._callback(!index, event, index);
         };
 
         clearTimeout(this._delayTime);
         clearTimeout(this._typeTimeOut);
-
-        console.log(type, event.timeStamp, currentTarget, this._elements[0].innerText);
+        // console.log(type, event.timeStamp, currentTarget);
+        console.log(type, event.timeStamp);
         if (type !== "focusout") {
             // if (!this._firstClickCount) {
             //     const firstRun = this.__firstRun;
@@ -1156,9 +1164,9 @@ export class ClickOut {
             // 去掉focusin后click的事件
             this._typeTimeOut = setTimeout(
                 () => {
-                    this._currentType = this._delayTime = null;
+                    this._currentType = this._delayTime = this._typeTimeOut = null;
                 },
-                this._currentType === "focusin" ? 300 : 36 // window 会click 导致currentTarget为document 发生错误
+                this._currentType === "focusin" ? 360 : 36 // window 会click 导致currentTarget为document 发生错误
             );
             return;
         }
@@ -1184,8 +1192,14 @@ export class ClickOut {
             }
             EventListener.on(element, "click,focusin,focusout", this._handler);
         });
-        EventListener.on(document, "click", this._handler);
+        this.toggleBindDocument(true);
         return this;
+    }
+    toggleBindDocument(isBind) {
+        let method = isBind ? 'on' : 'off';
+        if (this._bindDocumentStatus === method && method === 'on') return;
+        this._bindDocumentStatus = method;
+        EventListener[method](document, "click", this._handler);
     }
     update(elements) {
         if (elements) {
@@ -1204,7 +1218,7 @@ export class ClickOut {
                 element.style.outline = "";
             }
             EventListener.off(element, "click,focusin,focusout", this._handler);
-            EventListener.off(document, "click", this._handler);
+            this.toggleBindDocument();
         });
         clearTimeout(this._delayTime);
         clearTimeout(this._typeTimeOutCb);
@@ -1214,7 +1228,7 @@ export class ClickOut {
 }
 
 export class HoverOut {
-    constructor(elements, options, callback) {
+    constructor (elements, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -1275,7 +1289,7 @@ export class HoverOut {
 }
 
 export class ScrollSync {
-    constructor(elements, options, callback) {
+    constructor (elements, options, callback) {
         this._options = {
             isPercent: false, //percent,
             isScrollTop: false, //left,
@@ -1372,7 +1386,7 @@ export class ScrollSync {
 }
 
 export class ScrollLoad {
-    constructor(element, options /*options = { offset: 60 }*/, callback) {
+    constructor (element, options /*options = { offset: 60 }*/, callback) {
         this._options = {
             offset: 60,
             isReachTop: false,
@@ -1411,6 +1425,7 @@ export class ScrollLoad {
             this._delayTime = setTimeout(() => {
                 this._preScrollTop = currentTarget.scrollTop;
                 this._isRun = false;
+                this._delayTime = null;
             }, 90);
         }
     }
@@ -1434,7 +1449,7 @@ export class ScrollLoad {
 }
 
 export class PerformanceScroll {
-    constructor(element, options /*options = { offset: 60 }*/, callback) {
+    constructor (element, options /*options = { offset: 60 }*/, callback) {
         this._options = {
             offset: 120,
             performance: "none", // none,middle,high
@@ -1515,7 +1530,7 @@ export class PerformanceScroll {
         this._isBind = true;
     }
     _getTotalTranslate(data = this._translateList) {
-        return data.reduce(function(acc, cur) {
+        return data.reduce(function (acc, cur) {
             return acc + cur;
         }, 0);
     }

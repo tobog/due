@@ -11,6 +11,7 @@
         :disabled="isReadonly"
         :reference="ready ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
+        v-bind="popperConfig"
     >
         <InputBase
             ref="inputBase"
@@ -91,6 +92,9 @@ export default {
     componentName: "DatePicter",
     inheritAttrs: false,
     mixins: [langMinix, mixin],
+    props: {
+        popperConfig: Object,
+    },
     components: {
         DatePanel,
         DropBase,
@@ -147,7 +151,7 @@ export default {
         },
         isTag: Boolean,
         size: [String, Number],
-        cellFormatter:Function
+        cellFormatter: Function,
     },
 
     data() {

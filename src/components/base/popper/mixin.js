@@ -13,7 +13,7 @@ export default {
         gpu: Boolean,
         trigger: {
             type: String,
-            default: "other",
+            default: "custom",
         }, //click hover,other,
         always: Boolean,
         offset: {

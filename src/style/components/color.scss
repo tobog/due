@@ -235,7 +235,10 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
     display: inline-block;
     position: relative;
     &-drop {
-        overflow: visible;
+        max-height: 390px;
+    }
+    &:focus {
+        box-shadow: 0 0 3px -1px $primary;
     }
     &-input {
         display: inline-block;

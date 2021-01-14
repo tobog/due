@@ -1,7 +1,7 @@
 
 import Popper from '../utils/popper';
 export default {
-    bind(el, { value,/* modifiers, arg*/ }) {
+    bind(el, { value = {},/* modifiers, arg*/ }) {
         el.__bindPopper = function (el, value = {}) {
             if (el.__vuePopper || !document) return;
             let { reference, options = {} } = value;
@@ -11,9 +11,16 @@ export default {
                 el.__vuePopper.toggle(true)
             }
         }
-        el.__bindPopper(el, value);
+        if (value && value.reference) {
+            el.__bindPopper(el, value);
+        }
     },
-    componentUpdated(el, { value }) {
+    inserted(el, { value = {} }) {
+        if (!el.__vuePopper && value && value.reference) {
+            el.__bindPopper(el, value);
+        }
+    },
+    componentUpdated(el, { value = {} }) {
         if (el.__vuePopper) {
             let { reference, options = {} } = value || {};
             if (!reference || el.style.display === 'none') return;
@@ -21,11 +28,11 @@ export default {
             if (options.always) {
                 el.__vuePopper.toggle(true)
             }
-        } else {
+        } else if (value && value.reference) {
             el.__bindPopper(el, value);
         }
     },
-    unbind(el,{value}) {
+    unbind(el, { value }) {
         el.__vuePopper && el.__vuePopper.destroy();
         el.__vuePopper = el.__bindPopper = null;
     }

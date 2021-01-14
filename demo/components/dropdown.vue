@@ -1,211 +1,208 @@
 <style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Dropdown 下拉菜单)</h2>
             <h4 class="padding-top-10">展示一组折叠的下拉菜单。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vDropdown v-bind="formData">
-                    <vButton>vButton</vButton>
-                    <template slot="list">
-                        <vDropdownItem disabled>驴打滚</vDropdownItem>
-                        <vDropdownItem selected divided>炸酱面</vDropdownItem>
-                        <vDropdownItem>炸酱面</vDropdownItem>
-                        <vDropdownItem>豆汁儿</vDropdownItem>
-                    </template>
-                </vDropdown>
-                <vDropdown label="label" :autoLabel="true">
-                    <template slot="list">
-                        <vDropdownItem disabled>驴打滚</vDropdownItem>
-                        <vDropdownItem selected divided>酱面</vDropdownItem>
-                        <vDropdownItem>豆汁儿炸酱面</vDropdownItem>
-                    </template>
-                </vDropdown>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vDropdown v-bind="config">
+                <vButton>vButton</vButton>
+                <template slot="list">
+                    <vDropdownItem disabled>驴打滚</vDropdownItem>
+                    <vDropdownItem divided>炸酱面</vDropdownItem>
+                    <vDropdownItem>炸酱面</vDropdownItem>
+                    <vDropdownItem>豆汁儿</vDropdownItem>
+                </template>
+            </vDropdown>
+            <vDropdown label="label" :autoLabel="true">
+                <template slot="list">
+                    <vDropdownItem disabled>驴打滚</vDropdownItem>
+                    <vDropdownItem divided>酱面</vDropdownItem>
+                    <vDropdownItem>豆汁儿炸酱面</vDropdownItem>
+                </template>
+            </vDropdown>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
-            value: "",
+            value: "0",
         }
     },
+    methods: {},
     computed: {
         getCode() {
-            return `<vDropdown v-bind="${this.getCodeString(this.formData)}">
-										<vButton>vButton</vButton>
-										<template slot="list">
-											<vDropdownItem disabled>驴打滚</vDropdownItem>
-											<vDropdownItem selected divided>炸酱面</vDropdownItem>
-											<vDropdownItem selected>炸酱面</vDropdownItem>
-											<vDropdownItem selected>豆汁儿</vDropdownItem>
-											<div data-vue-module="DropdownItem">
-												<vDropdown transfer>
-													<vButton>vButton</vButton>
-													<template slot="list">
-														<div data-vue-module="DropdownItem">驴打滚</div>
-														<div data-vue-module="DropdownItem">炸酱面</div>
-														<div data-vue-module="DropdownItem">豆汁儿</div>
-														<div data-vue-module="DropdownItem">冰糖葫芦</div>
-														<div data-vue-module="DropdownItem">北京烤鸭</div>
-													</template>
-												</vDropdown>
-											</div>
-										</template>
-									</vDropdown>
-								</section>
-										`
+            return `<Dropdown v-bind=CODE>
+                        <Button>Button</Button>
+                        <template slot="list">
+                            <DropdownItem disabled>驴打滚</DropdownItem>
+                            <DropdownItem selected divided>炸酱面</DropdownItem>
+                            <DropdownItem>炸酱面</DropdownItem>
+                            <DropdownItem>豆汁儿</DropdownItem>
+                        </template>
+                    </Dropdown>
+                        `
         },
-        getBase() {
+        getConfig() {
             return [
                 {
+                    showConfig: true,
+                    label: "更新显示",
+                    key: "autoLabel",
+                    demoDefault: false,
+                    explain: "自动更新显示文字",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
                     label: "手动控制显示",
                     key: "visible",
+                    demoDefault: false,
+                    explain: "是否手动控制显示",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
                 },
                 {
-                    label: "点击子节点关闭",
+                    showConfig: true,
+                    label: "自动关闭",
                     key: "autoClose",
+                    demoDefault: false,
+                    explain: "点击子节点关闭",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
                 },
                 {
+                    showConfig: true,
+                    label: "弹层位置",
+                    key: "transfer",
+                    demoDefault: false,
+                    explain:
+                        "是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
                     label: "触发方式",
                     key: "trigger",
+                    demoDefault: "click",
+                    explain: "触发方式,可选值:click,hover,custom",
+                    dataType: "String",
                     tag: "vSelect",
                     default: "click",
                     options: ["click", "hover", "custom"],
                 },
-                {
-                    label: "下拉位置",
-                    key: "placement",
-                    tag: "vSelect",
-                    default: "bottom",
-                    options: this.getPlacements,
-                },
-                {
-                    label: "DropdownItem",
-                    key: "name",
-                    tag: "vInput",
-                    default: "",
-                },
                 // {
-                //     label: "DropdownItem:禁用",
+                //     showConfig: true,
+                //     label: "是否禁用",
                 //     key: "disabled",
+                //     demoDefault: false,
+                //     explain: "是否禁用",
+                //     dataType: "Boolean",
                 //     tag: "vSwitch",
                 //     default: false,
                 // },
-                // {
-                //     label: "DropdownItem:选中状态",
-                //     key: "selected",
-                //     tag: "vSwitch",
-                //     default: false,
-                // },
-                // {
-                //     label: "DropdownItem:分割线",
-                //     key: "divided",
-                //     tag: "vSwitch",
-                //     default: false,
-                // },
-            ]
-        },
-        compProps() {
-            return [
                 {
-                    explain: "手动控制显示",
-                    prop: "visible",
-                    type: "vSwitch",
-                    default: false,
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    explain: "触发方式",
-                    prop: "trigger",
-                    type: "vSelect",
-                    default: "click",
-                    options: ["click", "hover", "custom"],
-                },
-                {
-                    explain: "下拉位置",
-                    prop: "placement",
-                    type: "vSelect",
-                    default: "bottom",
+                    showConfig: true,
+                    label: "显示位置",
+                    key: "placement",
+                    demoDefault: "bottom",
+                    explain:
+                        "显示位置,可选值：top,top-left,top-center,top-right,top-fix,bottom,bottom-left,bottom-center,bottom-right,bottom-fix,right,right-top,right-center,right-bottom,left,left-top,left-center,left-bottom,fix-left,fix-center,fix-right",
+                    dataType: "String",
+                    tag: "vSelect",
+                    default: "",
                     options: this.getPlacements,
                 },
                 {
-                    explain: "DropdownItem:name",
-                    prop: "name",
-                    type: "vInput",
-                    default: "",
-                },
-                {
-                    explain: "DropdownItem:禁用",
-                    prop: "disabled",
-                    type: "Boolean",
-                    default: false,
-                },
-                {
-                    explain: "DropdownItem:选中状态",
-                    prop: "selected",
-                    type: "Boolean",
-                    default: false,
-                },
-                {
-                    explain: "DropdownItem:分割线",
-                    prop: "divided",
-                    type: "Boolean",
-                    default: false,
-                },
-                {
-                    explain: "体内容",
-                    prop: "Dropdown:slot:default",
-                    type: "VNode",
+                    label: "名称",
+                    key: "name",
+                    explain: "DropdownItem:name，禁用",
+                    dataType: "Boolean",
                     default: "-",
                 },
                 {
+                    label: "禁用",
+                    key: "selected",
+                    explain: "DropdownItem:selected，禁用",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "选中状态",
+                    key: "selected",
+                    explain: "DropdownItem:selected，选中状态",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "分割线",
+                    key: "divided",
+                    explain: "DropdownItem:divided，分割线",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "显示的内容",
+                    key: "slot:default",
+                    explain: "显示的内容",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "显示的内容",
+                    key: "slot:default",
+                    explain: "显示的内容",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "列表内容",
+                    key: "slot:list",
                     explain: "列表内容",
-                    prop: "Dropdown:slot:list",
-                    type: "VNode",
+                    dataType: "VNode",
                     default: "-",
                 },
                 {
-                    prop: "Dropdown:on-clickout",
-                    explain: "点击菜单项时触发",
-                    type: "event",
+                    label: "事件",
+                    key: "on-clickout",
+                    explain: "点击时触发",
+                    dataType: "Function：Event",
                     default: "(isclickout,e)=>{}",
                 },
                 {
-                    prop: "Dropdown:on-change",
+                    label: "事件",
+                    key: "on-change",
                     explain: "点击菜单项时触发",
-                    type: "event",
+                    dataType: "Function：Event",
                     default: "(DropdownItem:name)=>{}",
                 },
                 {
-                    prop: "Dropdown:on-visible-change",
-                    explain: "菜单显示状态改变时调用",
-                    type: "event",
+                    label: "事件",
+                    key: "on-visible-change",
+                    explain: "下拉框展开或收起时触发",
+                    dataType: "Function：Event",
                     default: "(visible)=>{}",
                 },
             ]
