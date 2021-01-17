@@ -27,7 +27,7 @@
   "main": "api/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tobog/youe.git"
+    "url": "https://github.com/tobog/due.git"
   },
   "files": [
     "dist",

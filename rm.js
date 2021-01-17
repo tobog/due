@@ -2,10 +2,10 @@ const child_process = require("child_process");
 const path = require("path");
 [
     "dist/demo.html",
-    "dist/youe.common.js.map",
-    "dist/youe.umd.js",
-    "dist/youe.umd.js.map",
-    "dist/youe.umd.min.js.map",
+    "dist/due.common.js.map",
+    "dist/due.umd.js",
+    "dist/due.umd.js.map",
+    "dist/due.umd.min.js.map",
 ].forEach(function (val) {
     const dir = path.join(__dirname, val);
     try {
@@ -16,10 +16,10 @@ const path = require("path");
 });
 [
     "dist/demo.html",
-    "dist/youe.common.js.map",
-    "dist/youe.umd.js",
-    "dist/youe.umd.js.map",
-    "dist/youe.umd.min.js.map",
+    "dist/due.common.js.map",
+    "dist/due.umd.js",
+    "dist/due.umd.js.map",
+    "dist/due.umd.min.js.map",
 ].forEach(
     function (val) {
         const dir = path.join(__dirname, val);
