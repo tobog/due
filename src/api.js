@@ -18,12 +18,12 @@ const install = function (Vue, options = {}) {
         if (langMap && typeof langMap === "object") {
             Vue.prototype.__$langMap__ = langMap;
         }
-        Vue.prototype.[`$${compPrefixUpper}VueWraper`] = Components.VueWraper;
-        Vue.prototype.[`$${compPrefixUpper}Modal`] = Components.Modal;
-        Vue.prototype.[`$${compPrefixUpper}LoadingBar`] = Components.LoadingBar;
-        Vue.prototype.[`$${compPrefixUpper}Notice`] = Components.Notice;
-        Vue.prototype.[`$${compPrefixUpper}Message`] = Components.Message;
-        Vue.prototype.[`$${compPrefixUpper}Loading`] = Components.Loading;
+        Vue.prototype[`$${compPrefixUpper}VueWraper`] = Components.VueWraper;
+        Vue.prototype[`$${compPrefixUpper}Modal`] = Components.Modal;
+        Vue.prototype[`$${compPrefixUpper}LoadingBar`] = Components.LoadingBar;
+        Vue.prototype[`$${compPrefixUpper}Notice`] = Components.Notice;
+        Vue.prototype[`$${compPrefixUpper}Message`] = Components.Message;
+        Vue.prototype[`$${compPrefixUpper}Loading`] = Components.Loading;
     } else {
         Object.defineProperty(Vue.__proto__, "__$cssPrefix__", {
             get() {
