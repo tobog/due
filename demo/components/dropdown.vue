@@ -13,14 +13,14 @@
                     <vDropdownItem disabled>驴打滚</vDropdownItem>
                     <vDropdownItem divided>炸酱面</vDropdownItem>
                     <vDropdownItem>炸酱面</vDropdownItem>
-                    <vDropdownItem>豆汁儿</vDropdownItem>
+                    <vDropdownItem selected>豆汁儿</vDropdownItem>
                 </template>
             </vDropdown>
-            <vDropdown label="label" :autoLabel="true">
+            <vDropdown v-bind="config" label="label" :autoLabel="true">
                 <template slot="list">
                     <vDropdownItem disabled>驴打滚</vDropdownItem>
                     <vDropdownItem divided>酱面</vDropdownItem>
-                    <vDropdownItem>豆汁儿炸酱面</vDropdownItem>
+                    <vDropdownItem selected>豆汁儿炸酱面</vDropdownItem>
                 </template>
             </vDropdown>
         </template>
@@ -102,16 +102,6 @@ export default {
                     default: "click",
                     options: ["click", "hover", "custom"],
                 },
-                // {
-                //     showConfig: true,
-                //     label: "是否禁用",
-                //     key: "disabled",
-                //     demoDefault: false,
-                //     explain: "是否禁用",
-                //     dataType: "Boolean",
-                //     tag: "vSwitch",
-                //     default: false,
-                // },
                 {
                     showConfig: true,
                     label: "尺寸大小",
@@ -136,16 +126,27 @@ export default {
                     options: this.getPlacements,
                 },
                 {
+                    showConfig: true,
+                    label: "主题颜色",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题颜色",
+                    dataType: "String",
+                    default: "",
+                    options: this.getThemes,
+                },
+                {
                     label: "名称",
                     key: "name",
-                    explain: "DropdownItem:name，禁用",
+                    explain: "DropdownItem:name，名称",
                     dataType: "Boolean",
                     default: "-",
                 },
                 {
                     label: "禁用",
-                    key: "selected",
-                    explain: "DropdownItem:selected，禁用",
+                    key: "disabled",
+                    explain: "DropdownItem:disabled，禁用",
                     dataType: "Boolean",
                     default: "-",
                 },

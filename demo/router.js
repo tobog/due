@@ -174,6 +174,13 @@ export default new Router({
                     },
                 },
                 {
+                    path: "dragmove",
+                    component: () => import("./components/dragmove"),
+                    meta: {
+                        label: "拖动",
+                    },
+                },
+                {
                     path: "dropdown",
                     component: () => import("./components/dropdown"),
                     meta: {

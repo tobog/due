@@ -829,7 +829,7 @@ export class DragMove {
             style: ["translateX", "translateY"],
             boundaryElement: null, //添加边界元素,
             timeOut: null,
-            boundaryPoint: null, // 'center','border',cursor',[0,0,0]/[0]/[0,0],number
+            boundaryPoint: null, // {left,right,top,bottom}
             cursor: "move",
             triggerTime: "all", // all,over，
             boundaryCalc: true,
@@ -877,7 +877,6 @@ export class DragMove {
             });
         }
         if (style) {
-            // target.cursor=styles.cursor;
             style.forEach((key) => {
                 target[key] = styles[key];
             });
@@ -936,12 +935,14 @@ export class DragMove {
         this._isRun = true;
         this._initTime = this._tempTime = Date.now();
         this._distance = [0, 0];
-
         EventListener.on(document, "mousemove", this._callback);
         EventListener.on(document, "mouseup", this._cancel);
-        this._element && EventListener.on(this._element, "mousemove", this._callback);
-        this._element && EventListener.on(this._element, "mouseup", this._cancel);
-        !this._element && this._boundaryElement && EventListener.on(this._boundaryElement, "mouseup", this._cancel);
+        if (this._element) {
+            EventListener.on(this._element, "mousemove", this._callback);
+            EventListener.on(this._element, "mouseup", this._cancel);
+        } else {
+            this._boundaryElement && EventListener.on(this._boundaryElement, "mouseup", this._cancel);
+        }
         this._boundaryData = this._handleBoundaryRange(event);
         if (this._isCursorMove) this._handleCallback(event);
     }
@@ -953,7 +954,6 @@ export class DragMove {
     // 获取边界位置设置
     _getBoundaryPosition([distanceX, distanceY], [clientX, clientY]) {
         // console.log(distanceX, distanceY)
-
         if (this._boundaryData) {
             const { left, right, top, bottom } = this._boundaryData;
             if (!this._options.boundaryCalc) {
@@ -1009,9 +1009,6 @@ export class DragMove {
         this._tempAxis = [clientX, clientY];
         this._tempTime = nowTime;
         this._distance = distance;
-        // if (this._options.triggerTime === 'over') {
-        //     this.__cacheEvent = { clientX, clientY }
-        // }
         this._handler(
             {
                 // boundaryPosition：鼠标相对边界元素的位置或者移动元素相对边界元素的位置
@@ -1033,10 +1030,6 @@ export class DragMove {
         );
     }
     _handleCancel(event) {
-        // if (this._options.triggerTime === 'over' && !event && this.__cacheEvent) {
-        //     event = this.__cacheEvent;
-        //     this.__cacheEvent = null;
-        // }
         if (event && this._handler && !this._isDestroy && this._isRun) {
             const { style, props } = this._options,
                 { clientX = 0, clientY = 0 } = event,

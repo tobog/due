@@ -1,13 +1,14 @@
 <template>
-    <div :class="[_tobogPrefix_]" :data-index="index" :data-vue-module="$options.name" :style="getStyle">
+    <li :class="[_tobogPrefix_]" :data-index="index" :data-vue-module="$options.name" :style="getStyle">
         <slot></slot>
-    </div>
+    </li>
 </template>
 
 <script>
-import { unit } from "../../utils/tool"
+import {unit} from "../../utils/tool"
 export default {
     name: "FluidPanel",
+    componentName: "FluidPanel",
     data() {
         return {
             position: [],
@@ -15,19 +16,18 @@ export default {
         }
     },
     created() {
-
-        this.$parent.refresh()
+        this.$parent.refresh && this.$parent.refresh()
     },
     beforeUpdate() {
         // 当组件size 变换时 无法触发refresh
         if (!this.__running) {
             this.__running = true
-            this.$parent.refresh()
+            this.$parent.refresh && this.$parent.refresh(false)
         }
         clearTimeout(this._forceFresh)
         this._forceFresh = setTimeout(() => {
             this.__running = false
-        }, 2000)
+        }, 2300)
     },
     computed: {
         getStyle() {

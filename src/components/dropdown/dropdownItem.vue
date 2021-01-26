@@ -17,9 +17,6 @@ export default {
     beforeCreate() {
         this.__Dropdown = findComponentUpward(this, "Dropdown")
     },
-    mounted() {
-        if (this.selected) this.handleClick()
-    },
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
@@ -27,8 +24,7 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
-                    [`${_tobogPrefix_}-selected`]:
-                        this.selected || (this.__Dropdown && this.__Dropdown.label === this.name),
+                    [`${_tobogPrefix_}-selected`]: this.selected,
                     [`${_tobogPrefix_}-divided`]: this.divided,
                 },
             ]

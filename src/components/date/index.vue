@@ -1,5 +1,5 @@
 <template>
-    <div tabindex="-1" @keydown.prevent="handleKeydown" :class="[_tobogPrefix_ + '-wrapper']">
+    <div tabindex="-1" @keydown.prevent="handleKeydown" :class="classes">
         <div :class="[_tobogPrefix_]" :key="formats">
             <div :class="[_tobogPrefix_ + '-aside']" v-if="shortcuts.length > 0">
                 <div
@@ -24,6 +24,7 @@
                 :disableMethod="disableMethod"
                 :firstDayOfWeek="firstDayOfWeek"
                 :visible="visible"
+                :theme="theme"
                 :cellFormatter="cellFormatter"
                 @on-selected="selected"
                 @on-sync-update="handleCalendar"
@@ -44,6 +45,7 @@
                 :disableMethod="disableMethod"
                 :firstDayOfWeek="firstDayOfWeek"
                 :visible="visible"
+                :theme="theme"
                 :cellFormatter="cellFormatter"
                 @on-selected="selected"
                 @on-sync-update="handleCalendar"
@@ -53,8 +55,9 @@
             <Button
                 v-if="hasDateTimes"
                 @click="syncStatus(status === 'times' ? 'day' : 'times')"
-                theme="text"
+                borderType="text"
                 size="small"
+                :theme="theme || 'primary'"
                 :class="[_tobogPrefix_ + '-switch']"
                 >{{
                     status === "times"
@@ -64,15 +67,20 @@
             >
             <Button
                 v-if="confirm"
-                :class="[_tobogPrefix_ + '-confirm']"
                 size="small"
-                theme="primary"
+                :class="[_tobogPrefix_ + '-confirm']"
+                :theme="theme || 'primary'"
                 @click="handleConfirm"
                 >{{ langs("datepicker.confirm", "确定") }}</Button
             >
-            <Button v-if="confirm" :class="[_tobogPrefix_ + '-clear']" size="small" @click="handleClear">{{
-                langs("datepicker.clear", "清空")
-            }}</Button>
+            <Button
+                v-if="confirm"
+                size="small"
+                :class="[_tobogPrefix_ + '-clear']"
+                :theme="theme || 'primary'"
+                @click="handleClear"
+                >{{ langs("datepicker.clear", "清空") }}</Button
+            >
         </aside>
     </div>
 </template>
@@ -134,6 +142,7 @@ export default {
         },
         visible: Boolean, // 仅仅针对drop 的属性
         cellFormatter: Function,
+        theme: String,
     },
 
     data() {
@@ -148,6 +157,15 @@ export default {
         this.initStatus()
     },
     computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
+                },
+            ]
+        },
         hasDateTimes() {
             return /d.*(H|M|S)+/g.test(this.formats)
         },

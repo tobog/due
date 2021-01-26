@@ -6,11 +6,11 @@
         :isToggle="trigger === 'click'"
         :trigger="trigger"
         :class="[_tobogPrefix_ + '-wrapper']"
-        :dropClass="[_tobogPrefix_ + '-list']"
+        :dropClass="dropClasses"
         :data-vue-module="$options.name"
         :transfer="transfer"
         :placement="placement"
-        :reference="(ready && $refs.ref) || null"
+        :reference="ready && $refs.ref"
         @hook:created="ready = true"
         @on-clickout="handleClick"
         v-model="show"
@@ -22,7 +22,7 @@
                     v-if="innerLabel"
                     :size="size"
                     :class="[_tobogPrefix_ + '-button']"
-                    :theme="theme || 'primary'"
+                    :theme="theme"
                     icon="arrow-dropdown"
                     >{{ innerLabel }}</Button
                 >
@@ -64,7 +64,11 @@ export default {
         transfer: Boolean,
         autoClose: Boolean,
         size: [String, Number],
-        theme: String,
+        theme: {
+            type: String,
+            default: "primary",
+        },
+        dropClass: [String, Array, Object],
     },
     data() {
         return {
@@ -74,7 +78,11 @@ export default {
         }
     },
     created() {
-        this.$on("on-select", this.getSelected)
+        this.$on("on-select", (name) => {
+            if (this.autoClose) this.show = false
+            if (this.autoLabel) this.innerLabel = name
+            this.$emit("on-change", name)
+        })
     },
     computed: {
         classes() {
@@ -83,6 +91,16 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-visible`]: this.show,
+                },
+            ]
+        },
+        dropClasses() {
+            const _tobogPrefix_ = this._tobogPrefix_
+            return [
+                `${_tobogPrefix_}-list`,
+                this.dropClass,
+                {
+                    [`${_tobogPrefix_}-list-theme-${this.theme}`]: this.theme,
                 },
             ]
         },
@@ -99,11 +117,6 @@ export default {
     methods: {
         handleClick(status, event) {
             this.$emit("on-clickout", status, event)
-        },
-        getSelected(name) {
-            if (this.autoClose) this.show = false
-            if (this.autoLabel) this.innerLabel = name
-            this.$emit("on-change", name)
         },
     },
 }

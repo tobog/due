@@ -61,7 +61,7 @@ import GridLayout from "./grid/layout/index"
 import GridLayoutItem from "./grid/layout/item"
 import GridItem from "./grid/index/item"
 import Resize from "./resize"
-import Draggable from "./draggable"
+import Dragmove from "./dragmove"
 import Badge from "./badge/index"
 import Alert from "./alert/index"
 import DateBase from "./date/base/index"
@@ -153,7 +153,7 @@ export default {
     GridLayout,
     GridLayoutItem,
     Resize,
-    Draggable,
+    Dragmove,
     Badge,
     Alert,
     Datepicker,

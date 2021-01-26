@@ -9,39 +9,22 @@
     }
 }
 </style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode" isAll>
+        <template slot="header">
             <h2>代码示例 (Fluid 瀑布流布局)</h2>
             <h4 class="padding-top-10">
                 瀑布流布局
             </h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="24" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
+        </template>
+        <template v-slot="config">
             <vButton class="margin-10" theme="primary" @click="clear">{{ isStop ? "Run" : "Stop" }}</vButton>
-            <section v-if="show">
-                <vFluid v-bind="formData" class="fluid-demo">
-                    <vFluidPanel v-for="(i, index) in len" :style="setH()">{{ index }}</vFluidPanel>
-                </vFluid>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+            <vFluid v-bind="config" class="fluid-demo">
+                <vFluidPanel v-for="(i, index) in len" :style="setH()">{{ index }}</vFluidPanel>
+            </vFluid>
+        </template>
+    </Demo>
 </template>
 
 <script>
@@ -50,31 +33,31 @@ export default {
         return {
             len: [1, 2, 3, 5, 6, 7, 8, 9],
             isStop: false,
-        };
+        }
     },
     mounted() {
         this.__setInterval = setInterval(() => {
-            let len = [];
+            let len = []
             for (let index = 0; index < Math.floor(Math.random() * 10) + 10; index++) {
-                const element = (Math.random() * 5).toFixed(2);
-                len.push(element);
+                const element = (Math.random() * 5).toFixed(2)
+                len.push(element)
             }
-            this.len = len;
-        }, 8000);
+            this.len = len
+        }, 8000)
     },
     methods: {
         clear() {
-            clearInterval(this.__setInterval);
-            this.isStop = !this.isStop;
-            if (this.isStop) return;
+            clearInterval(this.__setInterval)
+            this.isStop = !this.isStop
+            if (this.isStop) return
             this.__setInterval = setInterval(() => {
-                let len = [];
+                let len = []
                 for (let index = 0; index < Math.floor(Math.random() * 20) + 10; index++) {
-                    const element = (Math.random() * 5).toFixed(2);
-                    len.push(element);
+                    const element = (Math.random() * 5).toFixed(2)
+                    len.push(element)
                 }
-                this.len = len;
-            }, 5000);
+                this.len = len
+            }, 5000)
         },
         setH() {
             return {
@@ -84,85 +67,85 @@ export default {
                     Math.floor(Math.random() * 10) +
                     Math.floor(Math.random() * 10) +
                     Math.floor(Math.random() * 10),
-            };
+            }
         },
     },
     computed: {
         getCode() {
-            return `<vFluid v-bind="${this.getCodeString(this.formData)}" class="fluid-demo">
-                        <vFluidPanel v-for="(i, index) in len" :style="setH()">{{ index }}</vFluidPanel>
-                    </vFluid>
-					`;
+            return `<Fluid v-bind=CODE class="fluid-demo">
+                        <FluidPanel v-for="(i, index) in len" :style="setH()">{{ index }}</FluidPanel>
+                    </Fluid>
+					`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
+                    showConfig: true,
                     label: "是否贴边",
                     key: "toEdge",
+                    demoDefault: true,
+                    explain: "是否贴边",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "布局类型",
                     key: "type",
+                    demoDefault: "column",
+                    explain: "布局类型，column：css多栏布局, position:js布局",
+                    dataType: "String",
                     tag: "vSelect",
-                    options: ["column", "position"],
                     default: null,
+                    options: ["column", "position"],
                 },
                 {
+                    showConfig: true,
                     label: "子元素宽度",
                     key: "size",
+                    demoDefault: "",
+                    explain: "子元素宽度,单位px和%",
+                    dataType: "Number|String",
                     tag: "vInputNumber",
-                    default: null,
+                    default: "",
                 },
                 {
+                    showConfig: true,
                     label: "列数",
                     key: "column",
+                    demoDefault: "",
+                    explain: "列数, size优先级高于column，列数，在没有指定size下动态计算size大小",
+                    dataType: "Number|String",
                     tag: "vInputNumber",
-                    default: null,
+                    default: "",
                 },
                 {
+                    showConfig: true,
                     label: "间隙",
                     key: "gap",
+                    demoDefault: "",
+                    explain: "间隙,布局类型为column时仅对左右间隙有用，分为[x,y]",
+                    dataType: "Number|String|Array",
                     tag: "vInputNumber",
-                    default: 30,
-                },
-            ];
-        },
-        compProps() {
-            return [
-                {
-                    explain: "是否贴边",
-                    prop: "toEdge",
-                    type: "Boolean",
-                    default: true,
+                    default: "",
                 },
                 {
-                    explain: "布局类型，column：css多栏布局, position:js布局",
-                    prop: "type",
-                    type: "String",
+                    label: "显示的内容",
+                    key: "slot:default",
+                    explain: "显示的内容",
+                    dataType: "VNode",
                     default: "-",
                 },
                 {
-                    explain: "子元素宽度,单位px和%",
-                    prop: "size",
-                    type: "String,Number",
-                    default: "-",
+                    label: "事件",
+                    key: "on-refresh",
+                    explain: "数量或者尺寸变化",
+                    dataType: "Function：Event",
+                    default: "()=>{}",
                 },
-                {
-                    explain: "列数，在没有指定size下动态计算size大小",
-                    prop: "column",
-                    type: "Number",
-                    default: "-",
-                },
-                {
-                    explain: "间隙,分为[x,y]",
-                    prop: "gap",
-                    type: "Number,String,Array",
-                    default: "-",
-                },
-            ];
+            ]
         },
     },
-};
+}
 </script>

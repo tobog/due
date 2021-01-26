@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses" :data-vue-module="$options.name">
+    <div :class="classes" :data-vue-module="$options.name">
         <Header :status="status" :calendar="initCalendar" @on-selected="selected" />
         <component
             v-if="status !== 'times'"
@@ -135,7 +135,7 @@ export default {
         },
     },
     computed: {
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,

@@ -70,6 +70,7 @@
             :visible="visible"
             :cellFormatter="cellFormatter"
             :doublePanel="doublePanel"
+            :theme="theme"
             @input="handleInput"
             @on-clear="handleClear('autoClose')"
             @on-confirm="handleConfirm"
@@ -85,7 +86,6 @@ import DropBase from "../base/dropBase"
 import InputBase from "../input/base"
 import mixin from "../input/base/mixin"
 import Button from "../button/index"
-import Dates from "../../utils/dates"
 import langMinix from "../../mixins/lang"
 export default {
     name: "DatePicter",
@@ -152,6 +152,7 @@ export default {
         isTag: Boolean,
         size: [String, Number],
         cellFormatter: Function,
+        theme:String,
     },
 
     data() {

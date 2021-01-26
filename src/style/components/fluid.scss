@@ -1,18 +1,21 @@
 $prefix-cls: #{$prefix}-fluid;
 $prefix-cls-panel: #{$prefix}-fluidpanel;
-
+.#{$prefix-cls-panel} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 .#{$prefix-cls} {
     box-sizing: content-box;
-
+    list-style: none;
+    padding: 0;
+    margin: 0;
     &:not(&-position) {
         width: 100%;
         column-width: 200px;
         column-gap: 0;
         column-rule: 0;
-
-        &>*,
-        &>.#{$prefix-cls-panel} {
-            margin: 0;
+        & > .#{$prefix-cls-panel} {
             box-sizing: border-box;
             height: 100%;
             overflow: auto;
@@ -24,7 +27,7 @@ $prefix-cls-panel: #{$prefix}-fluidpanel;
     &-position {
         position: relative;
 
-        &>.#{$prefix-cls-panel} {
+        & > .#{$prefix-cls-panel} {
             position: absolute;
             top: 0;
             transform: translate(0, 0);

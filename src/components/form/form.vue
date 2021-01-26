@@ -1,5 +1,5 @@
 <template>
-    <form :data-vue-module="$options.name" :class="wrapClasses" @submit.prevent="submit">
+    <form :data-vue-module="$options.name" :class="classes" @submit.prevent="submit">
         <slot></slot>
         <!-- 防止单个表单出现 enter 提交 -->
         <input type="hidden" />
@@ -36,7 +36,7 @@ export default {
         });
     },
     computed: {
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,
@@ -84,13 +84,5 @@ export default {
             });
         },
     },
-    // watch: {
-    //     rules(val, old) {
-    //         try {
-    //             if (JSON.stringify(val) === JSON.stringify(old)) return;
-    //             this.validate();
-    //         } catch (error) {}
-    //     },
-    // },
 };
 </script>

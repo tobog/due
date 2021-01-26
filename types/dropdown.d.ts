@@ -1,11 +1,11 @@
-import {UIComponent, VNode, UIComponentSize, UIComponentPlacement} from "./component"
+import {UIComponent, VNode, UIComponentSize, UIComponenTheme, UIComponentPlacement} from "./component"
 
 export declare class Dropdown extends UIComponent {
     /**
-     * 触发方式，可选值为 hover（悬停）click（点击）contextMenu（右键）custom（自定义），使用 custom 时，需配合 visible 一起使用
+     * 触发方式，可选值为 hover（悬停）click（点击）custom（自定义），使用 custom 时，需配合 visible 一起使用
      * @default hover
      */
-    trigger?: "hover" | "click" | "custom" | "contextMenu"
+    trigger?: "hover" | "click" | "custom"
     /**
      * 手动控制下拉框的显示，在 trigger = 'custom' 时使用
      * @default false
@@ -17,30 +17,46 @@ export declare class Dropdown extends UIComponent {
      */
     placement?: UIComponentPlacement
     /**
+     *设置大小，可选值为：small,normal(default),medium,large
+     * @default normal
+     */
+    size?: UIComponentSize
+    /**
+     *主题颜色,仅对默认样式有用
+     * @default primary
+     */
+    theme?: UIComponenTheme
+    /**
+     * 自动更新显示文字
+     * @default false
+     */
+    autoLabel?: boolean
+    /**
+     * 点击子节点关闭
+     * @default false
+     */
+    autoClose?: boolean
+    /**
      * 是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果
      * @default false
      */
     transfer?: boolean
     /**
-     * 开启 transfer 时，给浮层添加额外的 class 名称
-     */
-    "transfer-class-name"?: string
-    /**
-     * 是否开启 stop-propagation
+     * ，给浮层添加额外的 class 名称
      * @default false
      */
-    "stop-propagation"?: boolean
+    dropClass?: string | object | any[]
     /**
      * 点击菜单项时触发
      *
      */
-    $emit(eventName: "on-click", value: string): this
+    $emit(eventName: "on-change", value: string): this
     /**
      * 菜单显示状态改变时调用
      */
     $emit(eventName: "on-visible-change", value: boolean): this
     /**
-     * 点击外部关闭下拉菜单时触发
+     * 点击时触发
      */
     $emit(eventName: "on-clickoutside", event: object): this
     /**
@@ -50,9 +66,9 @@ export declare class Dropdown extends UIComponent {
         /**
          * 主体内容
          */
-        "": VNode[]
+        default: VNode[]
         /**
-         * 列表内容，一般由 DropdownMenu 承担
+         * 列表内容
          */
         list: VNode[]
     }
@@ -78,4 +94,13 @@ export declare class DropdownItem extends UIComponent {
      * @default false
      */
     selected?: boolean
+    /**
+     * slot插槽对象
+     */
+    $slots: {
+        /**
+         * 主体内容
+         */
+        default: VNode[]
+    }
 }
