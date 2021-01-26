@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses" :data-vue-module="$options.name" :style="getStyle">
+    <div :class="classes" :data-vue-module="$options.name" :style="getStyle">
         <div v-if="showLabel" ref="label" :style="labelStyles" :class="[_tobogPrefix_ + '-label']">
             <slot name="label">{{ label }}</slot>
         </div>
@@ -14,11 +14,12 @@
 
 <script>
 import AsyncValidator from "async-validator"
-import { findComponentUpward } from "../../utils/findComponent"
-import { debounce, unit, validVal } from "../../utils/tool"
+import {findComponentUpward} from "../../utils/findComponent"
+import {debounce, unit, validVal} from "../../utils/tool"
 
 export default {
     name: "FormItem",
+    componentName: "FormItem",
     props: {
         width: [Number, String],
         prop: String,
@@ -40,8 +41,8 @@ export default {
         }
     },
     created() {
-        this.Form = findComponentUpward(this, "Forms") || {}
-        this.Form.$emit && this.Form.$emit("on-form-item-add", this)
+        this.__Form = findComponentUpward(this, "Form") || {}
+        this.__Form.$emit && this.__Form.$emit("on-form-item-add", this)
         if (this.prop) {
             this.__debounceValidator = debounce(this.validate)
             this.$on("on-validate", this.__debounceValidator)
@@ -50,8 +51,8 @@ export default {
     },
     computed: {
         getStyle() {
-            if (!(this.inline || this.Form.inline)) return {}
-            const width = validVal(this.width) ? this.width : this.Form.width
+            if (!(this.inline || this.__Form.inline)) return {}
+            const width = validVal(this.width) ? this.width : this.__Form.width
             return validVal(width)
                 ? {
                       width: unit(width),
@@ -62,7 +63,7 @@ export default {
             const width = this.getLabelWidth
             return width != "0" && (validVal(this.label) || !!this.$slots.label)
         },
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
@@ -70,19 +71,19 @@ export default {
                     [`${_tobogPrefix_}-required`]: this.isRequired,
                     [`${_tobogPrefix_}-vertical-${this.vertical}`]: !!this.vertical,
                     [`${_tobogPrefix_}-error`]: !!this.error,
-                    [`${_tobogPrefix_}-reverse`]: this.reverse || this.Form.reverse,
-                    [`${_tobogPrefix_}-inline`]: this.inline || this.Form.inline,
+                    [`${_tobogPrefix_}-reverse`]: this.reverse || this.__Form.reverse,
+                    [`${_tobogPrefix_}-inline`]: this.inline || this.__Form.inline,
                     [`${_tobogPrefix_}-inline-label`]: validVal(this.getLabelWidth),
                 },
             ]
         },
         getLabelWidth() {
             const labelWidth = this.labelWidth
-            return validVal(labelWidth) ? labelWidth : this.Form.labelWidth
+            return validVal(labelWidth) ? labelWidth : this.__Form.labelWidth
         },
         labelStyles() {
             let width = this.getLabelWidth,
-                align = this.align || this.Form.align,
+                align = this.align || this.__Form.align,
                 style =
                     align === "justify"
                         ? {
@@ -120,7 +121,7 @@ export default {
             return isRequired
         },
         getRules() {
-            const formRules = this.Form.rules || {}
+            const formRules = this.__Form.rules || {}
             const rules = this.rules || formRules[this.prop] || formRules["*"] || []
             return rules instanceof Array ? rules : [rules]
         },
@@ -141,7 +142,7 @@ export default {
         validate(val, callback, trigger) {
             const prop = this.prop,
                 iscb = typeof callback === "function"
-            let rules = this.isRequired && this.getRules.length == 0 ? [{ required: true }] : this.getRules
+            let rules = this.isRequired && this.getRules.length == 0 ? [{required: true}] : this.getRules
             if (!trigger && !iscb) {
                 trigger = callback
                 callback = null
@@ -171,7 +172,7 @@ export default {
         },
     },
     beforeDestroy() {
-        this.Form.$emit && this.Form.$emit("on-form-item-remove", this)
+        this.__Form.$emit && this.__Form.$emit("on-form-item-remove", this)
     },
 }
 </script>

@@ -50,6 +50,11 @@ $prefix-cls: #{$prefix}-formitem;
         padding-right: 5px;
     }
 
+    &-inline-label#{&}-reverse > &-label {
+        padding-left: 5px;
+        padding-right: 1px;
+    }
+
     &-label {
         display: inline-block;
         flex: none;
