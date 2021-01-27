@@ -4,14 +4,14 @@
             <slot>{{ getText }}</slot>
         </span>
         <slot name="selected" :selected="selected">
-            <Icons v-if="multiple && selected" type="ios-checkmark" :class="iconClass"></Icons>
+            <Icons v-if="multiple && selected" type="ios-checkmark" :class="[_tobogPrefix_ + '-icon-selected']"></Icons>
         </slot>
     </div>
 </template>
 <script>
 import Icons from "../icons/index"
 import Emitter from "../../utils/emitter"
-// import { debounce } from '../../utils/tool';
+// import {debounce} from "../../utils/tool"
 export default {
     inheritAttrs: false,
     name: "Option",
@@ -40,12 +40,12 @@ export default {
         return {
             selected: false,
             hidden: false, // for search
-            formItemComponent: null,
+            // formItemComponent: null,
             hover: false,
         }
     },
     created() {
-        // this.__debounce = debounce(this.queryChange);
+        // this.__queryChange = debounce(this.queryChange, null)
         this.$on("on-selected", this.handleHighlight)
         this.$on("on-query-option", this.queryChange)
         this.handleDispatch("on-option-change", "created", this)
@@ -58,15 +58,15 @@ export default {
             return this.label !== void 0 ? this.label : this.value
         },
         multiple() {
-            return this.formItemComponent && this.formItemComponent.multiple
+            return this.__parentComponent__ && this.__parentComponent__.multiple
         },
         stricts() {
             if (this.strict !== void 0) return this.strict
-            return this.formItemComponent && this.formItemComponent.strict === false ? false : true
+            return this.__parentComponent__ && this.__parentComponent__.strict === false ? false : true
         },
-        iconClass() {
-            return `${this._tobogPrefix_}-icon-selected`
-        },
+        // iconClass() {
+        //     return `${this._tobogPrefix_}-icon-selected`
+        // },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
@@ -131,20 +131,22 @@ export default {
             if (this.__parentComponent__) {
                 this.__parentComponent__.$emit(...args)
             } else {
-                this.formItemComponent = this.__parentComponent__ = this.dispatch(["Input", "Select"], ...args)
+                this.__parentComponent__ = this.dispatch(["Input", "Select"], ...args)
             }
         },
     },
     watch: {
         value: {
+            deep: true,
             handler() {
                 this.handleDispatch("on-option-change", "change", this)
             },
-            deep: true,
         },
     },
     beforeDestroy() {
         this.handleDispatch("on-option-change", "destroy", this)
+        // this.__queryChange && this.__queryChange.cancel()
+        // this.__queryChange = null
     },
 }
 </script>

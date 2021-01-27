@@ -172,6 +172,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         max-width: calc(100% - 36px);
         flex: auto;
         flex-shrink: 2;
+        margin-right: auto;
 
         .#{$prefix-cls-base} {
             border: none !important;
