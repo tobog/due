@@ -15,7 +15,7 @@
                 :style="getDropStyle"
                 v-bind="$attrs"
                 @hook:created="ready = true"
-                @scroll="handleScroll"
+                v-on="$listeners"
             >
                 <slot name="drop"></slot>
             </Popper>
@@ -23,7 +23,7 @@
     </div>
 </template>
 <script>
-import {ClickOut, HoverOut, EventListener, getElement} from "../../utils/dom"
+import {ClickOut, HoverOut, getElement} from "../../utils/dom"
 import Popper from "./popper/index"
 
 export default {
@@ -160,9 +160,9 @@ export default {
                 this.updateIndex += 1
             })
         },
-        handleScroll(...args) {
-            this.$emit("on-scroll", ...args)
-        },
+        // handleScroll(...args) {
+        //     this.$emit("on-scroll", ...args)
+        // },
         cancelChange() {
             console.log("cancelChange")
             this.__outvisible = true

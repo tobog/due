@@ -3,7 +3,7 @@
         appear
         :data-vue-module="$options.name"
         :name="transitionName || (type === 'drop' ? 'transition-drop' : 'fade')"
-        v-on="transitionListeners"
+        v-on="$listeners"
     >
         <div ref="popper" :class="classes" tabindex="-1">
             <div :class="[_tobogPrefix_ + '-content']" @scroll="$emit('scroll', $event)">
@@ -35,27 +35,27 @@ export default {
         this.initPopper()
     },
     computed: {
-        transitionListeners() {
-            const listeners = {}
-            ;[
-                "before-enter",
-                "before-leave",
-                "before-appear",
-                "enter",
-                "leave",
-                "appear",
-                "after-enter",
-                "after-leave",
-                "after-appear",
-                "enter-cancelled",
-                "leave-cancelled",
-                "appear-cancelled",
-            ].forEach((key) => {
-                const listener = this.$listeners[key]
-                if (listener) listeners[key] = listener
-            })
-            return listeners
-        },
+        // transitionListeners() {
+        //     const listeners = {}
+        //     ;[
+        //         "before-enter",
+        //         "before-leave",
+        //         "before-appear",
+        //         "enter",
+        //         "leave",
+        //         "appear",
+        //         "after-enter",
+        //         "after-leave",
+        //         "after-appear",
+        //         "enter-cancelled",
+        //         "leave-cancelled",
+        //         "appear-cancelled",
+        //     ].forEach((key) => {
+        //         const listener = this.$listeners[key]
+        //         if (listener) listeners[key] = listener
+        //     })
+        //     return listeners
+        // },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
