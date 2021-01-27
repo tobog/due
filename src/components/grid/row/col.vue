@@ -16,6 +16,7 @@ import { findComponentUpward } from "../../../utils/findComponent"
 import { unit } from "../../../utils/tool"
 export default {
     name: "Col",
+    componentName: "Col",
     props: {
         order: [Number, String],
         span: [Number, String],

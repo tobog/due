@@ -16,13 +16,17 @@ export default {
         rules: Object,
         labelWidth: [Number, String],
         inline: Boolean,
+        labelAlign: String,
+        labelVertical: String,
+        reverse: Boolean,
         errorInview: {
             type: Boolean,
             default: true,
         },
-        // labelPosition: String, //left,right,top-left,top-right,
-        size: [Number, String],
-        reverse: Boolean,
+        showMessage: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {}

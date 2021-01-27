@@ -18,9 +18,10 @@
     padding: 0;
 }
 </style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode" isAll>
+        <template slot="header">
             <h2>代码示例 (Grid 栅格)</h2>
             <h4 class="padding-top-10">
                 <ul>
@@ -35,272 +36,208 @@
                     <li>每个row中的col总和应该为24</li>
                 </ul>
             </h4>
-        </vCol>
-        <vCol lg="24" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="24" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vRow
-                    class="demo-row"
-                    v-bind="formData"
-                    :style="{ 'background-size': 100 / (formData.grid || 1) + '%' + ' 100%' }"
-                >
-                    <vCol class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</vCol>
-                    <vCol class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</vCol>
-                    <vCol class="demo-col" span="6" offset="8">col-6 | offset-8</vCol>
-                    <vCol class="demo-col" span="6" offset="4">col-6 | offset-4</vCol>
-                </vRow>
-                <vRow class="demo-row">
-                    <vCol class="demo-col" span="18" push="6">col-18 | push-6</vCol>
-                    <vCol class="demo-col" span="6" pull="18">col-6 | pull-18</vCol>
-                </vRow>
-                <vRow class="demo-row" v-bind="formData">
-                    <vCol span="6" :xs="2" :sm="4" :md="6" :lg="5">
-                        <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                    </vCol>
-                    <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                        <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                    </vCol>
-                    <vCol span="6" :xs="2" :sm="4" :md="6" :lg="7">
-                        <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                    </vCol>
-                    <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                        <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                    </vCol>
-                    <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                        <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                    </vCol>
-                </vRow>
-                <!-- <vRow class="demo-row" v-bind="formData">
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="5" :ratio="0.5">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0.5
-                    </vCol>
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0
-                    </vCol>
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8" :ratio="0.2">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0.2
-                    </vCol>
-                </vRow> -->
-                <vGrid class="demo-row demo-grid" :grid="5" :ratio="1" border hover>
-                    <vGridItem class="demo-col">
-                        grid:1
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:2
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:3
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:4
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:5
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:6
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:7
-                    </vGridItem>
-                    <vGridItem class="demo-col">
-                        grid:8
-                    </vGridItem>
-                </vGrid>
-                <vRow class="demo-row" v-bind="formData">
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="5" :ratio="0.5">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0.5
-                    </vCol>
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0
-                    </vCol>
-                    <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8" :ratio="0.2">
-                        span=6 xs=2 sm=4 md=6 lg=8 ratio=0.2
-                    </vCol>
-                </vRow>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vRow
+                class="demo-row"
+                v-bind="config"
+                :style="{'background-size': 100 / (config.grid || 1) + '%' + ' 100%'}"
+            >
+                <vCol class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</vCol>
+                <vCol class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</vCol>
+                <vCol class="demo-col" span="6" offset="8">col-6 | offset-8</vCol>
+                <vCol class="demo-col" span="6" offset="4">col-6 | offset-4</vCol>
+            </vRow>
+            <vRow class="demo-row">
+                <vCol class="demo-col" span="18" push="6">col-18 | push-6</vCol>
+                <vCol class="demo-col" span="6" pull="18">col-6 | pull-18</vCol>
+            </vRow>
+            <vRow class="demo-row" v-bind="config">
+                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="5">
+                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
+                </vCol>
+                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
+                </vCol>
+                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="7">
+                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
+                </vCol>
+                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
+                </vCol>
+                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
+                </vCol>
+            </vRow>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
-            value: "",
+            len: [1, 2, 3, 5, 6, 7, 8, 9],
+            isStop: false,
         }
     },
+    mounted() {},
+    methods: {},
     computed: {
         getCode() {
-            return `<vRow class="demo-row" v-bind="formData">
-						<vCol class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</vCol>
-						<vCol class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</vCol>
-						<vCol class="demo-col" span="6" offset="8">col-6 | offset-8</vCol>
-						<vCol class="demo-col" span="6" offset="4">col-6 | offset-4</vCol>
-					</vRow>
-					<vRow class="demo-row">
-						<vCol class="demo-col" span="18" push="6">col-18 | push-6</vCol>
-						<vCol class="demo-col" span="6" pull="18">col-6 | pull-18</vCol>
-					</vRow>
-					<vRow class="demo-row" v-bind="formData">
-						<vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+            return `<Row class="demo-row" v-bind="formData">
+						<Col class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</Col>
+						<Col class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</Col>
+						<Col class="demo-col" span="6" offset="8">col-6 | offset-8</Col>
+						<Col class="demo-col" span="6" offset="4">col-6 | offset-4</Col>
+					</Row>
+					<Row class="demo-row">
+						<Col class="demo-col" span="18" push="6">col-18 | push-6</Col>
+						<Col class="demo-col" span="6" pull="18">col-6 | pull-18</Col>
+					</Row>
+					<Row class="demo-row" v-bind="formData">
+						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
 							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</vCol>
-						<vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+						</Col>
+						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
 							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</vCol>
-						<vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+						</Col>
+						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
 							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</vCol>
-						<vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
+						</Col>
+						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
 							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</vCol>
-					</vRow>
-							`
+						</Col>
+					</Row>
+					`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
+                    showConfig: true,
                     label: "是否flex布局",
                     key: "flex",
+                    demoDefault: true,
+                    explain: "Row:是否flex布局",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "栅格基数",
                     key: "grid",
+                    demoDefault: 24,
+                    explain: "Row:总栅格数",
+                    dataType: "Number",
                     tag: "vInputNumber",
                     default: 24,
                 },
                 {
+                    showConfig: true,
                     label: "栅格间距",
                     key: "gutter",
+                    demoDefault: 0,
+                    explain: "Row:栅格间距，单位 px，左右平分 上下",
+                    dataType: "Number|Array",
                     tag: "vInputNumber",
                     default: 0,
                 },
                 {
+                    showConfig: true,
                     label: "flex垂直对齐",
                     key: "align",
+                    demoDefault: "",
+                    explain: "flex 布局下的垂直对齐方式，可选值为top、middle、bottom,stretch",
+                    dataType: "Number",
                     tag: "vSelect",
                     default: "",
                     options: ["top", "middle", "bottom", "stretch"],
                 },
                 {
+                    showConfig: true,
                     label: "flex水平排列",
                     key: "justify",
+                    demoDefault: "",
+                    explain: "flex水平排列",
+                    dataType: "Number",
                     tag: "vSelect",
                     default: "",
                     options: ["start", "center", "end", "space-around", "space-between"],
                 },
-            ]
-        },
-        compProps() {
-            return [
-                {
-                    prop: "Row:flex",
-                    explain: "是否flex布局",
-                    type: "Boolean",
-                    default: false,
-                },
-                {
-                    explain: "flex 布局下的垂直对齐方式，可选值为top、middle、bottom,stretch",
-                    prop: "flex:align",
-                    type: "String",
-                    default: "",
-                },
-                {
-                    explain: "flex 布局下的水平排列方式，可选值为start、end、center、space-around、space-between",
-                    prop: "flex:justify",
-                    type: "String",
-                    default: "",
-                },
-                {
-                    prop: "Row:grid",
-                    explain: "Row:总栅格数",
-                    type: "Number",
-                    default: "24",
-                },
-                {
-                    prop: "Row:gutter",
-                    explain: "Row:栅格间距，单位 px，左右平分 上下",
-                    type: "Number|Array",
+                     {
+                    key: "Col:span",
+                    explain: " Col:格的占位格数，可选值为0~grid的整数，为 0 时，相当于display:none",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:span",
-                    explain: "栅格的占位格数，可选值为0~grid的整数，为 0 时，相当于display:none",
-                    type: "Number",
+                    key: "Col:offset",
+                    explain: " Col:格左侧的间隔格数，间隔内不可以有栅格",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:offset",
-                    explain: "栅格左侧的间隔格数，间隔内不可以有栅格",
-                    type: "Number",
+                    key: "Col:push",
+                    explain: " Col:格向右移动格数",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:push",
-                    explain: "栅格向右移动格数",
-                    type: "Number",
+                    key: "Col:gutter",
+                    explain: " Col:格间距，单位 px，左右平分",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:gutter",
-                    explain: "栅格间距，单位 px，左右平分",
-                    type: "Number",
+                    key: "Col:pull",
+                    explain: " Col:格向左移动格数",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:pull",
-                    explain: "栅格向左移动格数",
-                    type: "Number",
+                    key: "Col:order",
+                    explain: " Col:格的顺序，在flex布局模式下有效",
+                    data: "Number",
                     default: "-",
                 },
                 {
-                    prop: "Col:order",
-                    explain: "栅格的顺序，在flex布局模式下有效",
-                    type: "Number",
+                    key: "Col:xs",
+                    explain: " Col:<768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    data: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    prop: "Col:xs",
-                    explain: "	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
-                    type: " [Number, String, Object]",
+                    key: "Col:sm",
+                    explain: " Col:≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    data: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    prop: "Col:sm",
-                    explain: "	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
-                    type: " [Number, String, Object]",
+                    key: "Col:md",
+                    explain: " Col:≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    data: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    prop: "Col:md",
-                    explain: "	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象",
-                    type: " [Number, String, Object]",
+                    key: "Col:lg",
+                    explain: " Col:≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    data: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    prop: "Col:lg",
-                    explain: "	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象",
-                    type: " [Number, String, Object]",
+                    label: "显示的内容",
+                    key: "slot:default",
+                    explain: "显示的内容",
+                    dataType: "VNode",
                     default: "-",
+                },
+                {
+                    label: "事件",
+                    key: "on-refresh",
+                    explain: "数量或者尺寸变化",
+                    dataType: "Function：Event",
+                    default: "()=>{}",
                 },
             ]
         },

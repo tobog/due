@@ -20,9 +20,9 @@ export default {
             //     });
             //     if (value !== void 0) return value;
             // }
-            if (defaultVal !== void 0) return defaultVal;
-            if (this[key] !== void 0) return this[key];
-            if (this.$ConfigProvide && this.$ConfigProvide[globalKey] !== void 0) return this.$ConfigProvide[globalKey];
+            if (defaultVal != void 0) return defaultVal;
+            if (this[key] != void 0) return this[key];
+            if (this.$ConfigProvide && this.$ConfigProvide[globalKey] != void 0) return this.$ConfigProvide[globalKey];
             return this.$DUE && this.$DUE[globalKey];
         },
     },

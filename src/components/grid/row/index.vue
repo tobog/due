@@ -6,9 +6,10 @@
 
 <script>
 import mediaSize from "../../../mixins/mediaSize"
-import { unit } from "../../../utils/tool"
+import {unit} from "../../../utils/tool"
 export default {
     name: "Row",
+    componentName: "Row",
     mixins: [mediaSize],
     props: {
         grid: {

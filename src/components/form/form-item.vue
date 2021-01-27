@@ -5,8 +5,13 @@
         </div>
         <div :class="[_tobogPrefix_ + '-content']">
             <slot></slot>
-            <div v-if="error || message" :class="[_tobogPrefix_ + '-message-wrapper']">
-                <div :class="[_tobogPrefix_ + '-message']" v-html="error || message"></div>
+            <div
+                v-if="getShowMessage && (error || message || $slots.message)"
+                :class="[_tobogPrefix_ + '-message-wrapper']"
+            >
+                <slot name="message">
+                    <div :class="[_tobogPrefix_ + '-message']">{{ error || message }}</div>
+                </slot>
             </div>
         </div>
     </div>
@@ -16,7 +21,6 @@
 import AsyncValidator from "async-validator"
 import {findComponentUpward} from "../../utils/findComponent"
 import {debounce, unit, validVal} from "../../utils/tool"
-
 export default {
     name: "FormItem",
     componentName: "FormItem",
@@ -32,8 +36,11 @@ export default {
         align: String,
         vertical: String,
         value: Object,
-        size: [Number, String],
         reverse: Boolean,
+        showMessage: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {
@@ -50,8 +57,23 @@ export default {
         }
     },
     computed: {
+        classes() {
+            const _tobogPrefix_ = this._tobogPrefix_
+            const vertical = this.vertical || this.__Form.labelVertical
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-required`]: this.isRequired,
+                    [`${_tobogPrefix_}-vertical-${vertical}`]: !!vertical,
+                    [`${_tobogPrefix_}-error`]: !!this.error,
+                    [`${_tobogPrefix_}-reverse`]: this.reverse || this.__Form.reverse,
+                    [`${_tobogPrefix_}-inline`]: this.inline || this.__Form.inline,
+                    [`${_tobogPrefix_}-inline-label`]: validVal(this.getLabelWidth),
+                },
+            ]
+        },
         getStyle() {
-            if (!(this.inline || this.__Form.inline)) return {}
+            if (!this.inline && !this.__Form.inline) return {}
             const width = validVal(this.width) ? this.width : this.__Form.width
             return validVal(width)
                 ? {
@@ -61,29 +83,14 @@ export default {
         },
         showLabel() {
             const width = this.getLabelWidth
-            return width != "0" && (validVal(this.label) || !!this.$slots.label)
-        },
-        classes() {
-            const _tobogPrefix_ = this._tobogPrefix_
-            return [
-                _tobogPrefix_,
-                {
-                    [`${_tobogPrefix_}-required`]: this.isRequired,
-                    [`${_tobogPrefix_}-vertical-${this.vertical}`]: !!this.vertical,
-                    [`${_tobogPrefix_}-error`]: !!this.error,
-                    [`${_tobogPrefix_}-reverse`]: this.reverse || this.__Form.reverse,
-                    [`${_tobogPrefix_}-inline`]: this.inline || this.__Form.inline,
-                    [`${_tobogPrefix_}-inline-label`]: validVal(this.getLabelWidth),
-                },
-            ]
+            return width != "0" && width !== "0px" && (validVal(this.label) || !!this.$slots.label)
         },
         getLabelWidth() {
-            const labelWidth = this.labelWidth
-            return validVal(labelWidth) ? labelWidth : this.__Form.labelWidth
+            return validVal(this.labelWidth) ? this.labelWidth : this.__Form.labelWidth
         },
         labelStyles() {
             let width = this.getLabelWidth,
-                align = this.align || this.__Form.align,
+                align = this.align || this.__Form.labelAlign,
                 style =
                     align === "justify"
                         ? {
@@ -125,19 +132,22 @@ export default {
             const rules = this.rules || formRules[this.prop] || formRules["*"] || []
             return rules instanceof Array ? rules : [rules]
         },
+        getShowMessage() {
+            return this.showMessage || this.__Form.showMessage
+        },
     },
 
     methods: {
         handleChange(val) {
-            this.__validate__ = true
+            this.__validate = true
             this.getValue(val)
         },
         getValue(val) {
             if (val === void 0) {
-                if (this.__validVal__ === void 0 || !this.__validate__) return (this.__validVal__ = this.value)
-                return this.__validVal__
+                if (this.__validVal === void 0 || !this.__validate) return (this.__validVal = this.value)
+                return this.__validVal
             }
-            return (this.__validVal__ = val)
+            return (this.__validVal = val)
         },
         validate(val, callback, trigger) {
             const prop = this.prop,
@@ -150,7 +160,7 @@ export default {
             if (trigger) {
                 rules = rules.filter((rule) => !rule.trigger || rule.trigger === trigger)
             }
-            if (!prop || (!this.__validate__ && this.__validVal__ === void 0) || !rules.length) {
+            if (!prop || (!this.__validate && this.__validVal === void 0) || !rules.length) {
                 iscb && callback()
                 return true
             }
