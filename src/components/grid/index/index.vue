@@ -8,6 +8,7 @@
 import mediaSize from "../../../mixins/mediaSize"
 export default {
     name: "Grid",
+    componentName: "Grid",
     mixins: [mediaSize],
     props: {
         grid: {

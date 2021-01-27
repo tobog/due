@@ -202,10 +202,17 @@ export default new Router({
                     },
                 },
                 {
+                    path: "grid-row",
+                    component: () => import("./components/grid-row"),
+                    meta: {
+                        label: "栅格/Row-Col",
+                    },
+                },
+                {
                     path: "grid",
                     component: () => import("./components/grid"),
                     meta: {
-                        label: "栅格",
+                        label: "单元格/Grid",
                     },
                 },
                 {

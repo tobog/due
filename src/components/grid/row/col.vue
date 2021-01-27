@@ -34,12 +34,12 @@ export default {
     },
     data() {
         return {
-            Row: {},
+            // Row: {},
         }
     },
     created() {
         this.__media = ""
-        this.Row = findComponentUpward(this, "Row") || {}
+        this.__Row = findComponentUpward(this, "Row") || {}
     },
     computed: {
         getClasses() {
@@ -79,7 +79,7 @@ export default {
                     return !!val || val == "0"
                 },
                 style = {},
-                grid = parseInt(this.Row.grid || 0) || 24
+                grid = parseInt(this.__Row.grid || 0) || 24
             let mediaObject = this[media],
                 type = typeof mediaObject
             if (type === "number" || type === "string") {
@@ -112,7 +112,7 @@ export default {
             let [gutter, alignGutter] = this.gutterIn,
                 style = {},
                 classes = [this._tobogPrefix_, { [`${this._tobogPrefix_}-ratio`]: this.getRatio > 0 }]
-            if (this.Row.isCustomeGrid) {
+            if (this.__Row.isCustomeGrid) {
                 style = this.getStyle
             } else {
                 classes.push(this.getClasses)
@@ -126,7 +126,7 @@ export default {
             return { style, class: classes }
         },
         getMedia() {
-            const size = this.Row.getMediaWidth
+            const size = this.__Row.getMediaWidth
             switch (true) {
                 case this.xs && size <= 768:
                     return "xs"
@@ -155,7 +155,7 @@ export default {
                 gutter = mediaObject.gutter
                 if (gutter == void 0) gutter = this.gutter
             }
-            gutter = gutter != void 0 ? gutter : this.Row.getGutter
+            gutter = gutter != void 0 ? gutter : this.__Row.getGutter
             if (Array.isArray(gutter)) {
                 return gutter
             }
@@ -168,7 +168,7 @@ export default {
                 ratio = mediaObject.ratio
                 if (ratio == void 0) ratio = this.ratio
             }
-            ratio = ratio != void 0 ? ratio : this.Row.getRatio
+            ratio = ratio != void 0 ? ratio : this.__Row.getRatio
             return ratio || 0
         },
     },

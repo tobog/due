@@ -1,7 +1,9 @@
 $prefix-cls-row: #{$prefix}-row;
 $prefix-cls-col: #{$prefix}-col;
+
 $prefix-cls-grid: #{$prefix}-grid;
 $prefix-cls-griditem: #{$prefix}-griditem;
+
 $prefix-cls-layout: #{$prefix}-layout;
 $prefix-cls-layoutitem: #{$prefix}-gridlayoutitem;
 
@@ -31,39 +33,39 @@ $prefix-cls-layoutitem: #{$prefix}-gridlayoutitem;
         flex-wrap: wrap;
     }
 
-    &-top {
+    &-align-top {
         align-items: flex-start;
     }
 
-    &-middle {
+    &-align-middle {
         align-items: center;
     }
 
-    &-bottom {
+    &-align-bottom {
         align-items: flex-end;
     }
 
-    &-stretch {
+    &-align-stretch {
         align-items: stretch;
     }
 
-    &-start {
+    &-justify-start {
         justify-content: flex-start;
     }
 
-    &-center {
+    &-justify-center {
         justify-content: center;
     }
 
-    &-end {
+    &-justify-end {
         justify-content: flex-end;
     }
 
-    &-space-around {
+    &-justify-space-around {
         justify-content: space-around;
     }
 
-    &-space-between {
+    &-justify-space-between {
         justify-content: space-between;
     }
 }
@@ -108,10 +110,11 @@ $prefix-cls-layoutitem: #{$prefix}-gridlayoutitem;
         border: 0;
         border-radius: 0;
         transition: box-shadow 0.2s ease-in-out;
+        padding: 0;
+        margin: 0;
         &-ratio {
             display: inline-flex !important;
             flex-wrap: nowrap;
-            // align-self: flex-start;
             &-inner {
                 width: 100%;
                 flex-grow: 1;
@@ -139,11 +142,10 @@ $prefix-cls-layoutitem: #{$prefix}-gridlayoutitem;
     }
 }
 
-
-.#{$prefix-cls-layout}{
+.#{$prefix-cls-layout} {
     position: relative;
 }
-.#{$prefix-cls-layoutitem}{
+.#{$prefix-cls-layoutitem} {
     transition: all 0.2s ease;
     box-sizing: border-box;
     position: absolute;

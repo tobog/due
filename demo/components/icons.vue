@@ -24,51 +24,34 @@
     }
 }
 </style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode" isAll>
+        <template slot="header">
             <h2>代码示例 (Icon 图标)</h2>
             <h4 class="padding-top-10">图标使用</h4>
-        </vCol>
-        <vCol lg="24" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="24" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vIcon v-bind="formData">
-                    <span>vIcon</span>
-                </vIcon>
-                <vIcon
-                    style="width:90px"
-                    type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-                ></vIcon>
-                <vIcon
-                    style="width:90px"
-                    type="https://www.com.c"
-                    fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-                ></vIcon>
-                <vIcon
-                    style="width:90px"
-                    type="https://www.com.c"
-                    loading="https://www.baidu.com/img/flexible/logo/pc/result.png"
-                    fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-                ></vIcon>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-        <vCol span="24" class="demo-props">
+        </template>
+        <template v-slot="config">
+            <vIcon v-bind="config">
+                <span>vIcon</span>
+            </vIcon>
+            <vIcon
+                style="width:90px"
+                type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
+            ></vIcon>
+            <vIcon
+                style="width:90px"
+                type="https://www.com.c"
+                fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
+            ></vIcon>
+            <vIcon
+                style="width:90px"
+                type="https://www.com.c"
+                loading="https://www.baidu.com/img/flexible/logo/pc/result.png"
+                fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
+            ></vIcon>
+        </template>
+        <div slot="other">
             <h3 class="padding-15">所有图标</h3>
             <vInput
                 class="width-60per margin-auto"
@@ -81,13 +64,12 @@
                     <p>{{ item }}</p>
                 </div>
             </div>
-        </vCol>
-    </vRow>
+        </div>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
             iconName: "",
@@ -99,74 +81,77 @@ export default {
             return this.iconslist.filter((item) => item.indexOf(this.iconName) > -1)
         },
         getCode() {
-            return `<vIcon v-bind="${this.getCodeString(this.formData)}">vIcon</vIcon>
+            return `<vIcon v-bind=CODE>vIcon</vIcon>
 					<vIcon
 						style="width:90px"
 						type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-					></vIcon>`
+					></vIcon>
+					`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: "flex-center布局",
+                    showConfig: true,
+                    label: "center布局",
                     key: "center",
+                    demoDefault: false,
+                    explain: "flex-center布局",
+                    dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "颜色",
                     key: "color",
-                    tag: "vInput",
-                    props: {
-                        type: "color",
-                    },
+                    demoDefault: "",
+                    explain: "颜色",
+                    dataType: "String",
+                    tag: "vColorPicker",
+                    default: "",
                 },
                 {
+                    showConfig: true,
                     label: "大小",
                     key: "size",
+                    demoDefault: 26,
+                    explain: "大小",
+                    dataType: "String|Number",
                     tag: "vInputNumber",
-                    default: 26,
+                    default: "",
                 },
                 {
+                    showConfig: true,
                     label: "icon",
                     key: "type",
+                    demoDefault: "ios-archive-outline",
+                    explain: "icon,图标的名称,可以是路径或链接",
+                    dataType: "String",
                     tag: "vInput",
-                    default: "ios-archive-outline",
+                    default: "",
                     options: this.iconslist,
                 },
-            ]
-        },
-        compProps() {
-            return [
                 {
-                    prop: "type",
-                    explain: "图标的名称,可以是路径或链接",
-                    type: "String",
-                    default: "-",
-                },
-                {
-                    prop: "size",
-                    explain: "大小",
-                    type: "Number",
-                    default: "-",
-                },
-                {
-                    prop: "color",
-                    explain: "color",
-                    type: "String",
-                    default: "-",
-                },
-                {
-                    prop: "laoding",
+                    label: "加载loading",
+                    key: "laoding",
+                    demoDefault: "",
                     explain: "laoding 加载loading",
-                    type: "String|Boolean",
+                    dataType: "String|Boolean",
+                    default: "",
+                },
+                {
+                    label: "显示的内容",
+                    key: "slot:default",
+                    explain: "自定义图标",
+                    dataType: "VNode",
                     default: "-",
                 },
                 {
-                    prop: "slot:default",
-                    explain: "自定义图标",
-                    type: "VNode",
-                    default: "-",
+                    label: "事件",
+                    key: "on-resize",
+                    explain: "尺寸变化",
+                    dataType: "Function：Event",
+                    default: "()=>{}",
                 },
             ]
         },

@@ -1,5 +1,5 @@
-import {EventListener, getClientSize} from "../utils/dom"
-import {debounce} from "../utils/tool"
+import { EventListener, getClientSize } from "../utils/dom"
+import { debounce } from "../utils/tool"
 export default {
     inject: ["$ConfigProvide"],
     data() {
@@ -17,10 +17,13 @@ export default {
         }
         this.__getClientSize = debounce(
             this.__mediaCallback ||
-                (() => {
-                    this.mediaSize = getClientSize("viewport")
-                }),
-            100
+            (() => {
+                this.mediaSize = getClientSize("viewport");
+                this.$nextTick(() => {
+                    this.$emit('on-resize', this.mediaSize)
+                })
+            }),
+            120
         )
     },
     mounted() {

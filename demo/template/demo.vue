@@ -78,6 +78,9 @@
 			</pre>
         </div>
         <div class="demo-props-table">
+            <slot name="other"></slot>
+        </div>
+        <div class="demo-props-table">
             <h2 class="demo-header">Props & Events</h2>
             <vTable :columns="getColumns" :data="config" class="demo-table" border stripe></vTable>
         </div>
@@ -95,7 +98,7 @@
 //     options: "false|top|bottom", // 可选值
 //     explain: "在固定状态发生改变时触发",
 // }
-import FormEdit from "./formedit";
+import FormEdit from "./formedit"
 export default {
     components: {
         FormEdit,
@@ -106,7 +109,7 @@ export default {
         config: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         code: String,
@@ -127,25 +130,25 @@ export default {
                     --back: #151518;
                     --hover: #000;
             }`,
-        };
+        }
     },
     watch: {
         formData: {
             deep: true,
             handler(val) {
-                this.$emit("on-formData", val);
+                this.$emit("on-formData", val)
             },
         },
     },
     computed: {
         getFormatCode() {
-            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`);
+            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`)
             return code.replace(/\s{5,}/g, function() {
                 const reg = arguments[0],
-                    leng = reg.length;
+                    leng = reg.length
                 // console.log(arguments, leng)
-                return `\n${reg.slice(leng > 18 ? 20 : 6)}`;
-            });
+                return `\n${reg.slice(leng > 18 ? 20 : 6)}`
+            })
         },
         getColumns() {
             return [
@@ -170,7 +173,7 @@ export default {
                     title: "可选值",
                     key: "options",
                     render(h, data) {
-                        return <div class="table-opt">{(data.row.options || []).join(",")}</div>;
+                        return <div class="table-opt">{(data.row.options || []).join(",")}</div>
                         // console.log(data);
                     },
                 },
@@ -178,17 +181,17 @@ export default {
                 //     title: "切换",
                 //     key: "options",
                 // },
-            ];
+            ]
         },
     },
     methods: {
         getCodeString(val = {}) {
             try {
-                return JSON.stringify(val);
+                return JSON.stringify(val)
             } catch (error) {
-                return val;
+                return val
             }
         },
     },
-};
+}
 </script>

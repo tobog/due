@@ -20,10 +20,7 @@ export default {
             type: [Number, String, Array, Object],
             default: 0,
         },
-        flex: {
-            type: Boolean,
-            default: false,
-        },
+        flex: Boolean,
         align: {
             type: String,
             // default:'top'，top，middle，bottom，stretch
@@ -60,19 +57,19 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-flex`]: this.flex,
-                    [`${_tobogPrefix_}-${this.align}`]: !!this.align,
-                    [`${_tobogPrefix_}-${this.justify}`]: !!this.justify,
+                    [`${_tobogPrefix_}-align-${this.align}`]: !!this.align,
+                    [`${_tobogPrefix_}-justify-${this.justify}`]: !!this.justify,
                 },
             ]
         },
         getRatio() {
-            if (this.ratio instanceof Object) {
+            if (this.ratio && this.ratio instanceof Object) {
                 return this.ratio[this.getMedia] || 0
             }
             return this.ratio || 0
         },
         getGutter() {
-            if (this.gutter instanceof Object && !Array.isArray(this.gutter)) {
+            if (this.gutter && this.gutter instanceof Object && !Array.isArray(this.gutter)) {
                 return this.gutter[this.getMedia]
             }
             return this.gutter
