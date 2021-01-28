@@ -71,7 +71,6 @@ export default {
             }
         },
         handleOverflow(val) {
-            debugger
             if (
                 (!this.lock && !this.__isOverflowed) ||
                 !((val && !this.__isOverflowed) || (!val && this.__isOverflowed)) ||
