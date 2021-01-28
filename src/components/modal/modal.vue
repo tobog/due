@@ -32,7 +32,11 @@
                         </template>
                         <template v-if="closable">
                             <slot name="close">
-                                <Icons type="ios-close" :class="[_tobogPrefix_ + '-close']" @click.native="close"></Icons>
+                                <Icons
+                                    type="ios-close"
+                                    :class="[_tobogPrefix_ + '-close']"
+                                    @click.native="close"
+                                ></Icons>
                             </slot>
                         </template>
                     </span>
@@ -48,10 +52,10 @@
                     <div v-if="showFooter" :class="[_tobogPrefix_ + '-footer']" ref="footer">
                         <template v-if="!prompt">
                             <slot name="footer" :close="close" :confirm="confirm">
-                                <Button  @click.native="close" style="margin-right:16px">{{
+                                <Button @click.native="close" style="margin-right:16px">{{
                                     langs("modal.close", "关闭")
                                 }}</Button>
-                                <Button theme="primary"  @click.native="confirm">{{
+                                <Button theme="primary" @click.native="confirm">{{
                                     langs("modal.confirm", "确认")
                                 }}</Button>
                             </slot>
@@ -68,14 +72,14 @@
 </template>
 
 <script>
-let ModalInstances = [];
-import TransferDom from "../../directives/transfer-dom";
-import { EventListener, Fullscreen, DragMove } from "../../utils/dom";
-import { unit, validVal } from "../../utils/tool";
-import Icons from "../icons/index";
-import Button from "../button/index";
-import Loading from "../loading/loading";
-import langMinix from "../../mixins/lang";
+let ModalInstances = []
+import TransferDom from "../../directives/transfer-dom"
+import {EventListener, Fullscreen, DragMove} from "../../utils/dom"
+import {unit, validVal} from "../../utils/tool"
+import Icons from "../icons/index"
+import Button from "../button/index"
+import Loading from "../loading/loading"
+import langMinix from "../../mixins/lang"
 export default {
     name: "Modal",
     inheritAttrs: false,
@@ -105,10 +109,7 @@ export default {
             type: Number,
             default: 520,
         },
-        maskable: {
-            type: Boolean,
-            default: false,
-        },
+        maskable: Boolean,
         showHeader: {
             type: Boolean,
             default: true,
@@ -121,18 +122,9 @@ export default {
             type: Boolean,
             default: true,
         },
-        transfer: {
-            type: Boolean,
-            default: false,
-        },
-        dragable: {
-            type: Boolean,
-            default: false,
-        },
-        fullscreen: {
-            type: Boolean,
-            default: false,
-        },
+        transfer: Boolean,
+        dragable: Boolean,
+        fullscreen: Boolean,
         fullElement: {
             type: String,
             default: "modal", //wrap,modal
@@ -155,53 +147,53 @@ export default {
             show: !!this.visible,
             loading: false,
             lastMaskModel: null,
-        };
+        }
     },
     created() {
-        ModalInstances.push(this);
+        ModalInstances.push(this)
     },
     mounted() {
-        this.show = this.show ? 1 : 0;
-        EventListener.on(document, "keydown", this.escClose);
+        this.show = this.show ? 1 : 0
+        EventListener.on(document, "keydown", this.escClose)
     },
     activated() {
-        EventListener.on(document, "keydown", this.escClose);
+        EventListener.on(document, "keydown", this.escClose)
     },
     deactivated() {
-        EventListener.off(document, "keydown", this.escClose);
+        EventListener.off(document, "keydown", this.escClose)
     },
 
     computed: {
         wrapClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-wrapper`,
                 {
                     [`${_tobogPrefix_}-mask`]: !this.lastMaskModel || this.lastMaskModel === this._uid,
                     [`${_tobogPrefix_}-fixed`]: this.fixed,
                 },
-            ];
+            ]
         },
         headerClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-header`,
                 {
                     [`${_tobogPrefix_}-${this.prompt}`]: !!this.prompt,
                 },
-            ];
+            ]
         },
         contentClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-drawer`]: this.type === "drawer",
                 },
-            ];
+            ]
         },
         transitionname() {
-            return this.type === "drawer" ? "move-right" : "slide-up";
+            return this.type === "drawer" ? "move-right" : "slide-up"
         },
         contentStyles() {
             const style = this.modalStyle || "",
@@ -215,69 +207,69 @@ export default {
                               validVal(right) ? unit(right) : "auto",
                               validVal(bottom) ? unit(bottom) : "auto",
                               validVal(left) ? unit(left) : "auto",
-                          ].join(" ");
+                          ].join(" ")
             return typeof style == "string"
                 ? `width:${width};margin:${margin};${style}`
                 : {
                       width,
                       margin,
                       ...style,
-                  };
+                  }
         },
     },
     methods: {
         dragMove() {
-            if (!this.dragable || !this.show) return;
+            if (!this.dragable || !this.show) return
             this.$nextTick(() => {
                 if (this._DragMove) {
-                    this._DragMove.update(this.$refs.modal);
-                    return;
+                    this._DragMove.update(this.$refs.modal)
+                    return
                 }
-                this._DragMove = new DragMove(this.$refs.modal);
-            });
+                this._DragMove = new DragMove(this.$refs.modal)
+            })
         },
         handleFullscreen() {
             // 整个页面进入全屏
-            const ele = this.$refs[this.fullElement === "modal" ? "modal" : "wrap"];
+            const ele = this.$refs[this.fullElement === "modal" ? "modal" : "wrap"]
             Fullscreen.toggle(ele).then((bool) => {
-                this.$emit("on-fullscreenchange", bool);
-            });
+                this.$emit("on-fullscreenchange", bool)
+            })
         },
         clickMask() {
-            if (this.maskable) this.close();
+            if (this.maskable) this.close()
         },
         close() {
-            this.show = false;
-            this.$emit("on-cancel", this.name);
+            this.show = false
+            this.$emit("on-cancel", this.name)
         },
         afterLeave() {
-            this.$emit("on-change", false);
-            this.$emit("on-after-close", this.name);
+            this.$emit("on-change", false)
+            this.$emit("on-after-close", this.name)
         },
         confirm() {
-            if (!this.async) this.show = false;
-            this.loading = true;
+            if (!this.async) this.show = false
+            this.loading = true
             this.$emit("on-confirm", this.name, () => {
-                this.show = false;
-            });
+                this.show = false
+            })
         },
         escClose(e) {
-            if (this.show && this.closable && e.keyCode === 27) this.close();
+            if (this.show && this.closable && e.keyCode === 27) this.close()
         },
         delayToggle(val) {
-            clearTimeout(this.__timeOut);
-            if (this.show === val) return;
-            this.loading = false;
-            if (val) this.show = true;
+            clearTimeout(this.__timeOut)
+            if (this.show === val) return
+            this.loading = false
+            if (val) this.show = true
             if (this.delay) {
-                this.loading = true;
+                this.loading = true
                 this.__timeOut = setTimeout(() => {
-                    this.show = val;
-                    this.loading = false;
-                    this.__timeOut = null;
-                }, this.delay);
+                    this.show = val
+                    this.loading = false
+                    this.__timeOut = null
+                }, this.delay)
             } else {
-                this.show = val;
+                this.show = val
             }
         },
         handleOverflow(val) {
@@ -286,60 +278,60 @@ export default {
                 !((val && !this.__isOverflowed) || (!val && this.__isOverflowed)) ||
                 !this._isMounted
             ) {
-                return;
+                return
             }
-            this.__offsetParent = this.__offsetParent || this.$el.offsetParent;
-            if(!this.__offsetParent ) return;
+            this.__offsetParent = this.__offsetParent || this.$el.offsetParent
+            if (!this.__offsetParent) return
             const dataset = this.__offsetParent.dataset,
                 overflowIndex = parseInt(dataset.overflowIndex || 0),
                 style = this.__offsetParent.style,
-                originOverflow = dataset.originOverflow;
+                originOverflow = dataset.originOverflow
             if (val) {
-                this.__isOverflowed = true;
-                dataset.overflowIndex = overflowIndex + 1;
-                if (originOverflow === void 0) dataset.originOverflow = style.overflow || "";
-                style.overflow = "hidden";
-                return;
+                this.__isOverflowed = true
+                dataset.overflowIndex = overflowIndex + 1
+                if (originOverflow === void 0) dataset.originOverflow = style.overflow || ""
+                style.overflow = "hidden"
+                return
             }
-            this.__isOverflowed = false;
+            this.__isOverflowed = false
             if (overflowIndex < 2) {
-                style.overflow = originOverflow;
-                delete dataset.originOverflow;
-                delete dataset.overflowIndex;
-                return;
+                style.overflow = originOverflow
+                delete dataset.originOverflow
+                delete dataset.overflowIndex
+                return
             }
-            dataset.overflowIndex = overflowIndex - 1;
+            dataset.overflowIndex = overflowIndex - 1
         },
         setLastMask() {
-            const showInstances = ModalInstances.filter((item) => item.show);
-            console.log(showInstances, this._uid);
+            const showInstances = ModalInstances.filter((item) => item.show)
+            console.log(showInstances, this._uid)
             if (showInstances.length) {
-                const lastMaskModel = showInstances[showInstances.length - 1]._uid;
+                const lastMaskModel = showInstances[showInstances.length - 1]._uid
                 showInstances.forEach((item) => {
-                    item.lastMaskModel = lastMaskModel;
-                });
+                    item.lastMaskModel = lastMaskModel
+                })
             }
         },
     },
     watch: {
         dragable(val, old) {
-            if (val == old) return;
-            this.dragMove();
+            if (val == old) return
+            this.dragMove()
         },
         visible(val, old) {
-            this.delayToggle(val);
+            this.delayToggle(val)
         },
         show(val, old) {
-            this.setLastMask();
+            this.setLastMask()
             if (!this.__isInserted) {
                 this.$nextTick(() => {
-                    this.__isInserted = true;
-                    this.handleOverflow(val);
-                });
+                    this.__isInserted = true
+                    this.handleOverflow(val)
+                })
             } else {
-                this.handleOverflow(val);
+                this.handleOverflow(val)
             }
-            this.dragMove();
+            this.dragMove()
             this.$nextTick(() => {
                 if (
                     !val &&
@@ -348,24 +340,24 @@ export default {
                     typeof this.$options.destroy === "function" &&
                     this.$attrs.__pattern === "js"
                 ) {
-                    this.__destroyed__ = true;
-                    this.$options.destroy(this.name);
+                    this.__destroyed__ = true
+                    this.$options.destroy(this.name)
                 }
-            });
-            this.$emit("on-show-change", val, this.name);
+            })
+            this.$emit("on-show-change", val, this.name)
         },
     },
     beforeDestroy() {
-        if (this.show) this.handleOverflow(false);
-        clearTimeout(this.__timeout);
-        EventListener.off(document, "keydown", this.escClose);
-        ModalInstances = ModalInstances.filter((item) => item !== this);
-        this.setLastMask();
-        this.__timeout = null;
-        this._DragMove && this._DragMove.destroy();
-        this._DragMove = null;
+        if (this.show) this.handleOverflow(false)
+        clearTimeout(this.__timeout)
+        EventListener.off(document, "keydown", this.escClose)
+        ModalInstances = ModalInstances.filter((item) => item !== this)
+        this.setLastMask()
+        this.__timeout = null
+        this._DragMove && this._DragMove.destroy()
+        this._DragMove = null
         if (!this.__destroyed__ && typeof this.$options.destroy === "function" && this.$attrs.__pattern === "js")
-            this.$options.destroy(this.name);
+            this.$options.destroy(this.name)
     },
-};
+}
 </script>

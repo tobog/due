@@ -103,10 +103,7 @@ export default {
             // default: "暂无数据",
             default: null,
         },
-        filterable: {
-            type: Boolean,
-            default: false,
-        },
+        filterable: Boolean,
         keyModal: {
             type: Boolean,
             default: true,

@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses" :data-vue-module="dataVueModule || $options.name">
+    <div :class="classes" :data-vue-module="dataVueModule || $options.name">
         <div v-if="prepend" :class="[_tobogPrefix_ + '-prepend']">
             <slot name="prepend"></slot>
         </div>
@@ -103,6 +103,7 @@ import mixin from "./mixin";
 import Icons from "../../icons/index";
 export default {
     name: "InputBase",
+    componentName: "InputBase",
     inheritAttrs: false,
     mixins: [mixin],
     components: {
@@ -122,7 +123,7 @@ export default {
         };
     },
     computed: {
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 `${_tobogPrefix_}-wrapper`,

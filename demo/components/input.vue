@@ -1,62 +1,51 @@
+<style lang="scss">
+.demo-row {
+    margin-bottom: 5px;
+    background-image: linear-gradient(90deg, #f5f5f5 50%, transparent 0, transparent 100%);
+    background-size: 8.333333333333334% 100%;
+}
+.demo-col {
+    color: #fff;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 18px;
+    background: rgba(0, 153, 229, 0.3);
+}
+.demo-col:nth-child(2n) {
+    background: rgba(0, 153, 229, 0.7);
+}
+.demo-grid > .demo-col {
+    padding: 0;
+}
+</style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Input 输入框)</h2>
             <h4 class="padding-top-10">
                 基本表单组件，支持 input 和 textarea，并在原生控件基础上进行了功能扩展，可以组合使用。
             </h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vInput class="margin-bottom-20" v-bind="formData" v-model="val">
-                    <div slot="prepend">http://</div>
-                    <span slot="append">.com</span>
-                    <vOption value="ghost"></vOption>
-                    <vOption value="dashed"></vOption>
-                </vInput>
-                <vInput class="margin-bottom-20" v-model="val2" v-bind="formData">
-                    <span slot="prepend">http://</span>
-                    <vInput v-model="val4" slot="append" theme="primary"></vInput>
-                </vInput>
-                <vInput class="margin-bottom-20" v-model="val2" v-bind="formData">
-                    <template slot="prepend">
-                        <vDropdown autoClose label="label" autoLabel>
-                            <template slot="list">
-                                <vDropdownItem disabled>驴打滚</vDropdownItem>
-                                <vDropdownItem selected>酱面</vDropdownItem>
-                                <vDropdownItem>豆汁儿炸酱面</vDropdownItem>
-                            </template>
-                        </vDropdown>
-                    </template>
-                    <vInput v-model="val4" slot="append" theme="primary"></vInput>
-                </vInput>
-                <vInput class="margin-bottom-20" v-bind="formData" type="number"></vInput>
-                <vTextarea class="margin-bottom-20" v-bind="formData" v-model="val3"></vTextarea>
-                <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vInput class="margin-bottom-20" v-bind="config" v-model="val">
+                <div slot="prepend">http://</div>
+                <span slot="append">.com</span>
+                <vOption value="ghost"></vOption>
+                <vOption value="dashed"></vOption>
+            </vInput>
+            <vInput class="margin-bottom-20" v-model="val2" v-bind="config">
+                <span slot="prepend">http://</span>
+                <vInput v-model="val4" slot="append" theme="primary"></vInput>
+            </vInput>
+            <vInput class="margin-bottom-20" v-bind="config" type="number"></vInput>
+            <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
             label: "label",
@@ -68,306 +57,263 @@ export default {
             show1: true,
         }
     },
-    created() {
-        setTimeout(() => {
-            this.show1 = false
-        }, 5000)
-    },
     computed: {
         getCode() {
-            return `<vInput class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val">
-						<div slot="prepend">http://</div>
-						<span slot="append">.com</span>
-					</vInput>
-					<vInput class="margin-bottom-20" type="select" prefix suffix v-bind="${this.getCodeString(
-                        this.formData
-                    )}" v-model="val1">
-						<vInput suffix="search" />
-						<vOption value="primary"></vOption>
-						<vOption value="ghost"></vOption>
-						<vOption value="dashed"></vOption>
-						<vOption value="text"></vOption>
-						<vOption value="info"></vOption>
-						<vOption value="success"></vOption>
-						<vOption value="success"></vOption>
-						<vOption value="success"></vOption>
-						<vOption value="success"></vOption>
-					</vInput>
-					<vInput class="margin-bottom-20" v-model="val2" v-bind="${this.getCodeString(this.formData)}">
-						<span slot="prepend">http://</span>
-						<vInput v-model="val4" slot="append" theme="primary"></vInput>
-					</vInput>
-					<vInput class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" type="number"></vInput>
-					<vTextarea class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val3"></vTextarea>`
+            return `
+					`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
+                    showConfig: true,
                     label: "禁用状态",
                     key: "disabled",
                     tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "清空按钮",
                     key: "clearable",
                     tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "清空按钮",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "Drop置body下",
                     key: "transfer",
                     tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否将下拉置于 body 内",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: "过滤",
+                    showConfig: true,
+                    label: "搜索",
                     key: "filterable",
                     tag: "vSwitch",
-                    default: true,
+                    demoDefault: false,
+                    explain: "是否支持搜索",
+                    dataType: "Boolean",
+                    default: false,
                 },
                 {
+                    showConfig: true,
                     label: "自动关闭",
                     key: "autoClose",
                     tag: "vSwitch",
+                    demoDefault: 5,
+                    explain: "非多选下自动关闭",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "多选",
                     key: "multiple",
                     tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否支持多选",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "只读",
                     key: "readonly",
                     tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否只读",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "键盘操作",
                     key: "keyModal",
                     tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否键盘操作",
+                    dataType: "Boolean",
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "头部图标",
                     key: "prefix",
                     tag: "vSelect",
                     default: "person",
+                    demoDefault: "",
+                    explain: "prefix|slot:prefix 输入框头部图标",
+                    dataType: "Number|VNode",
                     options: this.iconslist,
                 },
                 {
+                    showConfig: true,
                     label: "尾部图标",
                     key: "suffix",
                     tag: "vSelect",
                     default: "person",
+                    demoDefault: "",
+                    explain: "suffix|slot:suffix输入框尾部图标",
+                    dataType: "Number|VNode",
                     options: this.iconslist,
                 },
                 {
+                    showConfig: true,
                     label: "类型",
                     key: "type",
                     tag: "vSelect",
                     default: "text",
+                    demoDefault: 5,
+                    explain:
+                        "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
+                    dataType: "String",
                     options: this.getFormTypes,
                 },
                 {
+                    showConfig: true,
                     label: "主题",
                     key: "theme",
                     tag: "vSelect",
                     default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
                     options: this.getThemes,
                 },
                 {
+                    showConfig: true,
                     label: "无数据提示",
                     key: "tip",
                     tag: "vInput",
                     default: "暂无数据",
+                    demoDefault: "暂无数据",
+                    explain: "无数据提示",
+                    dataType: "String",
                 },
-            ]
-        },
-        compProps() {
-            return [
                 {
-                    prop: "multipleKey",
+                    key: "multipleKey",
                     explain: "当mutiple=true下,渲染的取值key，type=file时默认multipleKey=name",
-                    type: "String",
+                    dataType: "String",
                     default: "-",
                 },
                 {
-                    prop: "type",
+                    key: "type",
                     explain:
                         "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
-                    type: "String",
+                    dataType: "String",
                     default: "",
                 },
                 {
-                    prop: "name",
+                    key: "name",
                     explain: "表单name",
-                    type: "String",
+                    dataType: "String",
                     default: "",
                 },
                 {
-                    prop: "value",
+                    key: "value",
                     explain: "绑定的值，可使用 v-model 双向绑定",
-                    type: "String|Number|Array",
+                    dataType: "String|Number|Array",
                     default: "",
                 },
                 {
-                    prop: "$attrs",
+                    key: "$attrs",
                     explain: "继承$attrs",
-                    type: "object",
+                    dataType: "object",
                     default: "-",
                 },
+
                 {
-                    prop: "disabled",
-                    explain: "是否禁用",
-                    type: "Boolean",
-                    default: "false",
-                },
-                {
-                    prop: "readonly",
-                    explain: "只读",
-                    type: "Boolean",
-                    default: "false",
-                },
-                {
-                    prop: "clearable",
-                    explain: "是否显示清空按钮",
-                    type: "Boolean",
-                    default: "false",
-                },
-                {
-                    prop: "filterable",
-                    explain: "是否支持搜索",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    prop: "autoClose",
-                    explain: "非多选下自动关闭",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    prop: "multiple",
-                    explain: "是否支持多选",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    explain:
-                        "主题：button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
-                    prop: "theme",
-                    type: "String",
-                    default: "",
-                },
-                {
-                    prop: "dropStyle",
+                    key: "dropStyle",
                     explain: "给浮层添加额外的 Style 名称",
-                    type: "Object, String",
+                    dataType: "Object, String",
                     default: "",
                 },
+
                 {
-                    prop: "tip",
-                    explain: "文字提示",
-                    type: "String",
-                    default: "暂无数据",
-                },
-                {
-                    prop: "keyModal",
-                    explain: "是否键盘操作",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    prop: "prefix|slot:prefix",
-                    explain: "输入框头部图标",
-                    type: "String|VNode",
-                    default: "-",
-                },
-                {
-                    prop: "suffix|slot:suffix",
-                    explain: "输入框尾部图标",
-                    type: "String|VNode",
-                    default: "-",
-                },
-                {
-                    prop: "search",
+                    key: "search",
                     explain: "否显示为搜索型输入框",
-                    type: "Boolean",
+                    dataType: "Boolean",
                     default: "false",
                 },
                 {
-                    prop: "slots:prepend",
+                    key: "slots:prepend",
                     explain: "输入框外头部组件",
-                    type: "VNode",
+                    dataType: "VNode",
                     default: "-",
                 },
                 {
-                    prop: "slots:append",
+                    key: "slots:append",
                     explain: "输入框外尾部组件",
-                    type: "VNode",
+                    dataType: "VNode",
                     default: "-",
                 },
                 {
-                    prop: "on-change",
+                    key: "on-change",
                     explain: "数据改变时触发事件",
-                    type: "Function:(val,__attachData)=>{}",
+                    dataType: "Function:(val,__attachData)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-attach",
+                    key: "on-attach",
                     explain: "数据改变时触发事件,获取附属数据",
-                    type: "Function:(val,__attachData)=>{}",
+                    dataType: "Function:(val,__attachData)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-icon-click",
+                    key: "on-icon-click",
                     explain: "点击图标时触发事件",
-                    type: "Function:(val,event)=>{}",
+                    dataType: "Function:(val,event)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-focus",
+                    key: "on-focus",
                     explain: "输入框聚焦时触发事件",
-                    type: "Function:(val,event)=>{}",
+                    dataType: "Function:(val,event)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-blur",
+                    key: "on-blur",
                     explain: "输入框失去焦点时触事件",
-                    type: "Function:(val,event)=>{}",
+                    dataType: "Function:(val,event)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-enter",
+                    key: "on-enter",
                     explain: "按下回车键时触发事件",
-                    type: "Function:(val,event)=>{}",
+                    dataType: "Function:(val,event)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-visible-change",
+                    key: "on-visible-change",
                     explain: "Drop下拉变化触发事件",
-                    type: "Function:val=>{}",
+                    dataType: "Function:val=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-search",
+                    key: "on-search",
                     explain: "点击搜索或按下回车键时触发事件：search",
-                    type: "Function:val=>{}",
+                    dataType: "Function:val=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-remove-item",
+                    key: "on-remove-item",
                     explain: "点击清空按钮时触发事件：search",
-                    type: "Function:(val,index)=>{}",
+                    dataType: "Function:(val,index)=>{}",
                     default: "-",
                 },
                 {
-                    prop: "on-clear",
+                    key: "on-clear",
                     explain: "点击清除触发事件",
-                    type: "Function",
+                    dataType: "Function",
                     default: "-",
                 },
             ]

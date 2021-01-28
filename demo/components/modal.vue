@@ -61,7 +61,7 @@ export default {
 	data() {
 		return {
 			val: true,
-			val1:true
+			val1:false
 		};
 	},
 	computed: {
@@ -127,7 +127,7 @@ export default {
 					default: true
 				},
 				{
-					label: "全局覆盖",
+					label: "全局覆盖锁定屏幕的滚动",
 					key: "lock",
 					tag: "vSwitch",
 					default: true
