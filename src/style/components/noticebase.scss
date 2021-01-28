@@ -41,6 +41,8 @@ $prefix-cls-notification: #{$prefix}-notification;
     box-sizing: border-box;
     word-break: break-all;
     pointer-events: initial;
+    background-color: $white;
+    border-radius: $radius;
 
     &[data-type=notice] {
         width: 280px;

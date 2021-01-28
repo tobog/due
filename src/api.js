@@ -7,11 +7,20 @@ const install = function (Vue, options = {}) {
     if (install.installed && !options.reset) return;
     console.log(options);
     global.__VUE__ = Vue;
+
     const cssPrefix = options.cssPrefix || "due";
     const langPrefix = options.langPrefix || cssPrefix;
     const compPrefix = options.compPrefix || "";
+    const directivePrefix = options.directPrefix == null ? compPrefix : directPrefix;
     const compPrefixUpper = compPrefix.toUpperCase();
     const langMap = options.langMap;
+    const directiveList = options.directives === true ? Object.keys(directives) : options.directives;
+    const directivesResult = {};
+    if (Array.isArray(directiveList) && directiveList.length > 0) {
+        directiveList.forEach((key) => {
+            directivesResult[`${directivePrefix}${key}`] = directives[key];
+        })
+    }
     if (Vue.prototype) {
         Vue.prototype.__$cssPrefix__ = cssPrefix;
         Vue.prototype.__$langPrefix__ = langPrefix;
@@ -76,7 +85,9 @@ const install = function (Vue, options = {}) {
             },
         });
     }
+
     Vue.mixin({
+        directives: directivesResult,
         computed: {
             _tobogPrefix_() {
                 return `${this.__$cssPrefix__}-${(this.$options.name || "").toLowerCase()}`;

@@ -16,7 +16,7 @@ export default {
     },
     unbind(el) {
         el.__vueClickOutside && el.__vueClickOutside.destroy();
-        el.__vueClickOutside = null;
+        el.__vueClickOutside = el.__bindClickOut = null;
     }
 }
 

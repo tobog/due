@@ -24,9 +24,10 @@
 </template>
 
 <script>
-import { unit } from "../../utils/tool";
+import {unit} from "../../utils/tool"
 export default {
     name: "Icons",
+    componentName: "Icons",
     props: {
         type: String,
         size: [Number, String],
@@ -43,17 +44,17 @@ export default {
         return {
             isError: false,
             isLoading: true,
-        };
+        }
     },
     watch: {
         type() {
-            this.isError = false;
+            this.isError = false
         },
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            const innerType = this.type && !this.isHttpIcon;
+            const _tobogPrefix_ = this._tobogPrefix_
+            const innerType = this.type && !this.isHttpIcon
             return [
                 _tobogPrefix_,
                 {
@@ -66,38 +67,36 @@ export default {
                     [`${_tobogPrefix_}-fallback`]: this.isError,
                     [`${_tobogPrefix_}-loadback`]: !innerType && this.showLoading,
                 },
-            ];
+            ]
         },
         isHttpIcon() {
-            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.type || "");
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.type || "")
         },
         isHttpErrorIcon() {
-            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.fallback || "");
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.fallback || "")
         },
         isHttpLoadingIcon() {
-            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.loading || "");
+            return /^(https?:\/\/|\.?\/|data:image\/)\w+/.test(this.loading || "")
         },
         showLoading() {
-            return (this.loading || this.$slots.loading) && this.isLoading;
+            return (this.loading || this.$slots.loading) && this.isLoading
         },
         styles() {
-            const style = {};
-            if (this.size) style["fontSize"] = unit(this.size, "px");
-            if (this.color) style.color = this.color;
-            return style;
+            let style = {}
+            if (this.size) style["fontSize"] = unit(this.size, "px")
+            if (this.color) style.color = this.color
+            return style
         },
     },
     methods: {
-        handleSuccess(e) {
-            this.isError = this.isLoading = false;
-            // console.log(Date.now(), e, "handleSuccess");
+        handleSuccess() {
+            this.isError = this.isLoading = false
         },
         handleError(e) {
-            // console.log(Date.now(), e, "handleError");
-            this.isLoading = false;
-            this.isError = !!(this.fallback || this.$slots.fallback);
-            this.$emit("on-error", e);
+            this.isLoading = false
+            this.isError = !!(this.fallback || this.$slots.fallback)
+            this.$emit("on-error", e)
         },
     },
-};
+}
 </script>

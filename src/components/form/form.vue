@@ -59,19 +59,21 @@ export default {
             return new Promise((resolve, reject) => {
                 let valid = true,
                     len = this.__FormItems.length,
-                    count = 0
+                    count = 0,
+                    firstError
                 if (!len) return resolve(true)
                 this.__FormItems.forEach((item) => {
                     item.validate(void 0, (errors) => {
                         const prevalid = valid
                         if (errors) valid = false
+                        if (errors && !firstError) firstError = errors
                         if (this.errorInview && valid != prevalid) {
                             scrollIntoView(item.$el, {position: "center"})
                         }
                         if (++count === len) {
                             // all finish
-                            typeof callback == "function" && callback(valid)
-                            valid ? resolve(true) : reject(false)
+                            typeof callback == "function" && callback(valid, firstError)
+                            valid ? resolve(true) : reject(firstError)
                         }
                     })
                 })

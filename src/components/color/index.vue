@@ -67,7 +67,7 @@
 <script>
 import {DragMove} from "../../utils/dom"
 import Color from "../../utils/color"
-import Clipboard from "../../utils/clipBoard"
+import Clipboard from "../../utils/clipboard"
 import Icons from "../icons"
 export default {
     name: "Color",

@@ -1,7 +1,6 @@
 $prefix-cls: #{$prefix}-icons;
 
 .#{$prefix-cls} {
-
     &-center {
         display: inline-flex;
         justify-content: center;
@@ -11,7 +10,7 @@ $prefix-cls: #{$prefix}-icons;
 
     &-httpicon {
         overflow: hidden;
-        &.#{$prefix-cls}-loading{
+        &.#{$prefix-cls}-loading {
             text-align: center;
         }
     }
@@ -24,48 +23,47 @@ $prefix-cls: #{$prefix}-icons;
         object-fit: contain;
     }
 
-    &-fit-fill>img {
+    &-fit-fill > img {
         object-fit: fill;
     }
 
-    &-fit-contain>img {
+    &-fit-contain > img {
         object-fit: contain;
     }
 
-    &-fit-cover>img {
+    &-fit-cover > img {
         object-fit: cover;
     }
 
-    &-fit-none>img {
+    &-fit-none > img {
         object-fit: none;
     }
 
-    &-fit-scale-down>img {
+    &-fit-scale-down > img {
         object-fit: scale-down;
     }
 
     &-success:before {
-        content: '\F170';
+        content: "\F170";
     }
 
     &-info:before {
-        content: '\F202';
+        content: "\F202";
     }
 
     &-warning:before {
-        content: '\F108';
+        content: "\F108";
     }
 
     &-error:before {
-        content: '\F177';
+        content: "\F177";
     }
-
     &-loading {
         transform-origin: center center 0;
         animation: $prefix-cls 1s linear infinite;
 
         &:before {
-            content: '\F45B';
+            content: "\F45B";
         }
     }
 

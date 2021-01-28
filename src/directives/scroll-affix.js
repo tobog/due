@@ -18,7 +18,7 @@ export default {
     },
     unbind(el) {
         el.__vueAffix && el.__vueAffix.destroy();
-        el.__vueAffix = null;
+        el.__vueAffix = el.__bindAffix = null;
     }
 }
 

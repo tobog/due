@@ -12,6 +12,7 @@
         padding: 16px;
         cursor: pointer;
         border-radius: 4px;
+        position: relative;
         p {
             font-size: 13px;
         }
@@ -20,6 +21,34 @@
         }
         /deep/ .due-icons {
             font-size: 26px;
+        }
+        &:hover .icons-copy {
+            display: block;
+        }
+        .icons-copy {
+            display: none;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            top: 0;
+            padding: 10px 0;
+            text-align: center;
+            background-color: rgba(#000000, 0.7);
+            color: #fff;
+            border-radius: 4px;
+        }
+        .icons-copy1,
+        .icons-copy2 {
+            position: absolute;
+            width: 50%;
+            left: 0;
+            bottom: 0;
+            padding: 10px 0;
+        }
+        .icons-copy2 {
+            left: unset;
+            right: 0;
         }
     }
 }
@@ -33,7 +62,7 @@
         </template>
         <template v-slot="config">
             <vIcon v-bind="config">
-                <span>vIcon</span>
+                <span>测试</span>
             </vIcon>
             <vIcon
                 style="width:90px"
@@ -51,7 +80,7 @@
                 fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
             ></vIcon>
         </template>
-        <div slot="other">
+        <div slot="other" slot-scope="config">
             <h3 class="padding-15">所有图标</h3>
             <vInput
                 class="width-60per margin-auto"
@@ -59,9 +88,20 @@
                 placeholder="输入英文关键词搜索，比如 info"
             ></vInput>
             <div class="iconstemp">
-                <div v-for="item in getFilterIcon">
-                    <vIcon v-bind="formData" :type="item"></vIcon>
+                <div v-for="item in getFilterIcon" :key="item">
+                    <vIcon v-bind="config" :type="item"></vIcon>
                     <p>{{ item }}</p>
+                    <div class="icons-copy">
+                        <span
+                            class="icons-copy1"
+                            v-v-Clipboard.copy="handleSuccess"
+                            :data-clipboard-text="getCodeCopy(item, config)"
+                            >复制组件</span
+                        >
+                        <span class="icons-copy2" v-v-Clipboard.copy="handleSuccess" :data-clipboard-text="item"
+                            >复制类型</span
+                        >
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,6 +114,20 @@ export default {
         return {
             iconName: "",
         }
+    },
+    // created() {
+    //     console.log(this)
+    // },
+    methods: {
+        handleSuccess(value) {
+            this.$VNotice.success({
+                title: value,
+                duration: 0,
+            })
+        },
+        getCodeCopy(type, config) {
+            return `<Icon v-bind="${JSON.stringify(config)}" :type="${type}"></Icon>`
+        },
     },
     computed: {
         getFilterIcon() {
@@ -114,11 +168,12 @@ export default {
                     showConfig: true,
                     label: "大小",
                     key: "size",
-                    demoDefault: 26,
+                    demoDefault: 22,
                     explain: "大小",
                     dataType: "String|Number",
-                    tag: "vInputNumber",
+                    tag: "vInput",
                     default: "",
+                    options: this.getSize,
                 },
                 {
                     showConfig: true,
@@ -133,11 +188,18 @@ export default {
                 },
                 {
                     label: "加载loading",
-                    key: "laoding",
+                    key: "loading",
                     demoDefault: "",
                     explain: "laoding 加载loading",
                     dataType: "String|Boolean",
                     default: "",
+                },
+                {
+                    label: "回退图片",
+                    key: "fallback",
+                    explain: "回退图片，可选值如type 属性",
+                    dataType: "String",
+                    default: "-",
                 },
                 {
                     label: "显示的内容",
@@ -147,9 +209,23 @@ export default {
                     default: "-",
                 },
                 {
+                    label: "loading内容",
+                    key: "slot:loading",
+                    explain: "自定义loading图标",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "回退内容",
+                    key: "slot:fallback",
+                    explain: "自定义fallback图标",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
                     label: "事件",
-                    key: "on-resize",
-                    explain: "尺寸变化",
+                    key: "on-error",
+                    explain: "图片加载失败",
                     dataType: "Function：Event",
                     default: "()=>{}",
                 },

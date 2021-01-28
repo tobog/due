@@ -5,7 +5,7 @@ export default {
         el.__bindDragMove = function (el, value) {
             if (el.__vueDragMove || !document) return;
             el.__vueDragMove = new DragMove(el, value);
-            el.__bindDragMove=null;
+            el.__bindDragMove = null;
         }
         el.__bindDragMove(el, value);
     },
@@ -14,6 +14,6 @@ export default {
     },
     unbind(el) {
         el.__vueDragMove && el.__vueDragMove.destroy();
-        el.__vueDragMove = null;
+        el.__vueDragMove = el.__bindDragMove = null;
     }
 }

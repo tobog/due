@@ -21,42 +21,17 @@
                     <vOption value="ghost"></vOption>
                     <vOption value="dashed"></vOption>
                 </vInput>
-                <vInput class="margin-bottom-20" v-bind="formData" v-model="val1"> </vInput>
-                <vInput class="margin-bottom-20" v-bind="formData" v-model="val">
-                    <div slot="prepend">http://</div>
-                    <span slot="append">.com</span>
-                </vInput>
-                <vSelect class="margin-bottom-20" v-bind="formData" v-model="val1">
-                    <span slot="append">.com</span>
-                    <vInput suffix="search" />
-                    <vOption value="primary">primary1</vOption>
-                    <vOption value="ghost">ghost2</vOption>
-                    <vOption value="dashed"></vOption>
-                    <vOption value="text"></vOption>
-                    <vOption value="info"></vOption>
-                    <vOption value="success"></vOption>
-                    <vOption value="success2"></vOption>
-                </vSelect>
                 <vInput class="margin-bottom-20" v-model="val2" v-bind="formData">
                     <span slot="prepend">http://</span>
                     <vInput v-model="val4" slot="append" theme="primary"></vInput>
                 </vInput>
                 <vInput class="margin-bottom-20" v-model="val2" v-bind="formData">
                     <template slot="prepend">
-                        <!-- <vDropdown label="label" autoLabel>
+                        <vDropdown autoClose label="label" autoLabel>
                             <template slot="list">
                                 <vDropdownItem disabled>驴打滚</vDropdownItem>
-                                <vDropdownItem selected divided>酱面</vDropdownItem>
+                                <vDropdownItem selected>酱面</vDropdownItem>
                                 <vDropdownItem>豆汁儿炸酱面</vDropdownItem>
-                            </template>
-                        </vDropdown> -->
-                        <vDropdown autoClose v-model="label">
-                            {{ label }}
-                            <template slot="list">
-                                <vDropdownItem disabled>驴打滚</vDropdownItem>
-                                <vDropdownItem divided>炸酱面</vDropdownItem>
-                                <vDropdownItem>炸酱面</vDropdownItem>
-                                <vDropdownItem>豆汁儿</vDropdownItem>
                             </template>
                         </vDropdown>
                     </template>
@@ -91,12 +66,12 @@ export default {
             val3: "",
             val4: "",
             show1: true,
-        };
+        }
     },
     created() {
         setTimeout(() => {
-            this.show1 = false;
-        }, 5000);
+            this.show1 = false
+        }, 5000)
     },
     computed: {
         getCode() {
@@ -123,7 +98,7 @@ export default {
 						<vInput v-model="val4" slot="append" theme="primary"></vInput>
 					</vInput>
 					<vInput class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" type="number"></vInput>
-					<vTextarea class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val3"></vTextarea>`;
+					<vTextarea class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val3"></vTextarea>`
         },
         getBase() {
             return [
@@ -209,7 +184,7 @@ export default {
                     tag: "vInput",
                     default: "暂无数据",
                 },
-            ];
+            ]
         },
         compProps() {
             return [
@@ -395,8 +370,8 @@ export default {
                     type: "Function",
                     default: "-",
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

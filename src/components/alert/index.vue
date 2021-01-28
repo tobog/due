@@ -25,6 +25,7 @@
 
 <script>
 import Color from "../../utils/color"
+import {isParseNumber} from "../../utils/tool"
 import Icons from "../icons/index"
 import Transitions from "../base/transition"
 import globalMixin from "../../mixins/global"
@@ -76,7 +77,7 @@ export default {
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-align-${this.align}`]: !!this.align,
                     [`${_tobogPrefix_}-broadcast`]: this.broadcast,
-                    [`${_tobogPrefix_}-size-${size}`]: !!size,
+                    [`${_tobogPrefix_}-size-${size}`]: !!size && !isParseNumber(size),
                 },
             ]
         },

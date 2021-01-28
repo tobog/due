@@ -10,7 +10,7 @@ export default {
             default: 'text',
         },
         dataVueModule: String,
-        value: [String, Array,Number],
+        value: [String, Array, Number],
         multiple: Boolean,
         name: String,
         suffix: String,
@@ -24,6 +24,7 @@ export default {
             type: [Boolean, Number],
             default: 0,
         },
+        max: Number
     },
     data() {
         return {

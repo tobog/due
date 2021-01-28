@@ -4,7 +4,7 @@
         isOutRef
         isToggle
         :class="[_tobogPrefix_ + '-wrapper']"
-        :dropClass="[_tobogPrefix_ + '-drop-wrapper']"
+        :dropClass="[_tobogPrefix_ + '-drop-wrapper', dropClass]"
         :is="showDrop ? 'DropBase' : 'section'"
         :data-vue-module="$options.name"
         :transfer="transfer"
@@ -32,6 +32,7 @@
             :active="visible"
             :showPassword="showPassword"
             :isInput="!isSelect || filterable"
+            :max="max"
             @hook:created="ready = true"
             @on-focus="handleFocus"
             @on-input="handleInput"
@@ -92,6 +93,7 @@ export default {
         transfer: Boolean,
         multiple: Boolean,
         dropStyle: [Object, String],
+        dropClass: [Object, String, Array],
         autoClose: {
             type: Boolean,
             default: true,
@@ -113,6 +115,7 @@ export default {
         strict: Boolean,
         options: Array,
         optCount: Number,
+        max: Number,
         showPassword: Boolean,
     },
     data() {
@@ -126,11 +129,11 @@ export default {
         }
     },
     created() {
-        this.updatedDrop = debounce(() => this.$refs.updatedDrop && this.$refs.dropBase.updatedDrop(), 60)
+        this.__updatedDrop = () => this.$refs.updatedDrop && this.$refs.dropBase.updatedDrop()
         this.searchMethod = throttle((val) => {
             this.$emit("on-search", val)
         }, 360)
-        this.$on("on-updated", this.updatedDrop)
+        this.$on("on-updated", this.__updatedDrop)
         this.$on("on-option-change", this.getAllOpt)
         this.$on("on-select", this.select)
     },
@@ -325,7 +328,7 @@ export default {
                     component.$emit("on-query-option", value, true)
                 })
             }
-            this.updatedDrop()
+            this.__updatedDrop()
             if (!this.isSelect) {
                 if (!this.multiple) {
                     this.updateModel(value)
@@ -418,7 +421,7 @@ export default {
                     .trim()
                 try {
                     const text = `${opt.label == void 0 ? opt.value : opt.label}`
-                    opt.hidden = !(text.indexOf(value) > -1 || new RegExp(parsedQuery, "ig").test(text))
+                    opt.hidden = !(text.indexOf(value) > -1 || new RegExp(parsedQuery, "i").test(text))
                 } catch (error) {
                     console.error(error)
                 }
