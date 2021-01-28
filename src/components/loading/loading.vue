@@ -71,6 +71,7 @@ export default {
             }
         },
         handleOverflow(val) {
+            debugger
             if (
                 (!this.lock && !this.__isOverflowed) ||
                 !((val && !this.__isOverflowed) || (!val && this.__isOverflowed)) ||
@@ -78,7 +79,7 @@ export default {
             ) {
                 return
             }
-            this.__offsetParent = this.__offsetParent || this.$el.offsetParent
+            this.__offsetParent = this.__offsetParent || this.$el.offsetParent || document.body
             if (!this.__offsetParent) return
             const dataset = this.__offsetParent.dataset,
                 overflowIndex = parseInt(dataset.overflowIndex || 0),
