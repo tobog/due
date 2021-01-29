@@ -1470,7 +1470,7 @@ export class PerformanceScroll {
     }
 
     async _handleCallback(event) {
-        const { beforeScroll, total, performance, length = 10, hideLength = 10 } = this._options;
+        const { beforeScroll, total, performance, length, hideLength } = this._options;
         if (typeof beforeScroll === "function") {
             const result = await beforeScroll(event, this);
             if (!result) return;
@@ -1528,7 +1528,7 @@ export class PerformanceScroll {
         }, 0);
     }
     _handleScrollUp(scrollTop = 0) {
-        const { performance, length = 10, hideLength = 10, total, offset } = this._options;
+        const { performance, length, hideLength, total, offset } = this._options;
         if (performance === "middle") return;
         let height = 0,
             i = 0;
@@ -1559,7 +1559,7 @@ export class PerformanceScroll {
         );
     }
     _handleScrollDown() {
-        const { performance, cellElement, cellHeight, length = 10, hideLength = 10, total } = this._options;
+        const { performance, cellElement, cellHeight, length, hideLength, total } = this._options;
         if (total && this._sizeIndex + 2 * hideLength + length * 1 > total) {
             this._callback(
                 {
@@ -1575,16 +1575,18 @@ export class PerformanceScroll {
         this._sizeIndex += hideLength;
         if (performance === "high") {
             let height = 0;
-            const celEle = getElement(cellElement, this._element);
-            if (celEle) {
-                const cellList = celEle.parentNode.children;
-                for (let index = 0; index < hideLength; index++) {
-                    height += cellList[index].clientHeight || 0;
-                }
-                this._translateList.push(height);
-            } else if (cellHeight) {
+            if (cellHeight) {
                 height = cellHeight * hideLength;
                 this._translateList.push(height);
+            } else if (cellElement) {
+                const celEle = getElement(cellElement, this._element);
+                if (celEle) {
+                    const cellList = celEle.parentNode.children;
+                    for (let index = 0; index < hideLength; index++) {
+                        height += cellList[index].clientHeight || 0;
+                    }
+                    this._translateList.push(height);
+                }
             }
         }
         this._callback(
@@ -1604,10 +1606,20 @@ export class PerformanceScroll {
         if (!this._handler) this._handler = throttle(this._handleCallback.bind(this), this._options.throttle);
         this._binding();
     }
-    reset() {
+    reset(isInit) {
         this._performance = false;
         this._preScrollTop = 0;
         this._translateList = [];
+        if (isInit === true) this._callback(
+            {
+                index: 0,
+                total,
+                translate: 0,
+                length: 2 * hideLength + length * 1,
+            },
+            "reset"
+        );
+
     }
     destroy() {
         EventListener.off(this._element, "scroll", this._handler);

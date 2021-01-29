@@ -135,11 +135,11 @@ export default {
             return this.iconslist.filter((item) => item.indexOf(this.iconName) > -1)
         },
         getCode() {
-            return `<vIcon v-bind=CODE>vIcon</vIcon>
-					<vIcon
+            return `<Icon v-bind=CODE>vIcon</Icon>
+					<Icon
 						style="width:90px"
 						type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-					></vIcon>
+					></Icon>
 					`
         },
         getConfig() {

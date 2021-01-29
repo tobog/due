@@ -1,4 +1,4 @@
-$prefix-cls:#{$prefix}-option;
+$prefix-cls: #{$prefix}-option;
 
 .#{$prefix-cls} {
     margin: 0;
@@ -8,13 +8,14 @@ $prefix-cls:#{$prefix}-option;
     color: $content;
     // white-space: nowrap;
     cursor: pointer;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 
     &:hover {
         background-color: $back;
     }
 
-    &#{&}-hover,&#{&}-hover#{&}-multiple-selected {
+    &#{&}-hover,
+    &#{&}-hover#{&}-multiple-selected {
         background-color: $light-primary;
         color: $white;
     }
@@ -24,7 +25,7 @@ $prefix-cls:#{$prefix}-option;
         background-color: $primary;
     }
 
-    &#{&}-multiple-selected {
+    &-selected#{&}-multiple {
         color: $primary;
         background: none;
     }
@@ -41,15 +42,14 @@ $prefix-cls:#{$prefix}-option;
     }
 }
 
-@each $key,
-$value in $colors-map {
-    .#{$prefix-cls}-#{$key} {
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-theme-#{$key} {
         &.#{$prefix-cls}-selected {
             background-color: $value;
             color: $white;
         }
 
-        &.#{$prefix-cls}-multiple-selected {
+        &.#{$prefix-cls}-selected.#{$prefix-cls}-multiple {
             color: $value;
             background: none;
         }

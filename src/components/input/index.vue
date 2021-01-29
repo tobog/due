@@ -73,7 +73,7 @@
 import DropBase from "../base/dropBase"
 import InputBase from "./base"
 import Option from "./option"
-import {throttle, validVal, debounce} from "../../utils/tool"
+import {throttle, validVal} from "../../utils/tool"
 import mixin from "./base/mixin"
 export default {
     name: "Input",

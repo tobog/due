@@ -1,5 +1,13 @@
 $prefix-cls: #{$prefix}-scroll;
+$prefix-cls-performance: #{$prefix}-virtuallist;
 
+.#{$prefix-cls-performance} {
+    overflow: auto;
+    height: 300px;
+    position: relative;
+    border: 1px solid $border;
+    border-radius: $radius;
+}
 .#{$prefix-cls} {
     overflow: auto;
     height: 300px;
@@ -80,3 +88,5 @@ $prefix-cls: #{$prefix}-scroll;
         }
     }
 }
+
+

@@ -25,6 +25,7 @@ import Input from "./input"
 import Textarea from "./input/textarea"
 import Select from "./input/select"
 import Option from "./input/option"
+import Options from "./input/option/list"
 import InputNumber from "./input/number"
 import Sort from "./sort/index"
 import Icon from "./icons/index"
@@ -80,6 +81,7 @@ import Transitions from "./base/transition"
 
 import ScrollSync from "./scrollsync/index"
 import Scroll from "./scroll/index"
+import Virtuallist from "./scroll/virtuallist"
 import Cascader from "./cascader"
 import Caspanel from "./cascader/caspanel"
 
@@ -125,6 +127,7 @@ export default {
     Textarea,
     Select,
     Option,
+    Options,
     Sort,
     Icon,
     Modal,
@@ -175,6 +178,7 @@ export default {
 
     ScrollSync,
     Scroll,
+    Virtuallist,
     Cascader,
     Caspanel,
 

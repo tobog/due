@@ -286,6 +286,13 @@ export default new Router({
                     },
                 },
                 {
+                    path: "performance",
+                    component: () => import("./components/performance"),
+                    meta: {
+                        label: "虚拟列表",
+                    },
+                },
+                {
                     path: "progress",
                     component: () => import("./components/progress"),
                     meta: {

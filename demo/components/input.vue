@@ -28,7 +28,8 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vInput class="margin-bottom-20" v-bind="config" v-model="val">
+            <vOptions :options="opts" v-bind="config" v-model="val"> </vOptions>
+            <!-- <vInput class="margin-bottom-20" v-bind="config" v-model="val">
                 <div slot="prepend">http://</div>
                 <span slot="append">.com</span>
                 <vOption value="ghost"></vOption>
@@ -38,7 +39,7 @@
                 <span slot="prepend">http://</span>
                 <vInput v-model="val4" slot="append" theme="primary"></vInput>
             </vInput>
-            <vInput class="margin-bottom-20" v-bind="config" type="number"></vInput>
+            <vInput class="margin-bottom-20" v-bind="config" type="number"></vInput> -->
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
     </Demo>
@@ -55,6 +56,15 @@ export default {
             val3: "",
             val4: "",
             show1: true,
+            opts: [],
+        }
+    },
+    created() {
+        for (let index = 0; index < 1000; index++) {
+            this.opts.push({
+                label: index,
+                value: index,
+            })
         }
     },
     computed: {
