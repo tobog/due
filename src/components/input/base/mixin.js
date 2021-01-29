@@ -24,7 +24,7 @@ export default {
             type: [Boolean, Number],
             default: 0,
         },
-        max: Number
+        maxLength: Number
     },
     data() {
         return {

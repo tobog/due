@@ -47,7 +47,7 @@ export function scrollTop(el, to = 0, endCallback) {
     const from = el.scrollTop;
     const scrollHeight = el.scrollHeight;
     const step = Math.max(Math.ceil(Math.abs(from - to) / 10), 10);
-    const scroll = function (start, end, step) {
+    const scroll = function(start, end, step) {
         let d;
         if (start > end) {
             d = start - step <= end ? end : start - step;
@@ -130,19 +130,19 @@ export function transformStyle(transform = "") {
 
     return matrix.length > 6
         ? {
-            translateX: parseFloat(matrix[11] || 0),
-            translateY: parseFloat(matrix[12] || 0),
-            // scaleX: parseFloat(matrix[0]),
-            // scaleY: parseFloat(matrix[12]),
-            // rotate: parseFloat(matrix[12]),
-        }
+              translateX: parseFloat(matrix[11] || 0),
+              translateY: parseFloat(matrix[12] || 0),
+              // scaleX: parseFloat(matrix[0]),
+              // scaleY: parseFloat(matrix[12]),
+              // rotate: parseFloat(matrix[12]),
+          }
         : {
-            translateX: parseFloat(matrix[4] || 0),
-            translateY: parseFloat(matrix[5] || 0),
-            // scaleX: parseFloat(matrix[0]),
-            // scaleY: parseFloat(matrix[3]),
-            // rotate: parseFloat(matrix[12]),
-        };
+              translateX: parseFloat(matrix[4] || 0),
+              translateY: parseFloat(matrix[5] || 0),
+              // scaleX: parseFloat(matrix[0]),
+              // scaleY: parseFloat(matrix[3]),
+              // rotate: parseFloat(matrix[12]),
+          };
 }
 
 export function getElement(target, container) {
@@ -225,12 +225,12 @@ let _AnimationFrame;
 function InitAnimationFrame() {
     if (!window) return;
     const requestFrame =
-        window.requestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        function (fn) {
-            return window.setTimeout(fn, 1000 / 60);
-        },
+            window.requestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            function(fn) {
+                return window.setTimeout(fn, 1000 / 60);
+            },
         cancelFrame =
             window.cancelAnimationFrame ||
             window.mozCancelAnimationFrame ||
@@ -246,11 +246,11 @@ function InitAnimationFrame() {
     });
 }
 export const AnimationFrame = {
-    requestFrame: function (fn) {
+    requestFrame: function(fn) {
         if (!_AnimationFrame && !InitAnimationFrame()) return;
         return _AnimationFrame.requestFrame(fn);
     },
-    cancelFrame: function (id) {
+    cancelFrame: function(id) {
         if (!_AnimationFrame && !InitAnimationFrame()) return;
         return _AnimationFrame.cancelFrame(id);
     },
@@ -261,7 +261,7 @@ function InitEventListener() {
     if (!document) return;
     if (document.addEventListener) {
         return (_EventListener = {
-            on: function (element, events, handler) {
+            on: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -269,7 +269,7 @@ function InitEventListener() {
                     });
                 }
             },
-            off: function (element, events, handler) {
+            off: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -277,10 +277,10 @@ function InitEventListener() {
                     });
                 }
             },
-            once: function (element, events, handler) {
+            once: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
-                    let onceHandler = function (event, ...agrs) {
+                    let onceHandler = function(event, ...agrs) {
                         event.currentTarget.removeEventListener(event.type, onceHandler, false);
                         return handler.call(this, event, ...agrs);
                     };
@@ -293,7 +293,7 @@ function InitEventListener() {
     }
     if (document.attachEvent) {
         return (_EventListener = {
-            on: function (element, events, handler) {
+            on: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -302,7 +302,7 @@ function InitEventListener() {
                     });
                 }
             },
-            off: function (element, events, handler) {
+            off: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
                     eventList.forEach((event) => {
@@ -310,10 +310,10 @@ function InitEventListener() {
                     });
                 }
             },
-            once: function (element, events, handler) {
+            once: function(element, events, handler) {
                 if (element && events && handler) {
                     let eventList = events.split(",");
-                    let onceHandler = function (event, ...agrs) {
+                    let onceHandler = function(event, ...agrs) {
                         event.currentTarget.detachEvent("on" + event, onceHandler);
                         return handler.call(this, event, ...agrs);
                     };
@@ -325,7 +325,7 @@ function InitEventListener() {
         });
     }
     return (_EventListener = {
-        on: function (element, events, handler) {
+        on: function(element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
                 eventList.forEach((event) => {
@@ -333,7 +333,7 @@ function InitEventListener() {
                 });
             }
         },
-        off: function (element, events, handler) {
+        off: function(element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
                 eventList.forEach((event) => {
@@ -341,10 +341,10 @@ function InitEventListener() {
                 });
             }
         },
-        once: function (element, events, handler) {
+        once: function(element, events, handler) {
             if (element && events && handler) {
                 let eventList = events.split(",");
-                let onceHandler = function (event, ...agrs) {
+                let onceHandler = function(event, ...agrs) {
                     event.currentTarget["on" + event] = null;
                     return handler.call(this, event, ...agrs);
                 };
@@ -357,15 +357,15 @@ function InitEventListener() {
 }
 
 export const EventListener = {
-    on: function (element, events, handler) {
+    on: function(element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.on(element, events, handler);
     },
-    off: function (element, events, handler) {
+    off: function(element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.off(element, events, handler);
     },
-    once: function (element, events, handler) {
+    once: function(element, events, handler) {
         if (!_EventListener && !InitEventListener()) return;
         return _EventListener.once(element, events, handler);
     },
@@ -467,8 +467,8 @@ export const EventListener = {
 //                 // .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
 //                 // `,
 //                 const css = ` .vview-custome-resize-triggers{visibility: hidden; opacity: 0;height: 0; width: 0;}
-//                 .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before 
-//                 { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; } 
+//                 .vview-custome-resize-triggers, .vview-custome-resize-triggers > div, .vview-contract-resize-trigger:before
+//                 { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; }
 //                 .vview-custome-resize-triggers > div { overflow: auto; } .vview-contract-resize-trigger:before { width: 200%; height: 200%; }
 //                 .vview-custome-resize-triggers .vview-contract-resize-trigger{top:0;}
 //                 `,
@@ -531,13 +531,13 @@ function _setMutation() {
         MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver || window.MsMutationObserver;
     if (mutationObserver) {
         _Mutation = {
-            observer: function (dom, options = {}, callbck) {
+            observer: function(dom, options = {}, callbck) {
                 let instance = new mutationObserver(callbck);
                 dom._mutationObserver_ = instance;
                 instance.observe(dom, options);
                 return instance;
             },
-            destroy: function (dom) {
+            destroy: function(dom) {
                 if (dom._mutationObserver_) {
                     dom._mutationObserver_.disconnect();
                     dom._mutationObserver_ = null;
@@ -546,23 +546,23 @@ function _setMutation() {
         };
     } else {
         _Mutation = {
-            observer: function (dom, options = {}, callbck) {
+            observer: function(dom, options = {}, callbck) {
                 EventListener.on(dom, "DOMAttrModified", callbck);
                 return dom;
             },
-            destroy: function (dom, callbck) {
+            destroy: function(dom, callbck) {
                 if (dom) EventListener.off(dom, "DOMAttrModified", callbck);
             },
         };
     }
 }
 export const Mutation = {
-    observer: function (dom, options = {}, callbck) {
+    observer: function(dom, options = {}, callbck) {
         if (!_Mutation) _setMutation();
         _Mutation.observer(dom, options, callbck);
         return dom;
     },
-    destroy: function (dom, callbck) {
+    destroy: function(dom, callbck) {
         if (dom) {
             if (!_Mutation) _setMutation();
             _Mutation.destroy(dom, callbck);
@@ -598,13 +598,13 @@ export const Fullscreen = {
         const dataset = dom.dataset;
         dataset.fullscreen = 1;
         if (isInner || !Fullscreen._request) {
-            const setStyle = function (dom, style) {
+            const setStyle = function(dom, style) {
                 const keys = Object.keys(style);
                 const styles = dom.style;
-                keys.forEach(function (key) {
+                keys.forEach(function(key) {
                     dataset["screen" + key] = styles[key];
                 }, style);
-                keys.forEach(function (key) {
+                keys.forEach(function(key) {
                     styles[key] = this[key];
                 }, style);
             };
@@ -636,7 +636,7 @@ export const Fullscreen = {
             if (Fullscreen._changeEvent) {
                 Fullscreen._handleChange =
                     Fullscreen._handleChange ||
-                    function (e) {
+                    function(e) {
                         if (Fullscreen._isFullscreen()) {
                             console.log("进入全屏");
                         } else {
@@ -666,9 +666,9 @@ export const Fullscreen = {
             }
         }
         if (dataset.innerscreen || !Fullscreen._exit) {
-            const setStyle = function (dom, keys) {
+            const setStyle = function(dom, keys) {
                 const styles = dom.style;
-                keys.forEach(function (key) {
+                keys.forEach(function(key) {
                     styles[key] = dataset["screen" + key];
                 });
             };
@@ -802,7 +802,7 @@ export function getClientSize(type) {
 }
 
 export class DragMove {
-    constructor (element, options, callback) {
+    constructor(element, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -811,19 +811,19 @@ export class DragMove {
             callback =
                 typeof callback === "function"
                     ? callback
-                    : function (obj) {
-                        if (obj.cancel || !obj.element) return;
-                        const { data, distance, element, style, isTransform } = obj;
-                        const styles = element.style;
-                        if (isTransform) {
-                            styles.transform = `translate(${data.translateX + distance[0]}px,${data.translateY +
-                                distance[1]}px)`;
-                        } else {
-                            style.forEach((key, index) => {
-                                styles[key] = parseFloat(data[key]) + distance[index] + "px";
-                            });
-                        }
-                    };
+                    : function(obj) {
+                          if (obj.cancel || !obj.element) return;
+                          const { data, distance, element, style, isTransform } = obj;
+                          const styles = element.style;
+                          if (isTransform) {
+                              styles.transform = `translate(${data.translateX + distance[0]}px,${data.translateY +
+                                  distance[1]}px)`;
+                          } else {
+                              style.forEach((key, index) => {
+                                  styles[key] = parseFloat(data[key]) + distance[index] + "px";
+                              });
+                          }
+                      };
         }
         this._options = {
             style: ["translateX", "translateY"],
@@ -892,13 +892,13 @@ export class DragMove {
             const eleData = element
                 ? Offset.boundingClientRect(element)
                 : {
-                    left: clientX,
-                    right: clientX,
-                    top: clientY,
-                    bottom: clientY,
-                    width: 0,
-                    height: 0,
-                };
+                      left: clientX,
+                      right: clientX,
+                      top: clientY,
+                      bottom: clientY,
+                      width: 0,
+                      height: 0,
+                  };
             const { left = 0, right = 0, top = 0, bottom = 0 } = this._options.boundaryPoint || {};
             return {
                 left: [
@@ -1093,7 +1093,7 @@ export class DragMove {
 }
 
 export class ClickOut {
-    constructor (elements, options, callback) {
+    constructor(elements, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -1119,7 +1119,7 @@ export class ClickOut {
         const cb = (target) => {
             const index = this._elements.findIndex((element) => element.contains(target)) + 1;
             // if (!index && this._firstClickCount) this._firstClickCount -= 1;
-            this._clickoutCount = !index ? (this._clickoutCount + 1) : 0;
+            this._clickoutCount = !index ? this._clickoutCount + 1 : 0;
             if (index) {
                 this.toggleBindDocument(true);
             }
@@ -1189,8 +1189,8 @@ export class ClickOut {
         return this;
     }
     toggleBindDocument(isBind) {
-        let method = isBind ? 'on' : 'off';
-        if (this._bindDocumentStatus === method && method === 'on') return;
+        let method = isBind ? "on" : "off";
+        if (this._bindDocumentStatus === method && method === "on") return;
         this._bindDocumentStatus = method;
         EventListener[method](document, "click", this._handler);
     }
@@ -1221,7 +1221,7 @@ export class ClickOut {
 }
 
 export class HoverOut {
-    constructor (elements, options, callback) {
+    constructor(elements, options, callback) {
         if (typeof options === "function") {
             callback = options;
             options = {};
@@ -1282,7 +1282,7 @@ export class HoverOut {
 }
 
 export class ScrollSync {
-    constructor (elements, options, callback) {
+    constructor(elements, options, callback) {
         this._options = {
             isPercent: false, //percent,
             isScrollTop: false, //left,
@@ -1379,7 +1379,7 @@ export class ScrollSync {
 }
 
 export class ScrollLoad {
-    constructor (element, options /*options = { offset: 60 }*/, callback) {
+    constructor(element, options /*options = { offset: 60 }*/, callback) {
         this._options = {
             offset: 60,
             isReachTop: false,
@@ -1442,7 +1442,7 @@ export class ScrollLoad {
 }
 
 export class PerformanceScroll {
-    constructor (element, options /*options = { offset: 60 }*/, callback) {
+    constructor(element, options /*options = { offset: 60 }*/, callback) {
         this._options = {
             offset: 120,
             performance: "none", // none,middle,high
@@ -1523,7 +1523,7 @@ export class PerformanceScroll {
         this._isBind = true;
     }
     _getTotalTranslate(data = this._translateList) {
-        return data.reduce(function (acc, cur) {
+        return data.reduce(function(acc, cur) {
             return acc + cur;
         }, 0);
     }
@@ -1610,16 +1610,16 @@ export class PerformanceScroll {
         this._performance = false;
         this._preScrollTop = 0;
         this._translateList = [];
-        if (isInit === true) this._callback(
-            {
-                index: 0,
-                total,
-                translate: 0,
-                length: 2 * hideLength + length * 1,
-            },
-            "reset"
-        );
-
+        if (isInit === true)
+            this._callback(
+                {
+                    index: 0,
+                    total: this._options.total,
+                    translate: 0,
+                    length: 2 * this._options.hideLength + length * 1,
+                },
+                "reset"
+            );
     }
     destroy() {
         EventListener.off(this._element, "scroll", this._handler);

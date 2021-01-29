@@ -29,13 +29,11 @@
         </template>
         <template v-slot="config">
             <vOptions :options="opts" v-bind="config" v-model="val"> </vOptions>
-            <!-- <vInput class="margin-bottom-20" v-bind="config" v-model="val">
-                <div slot="prepend">http://</div>
-                <span slot="append">.com</span>
-                <vOption value="ghost"></vOption>
-                <vOption value="dashed"></vOption>
+            <vInput class="margin-bottom-20" v-bind="config" v-model="val">
+                <vOption value="ghost">ghost2</vOption>
+                <vOption value="dashed">dashed1</vOption>
             </vInput>
-            <vInput class="margin-bottom-20" v-model="val2" v-bind="config">
+            <!-- <vInput class="margin-bottom-20" v-model="val2" v-bind="config">
                 <span slot="prepend">http://</span>
                 <vInput v-model="val4" slot="append" theme="primary"></vInput>
             </vInput>
@@ -57,20 +55,20 @@ export default {
             val4: "",
             show1: true,
             opts: [],
-        }
+        };
     },
     created() {
         for (let index = 0; index < 1000; index++) {
             this.opts.push({
                 label: index,
                 value: index,
-            })
+            });
         }
     },
     computed: {
         getCode() {
             return `
-					`
+					`;
         },
         getConfig() {
             return [
@@ -326,8 +324,8 @@ export default {
                     dataType: "Function",
                     default: "-",
                 },
-            ]
+            ];
         },
     },
-}
+};
 </script>

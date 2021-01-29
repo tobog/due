@@ -151,7 +151,9 @@ export default {
         getInputValStr() {
             try {
                 return JSON.stringify(this.valueData === void 0 ? this.value : this.valueData);
-            } catch (error) {}
+            } catch (error) {
+                return ''
+            }
         },
     },
     methods: {

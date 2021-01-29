@@ -7,11 +7,12 @@
     </div>
 </template>
 <script>
-import Icons from "../../icons/index"
-import Emitter from "../../../utils/emitter"
+import Icons from "../../icons/index";
+import Emitter from "../../../utils/emitter";
 
 export default {
     name: "Option",
+    componentName: "Option",
     mixins: [Emitter],
     components: {
         Icons,
@@ -26,38 +27,27 @@ export default {
             default: void 0,
         },
         disabled: Boolean,
-        strict: {
-            type: Boolean,
-            default: void 0,
-        },
-        theme: String,
         attach: Object,
         selected: Boolean,
         hover: Boolean,
+        theme: String,
     },
     data() {
-        return {
-            // selected:false,
-            // hidden: false, // for search
-            // hover: false,
-        }
+        return {};
     },
-    created() {
-        // this.$on("on-query-option", this.queryChange)
-        // this.handleDispatch("on-option-change", "created", this)
-    },
+    created() {},
     computed: {
         getTheme() {
-            return this.theme || (this.__parentComponent__ || {}).theme
+            return this.theme || (this.__parentComponent__ && this.__parentComponent__.theme);
         },
         getText() {
-            return this.label !== void 0 ? this.label : this.value
+            return this.label !== void 0 ? this.label : this.value;
         },
         multiple() {
-            return this.__parentComponent__ && this.__parentComponent__.multiple
+            return this.__parentComponent__ && this.__parentComponent__.multiple;
         },
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_
+            const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,
                 {
@@ -67,20 +57,19 @@ export default {
                     [`${_tobogPrefix_}-multiple`]: this.multiple,
                     [`${_tobogPrefix_}-theme-${this.getTheme}`]: !!this.getTheme,
                 },
-            ]
+            ];
         },
     },
     methods: {
         select() {
-            if (this.disabled) return
-            this.handleDispatch("on-select", this.value, this.getText)
+            if (this.disabled) return;
+            this.handleDispatch("on-select", this.value, this.getText, this.attach);
         },
-
         handleDispatch(...args) {
             if (this.__parentComponent__) {
-                this.__parentComponent__.$emit(...args)
+                this.__parentComponent__.$emit(...args);
             } else {
-                this.__parentComponent__ = this.dispatch("Options", ...args)
+                this.__parentComponent__ = this.dispatch("Options", ...args);
             }
         },
     },
@@ -89,13 +78,13 @@ export default {
             immediate: true,
             handler(val) {
                 if (val) {
-                    this.handleDispatch("on-option-change", "hover", this)
+                    this.handleDispatch("on-option-change", "hover", this);
                 }
             },
         },
     },
     beforeDestroy() {
-        this.handleDispatch("on-option-change", "destroy", this)
+        this.handleDispatch("on-option-change", "destroy", this);
     },
-}
+};
 </script>
