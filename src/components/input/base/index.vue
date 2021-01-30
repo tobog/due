@@ -18,24 +18,26 @@
                 </slot>
             </span>
             <div v-if="multiple" :class="[_tobogPrefix_ + '-tags']" @click.self="handleFileClick">
-                <span
-                    :class="[_tobogPrefix_ + '-tag']"
-                    v-for="(val, index) in value"
-                    :key="index"
-                    :data-hidden="collapse && index >= collapse"
-                >
-                    <span>{{ val }}</span>
-                    <Icons
-                        v-if="!(disabled || readonly)"
-                        :class="[_tobogPrefix_ + '-tag-clear']"
-                        type="close-circle"
-                        tabindex="-1"
-                        @focusin.stop="clearTag(index)"
-                    ></Icons>
-                </span>
-                <span v-if="collapse && value && value.length > collapse" :class="[_tobogPrefix_ + '-tag']"
-                    >&nbsp;+&nbsp;{{ value.length - collapse }}&nbsp;</span
-                >
+                <slot name="tags" :value="value" :clearTag="clearTag">
+                    <span
+                        v-for="(val, index) in value"
+                        :class="[_tobogPrefix_ + '-tag']"
+                        :key="index"
+                        :data-hidden="collapse && index >= collapse"
+                    >
+                        <span>{{ val }}</span>
+                        <Icons
+                            v-if="!(disabled || readonly)"
+                            :class="[_tobogPrefix_ + '-tag-clear']"
+                            type="close-circle"
+                            tabindex="-1"
+                            @focusin.stop="clearTag(index)"
+                        ></Icons>
+                    </span>
+                    <span v-if="collapse && value && value.length > collapse" :class="[_tobogPrefix_ + '-tag']"
+                        >&nbsp;+&nbsp;{{ value.length - collapse }}&nbsp;</span
+                    >
+                </slot>
                 <input
                     ref="input"
                     :type="isPassword ? 'text' : type"
@@ -70,8 +72,8 @@
             <div v-if="type === 'file' && !multiple" :class="[_tobogPrefix_ + '-tags']" @click.stop="handleFileClick">
                 {{ value }}
             </div>
-            <span v-if="!multiple && maxLength > 0" :class="[_tobogPrefix_ + '-length']"
-                >{{ value.length || 0 }}&nbsp;/&nbsp;{{ maxLength }}</span
+            <span v-if="+maxLength > 0" :class="[_tobogPrefix_ + '-length']"
+                >{{ value | filterLength }}&nbsp;/&nbsp;{{ maxLength }}</span
             >
             <Icons
                 v-if="isClearable"
@@ -159,8 +161,14 @@ export default {
             }
         },
     },
+    filters: {
+        filterLength(val) {
+            return Array.isArray(val) ? val.length : `${val}`.length;
+        },
+    },
     methods: {
         handleFocus(event) {
+            console.log(this);
             // console.log("handleFocus");
             this.isActive = true;
             clearTimeout(this.__blurTimeOut);
@@ -214,7 +222,7 @@ export default {
                 curposEnd = target.selectionEnd,
                 value = target.value || "";
             target.value = curpos == void 0 ? data : value.substring(0, curpos) + data + value.substring(curposEnd);
-            this.handleInput(event,'paste');
+            this.handleInput(event, "paste");
         },
         handleClear() {
             this.setInputFocus();

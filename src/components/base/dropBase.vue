@@ -25,7 +25,7 @@
 <script>
 import { ClickOut, HoverOut, getElement } from "../../utils/dom";
 import Popper from "./popper/index";
-let indexSS = 0;
+// let indexSS = 0;
 export default {
     name: "DropBase",
     inheritAttrs: false,
@@ -119,7 +119,7 @@ export default {
             });
         },
         async handleTriggerOut(status, event, index) {
-            console.log(status, indexSS++, event.target, event.type, "-???????????????");
+            // console.log(status, indexSS++, event.target, event.type, "-???????????????");
             clearTimeout(this.__outvisibleTimeOut);
             if (this.__outvisible || this.disabled) {
                 this.__outvisible = null;

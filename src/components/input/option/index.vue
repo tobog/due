@@ -42,18 +42,11 @@
             @on-blur="handleBlur"
             @on-keydown="handleKeydown"
         >
-            <template v-if="prepend" slot="prepend">
-                <slot name="prepend"></slot>
-            </template>
-            <template v-if="append" slot="append">
-                <slot name="append"></slot>
-            </template>
-            <template v-if="showPrefix" slot="prefix">
-                <slot name="prefix"></slot>
-            </template>
-            <template v-if="showSuffix" slot="suffix">
-                <slot name="suffix"></slot>
-            </template>
+            <slot slot="prepend" name="prepend"></slot>
+            <slot slot="append" name="append"></slot>
+            <slot slot="prefix" name="prefix"></slot>
+            <slot slot="suffix" name="suffix"></slot>
+            <slot name="tags" slot-scope="data" v-bind="data"></slot>
         </InputBase>
         <template v-if="showDrop" slot="drop">
             <Options
@@ -65,6 +58,7 @@
                 :strict="strict"
                 :keyModal="keyModal"
                 :reset="visible"
+                :noDataText="noDataText"
                 @on-change="select"
             >
                 <slot slot-scope="opt" v-bind="opt"></slot>
@@ -102,11 +96,7 @@ export default {
             type: Boolean,
             default: true,
         },
-        tip: {
-            type: String,
-            // default: "暂无数据",
-            default: null,
-        },
+        noDataText: String,
         keyModal: {
             type: Boolean,
             default: true,
@@ -121,9 +111,11 @@ export default {
         options: Array,
         optCount: Number,
         maxLength: {
-            default: 10,
+            type: Number,
+            default: 0,
         },
         showPassword: Boolean,
+        // lock: Boolean, // 只允许增加，锁定默认值
     },
     data() {
         return {
@@ -143,7 +135,7 @@ export default {
     },
     computed: {
         showDrop() {
-            return this.$slots.default || this.hasValidOpts || this.hasOpts;
+            return this.$slots.default || this.hasOpts;
         },
         hasOpts() {
             return Array.isArray(this.options);
@@ -201,27 +193,22 @@ export default {
         },
         async handleInput(event) {
             let value = await this.handleBeforeInput(event.target.value, event);
+            this.__attachData = "";
             if (!this.multiple) {
                 // input && no opts
-                if (+this.maxLength > 0 && !this.hasOpts && !this.isSelect) {
-                    this.valueText = event.target.value = `${value}`.slice(0, this.maxLength);
-                } else {
-                    this.valueText = value;
-                }
+                this.valueText =
+                    +this.maxLength > 0 && !this.filterable && (!this.type || this.type === "text")
+                        ? (event.target.value = `${value}`.slice(0, this.maxLength))
+                        : value;
             }
-            this.__attachData = "";
             if (this.filterable && typeof this.$listeners["on-search"] === "function") {
                 this.searchMethod(value, this.model, event);
                 return;
             }
-            if (this.hasOpts && this.$refs.options) {
+            if (this.$refs.options) {
                 this.$refs.options.queryChange(value);
-                this.$nextTick(() => {
-                    this.__updatedDrop();
-                });
-                return;
             }
-            this.__updatedDrop();
+            this.$nextTick(this.__updatedDrop);
             if (this.isSelect) return;
             // 是input
             if (!this.multiple) {
@@ -257,7 +244,7 @@ export default {
             const isValid = validVal(value);
             // 无法失去焦点问题
             // 在 输入框有值是进行匹配
-            const bool = isValid && this.$refs.options && this.$refs.options.getMatchedOpt(true);
+            const bool = isValid && this.$refs.options && this.$refs.options.getMatchedOpt(value, true);
             if (bool || this.isSelect) return;
             if (isValid && this.multiple) {
                 // input 多选
@@ -276,8 +263,7 @@ export default {
                 return (
                     this.hasOpts &&
                     this.options.find((item) => {
-                        if (getStricts(item)) return item.value === val;
-                        return item.value == val;
+                        return getStricts(item) ? item.value === val : item.value == val;
                     })
                 );
             };
@@ -289,26 +275,40 @@ export default {
                 });
             }
             const data = getOpt(this.model);
-            const text = data && data.label;
+            const text = data ? data.label || data.value : void 0;
             if (this.isSelect) return text == void 0 ? "" : text;
             return text == void 0 ? this.model : text;
         },
 
         updateModel(val) {
             if (val === this.model) return;
-            this.model = val;
+            this.model =
+                this.multiple && +this.maxLength > 0 && Array.isArray(val) ? val.slice(0, this.maxLength) : val;
             this.valueText = this.getValueText();
-            this.$emit("input", val);
-            this.handleDispatch("on-change", val);
+            this.$emit("input", this.model);
+            this.handleDispatch("on-change", this.model);
             this.multiple && (this.$refs.inputBase.getInputDom().value = "");
             this.__attachData = "";
         },
         handleKeydown(event) {
             if (!this.keyModal) return;
-            if (event.keyCode == 13 && !this.visible && (!this.multiple || (this.multiple && !event.target.value))) {
+            // 在无opt 下 自动添加
+            if (event.keyCode == 13 && !this.showDrop && this.multiple && event.target.value) {
+                this.updateModel(
+                    Array.isArray(this.model) ? [...this.model, event.target.value] : [event.target.value]
+                );
+                return;
+            }
+            if (
+                event.keyCode == 13 &&
+                !this.visible &&
+                this.showDrop &&
+                (!this.multiple || (this.multiple && !event.target.value))
+            ) {
                 this.visible = true;
                 return;
             }
+
             // Esc slide-up
             // next
             if (this.$refs.options && this.visible) {
@@ -324,11 +324,6 @@ export default {
                 this.visible = false;
             }
         },
-    },
-    updated() {
-        this.$nextTick(() => {
-            this.__runOptIndex = false;
-        });
     },
     watch: {
         value: {

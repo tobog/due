@@ -1,13 +1,25 @@
 <template>
     <div :class="classes" @click.stop="select" :data-vue-module="$options.name">
+        <Checkbox
+            v-if="getCheckbox"
+            :class="[_tobogPrefix_ + '-checkbox']"
+            :theme="getTheme"
+            :value="selected"
+            :disabled="disabled"
+        ></Checkbox>
         <slot>{{ getText }}</slot>
-        <slot name="selected" :selected="selected">
-            <Icons v-if="multiple && selected" type="ios-checkmark" :class="[_tobogPrefix_ + '-icon-selected']"></Icons>
+        <slot v-if="!getCheckbox" name="selected" :selected="selected">
+            <Icons
+                v-if="selected && getMultiple"
+                type="ios-checkmark"
+                :class="[_tobogPrefix_ + '-icon-selected']"
+            ></Icons>
         </slot>
     </div>
 </template>
 <script>
 import Icons from "../../icons/index";
+import Checkbox from "../../checkbox/index";
 import Emitter from "../../../utils/emitter";
 
 export default {
@@ -16,6 +28,7 @@ export default {
     mixins: [Emitter],
     components: {
         Icons,
+        Checkbox,
     },
     props: {
         value: {
@@ -34,11 +47,15 @@ export default {
         attach: Object,
         selected: Boolean,
         hover: Boolean,
+        checkbox: Boolean,
         theme: String,
         // strict: Boolean,
     },
     data() {
         return {};
+    },
+    created() {
+        this.handleDispatch("on-init-none");
     },
     computed: {
         getTheme() {
@@ -46,6 +63,12 @@ export default {
         },
         getText() {
             return this.label !== void 0 ? this.label : this.value;
+        },
+        getCheckbox() {
+            return 2;
+            return this.checkbox !== void 0
+                ? this.checkbox
+                : (this.__parentComponent__ && this.__parentComponent__.checkbox) || 1;
         },
         getMultiple() {
             return this.multiple !== void 0
@@ -59,9 +82,10 @@ export default {
                 {
                     [`${_tobogPrefix_}-selected`]: this.selected,
                     [`${_tobogPrefix_}-hover`]: this.hover,
+                    [`${_tobogPrefix_}-checkbox`]: this.checkbox,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
-                    [`${_tobogPrefix_}-multiple`]: this.multiple,
-                    [`${_tobogPrefix_}-theme-${this.getMultiple}`]: !!this.getMultiple,
+                    [`${_tobogPrefix_}-multiple`]: this.getMultiple,
+                    [`${_tobogPrefix_}-theme-${this.getTheme}`]: !!this.getTheme,
                 },
             ];
         },

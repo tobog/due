@@ -2,7 +2,7 @@ $prefix-cls: #{$prefix}-option;
 
 .#{$prefix-cls} {
     margin: 0;
-    padding: 6px 16px;
+    padding: 6px 12px;
     // font-size: $subFont;
     line-height: 1.5;
     color: $content;
@@ -40,9 +40,20 @@ $prefix-cls: #{$prefix}-option;
         font-size: 22px;
         float: right;
     }
+
+
+    &s-nodata-text {
+        text-align: center;
+        padding: 16px 0;
+        color: $sub-content;
+    }
+    &-checkbox{
+        margin-right: 5px;
+    }
 }
 
-@each $key, $value in $colors-map {
+@each $key,
+$value in $colors-map {
     .#{$prefix-cls}-theme-#{$key} {
         &.#{$prefix-cls}-selected {
             background-color: $value;

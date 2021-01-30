@@ -7,11 +7,22 @@
         :reset="refreshVirtual"
         @on-refresh="handleRefreshSize"
     >
+        <Option
+            v-if="multiple && hasCheckAll && baseData.length"
+            :class="[_tobogPrefix_ + 'check-all']"
+            :theme="theme"
+            :selected="baseData.length === value.length"
+            :value="symbolAll"
+            :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
+        ></Option>
         <template v-for="opt in getSizeData">
             <slot v-bind="opt">
                 <Option v-bind="opt" :key="opt.value"></Option>
             </slot>
         </template>
+        <div v-if="!getSizeData.length" :class="[_tobogPrefix_ + '-nodata-text']">
+            {{ noDataText || langs("options.noDataText", "暂无相关数据") }}
+        </div>
     </Virtuallist>
 </template>
 <script>
@@ -20,11 +31,12 @@
 import Option from "./index2";
 import Virtuallist from "../../scroll/virtuallist";
 import Emitter from "../../../utils/emitter";
+import langMinix from "../../../mixins/lang";
 export default {
     inheritAttrs: false,
     name: "Options",
     componentName: "Options",
-    mixins: [Emitter],
+    mixins: [Emitter, langMinix],
     model: {
         prop: "value",
         event: "on-change",
@@ -48,6 +60,12 @@ export default {
         regExpMatch: Boolean,
         keyModal: Boolean,
         reset: Boolean,
+        noDataText: String,
+        hasCheckAll: {
+            type: Boolean,
+            default: true,
+        },
+        checkAllLabel: String,
     },
     data() {
         return {
@@ -55,6 +73,7 @@ export default {
             resultData: [],
             sizeInfo: {},
             refreshVirtual: 0,
+            symbolAll: Date.now() + "@" + Math.random(),
         };
     },
     created() {
@@ -72,6 +91,10 @@ export default {
             if (this.sizeInfo.performance === "high")
                 return this.resultData.slice(this.sizeInfo.index, this.sizeInfo.index + this.sizeInfo.length);
             return this.resultData;
+        },
+        getOptTip() {
+            if (this.tip == null) return this.langs("input.noDataText", "暂无数据");
+            return this.tip;
         },
     },
     methods: {
@@ -104,14 +127,16 @@ export default {
             }
             return this.getStricts(data) ? data.value === value : data.value == value;
         },
-        select(val, text, attach,isCancel) {
-            if (this.multiple) {
+        select(val, text, attach, isCancel) {
+            if (this.multiple && this.hasCheckAll && val === this.symbolAll) {
+                val = this.value.length === this.baseData.length ? [] : this.baseData.map((item) => item.value);
+            } else if (this.multiple) {
                 const model = Array.isArray(this.value) ? this.value : [this.value];
                 val = model.some((item) => (this.getStricts(item) ? item === val : item == val))
                     ? model.filter((item) => (this.getStricts(item) ? item !== val : item != val))
                     : [...model, val];
             }
-            this.$emit("on-change", val, attach,isCancel);
+            this.$emit("on-change", val, attach, isCancel);
         },
 
         handleKeydown(event) {
@@ -199,6 +224,7 @@ export default {
             if (val === "") {
                 this.baseData.forEach((item) => {
                     item.hover = false;
+                    if (!this.multiple) item.selected = false;
                 });
                 this.resultData = this.baseData;
                 this.refreshVirtual += 1;
@@ -224,11 +250,15 @@ export default {
             });
             this.refreshVirtual += 1;
         },
-        getMatchedOpt(isCancel) {
+        getMatchedOpt(text, isCancel) {
+            let isHover = text == void 0;
+            if (!isHover && !text) return;
             return this.getSizeData.some((item) => {
-                let bool = item.hover && !item.disabled && !item.selected;
+                let bool = isHover
+                    ? item.hover && !item.disabled && !item.selected
+                    : `${item.label || item.value}` === text;
                 if (bool) {
-                    this.select(item.value, item.label, item.attach,isCancel);
+                    this.select(item.value, item.label, item.attach, isCancel);
                 }
                 return bool;
             });
@@ -251,7 +281,12 @@ export default {
             },
         },
         reset(val) {
-            if (val) this.resultData = this.baseData;
+            if (val) {
+                this.baseData.forEach((item) => {
+                    this.$set(item, "hover", false);
+                });
+                this.resultData = this.baseData;
+            }
         },
     },
     beforeDestroy() {},

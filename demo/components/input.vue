@@ -29,11 +29,11 @@
         </template>
         <template v-slot="config">
             <vOptions :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vOptions>
-            <vOptions v-bind="config" v-model="val1"  class="margin-bottom-20"> </vOptions>
-            <vInput class="margin-bottom-20" v-bind="config" v-model="val2">
+            <!-- <vOptions v-bind="config" v-model="val1"  class="margin-bottom-20"> </vOptions> -->
+            <!-- <vInput class="margin-bottom-20" v-bind="config" v-model="val2">
                 <vOption value="ghost">ghost2</vOption>
                 <vOption value="dashed">dashed1</vOption>
-            </vInput>
+            </vInput> -->
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
     </Demo>
@@ -176,7 +176,7 @@ export default {
                     key: "type",
                     tag: "vSelect",
                     default: "text",
-                    demoDefault: 'text',
+                    demoDefault: "text",
                     explain:
                         "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
                     dataType: "String",

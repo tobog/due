@@ -22,9 +22,9 @@ export default {
         size: [String, Number],
         collapse: {
             type: [Boolean, Number],
-            default: 0,
+            default:6,
         },
-        maxLength: Number
+        maxLength: Number,
     },
     data() {
         return {
