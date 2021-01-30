@@ -13,6 +13,7 @@
             :theme="theme"
             :selected="baseData.length === value.length"
             :value="symbolAll"
+            :checkbox="checkbox"
             :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
         ></Option>
         <template v-for="opt in getSizeData">
@@ -66,6 +67,8 @@ export default {
             default: true,
         },
         checkAllLabel: String,
+        disabled: Boolean,
+        checkbox: Boolean,
     },
     data() {
         return {
@@ -105,6 +108,9 @@ export default {
                     selected: this.$set(item, "selected", this.handleHighlight(this.value, item)),
                     theme: item.theme || this.theme,
                     hover: false,
+                    multiple: this.multiple,
+                    disabled: item.disabled || this.disabled,
+                    checkbox: this.checkbox,
                 };
             });
             this.resultData = this.baseData;
