@@ -109,19 +109,24 @@ export default {
                         this._performanceScroll.update(this.$el, opts);
                         return;
                     }
-                    this._performanceScroll = new PerformanceScroll(this.$el, opts, ({ index, translate, length }, type) => {
-                        if (type === "over") return;
-                        console.log(index, translate, length, this.total,'============')
-                        this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
-                        this.sizeLength = length;
-                        this.translateSize = translate;
-                        this.$emit("on-refresh", {
-                            index: this.sizeIndex,
-                            length: this.sizeLength,
-                            performance: this.initPerformance,
-                            translate: this.translateSize,
-                        });
-                    });
+                    this._performanceScroll = new PerformanceScroll(
+                        this.$el,
+                        opts,
+                        ({ index, translate, length }, type) => {
+                            if (type === "over") return;
+                            console.log(index, translate, length, this.total, "============");
+                            this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
+                            if (this.sizeIndex < 0) this.sizeIndex = 0;
+                            this.sizeLength = length;
+                            this.translateSize = translate;
+                            this.$emit("on-refresh", {
+                                index: this.sizeIndex,
+                                length: this.sizeLength,
+                                performance: this.initPerformance,
+                                translate: this.translateSize,
+                            });
+                        }
+                    );
                 }
             });
         },

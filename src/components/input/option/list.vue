@@ -47,6 +47,7 @@ export default {
         theme: String,
         regExpMatch: Boolean,
         keyModal: Boolean,
+        reset: Boolean,
     },
     data() {
         return {
@@ -127,7 +128,7 @@ export default {
                 this.navigateOpts(1);
             }
             if (keyCode === 13) {
-                this.getMatchedOpt(event.target.value);
+                this.getMatchedOpt(null, true) || this.getMatchedOpt(event.target.value);
             }
         },
         handleOptChange(type, component) {
@@ -153,9 +154,19 @@ export default {
             });
             compIndex = compIndex > -1 ? compIndex : selectIndex;
             if (compIndex > -1) {
-                if (!this.getSizeData[compIndex + val]) return;
+                let index = compIndex + val;
+                let nextData = this.getSizeData[index];
+                while (nextData) {
+                    if (nextData.disabled) {
+                        index += val;
+                        nextData = this.getSizeData[index];
+                    } else {
+                        break;
+                    }
+                }
+                if (!nextData) return;
                 this.$set(this.getSizeData[compIndex], "hover", false);
-                this.$set(this.getSizeData[compIndex + val], "hover", true);
+                this.$set(nextData, "hover", true);
                 this.$nextTick(() => {
                     this._hoverComponent && this.focusIndex(this._hoverComponent.$el);
                 });
@@ -190,6 +201,7 @@ export default {
                     item.hover = false;
                 });
                 this.resultData = this.baseData;
+                this.refreshVirtual += 1;
                 return;
             }
             const parsedQuery = this.regExpMatch
@@ -204,20 +216,20 @@ export default {
                 try {
                     let text = `${item.label || item.value}`;
                     item.hover = text === val;
-                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "ig").test(text);
+                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "i").test(text);
                 } catch (error) {
                     console.error(error);
                     return false;
                 }
             });
-            this.$nextTick(() => {
-                this.refreshVirtual += 1;
-            });
+            this.refreshVirtual += 1;
         },
-        getMatchedOpt(text) {
-            if (!text) return false;
-            return this.baseData.some((item) => {
-                let bool = `${item.label || item.value}` === text;
+        getMatchedOpt(text, isHover) {
+            if (!text && !isHover) return false;
+            return this[isHover ? "getSizeData" : "resultData"].some((item) => {
+                let bool = isHover
+                    ? item.hover && !item.disabled && !item.selected
+                    : `${item.label || item.value}` === text;
                 if (bool) {
                     this.select(item.value, item.label, item.attach);
                 }
@@ -240,6 +252,9 @@ export default {
             handler() {
                 this.init();
             },
+        },
+        reset(val) {
+            if (val) this.resultData = this.baseData;
         },
     },
     beforeDestroy() {},

@@ -58,7 +58,7 @@ export default {
         };
     },
     created() {
-        for (let index = 0; index < 1000; index++) {
+        for (let index = 0; index < 303; index++) {
             this.opts.push({
                 label: index,
                 value: index,

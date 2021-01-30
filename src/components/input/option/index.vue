@@ -65,6 +65,7 @@
                 :multiple="multiple"
                 :strict="strict"
                 :keyModal="keyModal"
+                :reset="visible"
                 @on-change="select"
             >
                 <slot v-slot="opt" v-bind="opt"></slot>
@@ -127,7 +128,6 @@ export default {
             model: "",
             visible: false,
             valueText: "",
-            lastOptIndex: this.optCount || 15,
         };
     },
     created() {
@@ -294,14 +294,6 @@ export default {
             this.multiple && (this.$refs.inputBase.getInputDom().value = "");
             this.__attachData = "";
         },
-        //对外提供
-        handleScroll(event) {
-            if (this.__runOptIndex) return;
-            if (event.target.scrollHeight - event.target.scrollTop - event.target.clientHeight < 60) {
-                this.__runOptIndex = true;
-                this.lastOptIndex += 5;
-            }
-        },
         handleKeydown(event) {
             if (!this.keyModal) return;
             if (event.keyCode == 13 && !this.visible && (!this.multiple || (this.multiple && !event.target.value))) {
@@ -341,13 +333,6 @@ export default {
             },
         },
         visible(val) {
-            if (val) {
-                // this.optComponents.forEach((component) => {
-                //     component.hidden = component.hover = false
-                // })
-                // this.handeOptQuery("")
-            }
-
             this.$emit("on-visible-change", val);
         },
     },
