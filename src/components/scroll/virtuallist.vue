@@ -25,13 +25,15 @@ export default {
         },
         cellSelector: String,
         cellHeight: Number,
-        refresh: [Number, String],
+        reset: [Number, String],
+        element: [String, HTMLElement, Function],
     },
     data() {
         return {
             translateSize: 0,
             sizeLength: this.baseSize * 2,
             sizeIndex: 0,
+            // customeEle: false,
         };
     },
     created() {
@@ -48,7 +50,12 @@ export default {
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
-            return [_tobogPrefix_, {}];
+            return [
+                _tobogPrefix_,
+                // {
+                //     [`${_tobogPrefix_}-custome`]: this.customeEle,
+                // },
+            ];
         },
         isPerformance() {
             return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total;
@@ -86,6 +93,8 @@ export default {
         initPerformanceScroll(opts = {}) {
             if (this.initPerformance !== "middle" && this.initPerformance !== "high") return;
             this.$nextTick(() => {
+                // const el = typeof this.element === "function" ? this.element(this.$el) : this.element || this.$el;
+                // this.customeEle = el !== this.$el;
                 if (this.$el) {
                     opts = {
                         performance: this.initPerformance,
@@ -100,28 +109,25 @@ export default {
                         this._performanceScroll.update(this.$el, opts);
                         return;
                     }
-                    this._performanceScroll = new PerformanceScroll(
-                        this.$el,
-                        opts,
-                        ({ index, translate, length }, type) => {
-                            if (type === "over") return;
-                            this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
-                            this.sizeLength = length;
-                            this.translateSize = translate;
-                            this.$emit("on-refresh", {
-                                index: this.sizeIndex,
-                                length: this.sizeLength,
-                                performance: this.initPerformance,
-                                translate: this.translateSize,
-                            });
-                        }
-                    );
+                    this._performanceScroll = new PerformanceScroll(this.$el, opts, ({ index, translate, length }, type) => {
+                        if (type === "over") return;
+                        console.log(index, translate, length, this.total,'============')
+                        this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
+                        this.sizeLength = length;
+                        this.translateSize = translate;
+                        this.$emit("on-refresh", {
+                            index: this.sizeIndex,
+                            length: this.sizeLength,
+                            performance: this.initPerformance,
+                            translate: this.translateSize,
+                        });
+                    });
                 }
             });
         },
     },
     watch: {
-        refresh() {
+        reset() {
             this.init();
         },
         total() {

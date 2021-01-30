@@ -1,5 +1,5 @@
 <template>
-    <div :class="classes" @click.stop="select" @mousedown.prevent :data-vue-module="$options.name">
+    <div :class="classes" @click.stop="select" :data-vue-module="$options.name">
         <slot>{{ getText }}</slot>
         <slot name="selected" :selected="selected">
             <Icons v-if="multiple && selected" type="ios-checkmark" :class="[_tobogPrefix_ + '-icon-selected']"></Icons>
@@ -26,16 +26,20 @@ export default {
             type: [String, Number],
             default: void 0,
         },
+        multiple: {
+            type: Boolean,
+            default: void 0,
+        },
         disabled: Boolean,
         attach: Object,
         selected: Boolean,
         hover: Boolean,
         theme: String,
+        // strict: Boolean,
     },
     data() {
         return {};
     },
-    created() {},
     computed: {
         getTheme() {
             return this.theme || (this.__parentComponent__ && this.__parentComponent__.theme);
@@ -43,8 +47,10 @@ export default {
         getText() {
             return this.label !== void 0 ? this.label : this.value;
         },
-        multiple() {
-            return this.__parentComponent__ && this.__parentComponent__.multiple;
+        getMultiple() {
+            return this.multiple !== void 0
+                ? this.multiple
+                : this.__parentComponent__ && this.__parentComponent__.multiple;
         },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_;
@@ -55,7 +61,7 @@ export default {
                     [`${_tobogPrefix_}-hover`]: this.hover,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-multiple`]: this.multiple,
-                    [`${_tobogPrefix_}-theme-${this.getTheme}`]: !!this.getTheme,
+                    [`${_tobogPrefix_}-theme-${this.getMultiple}`]: !!this.getMultiple,
                 },
             ];
         },

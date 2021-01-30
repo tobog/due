@@ -70,6 +70,9 @@
             <div v-if="type === 'file' && !multiple" :class="[_tobogPrefix_ + '-tags']" @click.stop="handleFileClick">
                 {{ value }}
             </div>
+            <span v-if="!multiple && maxLength > 0" :class="[_tobogPrefix_ + '-length']"
+                >{{ value.length || 0 }}&nbsp;/&nbsp;{{ maxLength }}</span
+            >
             <Icons
                 v-if="isClearable"
                 :class="[_tobogPrefix_ + `-clearicon`]"
@@ -152,7 +155,7 @@ export default {
             try {
                 return JSON.stringify(this.valueData === void 0 ? this.value : this.valueData);
             } catch (error) {
-                return ''
+                return "";
             }
         },
     },
@@ -211,7 +214,7 @@ export default {
                 curposEnd = target.selectionEnd,
                 value = target.value || "";
             target.value = curpos == void 0 ? data : value.substring(0, curpos) + data + value.substring(curposEnd);
-            this.handleInput(event);
+            this.handleInput(event,'paste');
         },
         handleClear() {
             this.setInputFocus();

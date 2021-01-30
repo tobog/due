@@ -220,6 +220,16 @@ $prefix-cls-textarea: #{$prefix}-textarea;
             outline: none;
         }
     }
+
+    &-length {
+        color: $disable-content;
+        font-size: 1em;
+        display: inline-flex;
+        align-items: center;
+        flex: none;
+        margin-left: auto;
+        padding-right: 5px;
+    }
 }
 
 .#{$prefix-cls-dropbase}-visible .#{$prefix-cls-select} {

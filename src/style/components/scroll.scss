@@ -3,15 +3,21 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
 
 .#{$prefix-cls-performance} {
     overflow: auto;
-    height: 300px;
+    max-height: inherit;
+    height: 100%;
     position: relative;
-    border: 1px solid $border;
-    border-radius: $radius;
+
+    // &-custome {
+    //     max-height: unset;
+    //     height: unset;
+    // }
 }
+
 .#{$prefix-cls} {
     overflow: auto;
     height: 300px;
     position: relative;
+
     &-placeholder {
         display: none;
         text-align: center;
@@ -19,6 +25,7 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
         position: relative;
         overflow: hidden;
         max-width: 100%;
+
         &-inner {
             // display: inline-flex;
             // justify-content: center;
@@ -31,10 +38,12 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
             transform: translateY(200%);
             transition: transform 0.3s linear;
         }
-        &[data-direction="top"] > &-inner {
+
+        &[data-direction="top"]>&-inner {
             transform: translateY(-200%);
         }
     }
+
     &-mask::after {
         content: "";
         position: absolute;
@@ -44,18 +53,22 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
         bottom: 0;
         background-color: $mask;
     }
-    &-up > &-placeholder[data-direction="up"],
-    &-down > &-placeholder[data-direction="down"] {
+
+    &-up>&-placeholder[data-direction="up"],
+    &-down>&-placeholder[data-direction="down"] {
         display: block;
     }
-    &-down > &-placeholder[data-active="true"] > &-placeholder-inner {
+
+    &-down>&-placeholder[data-active="true"]>&-placeholder-inner {
         transform: translateY(0%);
         animation: #{$prefix-cls}-down 0.2s linear;
     }
-    &-up > &-placeholder[data-active="true"] > &-placeholder-inner {
+
+    &-up>&-placeholder[data-active="true"]>&-placeholder-inner {
         transform: translateY(0%);
         animation: #{$prefix-cls}-up 0.2s linear;
     }
+
     &-message &-placeholder-inner {
         line-height: 50px;
         color: $disable-content;
@@ -74,6 +87,7 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
             transform: translateY(0%);
         }
     }
+
     @keyframes #{$prefix-cls}-up {
         from {
             transform: translateY(-100%);
@@ -88,5 +102,3 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
         }
     }
 }
-
-

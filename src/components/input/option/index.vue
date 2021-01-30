@@ -41,6 +41,7 @@
             @on-change="handleChange"
             @on-icon-click="handleIconClick"
             @on-blur="handleBlur"
+            @on-keydown="handleKeydown"
         >
             <template v-if="prepend" slot="prepend">
                 <slot name="prepend"></slot>
@@ -63,6 +64,7 @@
                 :theme="theme"
                 :multiple="multiple"
                 :strict="strict"
+                :keyModal="keyModal"
                 @on-change="select"
             >
                 <slot v-slot="opt" v-bind="opt"></slot>
@@ -87,8 +89,8 @@ export default {
         Options,
     },
     props: {
-        multipleKey: String,
-        multiplSplit: {
+        // multipleKey: String,
+        splitSymbol: {
             type: String,
             default: ",",
         },
@@ -105,16 +107,19 @@ export default {
             // default: "暂无数据",
             default: null,
         },
-        filterable: Boolean,
         keyModal: {
             type: Boolean,
             default: true,
         },
+        filterable: Boolean,
+
         beforeInput: Function,
         strict: Boolean,
         options: Array,
         optCount: Number,
-        maxLength: Number,
+        maxLength: {
+            default: 10,
+        },
         showPassword: Boolean,
     },
     data() {
@@ -191,8 +196,15 @@ export default {
             return typeof this.beforeInput === "function" ? await this.beforeInput(val, event) : val;
         },
         async handleInput(event) {
-            const value = await this.handleBeforeInput(event.target.value, event);
-            if (!this.multiple) this.valueText = value;
+            let value = await this.handleBeforeInput(event.target.value, event);
+            if (!this.multiple) {
+                // input && no opts
+                if (+this.maxLength > 0 && !this.hasOpts && !this.isSelect) {
+                    this.valueText = event.target.value = `${value}`.slice(0, this.maxLength);
+                } else {
+                    this.valueText = value;
+                }
+            }
             this.__attachData = "";
             if (this.filterable && typeof this.$listeners["on-search"] === "function") {
                 this.searchMethod(value, this.model, event);
@@ -209,15 +221,15 @@ export default {
             if (this.isSelect) return;
             // 是input
             if (!this.multiple) {
-                this.updateModel(value);
+                this.updateModel(this.valueText);
                 return;
             }
-            if (this.multiplSplit && value && event.type === "paste") {
-                this.updateModel([...this.model, ...value.split(new RegExp("\\" + this.multiplSplit, "g"))]);
+            if (this.splitSymbol && value && event.type === "paste") {
+                this.updateModel([...this.model, ...value.split(new RegExp("\\" + this.splitSymbol, "g"))]);
             }
         },
         handleBlur(event, inputDom) {
-            if (!this.isReadonly) this.handleModel(inputDom.value);
+            if (!this.isReadonly) this.handleInputModel(inputDom.value);
             if (this.type === "number") {
                 const value = this.handleRange(this.model);
                 value !== void 0 && this.updateModel(value);
@@ -226,7 +238,7 @@ export default {
                 this.type !== "file" && this.$emit("on-change", this.model, this.__attachData);
                 this.$emit("on-blur", this.model, this.__attachData);
                 this.__attachData = "";
-                this.handleDispatch("on-validate", this.model);
+                this.handleDispatch("on-validate", this.model, "blur");
             });
         },
         handleRange(val) {
@@ -235,32 +247,42 @@ export default {
             if ((min || min == "0") && val < min) return parseFloat(min);
             if ((max || max == "0") && val > max) return parseFloat(max);
         },
-        handleModel(value) {
-            // const isValid = validVal(value);
-            // const component = isValid && this.getMatchedOpt(value, true);
-            // if (component) return;
-            // if (isValid && this.multiple) {
-            //     this.updateModel(Array.isArray(this.model) ? [...this.model, value] : [value]);
-            //     return;
-            // }
-            // if (!this.multiple) this.updateModel(value);
+
+        handleInputModel(value) {
+            // 焦点失去更新匹配值，无需点击
+            const isValid = validVal(value);
+            const bool = isValid && this.hasOpts && this.$refs.options && this.$refs.options.getMatchedOpt(value);
+            if (bool || this.isSelect) return;
+            if (isValid && this.multiple) {
+                // input 多选
+                this.updateModel(Array.isArray(this.model) ? [...this.model, value] : [value]);
+                return;
+            }
+
+            if (!this.multiple) this.updateModel(value);
         },
         getValueText() {
+            const getStricts = (item) => {
+                if (item.strict !== void 0) return item.strict;
+                return this.strict === false ? false : true;
+            };
+            const getOpt = (val) => {
+                return this.options.find((item) => {
+                    if (getStricts(item)) return item.value === val;
+                    return item.value == val;
+                });
+            };
             if (this.multiple) {
                 // 有问题
-                const key = this.multipleKey || "name";
                 return this.model.map((val) => {
-                    if (val && typeof val === "object" && key) return val[key];
-                    return val;
+                    let data = getOpt(val);
+                    return (data && data.label) || val;
                 });
             }
-            const data = this.options.find((item) => {
-                if (this.strict) return item.value === this.model;
-                return item.value == this.model;
-            });
+            const data = getOpt(this.model);
             const text = data && data.label;
             if (this.isSelect) return text == void 0 ? "" : text;
-            return text === void 0 ? this.model : text;
+            return text == void 0 ? this.model : text;
         },
 
         updateModel(val) {
@@ -272,13 +294,33 @@ export default {
             this.multiple && (this.$refs.inputBase.getInputDom().value = "");
             this.__attachData = "";
         },
-
         //对外提供
         handleScroll(event) {
             if (this.__runOptIndex) return;
             if (event.target.scrollHeight - event.target.scrollTop - event.target.clientHeight < 60) {
                 this.__runOptIndex = true;
                 this.lastOptIndex += 5;
+            }
+        },
+        handleKeydown(event) {
+            if (!this.keyModal) return;
+            if (event.keyCode == 13 && !this.visible && (!this.multiple || (this.multiple && !event.target.value))) {
+                this.visible = true;
+                return;
+            }
+            // Esc slide-up
+            // next
+            if (this.$refs.options && this.visible) {
+                this.$refs.options.handleKeydown(event);
+                if (event.keyCode == 13) {
+                    this.$nextTick(() => {
+                        this.$emit("on-enter", this.model, event);
+                        this.visible = false;
+                    });
+                }
+            }
+            if (event.keyCode == 27) {
+                this.visible = false;
             }
         },
     },
@@ -296,19 +338,6 @@ export default {
                     if (this.multiple && !Array.isArray(val)) val = validVal(val) ? [val] : [];
                     this.updateModel(val);
                 });
-            },
-        },
-        options: {
-            immediate: true,
-            handler(val) {
-                this.inOpts = this.hasOpts
-                    ? val.map((opt) => {
-                          return {
-                              ...opt,
-                              hidden: false,
-                          };
-                      })
-                    : [];
             },
         },
         visible(val) {

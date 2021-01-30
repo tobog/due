@@ -4,7 +4,7 @@
         :data-vue-module="$options.name"
         :total="resultData.length"
         :cellSelector="_tobogPrefix_.slice(0, -1)"
-        :refresh="refreshVirtual"
+        :reset="refreshVirtual"
         @on-refresh="handleRefreshSize"
     >
         <template v-for="opt in getSizeData">
@@ -23,6 +23,7 @@ import Emitter from "../../../utils/emitter";
 export default {
     inheritAttrs: false,
     name: "Options",
+    componentName: "Options",
     mixins: [Emitter],
     model: {
         prop: "value",
@@ -39,13 +40,13 @@ export default {
                 return [];
             },
         },
-        value: {
-            type: [String, Array],
-            required: true,
-        },
+        value: [String, Array],
         multiple: Boolean,
         strict: Boolean,
         performance: String,
+        theme: String,
+        regExpMatch: Boolean,
+        keyModal: Boolean,
     },
     data() {
         return {
@@ -104,72 +105,73 @@ export default {
         },
         select(val, text, attach) {
             if (this.multiple) {
-                const model = Array.isArray(this.model) ? this.model : [this.model];
-                val = model.some((item) => (this.strict ? item === val : item == val))
-                    ? model.filter((item) => (this.strict ? item !== val : item != val))
+                const model = Array.isArray(this.value) ? this.value : [this.value];
+                val = model.some((item) => (this.getStricts(item) ? item === val : item == val))
+                    ? model.filter((item) => (this.getStricts(item) ? item !== val : item != val))
                     : [...model, val];
             }
             this.$emit("on-change", val, attach);
+        },
+
+        handleKeydown(event) {
+            if (!this.keyModal) return;
+            const keyCode = event.keyCode;
+            // Esc slide-up
+            // next
+            if (keyCode === 38) {
+                event.preventDefault();
+                this.navigateOpts(-1);
+            }
+            if (keyCode === 40) {
+                event.preventDefault();
+                this.navigateOpts(1);
+            }
+            if (keyCode === 13) {
+                this.getMatchedOpt(event.target.value);
+            }
         },
         handleOptChange(type, component) {
             if (type === "hover") {
                 this._hoverComponent = component;
             }
-        },
-        handleKeydown(event) {
-            if (!this.keyModal) return;
-            if (event.keyCode == 13 && !this.visible && (!this.multiple || (this.multiple && !event.target.value))) {
-                this.visible = true;
-                return;
-            }
-            const visible = this.visible,
-                keyCode = event.keyCode;
-            // Esc slide-up
-            // next
-            if (keyCode == 38 && visible) {
-                event.preventDefault();
-                this.navigateOpts(-1);
-            }
-            if (keyCode == 40 && visible) {
-                event.preventDefault();
-                this.navigateOpts(1);
-            }
-            if (keyCode == 13) {
-                this.getMatchedOpt() || this.handleModel(event.target.value);
-                this.$nextTick(() => {
-                    this.$emit("on-enter", this.model, event);
-                    this.visible = false;
-                });
-            }
-            if (keyCode == 32 && this.isSelect) {
-                event.preventDefault();
-                const component = this.getMatchedOpt();
-                if (!component) this.handleModel(event.target.value);
-            }
-            if (keyCode == 27) {
-                this.visible = false;
+
+            if (type === "destory") {
+                this._hoverComponent = null;
             }
         },
         navigateOpts(val) {
-            // let compData,
-            // lastIndex = this.resultData.length - 1
-            // this.resultData.forEach((item, i) => {
-            //     if (item.hover) {
-            //         compData = {...item, _index: i}
-            //     }
-            //     item.hover = false
-            // })
-            // let index = ((compData || {})._index || 0) + val
-            // if (index < 0) index = 0
-            // if (index > lastIndex) index = lastIndex
-            // const component = optComponents[index]
-            // component.hover = true
-            // this.focusIndex(component.$el, index)
+            let defaultIndex = -1;
+            let selectIndex = -1;
+            let compIndex = this.getSizeData.findIndex((item, i) => {
+                if (selectIndex === -1 && item.selected) {
+                    selectIndex = i;
+                }
+                if (defaultIndex === -1 && !item.disabled) {
+                    defaultIndex = i;
+                }
+                return item.hover && !item.disabled;
+            });
+            compIndex = compIndex > -1 ? compIndex : selectIndex;
+            if (compIndex > -1) {
+                if (!this.getSizeData[compIndex + val]) return;
+                this.$set(this.getSizeData[compIndex], "hover", false);
+                this.$set(this.getSizeData[compIndex + val], "hover", true);
+                this.$nextTick(() => {
+                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el);
+                });
+                return;
+            }
+            if (defaultIndex > -1) {
+                this.$set(this.getSizeData[defaultIndex], "hover", true);
+                this.$nextTick(() => {
+                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el);
+                });
+            }
         },
-        focusIndex(element, index) {
-            if (index < 0) return;
+        focusIndex(element) {
+            if (!element) return;
             // update scroll
-            const parentNode = element.parentNode,
+            const parentNode = this.$el,
                 elementRect = element.getBoundingClientRect(),
                 parentRect = parentNode.getBoundingClientRect(),
                 bottomOverflowDistance = elementRect.bottom - parentRect.bottom,
@@ -184,26 +186,43 @@ export default {
 
         queryChange(val = "") {
             if (val === "") {
+                this.baseData.forEach((item) => {
+                    item.hover = false;
+                });
                 this.resultData = this.baseData;
                 return;
             }
-            const parsedQuery = `${val}`
-                .replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function(match, reg, offset, str) {
-                    if (reg === "\\") return "\\\\";
-                    return reg;
-                })
-                .trim();
+            const parsedQuery = this.regExpMatch
+                ? `${val}`
+                      .replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function(match, reg) {
+                          if (reg === "\\") return "\\\\";
+                          return reg;
+                      })
+                      .trim()
+                : false;
             this.resultData = this.baseData.filter((item) => {
                 try {
                     let text = `${item.label || item.value}`;
                     item.hover = text === val;
-                    return text.indexOf(val) > -1 ? true : new RegExp(parsedQuery, "ig").test(text);
+                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "ig").test(text);
                 } catch (error) {
                     console.error(error);
                     return false;
                 }
             });
-            this.refreshVirtual += 1;
+            this.$nextTick(() => {
+                this.refreshVirtual += 1;
+            });
+        },
+        getMatchedOpt(text) {
+            if (!text) return false;
+            return this.baseData.some((item) => {
+                let bool = `${item.label || item.value}` === text;
+                if (bool) {
+                    this.select(item.value, item.label, item.attach);
+                }
+                return bool;
+            });
         },
     },
     watch: {
@@ -211,6 +230,7 @@ export default {
             deep: true,
             handler(val) {
                 this.baseData.forEach((item) => {
+                    this.$set(item, "hover", false);
                     this.$set(item, "selected", this.handleHighlight(val, item));
                 });
             },

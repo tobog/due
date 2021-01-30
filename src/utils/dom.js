@@ -1074,10 +1074,11 @@ export class DragMove {
     }
     update(element, options) {
         this._setOptions(options);
+        element = getElement(element);
         if (this._element === element) return;
         this.destroy();
         if (!this._handler) this._handler = throttle(this._cbFn, this._options.timeOut);
-        this._element = getElement(element);
+        this._element = element;
         this._relatedElement = getElement(this._options.relatedElement);
         this._binding();
     }
@@ -1110,7 +1111,9 @@ export class ClickOut {
         this._binding();
     }
     _setElements(elements) {
-        this._elements = (Array.isArray(elements) ? elements : [elements]).filter((ele) => !!ele);
+        this._elements = (Array.isArray(elements) ? elements : [elements])
+            .map((ele) => getElement(ele))
+            .filter((ele) => !!ele);
     }
     _handleCallback(event) {
         const type = event.type;
@@ -1388,7 +1391,7 @@ export class ScrollLoad {
             callback = options;
             options = {};
         }
-        this._element = element;
+        this._element = getElement(element);
         this._setOptions(options);
         this._callback = typeof callback === "function" && callback;
         this._handler = this._handleCallback.bind(this);
@@ -1429,8 +1432,10 @@ export class ScrollLoad {
     }
     update(element, options = {}) {
         this._setOptions(options);
+        element = getElement(element);
         if (this._element === element) return;
         this.destroy();
+        this._element = element;
         this._binding();
     }
     destroy() {
@@ -1457,7 +1462,7 @@ export class PerformanceScroll {
             callback = options;
             options = {};
         }
-        this._element = element;
+        this._element = getElement(element);
         this._setOptions(options);
         this._callback = typeof callback === "function" && callback;
         this._translateList = [];
@@ -1470,6 +1475,7 @@ export class PerformanceScroll {
     }
 
     async _handleCallback(event) {
+        if (this._resetStatus) return;
         const { beforeScroll, total, performance, length, hideLength } = this._options;
         if (typeof beforeScroll === "function") {
             const result = await beforeScroll(event, this);
@@ -1601,31 +1607,39 @@ export class PerformanceScroll {
     }
     update(element, options = {}) {
         this._setOptions(options);
+        element = getElement(element);
         if (this._element === element) return;
         this.destroy();
         if (!this._handler) this._handler = throttle(this._handleCallback.bind(this), this._options.throttle);
+        this._element = element;
         this._binding();
     }
     reset(isInit) {
+        this._resetStatus = true;
         this._performance = false;
-        this._preScrollTop = 0;
         this._translateList = [];
+        this._element.scrollTop = this._preScrollTop = 0;
         if (isInit === true)
             this._callback(
                 {
                     index: 0,
                     total: this._options.total,
                     translate: 0,
-                    length: 2 * this._options.hideLength + length * 1,
+                    length: 2 * this._options.hideLength + this._options.length * 1,
                 },
                 "reset"
             );
+        // 修复重置时多次触发滚动无法恢复默认状态
+        this.__resetTimeOut = setTimeout(() => {
+            this._resetStatus = false;
+            this.__resetTimeOut = null;
+        }, 300);
     }
     destroy() {
         EventListener.off(this._element, "scroll", this._handler);
         this.reset();
+        clearTimeout(this.__resetTimeOut);
         this._handler && this._handler.cancel();
-        this._handler = null;
-        this._isBind = false;
+        this._handler = this.__resetTimeOut = this._isBind = null;
     }
 }
