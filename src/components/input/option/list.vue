@@ -40,7 +40,7 @@ export default {
                 return [];
             },
         },
-        value: [String, Array],
+        value: [String, Array, Number],
         multiple: Boolean,
         strict: Boolean,
         performance: String,
@@ -104,14 +104,14 @@ export default {
             }
             return this.getStricts(data) ? data.value === value : data.value == value;
         },
-        select(val, text, attach) {
+        select(val, text, attach,isCancel) {
             if (this.multiple) {
                 const model = Array.isArray(this.value) ? this.value : [this.value];
                 val = model.some((item) => (this.getStricts(item) ? item === val : item == val))
                     ? model.filter((item) => (this.getStricts(item) ? item !== val : item != val))
                     : [...model, val];
             }
-            this.$emit("on-change", val, attach);
+            this.$emit("on-change", val, attach,isCancel);
         },
 
         handleKeydown(event) {
@@ -128,7 +128,7 @@ export default {
                 this.navigateOpts(1);
             }
             if (keyCode === 13) {
-                this.getMatchedOpt(null, true) || this.getMatchedOpt(event.target.value);
+                this.getMatchedOpt();
             }
         },
         handleOptChange(type, component) {
@@ -224,14 +224,11 @@ export default {
             });
             this.refreshVirtual += 1;
         },
-        getMatchedOpt(text, isHover) {
-            if (!text && !isHover) return false;
-            return this[isHover ? "getSizeData" : "resultData"].some((item) => {
-                let bool = isHover
-                    ? item.hover && !item.disabled && !item.selected
-                    : `${item.label || item.value}` === text;
+        getMatchedOpt(isCancel) {
+            return this.getSizeData.some((item) => {
+                let bool = item.hover && !item.disabled && !item.selected;
                 if (bool) {
-                    this.select(item.value, item.label, item.attach);
+                    this.select(item.value, item.label, item.attach,isCancel);
                 }
                 return bool;
             });

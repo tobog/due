@@ -35,27 +35,6 @@ export default {
         this.initPopper()
     },
     computed: {
-        // transitionListeners() {
-        //     const listeners = {}
-        //     ;[
-        //         "before-enter",
-        //         "before-leave",
-        //         "before-appear",
-        //         "enter",
-        //         "leave",
-        //         "appear",
-        //         "after-enter",
-        //         "after-leave",
-        //         "after-appear",
-        //         "enter-cancelled",
-        //         "leave-cancelled",
-        //         "appear-cancelled",
-        //     ].forEach((key) => {
-        //         const listener = this.$listeners[key]
-        //         if (listener) listeners[key] = listener
-        //     })
-        //     return listeners
-        // },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [

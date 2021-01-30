@@ -23,9 +23,9 @@
     </div>
 </template>
 <script>
-import {ClickOut, HoverOut, getElement} from "../../utils/dom"
-import Popper from "./popper/index"
-
+import { ClickOut, HoverOut, getElement } from "../../utils/dom";
+import Popper from "./popper/index";
+let indexSS = 0;
 export default {
     name: "DropBase",
     inheritAttrs: false,
@@ -64,70 +64,72 @@ export default {
             updateIndex: 0,
             ready: false,
             // unPerformance: this.visible || !this.performance, // 仅关闭情况下
-        }
+        };
     },
     computed: {
         getReference() {
-            if (this.reference instanceof HTMLElement) return this.reference
-            if (this.reference && typeof this.reference === "string") return getElement(this.reference)
-            if (this.ready && !this.isOutRef) return this.$el
-            return null
+            if (this.reference instanceof HTMLElement) return this.reference;
+            if (this.reference && typeof this.reference === "string") return getElement(this.reference);
+            if (this.ready && !this.isOutRef) return this.$el;
+            return null;
         },
         getDropStyle() {
             const dropStyle = this.dropStyle || {},
                 ref = (!this.show && !this._isMounted && {}) || this.getReference || {},
-                width = ref.offsetWidth
-            return typeof dropStyle === "string" ? `width:${width}px;${dropStyle}` : {width: `${width}px`, ...dropStyle}
+                width = ref.offsetWidth;
+            return typeof dropStyle === "string"
+                ? `width:${width}px;${dropStyle}`
+                : { width: `${width}px`, ...dropStyle };
         },
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_
+            const _tobogPrefix_ = this._tobogPrefix_;
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-visible`]: this.show,
                 },
-            ]
+            ];
         },
     },
     methods: {
         bindTriggerOut() {
-            if (this.trigger === "custom") return
+            if (this.trigger === "custom") return;
             this.$nextTick(() => {
                 const drop = (this.$refs.drop || {}).$el,
-                    reference = this.getReference
-                if (!drop || !reference) return
-                const eles = [drop, reference]
+                    reference = this.getReference;
+                if (!drop || !reference) return;
+                const eles = [drop, reference];
                 if (this.trigger === "hover") {
-                    this._eleClickOut && this._eleClickOut.destroy()
-                    this._eleClickOut = null
+                    this._eleClickOut && this._eleClickOut.destroy();
+                    this._eleClickOut = null;
                     if (this._eleHoverOut) {
-                        this._eleHoverOut.update(eles)
-                        return
+                        this._eleHoverOut.update(eles);
+                        return;
                     }
-                    this._eleHoverOut = new HoverOut(eles, this.handleTriggerOut)
+                    this._eleHoverOut = new HoverOut(eles, this.handleTriggerOut);
                 } else {
-                    this._eleHoverOut && this._eleHoverOut.destroy()
-                    this._eleHoverOut = null
+                    this._eleHoverOut && this._eleHoverOut.destroy();
+                    this._eleHoverOut = null;
                     if (this._eleClickOut) {
-                        this._eleClickOut.update(eles)
-                        return
+                        this._eleClickOut.update(eles);
+                        return;
                     }
-                    this._eleClickOut = new ClickOut(eles, this.handleTriggerOut)
+                    this._eleClickOut = new ClickOut(eles, this.handleTriggerOut);
                 }
-            })
+            });
         },
         async handleTriggerOut(status, event, index) {
-            console.log(status, index, event.type, "-???????????????")
-            clearTimeout(this.__outvisibleTimeOut)
+            console.log(status, indexSS++, event.target, event.type, "-???????????????");
+            clearTimeout(this.__outvisibleTimeOut);
             if (this.__outvisible || this.disabled) {
-                this.__outvisible = null
-                return
+                this.__outvisible = null;
+                return;
             }
             // console.log(status, index, event.type, event.target.innerText, "************");
             if (typeof this.visibleControl === "function") {
-                const result = await this.visibleControl(status)
-                if (result === void 0) return
-                status = !result
+                const result = await this.visibleControl(status);
+                if (result === void 0) return;
+                status = !result;
             }
             if (
                 (this.trigger !== "hover" && index == 1 && event.type !== "focusout") ||
@@ -136,91 +138,66 @@ export default {
                 // 一定在打开的状态下
                 // 内部自动关闭;
                 if (this.autoClose) {
-                    this.toggle(false)
-                    this.cancelChange()
+                    this.toggle(false);
+                    this.cancelChange();
                 }
-                this.$emit("on-clickout", status, event)
-                return
+                this.$emit("on-clickout", status, event);
+                return;
             }
             if (this.isToggle) {
                 // drop 的input 不引起Toggle变化
-                index != 1 && this.toggle(status ? false : !this.show)
-                index != 1 && !status && this.$emit("on-toggle", this.show)
+                index != 1 && this.toggle(status ? false : !this.show);
+                index != 1 && !status && this.$emit("on-toggle", this.show);
             } else {
-                this.show === status && this.toggle(!status)
+                this.show === status && this.toggle(!status);
             }
-            this.$emit("on-clickout", status, event)
+            this.$emit("on-clickout", status, event);
         },
         toggle(status = !this.show) {
-            if (this.disabled) return
-            this.show = status
+            if (this.disabled) return;
+            this.show = status;
         },
         updatedDrop() {
             this.$nextTick(() => {
-                this.updateIndex += 1
-            })
+                this.updateIndex += 1;
+            });
         },
-        // handleScroll(...args) {
-        //     this.$emit("on-scroll", ...args)
-        // },
         cancelChange() {
-            console.log("cancelChange")
-            this.__outvisible = true
-            clearTimeout(this.__outvisibleTimeOut)
+            console.log("cancelChange");
+            this.__outvisible = true;
+            clearTimeout(this.__outvisibleTimeOut);
             this.__outvisibleTimeOut = setTimeout(() => {
-                this.__outvisible = false
-                this.__outvisibleTimeOut = null
-            }, 300)
+                this.__outvisible = false;
+                this.__outvisibleTimeOut = null;
+            }, 300);
         },
-        //提高性能，在用到时在绑定实例
-        // activeBind(ele, oldEle) {
-        //     if (this.trigger === "custom" || this.unPerformance) return
-        //     this.__handleActiveTriggerOut = (event) => {
-        //         console.log("__handleActiveTriggerOut", "==========",event.currentTarget)
-        //         this.handleTriggerOut(false, event, 2)
-        //         this.unPerformance = true
-        //         EventListener.off(event.currentTarget, "click,foucsin", this.__handleActiveTriggerOut)
-        //         this.__handleActiveTriggerOut = null
-        //     }
-        //     if (oldEle) {
-        //         EventListener.off(oldEle, "click,foucsin", this.__handleActiveTriggerOut)
-        //     }
-        //     if (ele) {
-        //         EventListener.off(ele, "click,foucsin", this.__handleActiveTriggerOut)
-        //         EventListener.on(ele, "click,foucsin", this.__handleActiveTriggerOut)
-        //     }
-        // },
     },
     watch: {
         getReference() {
-            // this.activeBind(val, old)
-            this.bindTriggerOut()
+            this.bindTriggerOut();
         },
         transfer() {
-            this.bindTriggerOut()
+            this.bindTriggerOut();
         },
-        // unPerformance(val) {
-        //     setTimeout(this.bindTriggerOut)
-        // },
         show(val) {
-            this.$emit("on-visible-change", val)
-            this.$emit("update:visible", val)
-            this.$emit("on-change", val)
+            this.$emit("on-visible-change", val);
+            this.$emit("update:visible", val);
+            this.$emit("on-change", val);
         },
         visible(val) {
-            if (val === this.show) return
+            if (val === this.show) return;
             if (val) {
-                this.__outvisible = true
-                this._eleClickOut && this._eleClickOut.toggleBindDocument(true)
+                this.__outvisible = true;
+                this._eleClickOut && this._eleClickOut.toggleBindDocument(true);
             }
-            this.show = val
+            this.show = val;
         },
     },
     beforeDestroy() {
-        clearTimeout(this.__outvisibleTimeOut)
-        this._eleClickOut && this._eleClickOut.destroy()
-        this._eleHoverOut && this._eleHoverOut.destroy()
-        this._eleHoverOut = this._eleClickOut = this.__outvisibleTimeOut = null
+        clearTimeout(this.__outvisibleTimeOut);
+        this._eleClickOut && this._eleClickOut.destroy();
+        this._eleHoverOut && this._eleHoverOut.destroy();
+        this._eleHoverOut = this._eleClickOut = this.__outvisibleTimeOut = null;
     },
-}
+};
 </script>

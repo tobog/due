@@ -10,7 +10,7 @@ export default {
             default: 'text',
         },
         dataVueModule: String,
-        value: [String, Array, Number],
+        value: [String, Array, Number,Boolean],
         multiple: Boolean,
         name: String,
         suffix: String,

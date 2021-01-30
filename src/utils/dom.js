@@ -1136,7 +1136,7 @@ export class ClickOut {
         clearTimeout(this._delayTime);
         clearTimeout(this._typeTimeOut);
         // console.log(type, event.timeStamp, currentTarget);
-        console.log(type, event.timeStamp);
+        console.log(type, event.timeStamp,event.target);
         if (type !== "focusout") {
             // if (!this._firstClickCount) {
             //     const firstRun = this.__firstRun;

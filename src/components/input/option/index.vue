@@ -12,7 +12,6 @@
         :disabled="isReadonly"
         :reference="ready && showDrop ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
-        @scroll="handleScroll"
     >
         <InputBase
             ref="inputBase"
@@ -68,7 +67,7 @@
                 :reset="visible"
                 @on-change="select"
             >
-                <slot v-slot="opt" v-bind="opt"></slot>
+                <slot slot-scope="opt" v-bind="opt"></slot>
             </Options>
         </template>
     </Component>
@@ -115,7 +114,10 @@ export default {
         filterable: Boolean,
 
         beforeInput: Function,
-        strict: Boolean,
+        strict: {
+            type: Boolean,
+            default: true,
+        },
         options: Array,
         optCount: Number,
         maxLength: {
@@ -144,19 +146,21 @@ export default {
             return this.$slots.default || this.hasValidOpts || this.hasOpts;
         },
         hasOpts() {
-            return Array.isArray(this.options) || true;
+            return Array.isArray(this.options);
         },
         isSelect() {
             return false;
         },
     },
     methods: {
-        select(val, attach) {
+        select(val, attach, isCancel) {
             this.__attachData = attach;
             if (this.autoClose) this.visible = false;
             this.updateModel(val);
-            this.$refs.inputBase.setInputFocus(); //有问题无法失去焦点
-            this.showDrop && this.$refs.dropBase.cancelChange();
+            if (!isCancel) {
+                this.$refs.inputBase.setInputFocus(); //有问题无法失去焦点
+                this.showDrop && this.$refs.dropBase.cancelChange();
+            }
             this.$emit("on-change", this.model, this.__attachData);
         },
         handleFocus(event) {
@@ -251,7 +255,9 @@ export default {
         handleInputModel(value) {
             // 焦点失去更新匹配值，无需点击
             const isValid = validVal(value);
-            const bool = isValid && this.hasOpts && this.$refs.options && this.$refs.options.getMatchedOpt(value);
+            // 无法失去焦点问题
+            // 在 输入框有值是进行匹配
+            const bool = isValid && this.$refs.options && this.$refs.options.getMatchedOpt(true);
             if (bool || this.isSelect) return;
             if (isValid && this.multiple) {
                 // input 多选
@@ -267,10 +273,13 @@ export default {
                 return this.strict === false ? false : true;
             };
             const getOpt = (val) => {
-                return this.options.find((item) => {
-                    if (getStricts(item)) return item.value === val;
-                    return item.value == val;
-                });
+                return (
+                    this.hasOpts &&
+                    this.options.find((item) => {
+                        if (getStricts(item)) return item.value === val;
+                        return item.value == val;
+                    })
+                );
             };
             if (this.multiple) {
                 // 有问题

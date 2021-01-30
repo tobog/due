@@ -28,16 +28,12 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vOptions :options="opts" v-bind="config" v-model="val"> </vOptions>
-            <vInput class="margin-bottom-20" v-bind="config" v-model="val">
+            <vOptions :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vOptions>
+            <vOptions v-bind="config" v-model="val1"  class="margin-bottom-20"> </vOptions>
+            <vInput class="margin-bottom-20" v-bind="config" v-model="val2">
                 <vOption value="ghost">ghost2</vOption>
                 <vOption value="dashed">dashed1</vOption>
             </vInput>
-            <!-- <vInput class="margin-bottom-20" v-model="val2" v-bind="config">
-                <span slot="prepend">http://</span>
-                <vInput v-model="val4" slot="append" theme="primary"></vInput>
-            </vInput>
-            <vInput class="margin-bottom-20" v-bind="config" type="number"></vInput> -->
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
     </Demo>
@@ -117,7 +113,7 @@ export default {
                     label: "自动关闭",
                     key: "autoClose",
                     tag: "vSwitch",
-                    demoDefault: 5,
+                    demoDefault: false,
                     explain: "非多选下自动关闭",
                     dataType: "Boolean",
                     default: false,
@@ -180,7 +176,7 @@ export default {
                     key: "type",
                     tag: "vSelect",
                     default: "text",
-                    demoDefault: 5,
+                    demoDefault: 'text',
                     explain:
                         "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
                     dataType: "String",
