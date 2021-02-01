@@ -8,17 +8,18 @@
         @on-refresh="handleRefreshSize"
     >
         <Option
-            v-if="multiple && hasCheckAll && baseData.length"
-            :class="[_tobogPrefix_ + 'check-all']"
+            v-if="isHasCheckAll"
+            slot="prefix"
+            :class="[_tobogPrefix_ + '-check-all']"
             :theme="theme"
             :selected="baseData.length === value.length"
             :value="symbolAll"
             :checkbox="checkbox"
             :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
         ></Option>
-        <template v-for="opt in getSizeData">
-            <slot v-bind="opt">
-                <Option v-bind="opt" :key="opt.value"></Option>
+        <template v-for="(opt, index) in getSizeData">
+            <slot v-bind="opt" :indexInCurrent="index">
+                <Option v-bind="opt" :key="opt.value" :indexInCurrent="index"></Option>
             </slot>
         </template>
         <div v-if="!getSizeData.length" :class="[_tobogPrefix_ + '-nodata-text']">
@@ -27,12 +28,10 @@
     </Virtuallist>
 </template>
 <script>
-// 提取opts 单独成list 组件 提供性能 ，键盘操作等功能
-// import Icons from "../icons/index"
-import Option from "./index2";
-import Virtuallist from "../../scroll/virtuallist";
-import Emitter from "../../../utils/emitter";
-import langMinix from "../../../mixins/lang";
+import Option from "./index2"
+import Virtuallist from "../../scroll/virtuallist"
+import Emitter from "../../../utils/emitter"
+import langMinix from "../../../mixins/lang"
 export default {
     inheritAttrs: false,
     name: "Options",
@@ -50,7 +49,7 @@ export default {
         data: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         value: [String, Array, Number],
@@ -62,13 +61,16 @@ export default {
         keyModal: Boolean,
         reset: Boolean,
         noDataText: String,
+        checkAllLabel: String,
+        disabled: Boolean,
+        checkbox: {
+            type: Boolean,
+            default: true,
+        },
         hasCheckAll: {
             type: Boolean,
             default: true,
         },
-        checkAllLabel: String,
-        disabled: Boolean,
-        checkbox: Boolean,
     },
     data() {
         return {
@@ -77,197 +79,211 @@ export default {
             sizeInfo: {},
             refreshVirtual: 0,
             symbolAll: Date.now() + "@" + Math.random(),
-        };
+        }
     },
     created() {
-        this.$on("on-select", this.select);
-        this.$on("on-option-change", this.handleOptChange);
+        this.$on("on-select", this.select)
+        this.$on("on-option-change", this.handleOptChange)
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            return [_tobogPrefix_, {}];
+            const _tobogPrefix_ = this._tobogPrefix_
+            return [
+                _tobogPrefix_,
+                {
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-disabled`]: this.disabled,
+                },
+            ]
         },
         getSizeData() {
             if (this.sizeInfo.performance === "middle")
-                return this.resultData.slice(0, this.sizeInfo.index + this.sizeInfo.length);
+                return this.resultData.slice(0, this.sizeInfo.index + this.sizeInfo.length)
             if (this.sizeInfo.performance === "high")
-                return this.resultData.slice(this.sizeInfo.index, this.sizeInfo.index + this.sizeInfo.length);
-            return this.resultData;
+                return this.resultData.slice(this.sizeInfo.index, this.sizeInfo.index + this.sizeInfo.length)
+            return this.resultData
         },
-        getOptTip() {
-            if (this.tip == null) return this.langs("input.noDataText", "暂无数据");
-            return this.tip;
+        isHasCheckAll() {
+            return (
+                this.multiple &&
+                this.hasCheckAll &&
+                !this.disabled &&
+                this.baseData.length &&
+                !this.baseData.some((item) => item.disabled)
+            )
         },
     },
     methods: {
         init() {
-            this.baseData = this.data.map((item) => {
+            this.baseData = this.data.map((item, index) => {
                 return {
                     ...item,
-                    selected: this.$set(item, "selected", this.handleHighlight(this.value, item)),
+                    selected: this.$set(item, "selected", this.isSelected(this.value, item)),
                     theme: item.theme || this.theme,
                     hover: false,
                     multiple: this.multiple,
                     disabled: item.disabled || this.disabled,
                     checkbox: this.checkbox,
-                };
-            });
-            this.resultData = this.baseData;
-            this.refreshVirtual += 1;
+                    indexInTotal: index,
+                }
+            })
+            this.resultData = this.baseData
+            this.refreshVirtual += 1
         },
         handleRefreshSize(data) {
-            this.sizeInfo = data;
+            this.sizeInfo = data
         },
-        getStricts(item) {
-            if (item.strict !== void 0) return item.strict;
-            return this.strict === false ? false : true;
-        },
-        handleHighlight(value = "", data) {
+        // getStricts(item) {
+        //     if (item.strict !== void 0) return item.strict
+        //     return item.strict || this.strict
+        // },
+        isSelected(value = "", data) {
+            let strict = data.strict || this.strict
             if (Array.isArray(value) && this.multiple) {
-                return this.getStricts(data)
+                return strict
                     ? value.indexOf(data.value) > -1
                     : value.some((val) => {
-                          return data.value == val;
-                      });
+                          return data.value == val
+                      })
             }
-            return this.getStricts(data) ? data.value === value : data.value == value;
+            return strict ? data.value === value : data.value == value
         },
         select(val, text, attach, isCancel) {
             if (this.multiple && this.hasCheckAll && val === this.symbolAll) {
-                val = this.value.length === this.baseData.length ? [] : this.baseData.map((item) => item.value);
+                val = this.value.length === this.baseData.length ? [] : this.baseData.map((item) => item.value)
             } else if (this.multiple) {
-                const model = Array.isArray(this.value) ? this.value : [this.value];
-                val = model.some((item) => (this.getStricts(item) ? item === val : item == val))
-                    ? model.filter((item) => (this.getStricts(item) ? item !== val : item != val))
-                    : [...model, val];
+                const model = Array.isArray(this.value) ? this.value : []
+                val = model.some((item) => ((item.strict || this.strict) ? item === val : item == val))
+                    ? model.filter((item) => ((item.strict || this.strict) ? item !== val : item != val))
+                    : [...model, val]
             }
-            this.$emit("on-change", val, attach, isCancel);
+            this.$emit("on-change", val, attach, isCancel)
         },
 
         handleKeydown(event) {
-            if (!this.keyModal) return;
-            const keyCode = event.keyCode;
+            if (!this.keyModal) return
+            const keyCode = event.keyCode
             // Esc slide-up
             // next
             if (keyCode === 38) {
-                event.preventDefault();
-                this.navigateOpts(-1);
+                event.preventDefault()
+                this.navigateOpts(-1)
             }
             if (keyCode === 40) {
-                event.preventDefault();
-                this.navigateOpts(1);
+                event.preventDefault()
+                this.navigateOpts(1)
             }
             if (keyCode === 13) {
-                this.getMatchedOpt();
+                this.getMatchedOpt()
             }
         },
         handleOptChange(type, component) {
             if (type === "hover") {
-                this._hoverComponent = component;
+                this._hoverComponent = component
+                return
             }
 
             if (type === "destory") {
-                this._hoverComponent = null;
+                this._hoverComponent = null
+                return
             }
         },
         navigateOpts(val) {
-            let defaultIndex = -1;
-            let selectIndex = -1;
+            let defaultIndex = -1
+            let selectIndex = -1
             let compIndex = this.getSizeData.findIndex((item, i) => {
                 if (selectIndex === -1 && item.selected) {
-                    selectIndex = i;
+                    selectIndex = i
                 }
                 if (defaultIndex === -1 && !item.disabled) {
-                    defaultIndex = i;
+                    defaultIndex = i
                 }
-                return item.hover && !item.disabled;
-            });
-            compIndex = compIndex > -1 ? compIndex : selectIndex;
+                return item.hover && !item.disabled
+            })
+            compIndex = compIndex > -1 ? compIndex : selectIndex
             if (compIndex > -1) {
-                let index = compIndex + val;
-                let nextData = this.getSizeData[index];
+                let index = compIndex + val
+                let nextData = this.getSizeData[index]
                 while (nextData) {
                     if (nextData.disabled) {
-                        index += val;
-                        nextData = this.getSizeData[index];
+                        index += val
+                        nextData = this.getSizeData[index]
                     } else {
-                        break;
+                        break
                     }
                 }
-                if (!nextData) return;
-                this.$set(this.getSizeData[compIndex], "hover", false);
-                this.$set(nextData, "hover", true);
+                if (!nextData) return
+                this.$set(this.getSizeData[compIndex], "hover", false)
+                this.$set(nextData, "hover", true)
                 this.$nextTick(() => {
-                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el);
-                });
-                return;
+                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el)
+                })
+                return
             }
             if (defaultIndex > -1) {
-                this.$set(this.getSizeData[defaultIndex], "hover", true);
+                this.$set(this.getSizeData[defaultIndex], "hover", true)
                 this.$nextTick(() => {
-                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el);
-                });
+                    this._hoverComponent && this.focusIndex(this._hoverComponent.$el)
+                })
             }
         },
         focusIndex(element) {
-            if (!element) return;
+            if (!element) return
             // update scroll
             const parentNode = this.$el,
                 elementRect = element.getBoundingClientRect(),
                 parentRect = parentNode.getBoundingClientRect(),
                 bottomOverflowDistance = elementRect.bottom - parentRect.bottom,
-                topOverflowDistance = elementRect.top - parentRect.top;
+                topOverflowDistance = elementRect.top - parentRect.top
             if (bottomOverflowDistance > 0) {
-                parentNode.scrollTop += bottomOverflowDistance;
+                parentNode.scrollTop += bottomOverflowDistance
             }
             if (topOverflowDistance < 0) {
-                parentNode.scrollTop += topOverflowDistance;
+                parentNode.scrollTop += topOverflowDistance
             }
         },
 
         queryChange(val = "") {
             if (val === "") {
                 this.baseData.forEach((item) => {
-                    item.hover = false;
-                    if (!this.multiple) item.selected = false;
-                });
-                this.resultData = this.baseData;
-                this.refreshVirtual += 1;
-                return;
+                    item.hover = false
+                    if (!this.multiple) item.selected = false
+                })
+                this.resultData = this.baseData
+                this.refreshVirtual += 1
+                return
             }
             const parsedQuery = this.regExpMatch
                 ? `${val}`
                       .replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function(match, reg) {
-                          if (reg === "\\") return "\\\\";
-                          return reg;
+                          if (reg === "\\") return "\\\\"
+                          return reg
                       })
                       .trim()
-                : false;
+                : false
             this.resultData = this.baseData.filter((item) => {
                 try {
-                    let text = `${item.label || item.value}`;
-                    item.hover = text === val;
-                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "i").test(text);
+                    let text = `${item.label || item.value}`
+                    item.hover = text === val
+                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "i").test(text)
                 } catch (error) {
-                    console.error(error);
-                    return false;
+                    console.error(error)
+                    return false
                 }
-            });
-            this.refreshVirtual += 1;
+            })
+            this.refreshVirtual += 1
         },
         getMatchedOpt(text, isCancel) {
-            let isHover = text == void 0;
-            if (!isHover && !text) return;
+            let isHover = text == void 0
+            if (!isHover && !text) return
             return this.getSizeData.some((item) => {
-                let bool = isHover
-                    ? item.hover && !item.disabled && !item.selected
-                    : `${item.label || item.value}` === text;
+                let bool =
+                    !item.disabled && !item.selected && (isHover ? item.hover : `${item.label || item.value}` === text)
                 if (bool) {
-                    this.select(item.value, item.label, item.attach, isCancel);
+                    this.select(item.value, item.label, item.attach, isCancel)
                 }
-                return bool;
-            });
+                return bool
+            })
         },
     },
     watch: {
@@ -275,26 +291,26 @@ export default {
             deep: true,
             handler(val) {
                 this.baseData.forEach((item) => {
-                    this.$set(item, "hover", false);
-                    this.$set(item, "selected", this.handleHighlight(val, item));
-                });
+                    this.$set(item, "hover", false)
+                    this.$set(item, "selected", this.isSelected(val, item))
+                })
             },
         },
         data: {
             immediate: true,
             handler() {
-                this.init();
+                this.init()
             },
         },
         reset(val) {
             if (val) {
                 this.baseData.forEach((item) => {
-                    this.$set(item, "hover", false);
-                });
-                this.resultData = this.baseData;
+                    this.$set(item, "hover", false)
+                })
+                this.resultData = this.baseData
             }
         },
     },
     beforeDestroy() {},
-};
+}
 </script>

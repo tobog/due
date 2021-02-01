@@ -1,12 +1,16 @@
 <template>
-    <div :class="classes" :data-vue-module="$options.name">
-        <div :style="getTransferStyle">
-            <slot></slot>
+    <div :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+        <slot name="prefix" />
+        <div :class="[_tobogPrefix_ + '-inner']" ref="virtuallist">
+            <div :style="getTransferStyle">
+                <slot></slot>
+            </div>
         </div>
+        <slot name="suffix" />
     </div>
 </template>
 <script>
-import { PerformanceScroll } from "../../utils/dom";
+import {PerformanceScroll} from "../../utils/dom"
 // Virtuallist 虚拟列表
 export default {
     name: "Virtuallist",
@@ -34,7 +38,7 @@ export default {
             sizeLength: this.baseSize * 2,
             sizeIndex: 0,
             // customeEle: false,
-        };
+        }
     },
     created() {
         this.$emit("on-refresh", {
@@ -42,23 +46,14 @@ export default {
             length: 2 * 5 + this.baseSize,
             performance: this.initPerformance,
             translate: this.translateSize,
-        });
+        })
     },
     mounted() {
-        this.init();
+        this.init()
     },
     computed: {
-        classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            return [
-                _tobogPrefix_,
-                // {
-                //     [`${_tobogPrefix_}-custome`]: this.customeEle,
-                // },
-            ];
-        },
         isPerformance() {
-            return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total;
+            return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total
         },
         initPerformance() {
             // if (this.performance === "auto") {
@@ -67,35 +62,34 @@ export default {
             //     return "high";
             // }
             // 测试用
-            return "high";
-            return this.performance;
+            return "high"
+            return this.performance
         },
         getTransferStyle() {
-            if (!this.isPerformance) return {};
+            if (!this.isPerformance) return {}
             if (this.translateSize > 0)
                 return {
                     transform: `translateY(${this.translateSize}px)`,
-                };
-            return {};
+                }
+            return {}
         },
     },
     methods: {
         init() {
-            this.translateSize = 0;
+            this.translateSize = 0
             if (this._performanceScroll) {
-                this._performanceScroll.reset(true);
-                this.initPerformanceScroll();
+                this._performanceScroll.reset(true)
+                this.initPerformanceScroll()
             } else {
-                this.initPerformanceScroll();
+                this.initPerformanceScroll()
             }
         },
         // 性能优化
         initPerformanceScroll(opts = {}) {
-            if (this.initPerformance !== "middle" && this.initPerformance !== "high") return;
+            if (this.initPerformance !== "middle" && this.initPerformance !== "high") return
             this.$nextTick(() => {
-                // const el = typeof this.element === "function" ? this.element(this.$el) : this.element || this.$el;
-                // this.customeEle = el !== this.$el;
-                if (this.$el) {
+                const el = this.$refs.virtuallist
+                if (el) {
                     opts = {
                         performance: this.initPerformance,
                         beforeScroll: () => this.isPerformance || this.sizeIndex >= this.total,
@@ -104,47 +98,43 @@ export default {
                         cellElement: this.cellSelector || "div>*",
                         cellHeight: this.cellHeight,
                         ...opts,
-                    };
-                    if (this._performanceScroll) {
-                        this._performanceScroll.update(this.$el, opts);
-                        return;
                     }
-                    this._performanceScroll = new PerformanceScroll(
-                        this.$el,
-                        opts,
-                        ({ index, translate, length }, type) => {
-                            if (type === "over") return;
-                            console.log(index, translate, length, this.total, "============");
-                            this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
-                            if (this.sizeIndex < 0) this.sizeIndex = 0;
-                            this.sizeLength = length;
-                            this.translateSize = translate;
-                            this.$emit("on-refresh", {
-                                index: this.sizeIndex,
-                                length: this.sizeLength,
-                                performance: this.initPerformance,
-                                translate: this.translateSize,
-                            });
-                        }
-                    );
+                    if (this._performanceScroll) {
+                        this._performanceScroll.update(el, opts)
+                        return
+                    }
+                    this._performanceScroll = new PerformanceScroll(el, opts, ({index, translate, length}, type) => {
+                        if (type === "over") return
+                        console.log(index, translate, length, this.total, "============")
+                        this.sizeIndex = index + length > this.total ? this.total - length + 1 : index
+                        if (this.sizeIndex < 0) this.sizeIndex = 0
+                        this.sizeLength = length
+                        this.translateSize = translate
+                        this.$emit("on-refresh", {
+                            index: this.sizeIndex,
+                            length: this.sizeLength,
+                            performance: this.initPerformance,
+                            translate: this.translateSize,
+                        })
+                    })
                 }
-            });
+            })
         },
     },
     watch: {
         reset() {
-            this.init();
+            this.init()
         },
         total() {
-            this.init();
+            this.init()
         },
         initPerformance() {
-            this.initPerformanceScroll();
+            this.initPerformanceScroll()
         },
     },
     beforeDestroy() {
-        this._performanceScroll && this._performanceScroll.destroy();
-        this._performanceScroll = null;
+        this._performanceScroll && this._performanceScroll.destroy()
+        this._performanceScroll = null
     },
-};
+}
 </script>

@@ -2,15 +2,21 @@ $prefix-cls: #{$prefix}-scroll;
 $prefix-cls-performance: #{$prefix}-virtuallist;
 
 .#{$prefix-cls-performance} {
-    overflow: auto;
+    overflow: hidden;
     max-height: inherit;
     height: 100%;
-    position: relative;
-
-    // &-custome {
-    //     max-height: unset;
-    //     height: unset;
-    // }
+    display: flex;
+    flex-direction: column;
+    & > * {
+        flex: none;
+    }
+    & > &-inner {
+        // position: relative;
+        height: 100%;
+        max-height: inherit;
+        overflow: auto;
+        flex: auto;
+    }
 }
 
 .#{$prefix-cls} {
@@ -39,7 +45,7 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
             transition: transform 0.3s linear;
         }
 
-        &[data-direction="top"]>&-inner {
+        &[data-direction="top"] > &-inner {
             transform: translateY(-200%);
         }
     }
@@ -54,17 +60,17 @@ $prefix-cls-performance: #{$prefix}-virtuallist;
         background-color: $mask;
     }
 
-    &-up>&-placeholder[data-direction="up"],
-    &-down>&-placeholder[data-direction="down"] {
+    &-up > &-placeholder[data-direction="up"],
+    &-down > &-placeholder[data-direction="down"] {
         display: block;
     }
 
-    &-down>&-placeholder[data-active="true"]>&-placeholder-inner {
+    &-down > &-placeholder[data-active="true"] > &-placeholder-inner {
         transform: translateY(0%);
         animation: #{$prefix-cls}-down 0.2s linear;
     }
 
-    &-up>&-placeholder[data-active="true"]>&-placeholder-inner {
+    &-up > &-placeholder[data-active="true"] > &-placeholder-inner {
         transform: translateY(0%);
         animation: #{$prefix-cls}-up 0.2s linear;
     }

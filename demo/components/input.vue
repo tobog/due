@@ -56,7 +56,7 @@ export default {
     created() {
         for (let index = 0; index < 303; index++) {
             this.opts.push({
-                label: index,
+                label: index +"@",
                 value: index,
             });
         }
