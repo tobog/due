@@ -3,7 +3,7 @@ $prefix-cls: #{$prefix}-option;
 .#{$prefix-cls} {
     margin: 0;
     padding: 6px 12px;
-    line-height: 1.5;
+    // line-height: 1.5;
     color: $content;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -51,13 +51,6 @@ $prefix-cls: #{$prefix}-option;
         }
         &-check-all{
             box-shadow: 0 1px  3px -2px $border;
-            // position: absolute;
-            // top: 0;
-            // left: 0;
-            // right: 0;
-            // &+.#{$prefix-cls}{
-            //     margin-top: 33px;
-            // }
         }
     }
 }

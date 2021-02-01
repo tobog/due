@@ -7,16 +7,27 @@
         :reset="refreshVirtual"
         @on-refresh="handleRefreshSize"
     >
-        <Option
-            v-if="isHasCheckAll"
+        <slot
             slot="prefix"
-            :class="[_tobogPrefix_ + '-check-all']"
-            :theme="theme"
+            name="prefix"
             :selected="baseData.length === value.length"
+            :theme="theme"
             :value="symbolAll"
-            :checkbox="checkbox"
-            :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
-        ></Option>
+            :queryChange="queryChange"
+            :select="select"
+        >
+            <Option
+                v-if="isHasCheckAll"
+                slot="prefix"
+                :class="[_tobogPrefix_ + '-check-all']"
+                :theme="theme"
+                :selected="baseData.length === value.length"
+                :value="symbolAll"
+                :checkbox="checkbox"
+                :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
+            ></Option>
+        </slot>
+
         <template v-for="(opt, index) in getSizeData">
             <slot v-bind="opt" :indexInCurrent="index">
                 <Option v-bind="opt" :key="opt.value" :indexInCurrent="index"></Option>
@@ -25,6 +36,7 @@
         <div v-if="!getSizeData.length" :class="[_tobogPrefix_ + '-nodata-text']">
             {{ noDataText || langs("options.noDataText", "暂无相关数据") }}
         </div>
+        <slot slot="suffix" name="suffix" :theme="theme" :select="select"></slot>
     </Virtuallist>
 </template>
 <script>
@@ -133,10 +145,6 @@ export default {
         handleRefreshSize(data) {
             this.sizeInfo = data
         },
-        // getStricts(item) {
-        //     if (item.strict !== void 0) return item.strict
-        //     return item.strict || this.strict
-        // },
         isSelected(value = "", data) {
             let strict = data.strict || this.strict
             if (Array.isArray(value) && this.multiple) {
@@ -153,8 +161,8 @@ export default {
                 val = this.value.length === this.baseData.length ? [] : this.baseData.map((item) => item.value)
             } else if (this.multiple) {
                 const model = Array.isArray(this.value) ? this.value : []
-                val = model.some((item) => ((item.strict || this.strict) ? item === val : item == val))
-                    ? model.filter((item) => ((item.strict || this.strict) ? item !== val : item != val))
+                val = model.some((item) => (item.strict || this.strict ? item === val : item == val))
+                    ? model.filter((item) => (item.strict || this.strict ? item !== val : item != val))
                     : [...model, val]
             }
             this.$emit("on-change", val, attach, isCancel)
