@@ -77,13 +77,13 @@
 				<code v-text="getFormatCode" class="html"></code>
 			</pre>
         </div>
-        <!-- <div class="demo-props-table">
+        <div class="demo-props-table">
             <h2 class="demo-header">Props & Events</h2>
             <vTable :columns="getColumns" :data="config" class="demo-table" border stripe></vTable>
         </div>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>
-        </div> -->
+        </div>
     </div>
 </template>
 

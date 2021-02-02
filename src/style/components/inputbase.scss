@@ -30,7 +30,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         align-items: stretch;
         flex-wrap: nowrap;
 
-        &>* {
+        & > * {
             background-color: $white;
         }
     }
@@ -90,7 +90,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         border-bottom-right-radius: $radius;
     }
 
-    &-active>&-inner {
+    &-active > &-inner {
         box-shadow: 0 0 6px 0 $primary;
         border-color: $primary;
     }
@@ -111,8 +111,8 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 
     &-readonly,
     &-disabled,
-    &-disabled>*,
-    &-readonly>* {
+    &-disabled > *,
+    &-readonly > * {
         cursor: not-allowed !important;
         pointer-events: none !important;
     }
@@ -121,7 +121,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         // cursor: not-allowed !important;
         // pointer-events: none !important;
 
-        &>* {
+        & > * {
             background-color: $disabled;
         }
     }
@@ -144,18 +144,18 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     &-arrowicon {
         display: none;
         font-size: 1.2em;
-
+        transition: transform 0.2s;
         &::before {
             transition: transform 0.2s;
         }
     }
 
     &-clearicon,
-    &-clear &-inner:hover>&-arrowicon {
+    &-clear &-inner:hover > &-arrowicon {
         display: none;
     }
 
-    &-clear &-inner:hover>&-clearicon {
+    &-clear &-inner:hover > &-clearicon {
         display: inline-flex;
     }
 
@@ -199,11 +199,11 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         flex-wrap: nowrap;
         white-space: nowrap;
 
-        &[data-hidden='true'] {
+        &[data-hidden="true"] {
             display: none;
         }
 
-        &>span {
+        & > span {
             flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -232,7 +232,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 }
 
-.#{$prefix-cls-dropbase}-visible .#{$prefix-cls-select} {
+.#{$prefix-cls-dropbase}-visible > .#{$prefix-cls-select} > .#{$prefix-cls-base}-inner {
     .#{$prefix-cls-base}-arrowicon {
         transform: rotate(180deg);
     }
@@ -240,8 +240,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 
 .#{$prefix-cls-select},
 .#{$prefix-cls-input} {
-
-    &-wrapper>.#{$prefix-cls-dropbase}-drop,
+    &-wrapper > .#{$prefix-cls-dropbase}-drop,
     &-drop-wrapper {
         max-height: 260px;
     }
@@ -258,8 +257,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 }
 
-@each $key,
-$value in $colors-map {
+@each $key, $value in $colors-map {
     .#{$prefix-cls-base}-#{$key} {
         .#{$prefix-cls-base}-tag:hover {
             border-color: $value;
@@ -277,7 +275,7 @@ $value in $colors-map {
             }
         }
 
-        &.#{$prefix-cls-base}-active>.#{$prefix-cls-base}-inner {
+        &.#{$prefix-cls-base}-active > .#{$prefix-cls-base}-inner {
             box-shadow: 0 0 6px 0 $value;
             border-color: $value;
         }
@@ -295,13 +293,13 @@ $value in $colors-map {
             }
         }
 
-        &.#{$prefix-cls-number}-active>.#{$prefix-cls-number}-inner {
+        &.#{$prefix-cls-number}-active > .#{$prefix-cls-number}-inner {
             box-shadow: 0 0 6px 0 $value;
             border-color: $value;
         }
 
         .#{$prefix-cls-number}-suffix {
-            &>.#{$prefix}-icons:hover {
+            & > .#{$prefix}-icons:hover {
                 color: $value;
             }
         }
@@ -319,13 +317,13 @@ $value in $colors-map {
             }
         }
 
-        &.#{$prefix-cls-textarea}-active>.#{$prefix-cls-textarea}-inner {
+        &.#{$prefix-cls-textarea}-active > .#{$prefix-cls-textarea}-inner {
             box-shadow: 0 0 6px 0 $value;
             border-color: $value;
         }
 
         .#{$prefix-cls-textarea}-suffix {
-            &>.#{$prefix}-icons:hover {
+            & > .#{$prefix}-icons:hover {
                 color: $value;
             }
         }
@@ -343,7 +341,7 @@ $value in $colors-map {
         justify-content: center;
         border-left: 1px solid $border;
 
-        &>.#{$prefix}-icons:hover {
+        & > .#{$prefix}-icons:hover {
             color: $primary;
         }
     }
@@ -353,7 +351,6 @@ $value in $colors-map {
     }
 
     &-suffix {
-
         .#{$prefix}-icons[data-min],
         .#{$prefix}-icons[data-max] {
             color: $disable-content !important;
@@ -415,7 +412,7 @@ $value in $colors-map {
             transform: translateY(-50%);
         }
 
-        &:hover>.#{$prefix-cls-textarea}-suffix {
+        &:hover > .#{$prefix-cls-textarea}-suffix {
             display: none;
         }
     }

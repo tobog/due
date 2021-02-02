@@ -56,13 +56,13 @@ export default {
             return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total
         },
         initPerformance() {
-            // if (this.performance === "auto") {
-            //     if (this.total < 100) return "normal";
-            //     if (this.total < 500) return "middle";
-            //     return "high";
-            // }
+            if (this.performance === "auto") {
+                if (this.total < 100) return "normal"
+                if (this.total < 200) return "middle"
+                return "high"
+            }
             // 测试用
-            return "high"
+            // return "high"
             return this.performance
         },
         getTransferStyle() {
@@ -86,13 +86,13 @@ export default {
         },
         // 性能优化
         initPerformanceScroll(opts = {}) {
-            if (this.initPerformance !== "middle" && this.initPerformance !== "high") return
+            if (!this._performanceScroll && this.initPerformance !== "middle" && this.initPerformance !== "high") return
             this.$nextTick(() => {
                 const el = this.$refs.virtuallist
                 if (el) {
                     opts = {
                         performance: this.initPerformance,
-                        beforeScroll: () => this.isPerformance || this.sizeIndex >= this.total,
+                        beforeScroll: () => this.isPerformance || this.sizeIndex < this.total,
                         length: this.baseSize,
                         total: this.total,
                         cellElement: this.cellSelector || "div>*",
@@ -105,7 +105,7 @@ export default {
                     }
                     this._performanceScroll = new PerformanceScroll(el, opts, ({index, translate, length}, type) => {
                         if (type === "over") return
-                        console.log(index, translate, length, this.total, "============")
+                        // console.log(index, translate, length, this.total, "============")
                         this.sizeIndex = index + length > this.total ? this.total - length + 1 : index
                         if (this.sizeIndex < 0) this.sizeIndex = 0
                         this.sizeLength = length

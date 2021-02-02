@@ -28,12 +28,7 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vOptions :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vOptions>
-            <!-- <vOptions v-bind="config" v-model="val1"  class="margin-bottom-20"> </vOptions> -->
-            <!-- <vInput class="margin-bottom-20" v-bind="config" v-model="val2">
-                <vOption value="ghost">ghost2</vOption>
-                <vOption value="dashed">dashed1</vOption>
-            </vInput> -->
+            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput>
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
     </Demo>
@@ -51,20 +46,20 @@ export default {
             val4: "",
             show1: true,
             opts: [],
-        };
+        }
     },
     created() {
-        for (let index = 0; index < 303; index++) {
+        for (let index = 0; index < 608; index++) {
             this.opts.push({
-                label: index +"@",
+                label: index + "@",
                 value: index,
-            });
+            })
         }
     },
     computed: {
         getCode() {
             return `
-					`;
+					`
         },
         getConfig() {
             return [
@@ -320,8 +315,8 @@ export default {
                     dataType: "Function",
                     default: "-",
                 },
-            ];
+            ]
         },
     },
-};
+}
 </script>

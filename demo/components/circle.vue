@@ -3,20 +3,20 @@
 <template>
     <Demo :config="getConfig" :code="getCode">
         <template slot="header">
-            <h2>代码示例 (Circle 进度环)</h2>
+            <h2>代码示例 (Circle/CircleCard 进度环)</h2>
             <h4 class="padding-top-10">
                 图表类组件。一般有两种用途：1.显示某项任务进度的百分比；2.统计某些指标的占比。 3.
                 Circle已被html默认标签，请勿自己使用，你可以使用dueCircle等方法修改组件名称
             </h4>
         </template>
         <template v-slot="config">
-            <vCircle v-bind="config">{{ config.percent }}%</vCircle>
-            <vCircle v-bind="config">
+            <vCircleCard v-bind="config">{{ config.percent }}%</vCircleCard>
+            <vCircleCard v-bind="config">
                 <vIcon type="ios-checkmark" size="60" style="color:#5cb85c"></vIcon>
-            </vCircle>
-            <vCircle v-bind="config" stroke-color="#ff5500">
+            </vCircleCard>
+            <vCircleCard v-bind="config" stroke-color="#ff5500">
                 <vIcon type="ios-close" size="50" style="color:#ff5500"></vIcon>
-            </vCircle>
+            </vCircleCard>
         </template>
     </Demo>
 </template>
@@ -33,7 +33,7 @@ export default {
     methods: {},
     computed: {
         getCode() {
-            return `<Circle v-bind=CODE></Circle>`
+            return `<CircleCard v-bind=CODE></CircleCard>`
         },
         getConfig() {
             return [

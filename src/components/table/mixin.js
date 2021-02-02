@@ -340,7 +340,7 @@ export default {
         },
         // 性能优化
         initPerformanceScroll(opts = {}) {
-            if (this.initPerformance !== "middle" && this.initPerformance !== "high") return
+            if (!this._performanceScroll &&  this.initPerformance !== "middle" && this.initPerformance !== "high") return
             this.$nextTick(() => {
                 if (this.$refs.body) {
                     if (this._performanceScroll) {
@@ -351,7 +351,7 @@ export default {
                         this.$refs.body,
                         {
                             performance: this.initPerformance,
-                            beforeScroll: () => this.isPerformance || this.sizeIndex >= this.resultData.length,
+                            beforeScroll: () => this.isPerformance || this.sizeIndex < this.resultData.length,
                             length: this.baseLength,
                             total: this.resultData.length,
                             cellElement: "table>tbody>tr",

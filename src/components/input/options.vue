@@ -10,7 +10,7 @@
         <slot
             slot="prefix"
             name="prefix"
-            :selected="baseData.length === value.length"
+            :selected="isCheckAll"
             :theme="theme"
             :value="symbolAll"
             :queryChange="queryChange"
@@ -21,7 +21,7 @@
                 slot="prefix"
                 :class="[_tobogPrefix_ + '-check-all']"
                 :theme="theme"
-                :selected="baseData.length === value.length"
+                :selected="isCheckAll"
                 :value="symbolAll"
                 :checkbox="checkbox"
                 :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
@@ -40,10 +40,10 @@
     </Virtuallist>
 </template>
 <script>
-import Option from "./index2"
-import Virtuallist from "../../scroll/virtuallist"
-import Emitter from "../../../utils/emitter"
-import langMinix from "../../../mixins/lang"
+import Option from "./option"
+import Virtuallist from "../scroll/virtuallist"
+import Emitter from "../../utils/emitter"
+import langMinix from "../../mixins/lang"
 export default {
     inheritAttrs: false,
     name: "Options",
@@ -121,6 +121,9 @@ export default {
                 !this.baseData.some((item) => item.disabled && !item.selected)
             )
         },
+        isCheckAll() {
+            return Array.isArray(this.value) && this.value.length > 0 && this.baseData.length === this.value.length
+        },
     },
     methods: {
         init() {
@@ -150,9 +153,11 @@ export default {
             return strict ? data.value === value : data.value == value
         },
         select(val, text, attach, isCancel) {
+            console.log(this.value, "==============")
             if (this.multiple && this.hasCheckAll && val === this.symbolAll) {
+                const model = Array.isArray(this.value) ? this.value : []
                 val =
-                    this.value.length === this.baseData.length
+                    model.length > 0 && model.length === this.baseData.length
                         ? this.baseData.filter((item) => item.selected && item.disabled).map((item) => item.value)
                         : this.baseData.map((item) => item.value)
             } else if (this.multiple) {

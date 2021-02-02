@@ -2,8 +2,7 @@ $prefix-cls: #{$prefix}-option;
 
 .#{$prefix-cls} {
     margin: 0;
-    padding: 6px 12px;
-    // line-height: 1.5;
+    padding: 8px 16px;
     color: $content;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -12,30 +11,27 @@ $prefix-cls: #{$prefix}-option;
         background-color: $back;
     }
 
-    &#{&}-hover,
-    &#{&}-hover#{&}-multiple-selected {
+    &#{&}-hover {
         background-color: $light-primary;
         color: $white;
     }
-
+    &#{&}-disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: $disabled;
+    }
     &#{&}-selected {
         color: $white;
         background-color: $primary;
     }
 
-    &-selected#{&}-multiple {
+    &#{&}-selected#{&}-multiple {
         color: $primary;
         background: none;
     }
 
-    &-disabled {
-        cursor: not-allowed;
-        pointer-events: none;
-        background-color: $disabled;
-    }
-
     &-icon-selected {
-        font-size: 22px;
+        font-size: 1.5em;
         float: right;
     }
     &-checkbox {
@@ -46,11 +42,11 @@ $prefix-cls: #{$prefix}-option;
         position: relative;
         &-nodata-text {
             text-align: center;
-            padding: 16px 0;
+            padding: 12px 0;
             color: $sub-content;
         }
-        &-check-all{
-            box-shadow: 0 1px  3px -2px $border;
+        &-check-all {
+            box-shadow: 0 1px 3px -2px $border;
         }
     }
 }

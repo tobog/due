@@ -25,7 +25,7 @@ import Input from "./input"
 import Textarea from "./input/textarea"
 import Select from "./input/select"
 import Option from "./input/option"
-import Options from "./input/option/index"
+import Options from "./input/options"
 import InputNumber from "./input/number"
 import Sort from "./sort/index"
 import Icon from "./icons/index"
@@ -33,7 +33,7 @@ import Modal from "./modal/index"
 import Upload from "./upload/index"
 import Progress from "./progress/index"
 
-import Circle from "./circle/index"
+import CircleCard from "./circle/index"
 import LoadingBar from "./loading-bar/index.js"
 import Step from "./steps/step"
 import Steps from "./steps/steps"
@@ -133,7 +133,7 @@ export default {
     Modal,
     Upload,
     Progress,
-    Circle,
+    CircleCard,
     Step,
     Steps,
     // Steps2,

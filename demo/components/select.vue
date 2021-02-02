@@ -22,7 +22,8 @@
 					<div slot="prepend">http://</div>
 					<span slot="append">.com</span>
 				</vSelect>
-				<vSelect :options="options" class="margin-bottom-20" prefix v-bind="formData" v-model="val1"></vSelect>
+				<vSelect :options="options" class="margin-bottom-20"  v-bind="formData" v-model="val1"></vSelect>
+				<vSelect :options="options.slice(0,30)" class="margin-bottom-20"  v-bind="formData" v-model="val1"></vSelect>
 				<vSelect class="margin-bottom-20" v-model="val2" v-bind="formData">
 					<span slot="prepend">http://</span>
 					<vSelect v-model="val4" slot="append" theme="primary"></vSelect>
@@ -62,7 +63,7 @@ export default {
 	},
 	created(){
 		var options = [];
-		for (let index = 0; index < 100; index++) {
+		for (let index = 0; index < 307; index++) {
 			options.push({
 				value: index + 1,
 				label: index,

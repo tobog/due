@@ -12,7 +12,6 @@
         :disabled="isReadonly"
         :reference="ready && showDrop ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
-        @scroll="handleScroll"
     >
         <InputBase
             ref="inputBase"
@@ -32,47 +31,47 @@
             :active="visible"
             :showPassword="showPassword"
             :isInput="!isSelect || filterable"
-            :max="max"
+            :maxLength="maxLength"
+            :showWordCount="showWordCount"
             @hook:created="ready = true"
             @on-focus="handleFocus"
             @on-input="handleInput"
-            @on-keydown="handleKeydown"
             @on-clear="handleClear"
             @on-remove-item="handleClearTag"
             @on-change="handleChange"
             @on-icon-click="handleIconClick"
             @on-blur="handleBlur"
+            @on-keydown="handleKeydown"
         >
-            <template v-if="prepend" slot="prepend">
-                <slot name="prepend"></slot>
-            </template>
-            <template v-if="append" slot="append">
-                <slot name="append"></slot>
-            </template>
-            <template v-if="showPrefix" slot="prefix">
-                <slot name="prefix"></slot>
-            </template>
-            <template v-if="showSuffix" slot="suffix">
-                <slot name="suffix"></slot>
-            </template>
+            <slot slot="prepend" name="prepend"></slot>
+            <slot slot="append" name="append"></slot>
+            <slot slot="prefix" name="prefix"></slot>
+            <slot slot="suffix" name="suffix"></slot>
+            <slot name="tags" slot-scope="data" v-bind="data"></slot>
         </InputBase>
         <template v-if="showDrop" slot="drop">
-            <slot>
-                <div v-if="hasOpts">
-                    <Option v-for="item in getInOpts" :key="item.value" v-bind="item"></Option>
-                </div>
-            </slot>
-            <div v-if="hasValidOpts" :class="[_tobogPrefix_ + '-tip']">
-                <slot name="tip">{{ getOptTip }}</slot>
-            </div>
+            <Options
+                ref="options"
+                :data="options"
+                :value="model"
+                :theme="theme"
+                :multiple="multiple"
+                :strict="strict"
+                :keyModal="keyModal"
+                :reset="visible"
+                :noDataText="noDataText"
+                @on-change="select"
+            >
+                <slot slot-scope="opt" v-bind="opt"></slot>
+            </Options>
         </template>
     </Component>
 </template>
 
 <script>
 import DropBase from "../base/dropBase"
+import Options from "./options"
 import InputBase from "./base"
-import Option from "./option"
 import {throttle, validVal} from "../../utils/tool"
 import mixin from "./base/mixin"
 export default {
@@ -82,11 +81,11 @@ export default {
     components: {
         DropBase,
         InputBase,
-        Option,
+        Options,
     },
     props: {
-        multipleKey: String,
-        multiplSplit: {
+        // multipleKey: String,
+        splitSymbol: {
             type: String,
             default: ",",
         },
@@ -98,31 +97,32 @@ export default {
             type: Boolean,
             default: true,
         },
-        tip: {
-            type: String,
-            // default: "暂无数据",
-            default: null,
-        },
-        filterable: Boolean,
+        noDataText: String,
         keyModal: {
             type: Boolean,
             default: true,
         },
+        filterable: Boolean,
+
         beforeInput: Function,
-        strict: Boolean,
+        strict: {
+            type: Boolean,
+            default: true,
+        },
         options: Array,
-        optCount: Number,
-        max: Number,
+        maxLength: {
+            type: Number,
+            default: 0,
+        },
         showPassword: Boolean,
+        showWordCount: Boolean,
+        // lock: Boolean, // 只允许增加，锁定默认值
     },
     data() {
         return {
             model: "",
             visible: false,
-            optComponents: [],
             valueText: "",
-            lastOptIndex: this.optCount || 15,
-            inOpts: [],
         }
     },
     created() {
@@ -130,119 +130,33 @@ export default {
         this.searchMethod = throttle((val) => {
             this.$emit("on-search", val)
         }, 360)
-        this.$on("on-updated", this.__updatedDrop)
-        this.$on("on-option-change", this.getAllOpt)
-        this.$on("on-select", this.select)
     },
     mounted() {
         this.handleDispatch("on-change", this.model)
     },
     computed: {
         showDrop() {
-            return this.$slots.default || this.hasValidOpts || this.hasOpts
+            return this.$slots.default || this.hasOpts
         },
         hasOpts() {
-            return Array.isArray(this.options)
-        },
-        getInOpts() {
-            return this.inOpts.filter((opt) => !opt.hidden).slice(0, this.lastOptIndex)
-        },
-        getOptTip() {
-            if (this.tip == null) return this.langs("input.noDataText", "暂无数据")
-            return this.tip
+            return Array.isArray(this.options) || this.isSelect
         },
         isSelect() {
             return false
         },
-        hasValidOpts() {
-            const hasTip = this.$slots.tip || this.tip
-            return hasTip && this.optComponents.length && !this.optComponents.some((item) => !item.hidden)
-        },
     },
     methods: {
-        getAllOpt(type, component) {
-            const model = this.model
-            if (type === "destroy") {
-                const index = this.optComponents.indexOf(component)
-                index > -1 && this.optComponents.splice(index, 1)
-                return
-            }
-            if (type === "change") {
-                component.$emit("on-selected", model)
-            }
-            if (type === "created") {
-                component.$emit("on-selected", model)
-                this.optComponents.push(component)
-            }
-        },
-        getMatchedOpt(value, isUpdate) {
-            if (isUpdate) {
-                this.optComponents.forEach((component) => {
-                    component.$emit("on-query-option", value)
-                })
-            }
-            const component = this.optComponents.find((component) => component.hover)
-            if (component) component.select()
-            return component
-        },
-        navigateOpts(val) {
-            let index,
-                optComponents = this.optComponents.filter((component) => !component.hidden),
-                lastIndex = optComponents.length - 1
-            optComponents.forEach((component, i) => {
-                if (component.hover) index = i
-                component.hover = false
-            })
-            if (index == void 0) {
-                optComponents.forEach((component, i) => {
-                    if (component.selected) index = i
-                })
-            }
-            index = (index || 0) + val
-            if (index < 0) index = 0
-            if (index > lastIndex) index = lastIndex
-            const component = optComponents[index]
-            component.hover = true
-            this.focusIndex(component, index)
-        },
-        focusIndex(component, index) {
-            if (index < 0) return
-            // update scroll
-            const element = component.$el,
-                parentNode = element.parentNode,
-                elementRect = element.getBoundingClientRect(),
-                parentRect = parentNode.getBoundingClientRect(),
-                bottomOverflowDistance = elementRect.bottom - parentRect.bottom,
-                topOverflowDistance = elementRect.top - parentRect.top
-            if (bottomOverflowDistance > 0) {
-                parentNode.scrollTop += bottomOverflowDistance
-            }
-            if (topOverflowDistance < 0) {
-                parentNode.scrollTop += topOverflowDistance
-            }
-        },
-        selectedOpt(val) {
-            this.optComponents.forEach((component) => {
-                component.$emit("on-selected", val)
-            })
-        },
-        select(val, text, attach) {
-            if (this.multiple) {
-                const model = Array.isArray(this.model) ? this.model : [this.model]
-                val = model.some((item) => (this.strict ? item === val : item == val))
-                    ? model.filter((item) => (this.strict ? item !== val : item != val))
-                    : [...model, val]
-            } else if (this.autoClose) {
-                this.visible = false
-            }
+        select(val, attach, isCancel) {
             this.__attachData = attach
+            if (this.autoClose) this.visible = false
             this.updateModel(val)
-            this.$refs.inputBase.setInputFocus() //有问题无法失去焦点
-            this.showDrop && this.$refs.dropBase.cancelChange()
+            if (!isCancel) {
+                this.$refs.inputBase.setInputFocus() //有问题无法失去焦点
+                this.showDrop && this.$refs.dropBase.cancelChange()
+            }
             this.$emit("on-change", this.model, this.__attachData)
         },
         handleFocus(event) {
-            this.selectedOpt(this.model)
             this.$nextTick(() => {
                 this.$emit("on-focus", this.model, event)
             })
@@ -260,42 +174,10 @@ export default {
             this.showDrop && this.$refs.dropBase.cancelChange()
             this.$emit("on-remove-item", item, index)
         },
-        handleKeydown(event) {
-            if (!this.keyModal) return
-            if (event.keyCode == 13 && !this.visible && (!this.multiple || (this.multiple && !event.target.value))) {
-                this.visible = true
-                return
-            }
-            const visible = this.visible,
-                keyCode = event.keyCode
-            // Esc slide-up
-            // next
-            if (keyCode == 38 && visible) {
-                event.preventDefault()
-                this.navigateOpts(-1)
-            }
-            if (keyCode == 40 && visible) {
-                event.preventDefault()
-                this.navigateOpts(1)
-            }
-            if (keyCode == 13) {
-                this.getMatchedOpt() || this.handleModel(event.target.value)
-                this.$nextTick(() => {
-                    this.$emit("on-enter", this.model, event)
-                    this.visible = false
-                })
-            }
-            if (keyCode == 32 && this.isSelect) {
-                event.preventDefault()
-                const component = this.getMatchedOpt()
-                if (!component) this.handleModel(event.target.value)
-            }
-            if (keyCode == 27) {
-                this.visible = false
-            }
-        },
+
         handleChange(event) {
             if (this.type === "text") return
+            // 其他类型
             const dom = event.target
             let value
             if (this.type === "file") {
@@ -311,33 +193,35 @@ export default {
             return typeof this.beforeInput === "function" ? await this.beforeInput(val, event) : val
         },
         async handleInput(event) {
-            const value = await this.handleBeforeInput(event.target.value, event)
-            if (!this.multiple) this.valueText = value
+            let value = await this.handleBeforeInput(event.target.value, event)
             this.__attachData = ""
+            if (!this.multiple) {
+                // input && no opts
+                this.valueText =
+                    this.maxLength > 0 && !this.filterable && (!this.type || this.type === "text")
+                        ? (event.target.value = `${value}`.slice(0, this.maxLength))
+                        : value
+            }
             if (this.filterable && typeof this.$listeners["on-search"] === "function") {
                 this.searchMethod(value, this.model, event)
                 return
             }
-            if (this.hasOpts) {
-                this.handeOptQuery(value)
-            } else {
-                this.optComponents.forEach((component) => {
-                    component.$emit("on-query-option", value, true)
-                })
+            if (this.$refs.options) {
+                this.$refs.options.queryChange(value)
             }
-            this.__updatedDrop()
-            if (!this.isSelect) {
-                if (!this.multiple) {
-                    this.updateModel(value)
-                    return
-                }
-                if (this.multiplSplit && value && event.type === "paste") {
-                    this.updateModel([...this.model, ...value.split(new RegExp("\\" + this.multiplSplit, "g"))])
-                }
+            this.$nextTick(this.__updatedDrop)
+            if (this.isSelect) return
+            // 是input
+            if (!this.multiple) {
+                this.updateModel(this.valueText)
+                return
+            }
+            if (this.splitSymbol && value && event.type === "paste") {
+                this.updateModel([...this.model, ...value.split(new RegExp("\\" + this.splitSymbol, "g"))])
             }
         },
         handleBlur(event, inputDom) {
-            if (!this.isReadonly) this.handleModel(inputDom.value)
+            if (!this.isReadonly) this.handleInputModel(inputDom.value)
             if (this.type === "number") {
                 const value = this.handleRange(this.model)
                 value !== void 0 && this.updateModel(value)
@@ -346,7 +230,7 @@ export default {
                 this.type !== "file" && this.$emit("on-change", this.model, this.__attachData)
                 this.$emit("on-blur", this.model, this.__attachData)
                 this.__attachData = ""
-                this.handleDispatch("on-validate", this.model)
+                this.handleDispatch("on-validate", this.model, "blur")
             })
         },
         handleRange(val) {
@@ -355,80 +239,85 @@ export default {
             if ((min || min == "0") && val < min) return parseFloat(min)
             if ((max || max == "0") && val > max) return parseFloat(max)
         },
-        handleModel(value) {
+
+        handleInputModel(value) {
+            // 焦点失去更新匹配值，无需点击
             const isValid = validVal(value)
-            const component = isValid && this.getMatchedOpt(value, true)
-            if (component) return
+            // 无法失去焦点问题
+            // 在 输入框有值是进行匹配
+            const bool = isValid && this.$refs.options && this.$refs.options.getMatchedOpt(value, true)
+            if (bool || this.isSelect) return
             if (isValid && this.multiple) {
+                // input 多选
                 this.updateModel(Array.isArray(this.model) ? [...this.model, value] : [value])
                 return
             }
+
             if (!this.multiple) this.updateModel(value)
         },
         getValueText() {
+            const getOpt = (val) => {
+                return (
+                    this.hasOpts &&
+                    (this.options || []).find((item) => {
+                        return item.strict || this.strict ? item.value === val : item.value == val
+                    })
+                )
+            }
             if (this.multiple) {
-                const key = this.multipleKey || "name"
+                // 有问题
                 return this.model.map((val) => {
-                    if (val && typeof val === "object" && key) return val[key]
-                    return val
+                    let data = getOpt(val)
+                    return (data && data.label) || val
                 })
             }
-            const data = this.optComponents.find((item) => {
-                // if (this.strict) return item.value === this.model;
-                return item.value == this.model
-            })
-            const text = data && data.text()
+            const data = getOpt(this.model)
+            const text = data ? data.label || data.value : void 0
             if (this.isSelect) return text == void 0 ? "" : text
-            return text === void 0 ? this.model : text
-        },
-        updateModel(val) {
-            if (val === this.model) return
-            this.model = val
-            this.selectedOpt(val)
-            this.valueText = this.getValueText()
-            this.$emit("input", val)
-            this.handleDispatch("on-change", val)
-            if (this.multiple) this.$refs.inputBase.getInputDom().value = ""
-            this.__attachData = ""
+            return text == void 0 ? this.model : text
         },
 
-        //对外提供
-        getSelectedOpts() {
-            return this.optComponents.filter((component) => component.selected)
+        updateModel(val) {
+            if (val === this.model) return
+            this.model = this.multiple && this.maxLength > 0 && Array.isArray(val) ? val.slice(0, this.maxLength) : val
+            this.valueText = this.getValueText()
+            this.$emit("input", this.model)
+            this.handleDispatch("on-change", this.model, "change")
+            this.multiple && (this.$refs.inputBase.getInputDom().value = "")
+            this.__attachData = ""
         },
-        handleScroll(event) {
-            if (this.__runOptIndex) return
-            const target = event.target
-            if (target.scrollHeight - target.scrollTop - target.clientHeight < 60) {
-                this.__runOptIndex = true
-                this.lastOptIndex += 5
+        handleKeydown(event) {
+            if (!this.keyModal) return
+            // 在无opt 下 自动添加
+            if (event.keyCode == 13 && !this.showDrop && this.multiple && event.target.value) {
+                this.updateModel(Array.isArray(this.model) ? [...this.model, event.target.value] : [event.target.value])
+                return
+            }
+            if (
+                event.keyCode == 13 &&
+                !this.visible &&
+                this.showDrop &&
+                (!this.multiple || (this.multiple && !event.target.value))
+            ) {
+                this.visible = true
+                return
+            }
+
+            // Esc slide-up
+            // next
+            if (this.$refs.options && this.visible) {
+                this.$refs.options.handleKeydown(event)
+                if (event.keyCode == 13) {
+                    this.$nextTick(() => {
+                        this.$emit("on-enter", this.model, event)
+                        this.visible = false
+                    })
+                }
+            }
+            if (event.keyCode == 27) {
+                this.visible = false
             }
         },
-        handeOptQuery(value = "") {
-            const model = Array.isArray(this.model) ? this.model : [this.model]
-            this.inOpts.forEach((opt) => {
-                this.lastOptIndex = this.optCount || 15
-                if (value === "" || model.some((val) => (this.strict ? val === opt.value : val == opt.value)))
-                    return (opt.hidden = false)
-                const parsedQuery = `${value}`
-                    .replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function(match, reg, offset, str) {
-                        if (reg === "\\") return "\\\\"
-                        return reg
-                    })
-                    .trim()
-                try {
-                    const text = `${opt.label == void 0 ? opt.value : opt.label}`
-                    opt.hidden = !(text.indexOf(value) > -1 || new RegExp(parsedQuery, "i").test(text))
-                } catch (error) {
-                    console.error(error)
-                }
-            })
-        },
-    },
-    updated() {
-        this.$nextTick(() => {
-            this.__runOptIndex = false
-        })
     },
     watch: {
         value: {
@@ -441,27 +330,7 @@ export default {
                 })
             },
         },
-        options: {
-            immediate: true,
-            handler(val) {
-                this.inOpts = this.hasOpts
-                    ? val.map((opt) => {
-                          return {
-                              ...opt,
-                              hidden: false,
-                          }
-                      })
-                    : []
-            },
-        },
         visible(val) {
-            if (val) {
-                this.optComponents.forEach((component) => {
-                    component.hidden = component.hover = false
-                })
-                this.handeOptQuery("")
-            }
-
             this.$emit("on-visible-change", val)
         },
     },
