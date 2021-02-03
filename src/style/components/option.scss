@@ -1,6 +1,7 @@
 $prefix-cls: #{$prefix}-option;
 
 .#{$prefix-cls} {
+    box-sizing: border-box;
     margin: 0;
     padding: 8px 16px;
     color: $content;
@@ -48,6 +49,16 @@ $prefix-cls: #{$prefix}-option;
         &-check-all {
             box-shadow: 0 1px 3px -2px $border;
         }
+    }
+    &-size-small {
+        padding: 7px 12px;
+        font-size: $subFont;
+    }
+    &-size-medium {
+        padding: 10px 16px;
+    }
+    &-size-large {
+        padding: 10px 20px;
     }
 }
 

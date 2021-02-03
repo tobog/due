@@ -22,6 +22,7 @@
 import Icons from "../icons/index"
 import Checkbox from "../checkbox/index"
 import Emitter from "../../utils/emitter"
+import {isParseNumber} from "../../utils/tool"
 
 export default {
     name: "Option",
@@ -36,10 +37,7 @@ export default {
             type: [String, Number],
             required: true,
         },
-        label: {
-            type: [String, Number],
-            default: void 0,
-        },
+        label: [String, Number],
         multiple: Boolean,
         disabled: Boolean,
         attach: Object,
@@ -47,6 +45,7 @@ export default {
         hover: Boolean,
         checkbox: Boolean,
         theme: String,
+        size: String,
     },
     data() {
         return {}
@@ -67,8 +66,12 @@ export default {
         getMultiple() {
             return this.multiple || (this.__parentComponent__ && this.__parentComponent__.multiple)
         },
+        getSize() {
+            return this.size || (this.__parentComponent__ && this.__parentComponent__.size)
+        },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
+            const size = this.getSize
             return [
                 _tobogPrefix_,
                 {
@@ -78,6 +81,7 @@ export default {
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-multiple`]: this.getMultiple,
                     [`${_tobogPrefix_}-theme-${this.getTheme}`]: !!this.getTheme,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                 },
             ]
         },
@@ -86,6 +90,12 @@ export default {
         select() {
             if (this.disabled) return
             this.handleDispatch("on-select", this.value, this.getText, this.attach)
+            this.$emit("on-select", {
+                value: this.value,
+                label: this.getText,
+                attach: this.attach,
+                selected: this.selected,
+            })
         },
         handleDispatch(...args) {
             if (this.__parentComponent__) {

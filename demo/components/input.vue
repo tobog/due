@@ -28,7 +28,8 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput>
+            <!-- <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput> -->
+            <vOption size="small" value="value"></vOption>
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
     </Demo>

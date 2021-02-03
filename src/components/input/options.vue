@@ -44,6 +44,7 @@ import Option from "./option"
 import Virtuallist from "../scroll/virtuallist"
 import Emitter from "../../utils/emitter"
 import langMinix from "../../mixins/lang"
+import {isParseNumber} from "../../utils/tool"
 export default {
     inheritAttrs: false,
     name: "Options",
@@ -70,13 +71,17 @@ export default {
         performance: String,
         theme: String,
         regExpMatch: Boolean,
-        keyModal: Boolean,
-        reset: Boolean,
+        reset: [Boolean, String, Number],
         noDataText: String,
         checkAllLabel: String,
         disabled: Boolean,
         checkbox: Boolean,
+        size: String,
         hasCheckAll: {
+            type: Boolean,
+            default: true,
+        },
+        keyModal: {
             type: Boolean,
             default: true,
         },
@@ -101,6 +106,7 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-size-${this.size}`]: !!this.size && !isParseNumber(this.size),
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                 },
             ]
@@ -117,7 +123,7 @@ export default {
                 this.multiple &&
                 this.hasCheckAll &&
                 !this.disabled &&
-                this.baseData.length &&
+                this.resultData.length &&
                 !this.baseData.some((item) => item.disabled && !item.selected)
             )
         },
@@ -137,6 +143,7 @@ export default {
                     disabled: item.disabled || this.disabled,
                     checkbox: this.checkbox,
                     indexInTotal: index,
+                    size: this.size,
                 }
             })
             this.resultData = this.baseData
@@ -153,7 +160,6 @@ export default {
             return strict ? data.value === value : data.value == value
         },
         select(val, text, attach, isCancel) {
-            console.log(this.value, "==============")
             if (this.multiple && this.hasCheckAll && val === this.symbolAll) {
                 const model = Array.isArray(this.value) ? this.value : []
                 val =
@@ -162,8 +168,8 @@ export default {
                         : this.baseData.map((item) => item.value)
             } else if (this.multiple) {
                 const model = Array.isArray(this.value) ? this.value : []
-                val = model.some((item) => (item.strict || this.strict ? item === val : item == val))
-                    ? model.filter((item) => (item.strict || this.strict ? item !== val : item != val))
+                val = model.some((item) => ((item.strict || this.strict) ? item === val : item == val))
+                    ? model.filter((item) => ((item.strict || this.strict) ? item !== val : item != val))
                     : [...model, val]
             }
             this.$emit("on-change", val, attach, isCancel)
@@ -272,9 +278,9 @@ export default {
                 : false
             this.resultData = this.baseData.filter((item) => {
                 try {
-                    let text = `${item.label || item.value}`
+                    let text = `${item.label == void 0 ? item.value : item.label}`
                     item.hover = text === val
-                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "i").test(text)
+                    return text.indexOf(val) > -1 ? true : (parsedQuery && new RegExp(parsedQuery, "i").test(text))
                 } catch (error) {
                     console.error(error)
                     return false

@@ -60,6 +60,13 @@
                 :keyModal="keyModal"
                 :reset="visible"
                 :noDataText="noDataText"
+                :regExpMatch="regExpMatch"
+                :hasCheckAll="hasCheckAll"
+                :size="size"
+                :checkbox="checkbox"
+                :disabled="disabled"
+                :checkAllLabel="checkAllLabel"
+                :performance="performance"
                 @on-change="select"
             >
                 <slot slot-scope="opt" v-bind="opt"></slot>
@@ -103,7 +110,6 @@ export default {
             default: true,
         },
         filterable: Boolean,
-
         beforeInput: Function,
         strict: {
             type: Boolean,
@@ -116,7 +122,15 @@ export default {
         },
         showPassword: Boolean,
         showWordCount: Boolean,
-        // lock: Boolean, // 只允许增加，锁定默认值
+        performance: String,
+        regExpMatch: Boolean,
+        noDataText: String,
+        checkbox: Boolean,
+        checkAllLabel: String,
+        hasCheckAll: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {

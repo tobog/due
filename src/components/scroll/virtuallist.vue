@@ -92,7 +92,7 @@ export default {
                 if (el) {
                     opts = {
                         performance: this.initPerformance,
-                        beforeScroll: () => this.isPerformance || this.sizeIndex < this.total,
+                        beforeScroll: () => this.isPerformance && this.sizeIndex < this.total,
                         length: this.baseSize,
                         total: this.total,
                         cellElement: this.cellSelector || "div>*",

@@ -18,8 +18,8 @@
                 </slot>
             </span>
             <div v-if="multiple" :class="[_tobogPrefix_ + '-tags']" @click.self="handleFileClick">
-                <slot name="tags" :value="value" :clearTag="clearTag">
-                    <template v-for="(val, index) in value">
+                <template v-for="(val, index) in value">
+                    <slot name="tag" :value="val" :index="index" :clearTag="clearTag">
                         <span
                             v-if="(collapse && index < collapse) || !collapse"
                             :class="[_tobogPrefix_ + '-tag']"
@@ -34,11 +34,13 @@
                                 @focusin.stop="clearTag(index)"
                             ></Icons>
                         </span>
-                    </template>
-                    <span v-if="collapse && value && value.length > collapse" :class="[_tobogPrefix_ + '-tag']"
-                        >&nbsp;+&nbsp;{{ value.length - collapse }}&nbsp;</span
-                    >
-                </slot>
+                    </slot>
+                </template>
+
+                <span v-if="collapse && value && value.length > collapse" :class="[_tobogPrefix_ + '-tag']"
+                    >&nbsp;+&nbsp;{{ value.length - collapse }}&nbsp;</span
+                >
+
                 <input
                     ref="input"
                     :type="isPassword ? 'text' : type"
@@ -160,6 +162,9 @@ export default {
             } catch (error) {
                 return ""
             }
+        },
+        getMultiTags(){
+            
         },
     },
     filters: {
