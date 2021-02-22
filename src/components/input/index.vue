@@ -25,7 +25,6 @@
             :name="name"
             :clearable="clearable"
             :disabled="disabled"
-            :theme="theme"
             :multiple="multiple"
             :collapse="collapse"
             :active="visible"
@@ -33,6 +32,8 @@
             :isInput="!isSelect || filterable"
             :maxLength="maxLength"
             :showWordCount="showWordCount"
+            :size="getSize"
+            :theme="getTheme"
             @hook:created="ready = true"
             @on-focus="handleFocus"
             @on-input="handleInput"
@@ -54,7 +55,6 @@
                 ref="options"
                 :data="options"
                 :value="model"
-                :theme="theme"
                 :multiple="multiple"
                 :strict="strict"
                 :keyModal="keyModal"
@@ -62,7 +62,8 @@
                 :noDataText="noDataText"
                 :regExpMatch="regExpMatch"
                 :hasCheckAll="hasCheckAll"
-                :size="size"
+                :size="getSize"
+                :theme="getTheme"
                 :checkbox="checkbox"
                 :disabled="disabled"
                 :checkAllLabel="checkAllLabel"
@@ -81,17 +82,17 @@ import Options from "./options"
 import InputBase from "./base"
 import {throttle, validVal} from "../../utils/tool"
 import mixin from "./base/mixin"
+import globalMixin from "../../mixins/global"
 export default {
     name: "Input",
     inheritAttrs: false,
-    mixins: [mixin],
+    mixins: [mixin, globalMixin],
     components: {
         DropBase,
         InputBase,
         Options,
     },
     props: {
-        // multipleKey: String,
         splitSymbol: {
             type: String,
             default: ",",
@@ -158,6 +159,12 @@ export default {
         isSelect() {
             return false
         },
+        getTheme(){
+            return this.getGlobalData('theme')
+        },
+        getSize(){
+            return this.getGlobalData('size')
+        }
     },
     methods: {
         select(val, attach, isCancel) {
@@ -280,10 +287,7 @@ export default {
             }
             if (this.multiple) {
                 // 有问题
-                return this.model.map((val) => {
-                    let data = getOpt(val)
-                    return (data && data.label) || val
-                })
+                return this.model.map((val) => getOpt(val)  || val)
             }
             const data = getOpt(this.model)
             const text = data ? data.label || data.value : void 0

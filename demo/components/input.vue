@@ -28,7 +28,7 @@
             </h4>
         </template>
         <template v-slot="config">
-            <!-- <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput> -->
+            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput>
             <vOption size="small" value="value"></vOption>
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
         </template>
@@ -50,12 +50,13 @@ export default {
         }
     },
     created() {
-        for (let index = 0; index < 608; index++) {
+        for (let index = 0; index < 3; index++) {
             this.opts.push({
                 label: index + "@",
                 value: index,
             })
         }
+        this.opts[2].readonly=true;
     },
     computed: {
         getCode() {
@@ -188,6 +189,17 @@ export default {
                     explain: "主题",
                     dataType: "String",
                     options: this.getThemes,
+                },
+                 {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
                     showConfig: true,

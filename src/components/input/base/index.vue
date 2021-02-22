@@ -18,16 +18,16 @@
                 </slot>
             </span>
             <div v-if="multiple" :class="[_tobogPrefix_ + '-tags']" @click.self="handleFileClick">
-                <template v-for="(val, index) in value">
-                    <slot name="tag" :value="val" :index="index" :clearTag="clearTag">
+                <template v-for="(item, index) in getMultiTags">
+                    <slot name="tag" v-bind="item" :index="index" :clearTag="clearTag">
                         <span
                             v-if="(collapse && index < collapse) || !collapse"
                             :class="[_tobogPrefix_ + '-tag']"
                             :key="index"
                         >
-                            <span>{{ val }}</span>
+                            <span>{{ item.label }}</span>
                             <Icons
-                                v-if="!(disabled || readonly)"
+                                v-if="!(disabled || readonly || item.disabled || item.readonly)"
                                 :class="[_tobogPrefix_ + '-tag-clear']"
                                 type="close-circle"
                                 tabindex="-1"
@@ -109,6 +109,7 @@
 <script>
 import mixin from "./mixin"
 import Icons from "../../icons/index"
+import {typeOf} from "../../../utils/tool"
 export default {
     name: "InputBase",
     componentName: "InputBase",
@@ -142,6 +143,7 @@ export default {
                     [`${_tobogPrefix_}-active`]: this.isActive || this.active,
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
                     [`${_tobogPrefix_}-clear`]: this.isClearable,
+                    [`${_tobogPrefix_}-size-${this.size}`]: !!this.size,
                 },
             ]
         },
@@ -163,8 +165,16 @@ export default {
                 return ""
             }
         },
-        getMultiTags(){
-            
+        getMultiTags() {
+            if (!this.multiple || !Array.isArray(this.value)) return
+            return this.value.map((item) => {
+                return typeOf(item) === "object"
+                    ? item
+                    : {
+                          label: item,
+                          value: item,
+                      }
+            })
         },
     },
     filters: {

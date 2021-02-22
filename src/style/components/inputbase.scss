@@ -232,6 +232,34 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 }
 
+.#{$prefix-cls-number},
+.#{$prefix-cls-base} {
+    &-size-small {
+        min-height: 28px;
+        font-size: $subFont;
+    }
+    &-size-medium {
+        min-height: 36px;
+    }
+    &-size-large {
+        min-height: 40px;
+    }
+}
+
+.#{$prefix-cls-base} {
+    &-size-small {
+        margin: 4px;
+        padding: 5px 10px;
+    }
+    &-size-medium &-tag {
+        margin: 4px;
+        padding: 4px 10px;
+    }
+    &-size-large &-tag {
+        margin: 4px;
+        padding: 5px 10px;
+    }
+}
 .#{$prefix-cls-dropbase}-visible > .#{$prefix-cls-select} > .#{$prefix-cls-base}-inner {
     .#{$prefix-cls-base}-arrowicon {
         transform: rotate(180deg);
