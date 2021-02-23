@@ -125,10 +125,10 @@ export default {
                     --content: #e6e6e6;
                     --sub-content: #777; // 待优化
                     --disable-content: #56565a;
-                    --componentBack:#151518;
+                    --backColor:#151518;
                     --border:#555;
                     --back: #151518;
-                    --hover: #000;
+                    // --hover: #000;
             }`,
         }
     },

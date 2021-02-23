@@ -5,7 +5,7 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
     width: 240px;
     outline: 1px solid $border;
     overflow: hidden;
-    background-color: $componentBack;
+    background-color: $backColor;
     min-height: 270px;
     &-basic {
         font-size: 0;

@@ -67,7 +67,7 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
         color: $content;
         padding: 8px;
         overflow: auto;
-        background-color: $componentBack;
+        background-color: $backColor;
     }
     &-disabled > &-header,
     &-disabled > &-content {

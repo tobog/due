@@ -25,7 +25,7 @@
 <script>
 import { ClickOut, HoverOut, getElement } from "../../utils/dom";
 import Popper from "./popper/index";
-// let indexSS = 0;
+
 export default {
     name: "DropBase",
     inheritAttrs: false,

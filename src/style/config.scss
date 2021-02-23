@@ -1,6 +1,4 @@
 :root {
-
-    //     // --prefix: 'due';
     //     // 主题颜色
     //     --primary: #2d8cf0;
     //     --light-primary: #5cadff;
@@ -20,10 +18,10 @@
     --sub-content: #808695; // 待优化
     --disable-content: #c0c4cc; // 待优化
     // 背景、边框、阴影等 // 待优化
-    --componentBack: #fff;
-    //     --disabled: #f7f7f7;
+    --backColor: #fff;
+    --disabled: #f7f7f7;
     --border: #dcdee2;
-    //     --divider: #e8eaec;
+    --divider: #e8eaec;
 
     --hover: #ebf7ff;
     //     --transparent: transparent;
@@ -33,11 +31,8 @@
     //     --mask: rgba(55, 55, 55, 0.6);
     //     --white: $white;
     //     --white-mask: rgba(255, 255, 255, 0.9);
-
 }
 
-// // 前缀配置
-// $prefix: 'due' !default !global;
 // // 颜色配置
 // $primary: var(--primary, #2d8cf0) !default !global;
 // $confirm: var(--primary, #2d8cf0) !default !global;
@@ -51,32 +46,28 @@
 // $danger: var(--danger, #ed4014) !default !global;
 // $error-shadow: var(--error-shadow, rgba(237, 63, 20, 0.2)) !default !global;
 // 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
-$title:var(--title, #17233d) !default !global;
-$content:var(--content, #515a6e) !default !global;
-$sub-content:var(--sub-content, #808695) !default !global;
-$disable-content:var(--disable-content, #C0C4CC) !default !global;
-$whiteTitle:var(--whiteTitle, #fff) !default !global;
+$title: var(--title, #17233d) !default !global;
+$content: var(--content, #515a6e) !default !global;
+$sub-content: var(--sub-content, #808695) !default !global;
+$disable-content: var(--disable-content, #c0c4cc) !default !global;
+$whiteTitle: var(--whiteTitle, #fff) !default !global;
 
-$componentBack:var(--componentBack, #fff) !default !global;
+$backColor: var(--backColor, #fff) !default !global;
 
-// $disabled:var(--disabled, #f7f7f7) !default !global;
-$border:var(--border, #dcdee2) !default !global;
-// $divider:var(--divider, #e8eaec) !default !global;
+$disabled: var(--disabled, #e6e6e6) !default !global;
+$border: var(--border, #dcdee2) !default !global;
+$divider: var(--divider, #e8eaec) !default !global;
 
-$hover:var(--hover, #ebf7ff) !default !global;
-// $transparent:var(--transparent, transparent) !default !global;
+$hover: var(--hover, #ebf7ff) !default !global;
+$transparent: transparent !default !global;
 
-$back:var(--back, #f8f8f9) !default !global;
+$back: var(--back, #f8f8f9) !default !global;
 // $darkback:var(--darkback, rgba(41, 42, 48, 0.9)) !default !global;
 // $mask:var(--mask, rgba(55, 55, 55, 0.6)) !default !global;
 // $white:var(--white, #fff) !default !global;
 // $white-mask:var(--white-mask, rgba(255, 255, 255, 0.9)) !default !global;
 // 前缀配置
 $prefix: "due" !default !global;
-
-// 背景主题
-// $componentBack: #fff !default !global;
-
 
 // 颜色配置
 $primary: #2d8cf0 !default !global;
@@ -97,21 +88,15 @@ $error-shadow: rgba(237, 63, 20, 0.2) !default !global;
 // $sub-content: #808695 !default !global;
 // $disable-content: #c0c4cc !default !global;
 
-$disabled: #e6e6e6 !default !global;
-// $disabled: #f7f7f7 !default !global;
-// $border: #dcdee2 !default !global;
-$divider: #e8eaec !default !global;
-
 // $hover: #ebf7ff !default !global;
-$transparent: transparent !default !global;
 
-// $back: #f8f8f9 !default !global;
 $darkback: rgba(41, 42, 48, 0.9) !default !global;
 $mask: rgba(55, 55, 55, 0.6) !default !global;
 $white: #fff !default !global;
 $white-mask: rgba(255, 255, 255, 0.9) !default !global;
 // 颜色配置
-$colors-map: (confirm: $primary,
+$colors-map: (
+    confirm: $primary,
     success: $success,
     primary: $primary,
     warning: $warning,
@@ -128,22 +113,28 @@ $baseFont: 14px;
 $subFont: 12px;
 $radius: 3px;
 // media
-$media-map: (xs: (max-width: 768px,
+$media-map: (
+    xs: (
+        max-width: 768px,
     ),
-    sm: (min-width: 768px,
+    sm: (
+        min-width: 768px,
     ),
-    md: (min-width: 992px,
+    md: (
+        min-width: 992px,
     ),
-    lg: (min-width: 1200px,
+    lg: (
+        min-width: 1200px,
     ),
-    xl: (min-width: 1600px,
+    xl: (
+        min-width: 1600px,
     ),
-    xxl: (min-width: 1920px,
+    xxl: (
+        min-width: 1920px,
     ),
 );
 
 .#{$prefix}-clearfix {
-
     &::before,
     &::after {
         content: "";
@@ -181,11 +172,10 @@ $media-map: (xs: (max-width: 768px,
 //     size:14
 // }
 
-
-$lineHeight:1.12;
+$lineHeight: 1.12;
 
 @mixin baseStyle {
-    background-color: $componentBack;
+    background-color: $backColor;
     line-height: $lineHeight;
     font-size: $baseFont;
     color: $title;

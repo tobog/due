@@ -29,17 +29,14 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         justify-content: flex-start;
         align-items: stretch;
         flex-wrap: nowrap;
-
-        & > * {
-            background-color: $white;
-        }
+        @include baseStyle();
     }
 
     &-prepend,
     &-append {
         @extend %input;
         display: inline-flex;
-        background-color: $back;
+        background-color: transparent;
         align-items: center;
         flex: none;
     }
@@ -104,9 +101,10 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         max-width: calc(100% - 2px);
         min-width: 0;
         margin: 0 1px;
-        line-height: normal;
+        line-height: 1;
         width: 30px;
-        background: inherit;
+        background: transparent;
+        color: inherit;
     }
 
     &-readonly,
@@ -118,12 +116,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 
     &-disabled {
-        // cursor: not-allowed !important;
-        // pointer-events: none !important;
-
-        & > * {
-            background-color: $disabled;
-        }
+        background-color: $disabled;
     }
 
     &-prefix,
@@ -271,6 +264,8 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     &-wrapper > .#{$prefix-cls-dropbase}-drop,
     &-drop-wrapper {
         max-height: 260px;
+        background-color: $backColor;
+        box-shadow: 0 0 0 1px $border;
     }
 
     &-tip {

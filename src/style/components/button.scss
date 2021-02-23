@@ -81,8 +81,8 @@ button.#{$prefix-cls} {
         border-radius: 50%;
     }
 
-    @include btn-base($content, $componentBack, $border);
-    @include btn-active($primary, $componentBack, $primary);
+    @include btn-base($content, $backColor, $border);
+    @include btn-active($primary, $backColor, $primary);
 
     &-border-dashed {
         border-style: dashed;
