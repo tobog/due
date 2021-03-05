@@ -36,9 +36,11 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     &-append {
         @extend %input;
         display: inline-flex;
-        background-color: transparent;
         align-items: center;
         flex: none;
+        overflow: hidden;
+        color: $sub-content;
+        background-color: $disabled;
     }
 
     &-append {
@@ -115,8 +117,13 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         pointer-events: none !important;
     }
 
-    &-disabled {
+    &-disabled, 
+    &-disabled &,
+    &-disabled &-prepend,
+    &-disabled &-append
+    {
         background-color: $disabled;
+        color: $disable-content;
     }
 
     &-prefix,
@@ -126,8 +133,16 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     &-arrowicon {
         display: inline-flex;
         align-items: center;
-        padding: 0 6px;
         flex: none;
+    }
+    &-prefix {
+        padding-left: 6px;
+    }
+    &-clearicon,
+    &-eyeicon,
+    &-arrowicon,
+    &-suffix {
+        padding-right: 6px;
     }
 
     &-eyeicon {
@@ -176,7 +191,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 
     &-tag {
-        margin: 2px;
+        margin: 2px 0 2px 4px;
         padding: 3px 6px;
         border: 1px solid $border;
         border-radius: 3px;
@@ -223,6 +238,14 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         margin-left: auto;
         padding-right: 5px;
     }
+    &-prepend,
+    &-append {
+        .#{$prefix-cls-input}-wrapper {
+            flex: auto;
+            margin: -1px -8px;
+            // border: 0;
+        }
+    }
 }
 
 .#{$prefix-cls-number},
@@ -240,16 +263,12 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 }
 
 .#{$prefix-cls-base} {
-    &-size-small {
-        margin: 4px;
-        padding: 5px 10px;
+    &-size-small &-tag {
+        padding: 4px 8px;
     }
+    &-size-large &-tag,
     &-size-medium &-tag {
-        margin: 4px;
-        padding: 4px 10px;
-    }
-    &-size-large &-tag {
-        margin: 4px;
+        margin: 4px 0 4px 6px;
         padding: 5px 10px;
     }
 }
@@ -277,79 +296,6 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 .#{$prefix-cls-select} {
     .#{$prefix-cls-base}-arrowicon {
         display: inline-flex;
-    }
-}
-
-@each $key, $value in $colors-map {
-    .#{$prefix-cls-base}-#{$key} {
-        .#{$prefix-cls-base}-tag:hover {
-            border-color: $value;
-            color: $value;
-        }
-
-        .#{$prefix-cls-base}-inner {
-            &:hover {
-                border-color: $value;
-            }
-
-            &:focus {
-                box-shadow: 0 0 6px 0 $value;
-                border-color: $value;
-            }
-        }
-
-        &.#{$prefix-cls-base}-active > .#{$prefix-cls-base}-inner {
-            box-shadow: 0 0 6px 0 $value;
-            border-color: $value;
-        }
-    }
-
-    .#{$prefix-cls-number}-#{$key} {
-        .#{$prefix-cls-number}-inner {
-            &:hover {
-                border-color: $value;
-            }
-
-            &:focus {
-                box-shadow: 0 0 6px 0 $value;
-                border-color: $value;
-            }
-        }
-
-        &.#{$prefix-cls-number}-active > .#{$prefix-cls-number}-inner {
-            box-shadow: 0 0 6px 0 $value;
-            border-color: $value;
-        }
-
-        .#{$prefix-cls-number}-suffix {
-            & > .#{$prefix}-icons:hover {
-                color: $value;
-            }
-        }
-    }
-
-    .#{$prefix-cls-textarea}-#{$key} {
-        .#{$prefix-cls-textarea}-inner {
-            &:hover {
-                border-color: $value;
-            }
-
-            &:focus {
-                box-shadow: 0 0 6px 0 $value;
-                border-color: $value;
-            }
-        }
-
-        &.#{$prefix-cls-textarea}-active > .#{$prefix-cls-textarea}-inner {
-            box-shadow: 0 0 6px 0 $value;
-            border-color: $value;
-        }
-
-        .#{$prefix-cls-textarea}-suffix {
-            & > .#{$prefix}-icons:hover {
-                color: $value;
-            }
-        }
     }
 }
 
@@ -440,3 +386,78 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         }
     }
 }
+
+
+@each $key, $value in $colors-map {
+    .#{$prefix-cls-base}-#{$key} {
+        .#{$prefix-cls-base}-tag:hover {
+            border-color: $value;
+            color: $value;
+        }
+
+        .#{$prefix-cls-base}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+
+        &.#{$prefix-cls-base}-active > .#{$prefix-cls-base}-inner {
+            box-shadow: 0 0 6px 0 $value;
+            border-color: $value;
+        }
+    }
+
+    .#{$prefix-cls-number}-#{$key} {
+        .#{$prefix-cls-number}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+
+        &.#{$prefix-cls-number}-active > .#{$prefix-cls-number}-inner {
+            box-shadow: 0 0 6px 0 $value;
+            border-color: $value;
+        }
+
+        .#{$prefix-cls-number}-suffix {
+            & > .#{$prefix}-icons:hover {
+                color: $value;
+            }
+        }
+    }
+
+    .#{$prefix-cls-textarea}-#{$key} {
+        .#{$prefix-cls-textarea}-inner {
+            &:hover {
+                border-color: $value;
+            }
+
+            &:focus {
+                box-shadow: 0 0 6px 0 $value;
+                border-color: $value;
+            }
+        }
+
+        &.#{$prefix-cls-textarea}-active > .#{$prefix-cls-textarea}-inner {
+            box-shadow: 0 0 6px 0 $value;
+            border-color: $value;
+        }
+
+        .#{$prefix-cls-textarea}-suffix {
+            & > .#{$prefix}-icons:hover {
+                color: $value;
+            }
+        }
+    }
+}
+

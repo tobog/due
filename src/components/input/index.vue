@@ -141,7 +141,8 @@ export default {
         }
     },
     created() {
-        this.__updatedDrop = () => this.$refs.updatedDrop && this.$refs.dropBase.updatedDrop()
+        this.__updatedDrop = () =>
+            this.$refs.dropBase && this.$refs.dropBase.updatedDrop && this.$refs.dropBase.updatedDrop()
         this.searchMethod = throttle((val) => {
             this.$emit("on-search", val)
         }, 360)
@@ -159,12 +160,12 @@ export default {
         isSelect() {
             return false
         },
-        getTheme(){
-            return this.getGlobalData('theme')
+        getTheme() {
+            return this.getGlobalData("theme")
         },
-        getSize(){
-            return this.getGlobalData('size')
-        }
+        getSize() {
+            return this.getGlobalData("size")
+        },
     },
     methods: {
         select(val, attach, isCancel) {
@@ -178,6 +179,7 @@ export default {
             this.$emit("on-change", this.model, this.__attachData)
         },
         handleFocus(event) {
+            // this.$nextTick(this.__updatedDrop)
             this.$nextTick(() => {
                 this.$emit("on-focus", this.model, event)
             })
@@ -195,7 +197,6 @@ export default {
             this.showDrop && this.$refs.dropBase.cancelChange()
             this.$emit("on-remove-item", item, index)
         },
-
         handleChange(event) {
             if (this.type === "text") return
             // 其他类型
@@ -260,7 +261,6 @@ export default {
             if ((min || min == "0") && val < min) return parseFloat(min)
             if ((max || max == "0") && val > max) return parseFloat(max)
         },
-
         handleInputModel(value) {
             // 焦点失去更新匹配值，无需点击
             const isValid = validVal(value)
@@ -273,7 +273,6 @@ export default {
                 this.updateModel(Array.isArray(this.model) ? [...this.model, value] : [value])
                 return
             }
-
             if (!this.multiple) this.updateModel(value)
         },
         getValueText() {
@@ -287,14 +286,13 @@ export default {
             }
             if (this.multiple) {
                 // 有问题
-                return this.model.map((val) => getOpt(val)  || val)
+                return this.model.map((val) => getOpt(val) || val)
             }
             const data = getOpt(this.model)
             const text = data ? data.label || data.value : void 0
             if (this.isSelect) return text == void 0 ? "" : text
             return text == void 0 ? this.model : text
         },
-
         updateModel(val) {
             if (val === this.model) return
             this.model = this.multiple && this.maxLength > 0 && Array.isArray(val) ? val.slice(0, this.maxLength) : val

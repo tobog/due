@@ -1,17 +1,17 @@
 <template>
     <div :class="classes" @click.stop="select" :data-vue-module="$options.name">
-        <slot :selected="selected" :theme="getTheme" :disabled="disabled">
+        <slot :selected="selected" :theme="getProp('theme')" :disabled="disabled">
+            <span :class="[_tobogPrefix_ + '-text']">{{ getText }}</span>
             <Checkbox
-                v-if="getCheckbox && getMultiple"
+                v-if="checkbox && getProp('multiple')"
                 readonly
                 :class="[_tobogPrefix_ + '-checkbox']"
-                :theme="getTheme"
+                :theme="getProp('theme')"
                 :value="selected"
                 :disabled="disabled"
             ></Checkbox>
-            {{ getText }}
             <Icons
-                v-if="selected && !getCheckbox && getMultiple"
+                v-if="selected && !checkbox && getProp('multiple')"
                 type="ios-checkmark"
                 :class="[_tobogPrefix_ + '-icon-selected']"
             ></Icons>
@@ -46,6 +46,8 @@ export default {
         checkbox: Boolean,
         theme: String,
         size: String,
+        wrapable: Boolean,
+        reverse: Boolean,
     },
     data() {
         return {}
@@ -54,39 +56,33 @@ export default {
         this.handleDispatch("on-init-none")
     },
     computed: {
-        getTheme() {
-            return this.theme || (this.__parentComponent__ && this.__parentComponent__.theme)
-        },
         getText() {
-            return this.label != void 0 ? this.label : this.value
-        },
-        getCheckbox() {
-            return this.checkbox || (this.__parentComponent__ && this.__parentComponent__.checkbox)
-        },
-        getMultiple() {
-            return this.multiple || (this.__parentComponent__ && this.__parentComponent__.multiple)
-        },
-        getSize() {
-            return this.size || (this.__parentComponent__ && this.__parentComponent__.size)
+            return this.label != null ? this.label : this.value
         },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
-            const size = this.getSize
+            const theme = this.getProp('theme');
+            const size = this.getProp('size');
             return [
                 _tobogPrefix_,
                 {
+                    [`${_tobogPrefix_}-ellipsis`]: !this.wrapable,
+                    [`${_tobogPrefix_}-reverse`]: this.reverse,
                     [`${_tobogPrefix_}-selected`]: this.selected,
                     [`${_tobogPrefix_}-hover`]: this.hover,
-                    [`${_tobogPrefix_}-has-checkbox`]: this.getCheckbox,
+                    [`${_tobogPrefix_}-has-checkbox`]: this.checkbox,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
-                    [`${_tobogPrefix_}-multiple`]: this.getMultiple,
-                    [`${_tobogPrefix_}-theme-${this.getTheme}`]: !!this.getTheme,
+                    [`${_tobogPrefix_}-multiple`]: this.getProp('multiple'),
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                 },
             ]
         },
     },
     methods: {
+        getProp(key){
+            return this[key] || (this.__parentComponent__ && this.__parentComponent__[key])
+        },
         select() {
             if (this.disabled) return
             this.handleDispatch("on-select", this.value, this.getText, this.attach)

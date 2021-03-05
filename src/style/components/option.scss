@@ -3,16 +3,32 @@ $prefix-cls: #{$prefix}-option;
 .#{$prefix-cls} {
     box-sizing: border-box;
     margin: 0;
-    padding: 8px 16px;
+    padding: 0 16px;
+    line-height: 30px;
     color: $content;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-
+    display: flex;
+    align-items: center;
+    &-reverse {
+        flex-direction: row-reverse;
+    }
+    &-ellipsis {
+        & > * {
+            flex: none;
+        }
+        & > .#{$prefix-cls}-text {
+            flex: auto;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
     &:hover {
-        background-color: rgba($primary, 0.3);
+        background-color: rgba($primary, 0.2);
     }
     &#{&}-hover {
-        background-color: $light-primary;
+        background-color: rgba($primary, 0.8);
         color: $white;
     }
     &#{&}-disabled {
@@ -20,22 +36,35 @@ $prefix-cls: #{$prefix}-option;
         pointer-events: none;
         background-color: $disabled;
     }
-    &#{&}-selected {
-        color: $white;
-        background-color: $primary;
-    }
 
     &#{&}-selected#{&}-multiple {
         color: $primary;
         background: none;
+        &:hover {
+            background-color: rgba($primary, 0.2);
+        }
+    }
+    &#{&}-selected {
+        color: $white;
+        background-color: $primary;
+        &.#{$prefix-cls}-hover {
+            background-color: rgba($primary, 0.8);
+            color: $white;
+        }
     }
 
     &-icon-selected {
         font-size: 1.5em;
-        float: right;
     }
+    &-icon-selected,
     &-checkbox {
-        margin-right: 5px;
+        margin-left: auto;
+        transform: translateX(8px);
+    }
+    &-reverse &-icon-selected,
+    &-reverse &-checkbox {
+        transform: translateX(-6px);
+        margin-left: 0;
     }
 
     &s {
@@ -43,7 +72,7 @@ $prefix-cls: #{$prefix}-option;
         padding: 3px 0;
         &-nodata-text {
             text-align: center;
-            padding: 12px 0;
+            padding: 10px;
             color: $sub-content;
         }
         &-check-all {
@@ -51,30 +80,39 @@ $prefix-cls: #{$prefix}-option;
         }
     }
     &-size-small {
-        padding: 7px 12px;
+        padding: 0 12px;
+        line-height: 26px;
         font-size: $subFont;
     }
     &-size-medium {
-        padding: 10px 16px;
+        line-height: 34px;
+        padding: 0 16px;
     }
     &-size-large {
-        padding: 10px 20px;
+        line-height: 34px;
+        padding: 0 20px;
     }
 }
 
 @each $key, $value in $colors-map {
     .#{$prefix-cls}-theme-#{$key} {
         &:hover {
-            background-color: rgba($value, 0.3);
+            background-color: rgba($value, 0.2);
+        }
+        &.#{$prefix-cls}-selected.#{$prefix-cls}-multiple {
+            color: $value;
+            background: none;
+            &:hover {
+                background-color: rgba($value, 0.2);
+            }
         }
         &.#{$prefix-cls}-selected {
             background-color: $value;
             color: $white;
-        }
-
-        &.#{$prefix-cls}-selected.#{$prefix-cls}-multiple {
-            color: $value;
-            background: none;
+            &.#{$prefix-cls}-hover {
+                background-color: rgba($value, 0.8);
+                color: $white;
+            }
         }
 
         &.#{$prefix-cls}-hover {

@@ -48,10 +48,6 @@ export default {
         autoClose: Boolean,
         dropClass: [Object, String, Array],
         dataVueModule: String,
-        // performance: {
-        //     type: Boolean,
-        //     default: true,
-        // },
         trigger: {
             type: String,
             default: "click", // 'click','hover','custom'
@@ -63,7 +59,6 @@ export default {
             show: this.visible || false,
             updateIndex: 0,
             ready: false,
-            // unPerformance: this.visible || !this.performance, // 仅关闭情况下
         };
     },
     computed: {

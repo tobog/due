@@ -28,8 +28,11 @@ export function getScroll(element, isAll) {
     return isAll ? eles : eles[eles.length - 1];
 }
 
-export function isScroll(element) {
+export function isScroll(element,isAutoCalc) {
     if (!element) return false;
+    if (isAutoCalc) {
+        return element.scrollHeight - element.offsetHeight - element.clientTop - element.clientBottom > 0;
+    }
     const data = ["scroll", "auto"];
     if (
         data.indexOf(getStyle(element, "overflow")) !== -1 ||
@@ -688,9 +691,9 @@ export const Fullscreen = {
     },
 };
 
-let _cached;
+let _cachedBarSize;
 export function getScrollBarSize(fresh) {
-    if (fresh || _cached === void 0) {
+    if (fresh || _cachedBarSize === void 0) {
         const inner = document.createElement("div");
         const outer = document.createElement("div");
         const outerStyle = outer.style;
@@ -711,9 +714,9 @@ export function getScrollBarSize(fresh) {
         let widthScroll = inner.offsetWidth;
         if (widthContained === widthScroll) widthScroll = outer.clientWidth;
         document.body.removeChild(outer);
-        _cached = widthContained - widthScroll || 8;
+        _cachedBarSize = widthContained - widthScroll || 8;
     }
-    return _cached;
+    return _cachedBarSize;
 }
 
 // export class ClassList {

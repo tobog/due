@@ -28,6 +28,13 @@
             </h4>
         </template>
         <template v-slot="config">
+            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20">
+                <div slot="prepend">prepend</div>
+                <div slot="append">测试</div>
+            </vInput>
+            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20">
+                <vInput dropStyle="width:auto" slot="prepend"> </vInput>
+            </vInput>
             <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput>
             <vOption size="small" value="value"></vOption>
             <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
@@ -56,7 +63,7 @@ export default {
                 value: index,
             })
         }
-        this.opts[2].readonly=true;
+        this.opts[2].readonly = true
     },
     computed: {
         getCode() {
@@ -190,7 +197,7 @@ export default {
                     dataType: "String",
                     options: this.getThemes,
                 },
-                 {
+                {
                     showConfig: true,
                     label: "尺寸大小",
                     key: "size",

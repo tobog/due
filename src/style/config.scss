@@ -19,13 +19,10 @@
     --disable-content: #c0c4cc; // 待优化
     // 背景、边框、阴影等 // 待优化
     --backColor: #fff;
-    --disabled: #f7f7f7;
+    --disabled: #f5f7fa;//f7f7f7;
     --border: #dcdee2;
     --divider: #e8eaec;
-
     --hover: #ebf7ff;
-    //     --transparent: transparent;
-
     --back: #f8f8f9;
     //     --darkback: rgba(41, 42, 48, 0.9);
     //     --mask: rgba(55, 55, 55, 0.6);
@@ -82,13 +79,6 @@ $error: #ed4014 !default !global;
 $danger: #ed4014 !default !global;
 $gray: gray !default !global;
 $error-shadow: rgba(237, 63, 20, 0.2) !default !global;
-// 中性色常用于文本、背景、边框、阴影等，可以体现出页面的层次结构。
-// $title: #17233d !default !global;
-// $content: #515a6e !default !global;
-// $sub-content: #808695 !default !global;
-// $disable-content: #c0c4cc !default !global;
-
-// $hover: #ebf7ff !default !global;
 
 $darkback: rgba(41, 42, 48, 0.9) !default !global;
 $mask: rgba(55, 55, 55, 0.6) !default !global;
@@ -172,7 +162,7 @@ $media-map: (
 //     size:14
 // }
 
-$lineHeight: 1.12;
+$lineHeight: 1;
 
 @mixin baseStyle {
     background-color: $backColor;

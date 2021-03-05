@@ -5,6 +5,7 @@
         :total="resultData.length"
         :cellSelector="_tobogPrefix_.slice(0, -1)"
         :reset="refreshVirtual"
+        v-bind="$attrs.virtualProps"
         @on-refresh="handleRefreshSize"
     >
         <slot
@@ -15,6 +16,7 @@
             :value="symbolAll"
             :queryChange="queryChange"
             :select="select"
+            :disabled="disabled"
         >
             <Option
                 v-if="isHasCheckAll"
@@ -27,7 +29,6 @@
                 :label="checkAllLabel || langs('options.checkAllLabel', '全选')"
             ></Option>
         </slot>
-
         <template v-for="(opt, index) in getSizeData">
             <slot v-bind="opt" :indexInCurrent="index">
                 <Option v-bind="opt" :key="opt.value" :indexInCurrent="index"></Option>
@@ -36,7 +37,7 @@
         <div v-if="!getSizeData.length" :class="[_tobogPrefix_ + '-nodata-text']">
             {{ noDataText || langs("options.noDataText", "暂无相关数据") }}
         </div>
-        <slot slot="suffix" name="suffix" :theme="theme" :select="select"></slot>
+        <slot slot="suffix" name="suffix" :theme="theme" :select="select" :disabled="disabled"></slot>
     </Virtuallist>
 </template>
 <script>
@@ -128,7 +129,7 @@ export default {
             )
         },
         isCheckAll() {
-            return Array.isArray(this.value) && this.value.length > 0 && this.baseData.length === this.value.length
+            return Array.isArray(this.value) && this.value.length > 0 && this.baseData.length <= this.value.length
         },
     },
     methods: {
@@ -168,13 +169,12 @@ export default {
                         : this.baseData.map((item) => item.value)
             } else if (this.multiple) {
                 const model = Array.isArray(this.value) ? this.value : []
-                val = model.some((item) => ((item.strict || this.strict) ? item === val : item == val))
-                    ? model.filter((item) => ((item.strict || this.strict) ? item !== val : item != val))
+                val = model.some((item) => (item.strict || this.strict ? item === val : item == val))
+                    ? model.filter((item) => (item.strict || this.strict ? item !== val : item != val))
                     : [...model, val]
             }
             this.$emit("on-change", val, attach, isCancel)
         },
-
         handleKeydown(event) {
             if (!this.keyModal) return
             const keyCode = event.keyCode
@@ -257,7 +257,6 @@ export default {
                 parentNode.scrollTop += topOverflowDistance
             }
         },
-
         queryChange(val = "") {
             if (val === "") {
                 this.baseData.forEach((item) => {
@@ -280,7 +279,7 @@ export default {
                 try {
                     let text = `${item.label == void 0 ? item.value : item.label}`
                     item.hover = text === val
-                    return text.indexOf(val) > -1 ? true : (parsedQuery && new RegExp(parsedQuery, "i").test(text))
+                    return text.indexOf(val) > -1 ? true : parsedQuery && new RegExp(parsedQuery, "i").test(text)
                 } catch (error) {
                     console.error(error)
                     return false

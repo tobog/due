@@ -128,7 +128,8 @@ export default {
                     --backColor:#151518;
                     --border:#555;
                     --back: #151518;
-                    // --hover: #000;
+                    --disabled: #151518;
+                    --hover: #000;
             }`,
         }
     },

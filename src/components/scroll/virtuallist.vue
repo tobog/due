@@ -2,7 +2,7 @@
     <div :class="[_tobogPrefix_]" :data-vue-module="$options.name">
         <slot name="prefix" />
         <div :class="[_tobogPrefix_ + '-inner']" ref="virtuallist">
-            <div :style="getTransferStyle">
+            <div :class="[_tobogPrefix_ + '-list']" :style="getTransferStyle">
                 <slot></slot>
             </div>
         </div>
