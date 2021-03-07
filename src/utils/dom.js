@@ -27,13 +27,19 @@ export function getScroll(element, isAll) {
 
     return isAll ? eles : eles[eles.length - 1];
 }
-
-export function isScroll(element,isAutoCalc) {
+export function hasScrollBar(element) {
+    const bool1 = isScroll(element, "y");
+    return bool1 && (element.scrollHeight - element.offsetHeight - element.clientTop - element.clientBottom > 0);
+}
+export function isScroll(element, type) {
     if (!element) return false;
-    if (isAutoCalc) {
-        return element.scrollHeight - element.offsetHeight - element.clientTop - element.clientBottom > 0;
-    }
     const data = ["scroll", "auto"];
+    if (type === "x" && data.indexOf(getStyle(element, "overflow-x")) !== -1) {
+        return true;
+    }
+    if (type === "y" && data.indexOf(getStyle(element, "overflow-y")) !== -1) {
+        return true;
+    }
     if (
         data.indexOf(getStyle(element, "overflow")) !== -1 ||
         data.indexOf(getStyle(element, "overflow-x")) !== -1 ||
