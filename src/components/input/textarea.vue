@@ -37,13 +37,14 @@
 </template>
 
 <script>
-import { validVal } from '../../utils/tool';
-import Icons from '../icons/index';
-import mixin from './base/mixin';
+import {validVal} from "../../utils/tool"
+import Icons from "../icons/index"
+import mixin from "./base/mixin"
+import globalMixin from "../../mixins/global"
 export default {
-    name: 'Textarea',
+    name: "Textarea",
     inheritAttrs: false,
-    mixins: [mixin],
+    mixins: [mixin, globalMixin],
     components: {
         Icons,
     },
@@ -62,88 +63,89 @@ export default {
         return {
             model: this.value,
             isActive: false,
-        };
+        }
     },
     mounted() {
-        this.handleDispatch('on-change', this.model);
+        this.handleDispatch("on-change", this.model)
     },
     computed: {
         wrapClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
+            const theme = this.getGlobalData("theme")
             return [
                 `${_tobogPrefix_}-wrapper`,
                 {
-                    [`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     // [`${_tobogPrefix_}-collapse`]: this.collapse > 0,
                     [`${_tobogPrefix_}-active`]: this.isActive,
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
                     [`${_tobogPrefix_}-clear`]: this.isClearable,
                 },
-            ];
+            ]
         },
         innerClasses() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 `${_tobogPrefix_}-inner`,
                 {
                     [`${_tobogPrefix_}-radius-left`]: !this.prepend,
                     [`${_tobogPrefix_}-radius-right`]: !this.append,
                 },
-            ];
+            ]
         },
         isClearable() {
-            return !this.isReadonly && this.clearable && validVal(this.model);
+            return !this.isReadonly && this.clearable && validVal(this.model)
         },
     },
     methods: {
         handleClear() {
-            this.model = '';
-            this.$emit('on-clear');
+            this.model = ""
+            this.$emit("on-clear")
         },
         handleFocus(event) {
             if (this.__blurStatus) {
-                clearTimeout(this.__blurTimeOut);
-                this.__blurStatus = false;
+                clearTimeout(this.__blurTimeOut)
+                this.__blurStatus = false
             }
-            this.isActive = true;
-            if (this._isFocused) return;
-            this._isFocused = false;
-            this.$emit('on-focus', this.model, event);
+            this.isActive = true
+            if (this._isFocused) return
+            this._isFocused = false
+            this.$emit("on-focus", this.model, event)
         },
         handleKeyCode(event) {
-            this.$emit('on-keydown', this.model, event);
+            this.$emit("on-keydown", this.model, event)
             if (event.keyCode == 13) {
-                this.$emit('on-enter', this.model, event);
+                this.$emit("on-enter", this.model, event)
             }
         },
         handleBlur(event) {
-            this.__blurStatus = true;
-            console.log(event.target, 'handleFocusout');
-            clearTimeout(this.__blurTimeOut);
+            this.__blurStatus = true
+            console.log(event.target, "handleFocusout")
+            clearTimeout(this.__blurTimeOut)
             this.__blurTimeOut = setTimeout(() => {
-                console.log('handleFocusout =========');
-                this.isActive = this._isFocused = false;
-                this.$emit('on-change', this.model, event);
-                this.$emit('on-blur', this.model, event);
-                this.handleDispatch('on-validate', this.model);
-            }, 10);
+                console.log("handleFocusout =========")
+                this.isActive = this._isFocused = false
+                this.$emit("on-change", this.model, event)
+                this.$emit("on-blur", this.model, event)
+                this.handleDispatch("on-validate", this.model)
+            }, 10)
         },
     },
     beforeDestroy() {
-        clearTimeout(this.__blurTimeOut);
+        clearTimeout(this.__blurTimeOut)
     },
     watch: {
         value: {
             deep: true,
             handler(val) {
-                this.model = val;
+                this.model = val
             },
         },
         model(val) {
-            this.$emit('input', val);
-            this.handleDispatch('on-change', val);
+            this.$emit("input", val)
+            this.handleDispatch("on-change", val)
         },
     },
-};
+}
 </script>

@@ -122,7 +122,6 @@ export default {
         dataVueModule: String,
         valueData: [String, Number, Array, Boolean, Object],
         active: Boolean,
-        showPassword: Boolean,
         isInput: Boolean,
     },
     data() {
@@ -137,7 +136,7 @@ export default {
             return [
                 `${_tobogPrefix_}-wrapper`,
                 {
-                    [`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-collapse`]: this.collapse > 0,
                     [`${_tobogPrefix_}-active`]: this.isActive || this.active,

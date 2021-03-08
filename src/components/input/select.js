@@ -9,13 +9,13 @@ export default {
         },
     },
     methods: {
-        handleBlur(event,inputDom) {
+        handleBlur(event, inputDom) {
             if (!this.isReadonly && this.filterable) this.handleInputModel(inputDom.value);
             this.$nextTick(() => {
                 this.$emit("on-change", this.model, this.__attachData);
                 this.$emit("on-blur", this.model, this.__attachData);
                 this.__attachData = "";
-                this.handleDispatch("on-validate", this.model,'blur');
+                this.handleDispatch("on-validate", this.model, 'blur');
             });
         },
         handleInputModel(value) {

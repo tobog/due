@@ -18,6 +18,7 @@
     border-right: 1px solid #ccc;
     // padding-top: 60px;
     font-size: 16px;
+    align-self: stretch;
 }
 .nav {
     position: fixed;
@@ -59,7 +60,7 @@
                         class="menu-item"
                         v-for="(item, index) in guideMenus"
                         :key="index"
-                        :to="{ path: item.path }"
+                        :to="{path: item.path}"
                         >{{ item.label }}</router-link
                     >
                 </div>
@@ -68,7 +69,7 @@
                         class="menu-item"
                         v-for="(item, index) in compMenus"
                         :key="index"
-                        :to="{ path: item.path }"
+                        :to="{path: item.path}"
                         >{{ item.path }}&nbsp;&nbsp;{{ item.label }}</router-link
                     >
                 </div>
@@ -81,34 +82,34 @@
 </template>
 
 <script>
-import "./index.scss";
+import "./index.scss"
 
 export default {
     name: "App",
     data() {
-        return {};
+        return {}
     },
     created() {
-        console.log(this, "----------------");
+        console.log(this, "----------------")
     },
     computed: {
         allMenus() {
-            let routes = this.$router.options.routes;
+            let routes = this.$router.options.routes
             return this.$router.options.routes[routes.length - 1].children.map((item) => {
                 return {
                     path: item.path,
                     label: (item.meta || {}).label || "",
                     guide: (item.meta || {}).type === "guide",
-                };
-            });
+                }
+            })
         },
         compMenus() {
-            return this.allMenus.filter((item) => !item.guide);
+            return this.allMenus.filter((item) => !item.guide)
         },
         guideMenus() {
-            return this.allMenus.filter((item) => item.guide);
+            return this.allMenus.filter((item) => item.guide)
         },
     },
     methods: {},
-};
+}
 </script>

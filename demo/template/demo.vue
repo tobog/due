@@ -10,6 +10,9 @@
             padding-left: 12px;
             padding-top: 10px;
         }
+        h2 {
+            text-transform: capitalize;
+        }
     }
     .demo-props-table,
     .demo-form,
@@ -39,6 +42,9 @@
         max-width: 300px;
         overflow: hidden;
     }
+    .demo-form-header {
+        padding: 10px;
+    }
 }
 </style>
 
@@ -60,7 +66,13 @@
         </div>
         <vRow class="demo-layout" flex>
             <vCol :lg="isAll ? 24 : 14" span="24" class="demo-form">
-                <FormEdit :formdata="config" v-model="formData"></FormEdit>
+                <template v-for="(item, key) in getConfig">
+                    <div v-if="!item.hide" :key="key">
+                        <h2 class="demo-form-header">{{ key }}属性配置</h2>
+                        <FormEdit v-if="key === 'component'" :formdata="item.data" v-model="formData"></FormEdit>
+                        <FormEdit v-else :formdata="item.data" v-model="formData[key]"></FormEdit>
+                    </div>
+                </template>
             </vCol>
             <vCol :lg="isAll ? 24 : 10" span="24" class="demo-view" :data-dark="isDark">
                 <vSwitch v-model="show" class="margin-bottom-10">
@@ -77,9 +89,9 @@
 				<code v-text="getFormatCode" class="html"></code>
 			</pre>
         </div>
-        <div class="demo-props-table">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getColumns" :data="config" class="demo-table" border stripe></vTable>
+        <div v-for="(item, key) in getConfig" :key="key" class="demo-props-table">
+            <h2 class="demo-header">{{ key }} 参数说明- {{ item.title || "Props & Events" }}</h2>
+            <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
         </div>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>
@@ -107,7 +119,7 @@ export default {
         title: String,
         isAll: Boolean,
         config: {
-            type: Array,
+            type: [Array, Object],
             default() {
                 return []
             },
@@ -142,6 +154,18 @@ export default {
         },
     },
     computed: {
+        getConfig() {
+            if (!this.config) return {}
+            if (Array.isArray(this.config)) {
+                return {
+                    component: {
+                        title: "Props & Events",
+                        data: this.config,
+                    },
+                }
+            }
+            return this.config
+        },
         getFormatCode() {
             let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`)
             return code.replace(/\s{5,}/g, function() {
@@ -171,10 +195,15 @@ export default {
                     key: "default",
                 },
                 {
+                    title: "测试参数",
+                    key: "demoDefault",
+                },
+                {
                     title: "可选值",
                     key: "options",
                     render(h, data) {
-                        return <div class="table-opt">{(data.row.options || []).join(",")}</div>
+                        let opts = data.row.options || []
+                        return <div class="table-opt">{opts.length > 20 ? "" : opts.join(",")}</div>
                         // console.log(data);
                     },
                 },

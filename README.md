@@ -17,7 +17,7 @@ medio 响应式组件或指令
 ## 更新
 <!-- 1. button 增加异步点击，样式优化 -->
 2. 添加动画组件
-3. input焦点粘贴bug 
+<!-- 3. input焦点粘贴bug  -->
 4. scroll-text 左右滚动
 5. img 组件 有加载状态
 6. mask 蒙版和剪切
@@ -55,7 +55,7 @@ media  整体组件
 4. 剪切
 5. 复制
 <!-- 6. setp2 -->
-7. inputnumber 无法粘贴
+<!-- 7. inputnumber 无法粘贴 -->
 8. tooltip 出现反复出现和消失解决方案再加一个为元素覆盖间隙
 
 

@@ -117,11 +117,10 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         pointer-events: none !important;
     }
 
-    &-disabled, 
+    &-disabled,
     &-disabled &,
     &-disabled &-prepend,
-    &-disabled &-append
-    {
+    &-disabled &-append {
         background-color: $disabled;
         color: $disable-content;
     }
@@ -294,7 +293,9 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 
 .#{$prefix-cls-select} {
     .#{$prefix-cls-base}-arrowicon {
+        padding: 0 6px;
         display: inline-flex;
+        transform-origin: center center;
     }
 }
 
@@ -319,6 +320,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 
     &-suffix {
+        padding: 0 6px;
         .#{$prefix}-icons[data-min],
         .#{$prefix}-icons[data-max] {
             color: $disable-content !important;
@@ -386,9 +388,8 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 }
 
-
 @each $key, $value in $colors-map {
-    .#{$prefix-cls-base}-#{$key} {
+    .#{$prefix-cls-base}-theme-#{$key} {
         .#{$prefix-cls-base}-tag:hover {
             border-color: $value;
             color: $value;
@@ -411,7 +412,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         }
     }
 
-    .#{$prefix-cls-number}-#{$key} {
+    .#{$prefix-cls-number}-theme-#{$key} {
         .#{$prefix-cls-number}-inner {
             &:hover {
                 border-color: $value;
@@ -435,7 +436,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         }
     }
 
-    .#{$prefix-cls-textarea}-#{$key} {
+    .#{$prefix-cls-textarea}-theme-#{$key} {
         .#{$prefix-cls-textarea}-inner {
             &:hover {
                 border-color: $value;
@@ -459,4 +460,3 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         }
     }
 }
-

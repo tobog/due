@@ -70,7 +70,7 @@ export default {
             }
         },
         handleVisible(item) {
-            return item.dataType ? item.showConfig && item.span != "0" : item.show !== false && item.span != "0"
+            return item.dataType ? (item.showConfig && item.span != "0") : (item.show !== false && item.span != "0")
         },
         isGroupFormChild(tag = "") {
             return /(Radio|Checkbox)$/gi.test(tag)

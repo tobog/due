@@ -37,8 +37,8 @@
             />
             <input
                 style="display:none;"
-                :class="[_tobogPrefix_ + '-hidden']"
                 type="number"
+                :class="[_tobogPrefix_ + '-hidden']"
                 :name="name"
                 :value="model"
                 :step="step"
@@ -74,26 +74,27 @@
 import Icons from "../icons/index"
 import mixin from "./base/mixin"
 import {parseNumber, validVal} from "../../utils/tool"
+import globalMixin from "../../mixins/global"
 export default {
     name: "Number",
     inheritAttrs: false,
-    mixins: [mixin],
+    mixins: [mixin, globalMixin],
     components: {
         Icons,
     },
     props: {
         value: [Number, String],
         formatter: Function,
-        precision: Number,
+        precision: [Number, String],
         math: String,
-        min: Number,
-        max: Number,
+        min: [Number, String],
+        max: [Number, String],
         step: {
-            type: Number,
+            type: [Number, String],
             default: 1,
         },
         radix: {
-            type: Number,
+            type: [Number, String],
             default: 1,
         },
         scroll: Boolean,
@@ -117,10 +118,13 @@ export default {
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
+            const theme = this.getGlobalData("theme")
+            const size = this.getGlobalData("size")
             return [
                 `${_tobogPrefix_}-wrapper`,
                 {
-                    [`${_tobogPrefix_}-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
+                    [`${_tobogPrefix_}-size-${size}`]: !!size,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
                     [`${_tobogPrefix_}-active`]: this.isActive,
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
@@ -148,10 +152,10 @@ export default {
             return parseNumber(this.step) || 1
         },
         isMin() {
-            return !!(validVal(this.min) && this.min >= this.model / this.getRadix)
+            return !!(validVal(this.min) && this.min * 1 >= this.model / this.getRadix)
         },
         isMax() {
-            return !!(validVal(this.max) && this.max <= this.model / this.getRadix)
+            return !!(validVal(this.max) && this.max * 1 <= this.model / this.getRadix)
         },
     },
     methods: {
@@ -253,6 +257,7 @@ export default {
         },
         handleClear() {
             if (this.isReadonly) return
+            this.$emit("on-clear")
             this.updateModel("")
         },
         handleKeyCode(event) {
@@ -280,9 +285,8 @@ export default {
         pipeMaxMin(val, isMin) {
             const min = this.min,
                 max = this.max
-            console.log(max, "1")
-            if (validVal(max) && max < val) return parseFloat(max)
-            if (isMin && validVal(min) && min > val) return parseFloat(min)
+            if (validVal(max) && max - val < 0) return parseFloat(max)
+            if (isMin && validVal(min) && min - val > 0) return parseFloat(min)
             return val
         },
         pips(val) {

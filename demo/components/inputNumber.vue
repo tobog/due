@@ -1,278 +1,272 @@
+<style lang="scss"></style>
+
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (InputNumber)</h2>
             <h4 class="padding-top-10">
                 基本表单组件，支持 input 和 textarea，并在原生控件基础上进行了功能扩展，可以组合使用。
             </h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vInputNumber class="margin-bottom-20" v-model="val"></vInputNumber>
-                <vInputNumber v-bind="formData" :formatter="(val) => `${val}%`" v-model="val"></vInputNumber>
-                <div>{{ val }}</div>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vInputNumber v-bind="config" :formatter="(val) => `${val}%`" v-model="val"></vInputNumber>
+            <div class="padding-15">{{ val }}</div>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
-            val: '',
-        };
+            val: "",
+        }
     },
     computed: {
         getCode() {
-            return `<vInputNumber class="margin-bottom-20" v-model="val"></vInputNumber>
-					<vInputNumber v-bind="${this.getCodeString(this.formData)}" :formatter="val => val%" v-model="val"></vInputNumber>`;
+            return `<InputNumber class="margin-bottom-20" v-model="val"></InputNumber>
+					<InputNumber v-bind="CODE" :formatter="val => val%" v-model="val"></InputNumber>`
         },
-        getBase() {
+        getConfig() {
             return [
                 {
-                    label: '只读',
-                    key: 'readonly',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '滚动变化',
-                    key: 'scroll',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "清空按钮",
+                    key: "clearable",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "清空按钮",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '禁用状态',
-                    key: 'disabled',
-                    tag: 'vSwitch',
-                    default: false,
-                },
-                {
-                    label: '是否使用控制按钮',
-                    key: 'controls',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "控制按钮",
+                    key: "controls",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否使用控制按钮",
+                    dataType: "Boolean",
                     default: true,
                 },
                 {
-                    label: '是否使用分割控制按钮',
-                    key: 'splitControls',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "分割控制按钮",
+                    key: "splitControls",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否使用分割控制按钮",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '清空按钮',
-                    key: 'clearable',
-                    tag: 'vSwitch',
+                    showConfig: true,
+                    label: "只读",
+                    key: "readonly",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否只读",
+                    dataType: "Boolean",
                     default: false,
                 },
                 {
-                    label: '小数点',
-                    key: 'precision',
-                    tag: 'vInputNumber',
-                    // default: ''
-                },
-                {
-                    label: 'Math对象方法',
-                    key: 'math',
-                    tag: 'vInput',
-                    // default: "",
-                },
-                {
-                    label: '最大值',
-                    key: 'max',
-                    tag: 'vInputNumber',
-                    // default: ''
-                },
-                {
-                    label: '最小值',
-                    key: 'min',
-                    tag: 'vInputNumber',
-                    // default: ''
-                },
-                {
-                    label: '步伐',
-                    key: 'step',
-                    tag: 'vInputNumber',
-                    default: 1,
-                },
-                {
-                    label: '基数倍率',
-                    key: 'radix',
-                    tag: 'vInputNumber',
-                    default: 1,
-                },
-                {
-                    label: '头部图标',
-                    key: 'prefix',
-                    tag: 'vSelect',
-                    default: 'person',
+                    showConfig: true,
+                    label: "头部图标",
+                    key: "prefix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "person",
+                    explain: "prefix|slot:prefix 输入框头部图标",
+                    dataType: "Number|VNode",
                     options: this.iconslist,
                 },
                 {
-                    label: '尾部图标',
-                    key: 'suffix',
-                    tag: 'vSelect',
-                    default: 'person',
+                    showConfig: true,
+                    label: "尾部图标",
+                    key: "suffix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "person",
+                    explain: "suffix|slot:suffix输入框尾部图标",
+                    dataType: "Number|VNode",
                     options: this.iconslist,
                 },
                 {
-                    label: '主题',
-                    key: 'theme',
-                    tag: 'vSelect',
-                    default: '',
+                    showConfig: true,
+                    label: "主题",
+                    key: "theme",
+                    tag: "vSelect",
+                    default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
                     options: this.getThemes,
                 },
-            ];
-        },
-        compProps() {
-            return [
                 {
-                    prop: 'name',
-                    explain: '表单name',
-                    type: 'String',
-                    default: '',
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    explain: '滚动变化',
-                    prop: 'scroll',
-                    tag: 'String',
+                    showConfig: true,
+                    label: "滚动变化",
+                    key: "scroll",
+                    tag: "vSwitch",
                     default: false,
+                    demoDefault: false,
+                    explain: "滚动变化",
+                    dataType: "Boolean",
                 },
                 {
-                    prop: 'value',
-                    explain: '绑定的值，可使用 v-model 双向绑定',
-                    type: 'String|Number|Array',
-                    default: '',
-                },
-                {
-                    prop: '$attrs',
-                    explain: '继承$attrs',
-                    type: 'object',
-                    default: '-',
-                },
-                {
-                    prop: 'disabled',
-                    explain: '是否禁用',
-                    type: 'Boolean',
-                    default: 'false',
-                },
-                {
-                    prop: 'readonly',
-                    explain: '只读',
-                    type: 'Boolean',
-                    default: 'false',
-                },
-                {
-                    prop: 'clearable',
-                    explain: '是否显示清空按钮',
-                    type: 'Boolean',
-                    default: 'false',
-                },
-                {
-                    prop: 'precision',
-                    explain: '小数点',
-                    type: 'Number',
-                    default: '-',
-                },
-                {
-                    prop: 'math',
-                    explain: 'Math对象方法',
-                    type: 'string',
-                    default: '-',
-                },
-                {
-                    prop: 'max',
-                    explain: '最大值',
-                    type: 'Number',
-                    default: '-',
-                },
-                {
-                    explain: '最小值',
-                    prop: 'min',
-                    type: 'Number',
-                    default: '-',
-                },
-                {
-                    prop: 'step',
-                    explain: '每次改变的步伐，可以是小数',
-                    type: 'Number',
+                    showConfig: true,
+                    label: "基数倍率",
+                    key: "radix",
+                    tag: "vInputNumber",
                     default: 1,
+                    demoDefault: 1,
+                    explain: "基数倍率",
+                    dataType: "Number",
                 },
                 {
-                    prop: 'radix',
-                    explain: '基数倍率',
-                    type: 'Number',
+                    showConfig: true,
+                    label: "步伐",
+                    key: "step",
+                    tag: "vInputNumber",
                     default: 1,
+                    demoDefault: 1,
+                    explain: "每次改变的步伐，可以是小数",
+                    dataType: "Number",
                 },
                 {
-                    explain:
-                        '主题：button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url',
-                    prop: 'theme',
-                    type: 'String',
-                    default: '',
+                    showConfig: true,
+                    label: "最大值",
+                    key: "max",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    explain: "最大值",
+                    dataType: "Number",
                 },
                 {
-                    prop: 'formatter',
-                    explain: '指定输入框展示值的格式',
-                    type: 'Function',
-                    default: '(resultRadix,val)=val',
+                    showConfig: true,
+                    label: "最小值",
+                    key: "min",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    explain: "最小值",
+                    dataType: "Number",
                 },
                 {
-                    prop: 'prefix|slot:prefix',
-                    explain: '输入框头部图标',
-                    type: 'String|VNode',
-                    default: '-',
+                    showConfig: true,
+                    label: "小数点",
+                    key: "precision",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    explain: "小数点",
+                    dataType: "Number",
                 },
                 {
-                    prop: 'suffix|slot:suffix',
-                    explain: '输入框尾部图标',
-                    type: 'String|VNode',
-                    default: '-',
+                    showConfig: true,
+                    label: "Math对象方法",
+                    key: "math",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "Math对象方法",
+                    dataType: "string",
                 },
                 {
-                    prop: 'on-change',
-                    explain: '数据改变时触发事件',
-                    type: 'Function:(val,event)=>{}',
-                    default: '-',
+                    key: "name",
+                    explain: "表单name",
+                    dataType: "String",
                 },
                 {
-                    prop: 'on-focus',
-                    explain: '输入框聚焦时触发事件',
-                    type: 'Function:(val,event)=>{}',
-                    default: '-',
+                    key: "formatter",
+                    explain: "指定输入框展示值的格式",
+                    dataType: "Function:(resultRadix,val)=va",
                 },
                 {
-                    prop: 'on-blur',
-                    explain: '输入框失去焦点时触事件',
-                    type: 'Function:(val,event)=>{}',
-                    default: '-',
+                    key: "value",
+                    explain: "绑定的值，可使用 v-model 双向绑定",
+                    dataType: "String|Number|Array",
+                    default: "",
                 },
                 {
-                    prop: 'on-clear',
-                    explain: '点击清除触发事件',
-                    type: 'Function',
-                    default: '-',
+                    key: "$attrs",
+                    explain: "继承$attrs",
+                    dataType: "object",
+                    default: "-",
                 },
-            ];
+                {
+                    key: "slots:prepend",
+                    explain: "输入框外头部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "slots:append",
+                    explain: "输入框外尾部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "input",
+                    explain: "数据改变时触发事件(v-model)",
+                    dataType: "Function:(val)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-keydown",
+                    explain: "按下键盘触发",
+                    dataType: "Function:(val)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-enter",
+                    explain: "按下enter键触发",
+                    dataType: "Function:(val)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-change",
+                    explain: "数据改变时触发事件",
+                    dataType: "Function:(val)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-focus",
+                    explain: "输入框聚焦时触发事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-blur",
+                    explain: "输入框失去焦点时触事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-clear",
+                    explain: "点击清除触发事件",
+                    dataType: "Function",
+                    default: "-",
+                },
+            ]
         },
     },
-};
+}
 </script>

@@ -25,7 +25,8 @@ export default {
             default:0,
         },
         maxLength: Number,
-        showWordCount:Boolean
+        showWordCount:Boolean,
+        showPassword: Boolean,
     },
     data() {
         return {

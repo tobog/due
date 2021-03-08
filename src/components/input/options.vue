@@ -69,17 +69,17 @@ export default {
         },
         value: [String, Array, Number],
         multiple: Boolean,
-        strict: Boolean,
         performance: String,
         theme: String,
-        regExpMatch: Boolean,
+        queryRegExp: Boolean,
         reset: [Boolean, String, Number],
         noDataText: String,
         checkAllLabel: String,
         disabled: Boolean,
         checkbox: Boolean,
         size: String,
-        hasCheckAll: {
+        checkAll: Boolean,
+        strict: {
             type: Boolean,
             default: true,
         },
@@ -123,7 +123,7 @@ export default {
         isHasCheckAll() {
             return (
                 this.multiple &&
-                this.hasCheckAll &&
+                this.checkAll &&
                 !this.disabled &&
                 this.resultData.length &&
                 !this.baseData.some((item) => item.disabled && !item.selected)
@@ -162,7 +162,7 @@ export default {
             return strict ? data.value === value : data.value == value
         },
         select(val, text, attach, isCancel) {
-            if (this.multiple && this.hasCheckAll && val === this.symbolAll) {
+            if (this.multiple && this.checkAll && val === this.symbolAll) {
                 const model = Array.isArray(this.value) ? this.value : []
                 val =
                     model.length > 0 && model.length === this.baseData.length
@@ -272,12 +272,17 @@ export default {
                 this.refreshVirtual += 1
                 return
             }
-            const parsedQuery = this.regExpMatch
+            const parsedQuery = this.queryRegExp
                 ? `${val}`
-                      .replace(/(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g, function(match, reg) {
-                          if (reg === "\\") return "\\\\"
-                          return reg
-                      })
+                      .replace(
+                          this.queryRegExp === true
+                              ? /(\^|\(|\)|\[|\]|\$|\*|\\+|\.|\?|\\|\{|\}|\|)/g
+                              : this.queryRegExp,
+                          function(match, reg) {
+                              if (reg === "\\") return "\\\\"
+                              return reg
+                          }
+                      )
                       .trim()
                 : false
             this.resultData = this.baseData.filter((item) => {

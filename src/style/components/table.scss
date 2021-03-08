@@ -223,7 +223,13 @@ $prefix-cls: #{$prefix}-table;
             background-color: $back;
         }
     }
-
+    &-table > tbody {
+        & > tr:last-child {
+            td {
+                border-bottom-color: transparent !important;
+            }
+        }
+    }
     &-both &-table,
     &-border &-table {
         td,

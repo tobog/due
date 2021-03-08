@@ -12,6 +12,7 @@
         :disabled="isReadonly"
         :reference="ready && showDrop ? $refs.inputBase.$refs.inputInner : null"
         v-model="visible"
+        v-bind="dropProps"
     >
         <InputBase
             ref="inputBase"
@@ -34,6 +35,7 @@
             :showWordCount="showWordCount"
             :size="getSize"
             :theme="getTheme"
+            v-bind="$attrs"
             @hook:created="ready = true"
             @on-focus="handleFocus"
             @on-input="handleInput"
@@ -48,7 +50,7 @@
             <slot slot="append" name="append"></slot>
             <slot slot="prefix" name="prefix"></slot>
             <slot slot="suffix" name="suffix"></slot>
-            <slot name="tags" slot-scope="data" v-bind="data"></slot>
+            <slot name="tag" slot-scope="data" v-bind="data"></slot>
         </InputBase>
         <template v-if="showDrop" slot="drop">
             <Options
@@ -60,8 +62,8 @@
                 :keyModal="keyModal"
                 :reset="visible"
                 :noDataText="noDataText"
-                :regExpMatch="regExpMatch"
-                :hasCheckAll="hasCheckAll"
+                :queryRegExp="queryRegExp"
+                :checkAll="checkAll"
                 :size="getSize"
                 :theme="getTheme"
                 :checkbox="checkbox"
@@ -124,14 +126,12 @@ export default {
         showPassword: Boolean,
         showWordCount: Boolean,
         performance: String,
-        regExpMatch: Boolean,
+        queryRegExp: Boolean,
         noDataText: String,
         checkbox: Boolean,
         checkAllLabel: String,
-        hasCheckAll: {
-            type: Boolean,
-            default: true,
-        },
+        checkAll: Boolean,
+        dropProps: Object,
     },
     data() {
         return {
@@ -353,6 +353,10 @@ export default {
                 this.$refs.options.handleScrollbar()
             }
         },
+    },
+    beforeDestroy() {
+        this.searchMethod && this.searchMethod.cancel()
+        this.searchMethod = null
     },
 }
 </script>

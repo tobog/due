@@ -1,22 +1,5 @@
 <style lang="scss">
-.demo-row {
-    margin-bottom: 5px;
-    background-image: linear-gradient(90deg, #f5f5f5 50%, transparent 0, transparent 100%);
-    background-size: 8.333333333333334% 100%;
-}
-.demo-col {
-    color: #fff;
-    padding: 30px 0;
-    text-align: center;
-    font-size: 18px;
-    background: rgba(0, 153, 229, 0.3);
-}
-.demo-col:nth-child(2n) {
-    background: rgba(0, 153, 229, 0.7);
-}
-.demo-grid > .demo-col {
-    padding: 0;
-}
+
 </style>
 
 <template>
@@ -28,16 +11,15 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20">
+            <vInput :options="opts" v-bind="config['Input']" v-model="val" class="margin-bottom-20">
                 <div slot="prepend">prepend</div>
                 <div slot="append">测试</div>
             </vInput>
-            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20">
+            <vInput :options="opts" v-bind="config['Input']" v-model="val1" class="margin-bottom-20">
                 <vInput dropStyle="width:auto" slot="prepend"> </vInput>
             </vInput>
-            <vInput :options="opts" v-bind="config" v-model="val" class="margin-bottom-20"> </vInput>
-            <vOption size="small" value="value"></vOption>
-            <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}-{{ val3 }}</div>
+            <vInput v-bind="config['Input']" v-model="val2" class="margin-bottom-20"> </vInput>
+            <div class="padding-15">{{ val }}-{{ val1 }}-{{ val2 }}</div>
         </template>
     </Demo>
 </template>
@@ -50,14 +32,11 @@ export default {
             val: "",
             val1: "",
             val2: "",
-            val3: "",
-            val4: "",
-            show1: true,
             opts: [],
         }
     },
     created() {
-        for (let index = 0; index < 60; index++) {
+        for (let index = 0; index < 100; index++) {
             this.opts.push({
                 label: index + "@",
                 value: index,
@@ -68,9 +47,13 @@ export default {
     computed: {
         getCode() {
             return `
+                    <Input :options="opts" v-bind="config['Input']" v-model="val" class="margin-bottom-20">
+                        <div slot="prepend">prepend</div>
+                        <div slot="append">测试</div>
+                    </Input>
 					`
         },
-        getConfig() {
+        getInputConfig() {
             return [
                 {
                     showConfig: true,
@@ -117,10 +100,10 @@ export default {
                     label: "自动关闭",
                     key: "autoClose",
                     tag: "vSwitch",
-                    demoDefault: false,
+                    demoDefault: true,
                     explain: "非多选下自动关闭",
                     dataType: "Boolean",
-                    default: false,
+                    default: true,
                 },
                 {
                     showConfig: true,
@@ -157,8 +140,8 @@ export default {
                     label: "头部图标",
                     key: "prefix",
                     tag: "vSelect",
-                    default: "person",
-                    demoDefault: "",
+                    default: void 0,
+                    demoDefault: "person",
                     explain: "prefix|slot:prefix 输入框头部图标",
                     dataType: "Number|VNode",
                     options: this.iconslist,
@@ -168,11 +151,41 @@ export default {
                     label: "尾部图标",
                     key: "suffix",
                     tag: "vSelect",
-                    default: "person",
-                    demoDefault: "",
+                    default: void 0,
+                    demoDefault: "person",
                     explain: "suffix|slot:suffix输入框尾部图标",
                     dataType: "Number|VNode",
                     options: this.iconslist,
+                },
+                {
+                    showConfig: true,
+                    label: "多选折叠",
+                    key: "collapse",
+                    tag: "vInputNumber",
+                    default: 0,
+                    demoDefault: 0,
+                    explain: "多选tags模式下，显示tag 数目",
+                    dataType: "Boolean|Number",
+                },
+                {
+                    showConfig: true,
+                    label: "字符长度",
+                    key: "maxLength",
+                    tag: "vInputNumber",
+                    default: void 0,
+                    demoDefault: void 0,
+                    explain: "输入模式下允许输入最大字符",
+                    dataType: "Number",
+                },
+                {
+                    showConfig: true,
+                    label: "字符长度提示",
+                    key: "showWordCount",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "输入模式下是否显示字符长度提示",
+                    dataType: "Boolean",
                 },
                 {
                     showConfig: true,
@@ -211,7 +224,7 @@ export default {
                 {
                     showConfig: true,
                     label: "无数据提示",
-                    key: "tip",
+                    key: "noDataText",
                     tag: "vInput",
                     default: "暂无数据",
                     demoDefault: "暂无数据",
@@ -219,23 +232,80 @@ export default {
                     dataType: "String",
                 },
                 {
-                    key: "multipleKey",
-                    explain: "当mutiple=true下,渲染的取值key，type=file时默认multipleKey=name",
-                    dataType: "String",
-                    default: "-",
+                    showConfig: true,
+                    label: "严格模式",
+                    key: "strict",
+                    tag: "vSwitch",
+                    default: true,
+                    demoDefault: true,
+                    explain: "在opt选项下，匹配是否严格模式",
+                    dataType: "Boolean",
                 },
                 {
-                    key: "type",
-                    explain:
-                        "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
+                    showConfig: true,
+                    label: "密码图标",
+                    key: "showPassword",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "在type=password下，是否显示密码图标控制",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "正在匹配",
+                    key: "queryRegExp",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "在输入查询下，选项是否正在匹配,queryRegExp=true启动默认正则",
+                    dataType: "[Boolean,RegExp]",
+                },
+                {
+                    showConfig: true,
+                    label: "选项checkbox",
+                    key: "checkbox",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "在输入查询下，选项是否显示checkbox",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "全选",
+                    key: "checkAll",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "选项是否显示全选",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "全选文字",
+                    key: "checkAllLabel",
+                    tag: "vSwitch",
+                    default: "全选",
+                    demoDefault: "全选",
+                    explain: "全选文字",
                     dataType: "String",
-                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "选项性能",
+                    key: "performance",
+                    tag: "vSelect",
+                    default: "auto",
+                    demoDefault: "auto",
+                    explain: "在有选项下，控制渲染项的数量来控制dom性能,类似虚拟列表",
+                    dataType: "String",
+                    options: ["auto", "hight", "middle", "normal"],
                 },
                 {
                     key: "name",
                     explain: "表单name",
                     dataType: "String",
-                    default: "",
                 },
                 {
                     key: "value",
@@ -244,28 +314,57 @@ export default {
                     default: "",
                 },
                 {
+                    key: "splitSymbol",
+                    explain: "多选项时的分割符号，主要在粘贴时用到",
+                    dataType: "String",
+                    default: ",",
+                },
+                {
+                    key: "dropStyle",
+                    explain: "给浮层添加额外的 Style 名称",
+                    dataType: "Object, String",
+                },
+                {
+                    key: "dropClass",
+                    explain: "给浮层添加额外的 class 名称",
+                    dataType: "Object, String, Array",
+                },
+                {
+                    key: "options",
+                    explain: "input 备选项，参考option 配置",
+                    dataType: "Array",
+                },
+                {
+                    key: "beforeInput",
+                    explain: "input 输入字符时处理函数，返回处理文本",
+                    dataType: "async Function",
+                },
+                {
+                    key: "dropProps",
+                    explain: "DropBase 下拉组件其他配置，参考DropBase组件",
+                    dataType: "async Function",
+                },
+                {
                     key: "$attrs",
                     explain: "继承$attrs",
                     dataType: "object",
                     default: "-",
                 },
-
-                {
-                    key: "dropStyle",
-                    explain: "给浮层添加额外的 Style 名称",
-                    dataType: "Object, String",
-                    default: "",
-                },
-
-                {
-                    key: "search",
-                    explain: "否显示为搜索型输入框",
-                    dataType: "Boolean",
-                    default: "false",
-                },
                 {
                     key: "slots:prepend",
                     explain: "输入框外头部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:default",
+                    explain: "自定义 opt 配置",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:tag",
+                    explain: "自定义 tag",
                     dataType: "VNode",
                     default: "-",
                 },
@@ -336,6 +435,517 @@ export default {
                     default: "-",
                 },
             ]
+        },
+        getInputBaseConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "清空按钮",
+                    key: "clearable",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "清空按钮",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "多选",
+                    key: "multiple",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否支持多选",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "只读",
+                    key: "readonly",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否只读",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "头部图标",
+                    key: "prefix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "person",
+                    explain: "prefix|slot:prefix 输入框头部图标",
+                    dataType: "Number|VNode",
+                    options: this.iconslist,
+                },
+                {
+                    showConfig: true,
+                    label: "尾部图标",
+                    key: "suffix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "person",
+                    explain: "suffix|slot:suffix输入框尾部图标",
+                    dataType: "Number|VNode",
+                    options: this.iconslist,
+                },
+                {
+                    showConfig: true,
+                    label: "多选折叠",
+                    key: "collapse",
+                    tag: "vInputNumber",
+                    default: 0,
+                    demoDefault: 0,
+                    explain: "多选tags模式下，显示tag 数目",
+                    dataType: "Boolean|Number",
+                },
+                {
+                    showConfig: true,
+                    label: "字符长度",
+                    key: "maxLength",
+                    tag: "vInputNumber",
+                    default: void 0,
+                    demoDefault: void 0,
+                    explain: "输入模式下允许输入最大字符",
+                    dataType: "Number",
+                },
+                {
+                    showConfig: true,
+                    label: "字符长度提示",
+                    key: "showWordCount",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "输入模式下是否显示字符长度提示",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "类型",
+                    key: "type",
+                    tag: "vSelect",
+                    default: "text",
+                    demoDefault: "text",
+                    explain:
+                        "输入框类型，可选值为 button,checkbox,color,date,datetime,datetime-local,month,week,time,email,file,hidden,image,number,password,radio,range,reset,search,submit,tel,text,url",
+                    dataType: "String",
+                    options: this.getFormTypes,
+                },
+                {
+                    showConfig: true,
+                    label: "主题",
+                    key: "theme",
+                    tag: "vSelect",
+                    default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
+                    options: this.getThemes,
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "密码图标",
+                    key: "showPassword",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "在type=password下，是否显示密码图标控制",
+                    dataType: "Boolean",
+                },
+                {
+                    key: "name",
+                    explain: "表单name",
+                    dataType: "String",
+                },
+                {
+                    key: "value",
+                    explain: "绑定的值，可使用 v-model 双向绑定",
+                    dataType: "String|Number|Array",
+                    default: "",
+                },
+                {
+                    key: "$attrs",
+                    explain: "继承$attrs",
+                    dataType: "object",
+                    default: "-",
+                },
+                {
+                    key: "slots:prepend",
+                    explain: "输入框外头部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:tag",
+                    explain: "自定义 tag",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "slots:append",
+                    explain: "输入框外尾部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "on-change",
+                    explain: "数据改变时触发事件",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-input",
+                    explain: "输入时触发",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-keydown",
+                    explain: "按下键盘时触发",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-icon-click",
+                    explain: "点击图标时触发事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-focus",
+                    explain: "输入框聚焦时触发事件",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-blur",
+                    explain: "输入框失去焦点时触事件",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-enter",
+                    explain: "按下回车键时触发事件",
+                    dataType: "Function:(event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-remove-item",
+                    explain: "点击清空按钮时触发事件：search",
+                    dataType: "Function:(index)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-clear",
+                    explain: "点击清除触发事件",
+                    dataType: "Function",
+                    default: "-",
+                },
+            ]
+        },
+        getOptionsConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "多选",
+                    key: "multiple",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否支持多选",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "键盘操作",
+                    key: "keyModal",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否键盘操作",
+                    dataType: "Boolean",
+                    default: true,
+                },
+                {
+                    showConfig: true,
+                    label: "正在匹配",
+                    key: "queryRegExp",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "在输入查询下，选项是否正在匹配,queryRegExp=true启动默认正则",
+                    dataType: "[Boolean,RegExp]",
+                },
+                {
+                    showConfig: true,
+                    label: "主题",
+                    key: "theme",
+                    tag: "vSelect",
+                    default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
+                    options: this.getThemes,
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "无数据提示",
+                    key: "noDataText",
+                    tag: "vInput",
+                    default: "暂无数据",
+                    demoDefault: "暂无数据",
+                    explain: "无数据提示",
+                    dataType: "String",
+                },
+                {
+                    showConfig: true,
+                    label: "严格模式",
+                    key: "strict",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "匹配是否严格模式",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "选项checkbox",
+                    key: "checkbox",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "选项是否显示checkbox",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "全选",
+                    key: "checkAll",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "选项是否显示全选",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "全选文字",
+                    key: "checkAllLabel",
+                    tag: "vSwitch",
+                    default: "全选",
+                    demoDefault: "全选",
+                    explain: "全选文字",
+                    dataType: "String",
+                },
+                {
+                    showConfig: true,
+                    label: "选项性能",
+                    key: "performance",
+                    tag: "vSelect",
+                    default: "auto",
+                    demoDefault: "auto",
+                    explain: "在有选项下，控制渲染项的数量来控制dom性能,类似虚拟列表",
+                    dataType: "String",
+                    options: ["auto", "hight", "middle", "normal"],
+                },
+                {
+                    key: "value",
+                    explain: "绑定的值，可使用 v-model(on-change) 双向绑定",
+                    dataType: "String|Number|Array",
+                    default: "",
+                },
+                {
+                    key: "data",
+                    explain: "input 备选项，参考option 配置",
+                    dataType: "Array",
+                },
+                {
+                    key: "scoped:prefix",
+                    explain: "顶部组件",
+                    dataType: "VNode",
+                    default: "option全选",
+                },
+                {
+                    key: "scoped:default",
+                    explain: "自定义 opt 配置",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:suffix",
+                    explain: "底部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "on-change",
+                    explain: "数据改变时触发事件",
+                    dataType: "Function:(val,__attachData)=>{}",
+                    default: "-",
+                },
+            ]
+        },
+        getOptionConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "主题",
+                    key: "theme",
+                    tag: "vSelect",
+                    default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
+                    options: this.getThemes,
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "选项checkbox",
+                    key: "checkbox",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "选项是否显示checkbox",
+                    dataType: "Boolean",
+                },
+                {
+                    key: "value",
+                    explain: "绑定的值",
+                    dataType: "String|Number",
+                    default: "",
+                },
+                {
+                    key: "label",
+                    explain: "绑定文本",
+                    dataType: "String|Number",
+                    default: "",
+                },
+                {
+                    key: "attach",
+                    explain: "附带的数据",
+                    dataType: "Object",
+                    default: "",
+                },
+                {
+                    key: "selected",
+                    explain: "是否选中",
+                    dataType: "Object",
+                    default: "",
+                },
+                {
+                    key: "reverse",
+                    explain: "是否flex 反向布局",
+                    dataType: "Boolean",
+                },
+                {
+                    key: "wrapable",
+                    explain: "是否换行",
+                    dataType: "Boolean",
+                },
+                {
+                    key: "scoped:default",
+                    explain: "自定义渲染",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:suffix",
+                    explain: "底部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "on-select",
+                    explain: "选中时触发事件",
+                    dataType: "Function:(val,text,attachData)=>{}",
+                    default: "-",
+                },
+            ]
+        },
+        getConfig() {
+            return {
+                Input: {
+                    data: this.getInputConfig,
+                },
+                InputBase: {
+                    hide: true,
+                    data: this.getInputBaseConfig,
+                    title: "输入框基础组件，是Input 和 Select 组件的基础",
+                },
+                Options: {
+                    hide: true,
+                    data: this.getOptionsConfig,
+                    title: "备选项组件配置，是option的list",
+                },
+                Option: {
+                    hide: true,
+                    data: this.getOptionConfig,
+                    title: "备选项组件配置",
+                },
+            }
         },
     },
 }

@@ -3,7 +3,7 @@
         <slot :selected="selected" :theme="getProp('theme')" :disabled="disabled">
             <span :class="[_tobogPrefix_ + '-text']">{{ getText }}</span>
             <Checkbox
-                v-if="checkbox && getProp('multiple')"
+                v-if="checkbox"
                 readonly
                 :class="[_tobogPrefix_ + '-checkbox']"
                 :theme="getProp('theme')"
@@ -11,7 +11,7 @@
                 :disabled="disabled"
             ></Checkbox>
             <Icons
-                v-if="selected && !checkbox && getProp('multiple')"
+                v-if="selected && !checkbox"
                 type="ios-checkmark"
                 :class="[_tobogPrefix_ + '-icon-selected']"
             ></Icons>
