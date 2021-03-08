@@ -27,10 +27,7 @@ export function getScroll(element, isAll) {
 
     return isAll ? eles : eles[eles.length - 1];
 }
-export function hasScrollBar(element) {
-    const bool1 = isScroll(element, "y");
-    return bool1 && (element.scrollHeight - element.offsetHeight - element.clientTop - element.clientBottom > 0);
-}
+
 export function isScroll(element, type) {
     if (!element) return false;
     const data = ["scroll", "auto"];

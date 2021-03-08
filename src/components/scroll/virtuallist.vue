@@ -1,16 +1,20 @@
 <template>
     <div :class="classes" :data-vue-module="$options.name">
-        <slot name="prefix" />
-        <div :class="[_tobogPrefix_ + '-inner']" ref="virtuallist">
+        <div v-if="!!$slots.prefix" :class="[_tobogPrefix_ + '-prefix']" :style="getBarStyle">
+            <slot name="prefix" />
+        </div>
+        <div :class="[_tobogPrefix_ + '-inner']" ref="list">
             <div :class="[_tobogPrefix_ + '-list']" :style="getTransferStyle">
                 <slot></slot>
             </div>
         </div>
-        <slot name="suffix" />
+        <div v-if="!!$slots.suffix" :class="[_tobogPrefix_ + '-suffix']" :style="getBarStyle">
+            <slot name="suffix" />
+        </div>
     </div>
 </template>
 <script>
-import { PerformanceScroll, hasScrollBar } from "../../utils/dom";
+import {PerformanceScroll, isScroll, getScrollBarSize} from "../../utils/dom"
 // Virtuallist 虚拟列表
 export default {
     name: "Virtuallist",
@@ -38,8 +42,9 @@ export default {
             sizeLength: this.baseSize * 2,
             sizeIndex: 0,
             hasScroll: false,
+            barSize: 0,
             // customeEle: false,
-        };
+        }
     },
     created() {
         this.$emit("on-refresh", {
@@ -47,60 +52,70 @@ export default {
             length: 2 * 5 + this.baseSize,
             performance: this.initPerformance,
             translate: this.translateSize,
-        });
+        })
     },
     mounted() {
-        this.init();
-        this.handleScrollbar();
+        this.init()
+        this.handleScrollbar()
+        this.$nextTick(() => {
+            this.barSize = getScrollBarSize()
+        })
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-scroll`]: this.hasScroll,
                 },
-            ];
+            ]
         },
         isPerformance() {
-            return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total;
+            return (this.initPerformance === "middle" || this.initPerformance === "high") && this.baseSize < this.total
         },
         initPerformance() {
             if (this.performance === "auto") {
-                if (this.total < 100) return "normal";
-                if (this.total < 200) return "middle";
-                return "high";
+                if (this.total < 100) return "normal"
+                if (this.total < 200) return "middle"
+                return "high"
             }
             // 测试用
             // return "high"
-            return this.performance;
+            return this.performance
         },
         getTransferStyle() {
-            if (!this.isPerformance) return {};
+            if (!this.isPerformance) return {}
             if (this.translateSize > 0)
                 return {
                     transform: `translateY(${this.translateSize}px)`,
-                };
-            return {};
+                }
+            return {}
+        },
+        getBarStyle() {
+            if (this.hasScroll) {
+                return {
+                    paddingRight: this.barSize + "px",
+                }
+            }
+            return {}
         },
     },
     methods: {
         init() {
-            this.translateSize = 0;
+            this.translateSize = 0
             if (this._performanceScroll) {
-                this._performanceScroll.reset(true);
-                this.initPerformanceScroll();
+                this._performanceScroll.reset(true)
+                this.initPerformanceScroll()
             } else {
-                this.initPerformanceScroll();
+                this.initPerformanceScroll()
             }
         },
         // 性能优化
         initPerformanceScroll(opts = {}) {
-            if (!this._performanceScroll && this.initPerformance !== "middle" && this.initPerformance !== "high")
-                return;
+            if (!this._performanceScroll && this.initPerformance !== "middle" && this.initPerformance !== "high") return
             this.$nextTick(() => {
-                const el = this.$refs.virtuallist;
+                const el = this.$refs.list
                 if (el) {
                     opts = {
                         performance: this.initPerformance,
@@ -110,54 +125,61 @@ export default {
                         cellElement: this.cellSelector || "div>*",
                         cellHeight: this.cellHeight,
                         ...opts,
-                    };
-                    if (this._performanceScroll) {
-                        this._performanceScroll.update(el, opts);
-                        return;
                     }
-                    this._performanceScroll = new PerformanceScroll(el, opts, ({ index, translate, length }, type) => {
-                        if (type === "over") return;
+                    if (this._performanceScroll) {
+                        this._performanceScroll.update(el, opts)
+                        return
+                    }
+                    this._performanceScroll = new PerformanceScroll(el, opts, ({index, translate, length}, type) => {
+                        if (type === "over") return
                         // console.log(index, translate, length, this.total, "============")
-                        this.sizeIndex = index + length > this.total ? this.total - length + 1 : index;
-                        if (this.sizeIndex < 0) this.sizeIndex = 0;
-                        this.sizeLength = length;
-                        this.translateSize = translate;
+                        this.sizeIndex = index + length > this.total ? this.total - length + 1 : index
+                        if (this.sizeIndex < 0) this.sizeIndex = 0
+                        this.sizeLength = length
+                        this.translateSize = translate
                         this.$emit("on-refresh", {
                             index: this.sizeIndex,
                             length: this.sizeLength,
                             performance: this.initPerformance,
                             translate: this.translateSize,
-                        });
-                        this.handleScrollbar();
-                    });
+                        })
+                        this.handleScrollbar()
+                    })
                 }
-            });
+            })
         },
         handleScrollbar() {
-            clearTimeout(this._scrollbarTimeout);
+            clearTimeout(this._scrollbarTimeout)
             this.$nextTick(() => {
+                if (!this.$slots.prefix && !this.$slots.suffix) {
+                    this.hasScroll = false
+                    return
+                }
                 this._scrollbarTimeout = setTimeout(() => {
-                    this.hasScroll = hasScrollBar(this.$refs.virtuallist);
-                }, 60);
-            });
+                    const element = this.$refs.list
+                    this.hasScroll =
+                        isScroll(element, "y") &&
+                        element.scrollHeight - element.clientHeight > 0
+                }, 60)
+            })
         },
     },
     watch: {
         reset() {
-            this.init();
+            this.init()
         },
         total() {
-            this.init();
-            this.handleScrollbar();
+            this.init()
+            this.handleScrollbar()
         },
         initPerformance() {
-            this.initPerformanceScroll();
+            this.initPerformanceScroll()
         },
     },
     beforeDestroy() {
-        clearTimeout(this._scrollbarTimeout);
-        this._performanceScroll && this._performanceScroll.destroy();
-        this._performanceScroll = this._scrollbarTimeout = null;
+        clearTimeout(this._scrollbarTimeout)
+        this._performanceScroll && this._performanceScroll.destroy()
+        this._performanceScroll = this._scrollbarTimeout = null
     },
-};
+}
 </script>

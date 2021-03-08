@@ -326,6 +326,7 @@ export default {
                 if (event.keyCode == 13) {
                     this.$nextTick(() => {
                         this.$emit("on-enter", this.model, event)
+                        if (this.multiple) return
                         this.visible = false
                     })
                 }
@@ -348,6 +349,9 @@ export default {
         },
         visible(val) {
             this.$emit("on-visible-change", val)
+            if (val && this.$refs.options) {
+                this.$refs.options.handleScrollbar()
+            }
         },
     },
 }

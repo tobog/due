@@ -1,5 +1,6 @@
 <template>
     <Virtuallist
+        ref="virtuallist"
         :class="classes"
         :data-vue-module="$options.name"
         :total="resultData.length"
@@ -188,8 +189,11 @@ export default {
                 event.preventDefault()
                 this.navigateOpts(1)
             }
-            if (keyCode === 13) {
+            if (keyCode === 13 && !this.multiple) {
                 this.getMatchedOpt()
+            }
+            if (keyCode === 13 && this.multiple && this._hoverComponent) {
+                this.select(this._hoverComponent.value, this._hoverComponent.label, this._hoverComponent.attach)
             }
         },
         handleOptChange(type, component) {
@@ -244,9 +248,10 @@ export default {
         },
         focusIndex(element) {
             if (!element) return
+            const parentNode = this.$refs.virtuallist && this.$refs.virtuallist.$refs.list
+            if (!parentNode) return
             // update scroll
-            const parentNode = this.$el,
-                elementRect = element.getBoundingClientRect(),
+            const elementRect = element.getBoundingClientRect(),
                 parentRect = parentNode.getBoundingClientRect(),
                 bottomOverflowDistance = elementRect.bottom - parentRect.bottom,
                 topOverflowDistance = elementRect.top - parentRect.top
@@ -299,13 +304,16 @@ export default {
                 return bool
             })
         },
+        handleScrollbar() {
+            this.$refs.virtuallist.handleScrollbar()
+        },
     },
     watch: {
         value: {
             deep: true,
             handler(val) {
                 this.baseData.forEach((item) => {
-                    this.$set(item, "hover", false)
+                    this.$set(item, "hover", !!(this._hoverComponent && this._hoverComponent.value === item.value))
                     this.$set(item, "selected", this.isSelected(val, item))
                 })
             },
@@ -321,6 +329,7 @@ export default {
                 this.baseData.forEach((item) => {
                     this.$set(item, "hover", false)
                 })
+                this._hoverComponent = null
                 this.resultData = this.baseData
             }
         },
