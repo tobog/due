@@ -336,11 +336,13 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         padding: 0 6px;
         flex: none;
         width: 32px;
-        font-size: 1.6em;
+        font-size: 1.2em;
         color: $sub-content;
         background-color: $back;
-        line-height: 0;
         cursor: pointer;
+        &:hover {
+            color: $primary;
+        }
     }
 
     &-decrease {
@@ -431,6 +433,12 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 
         .#{$prefix-cls-number}-suffix {
             & > .#{$prefix}-icons:hover {
+                color: $value;
+            }
+        }
+        .#{$prefix-cls-number}-decrease,
+        .#{$prefix-cls-number}-increase {
+            &:hover {
                 color: $value;
             }
         }

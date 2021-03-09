@@ -10,6 +10,7 @@
         </template>
         <template v-slot="config">
             <vInputNumber v-bind="config" :formatter="(val) => `${val}%`" v-model="val"></vInputNumber>
+            <vInputNumber v-bind="config" :formatter="(val) => `$ ${val}`" v-model="val1"></vInputNumber>
             <div class="padding-15">{{ val }}</div>
         </template>
     </Demo>
@@ -20,6 +21,7 @@ export default {
     data() {
         return {
             val: "",
+            val1: "",
         }
     },
     computed: {
@@ -180,15 +182,15 @@ export default {
                     explain: "小数点",
                     dataType: "Number",
                 },
-                {
-                    showConfig: true,
-                    label: "Math对象方法",
-                    key: "math",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "Math对象方法",
-                    dataType: "string",
-                },
+                // {
+                //     showConfig: true,
+                //     label: "Math对象方法",
+                //     key: "math",
+                //     tag: "vInput",
+                //     demoDefault: "",
+                //     explain: "Math对象方法",
+                //     dataType: "string",
+                // },
                 {
                     key: "name",
                     explain: "表单name",

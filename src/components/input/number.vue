@@ -10,12 +10,12 @@
             @focusin="handleFocusin"
             @focusout="handleFocusout"
         >
-            <span
+            <Icons
                 v-if="controls && splitControls"
                 :class="[_tobogPrefix_ + '-decrease']"
+                type="remove"
                 @click.stop="handleIconClick('down')"
-                >-</span
-            >
+            ></Icons>
             <span v-if="showPrefix" :class="[_tobogPrefix_ + '-prefix']">
                 <slot name="prefix">
                     <Icons :type="prefix" center />
@@ -53,12 +53,12 @@
                 center
                 @click.stop="handleClear"
             />
-            <span
+            <Icons
                 v-if="controls && splitControls"
+                type="add"
                 :class="[_tobogPrefix_ + '-increase']"
                 @click.stop="handleIconClick('up')"
-                >+</span
-            >
+            ></Icons>
             <span v-if="controls && !splitControls" :class="[_tobogPrefix_ + '-suffix']">
                 <Icons :data-max="isMax" type="ios-arrow-up" @click.stop="handleIconClick('up')" />
                 <Icons :data-min="isMin" type="ios-arrow-down" @click.stop="handleIconClick('down')" />
@@ -77,6 +77,7 @@ import {parseNumber, validVal} from "../../utils/tool"
 import globalMixin from "../../mixins/global"
 export default {
     name: "Number",
+    componentName: "Number",
     inheritAttrs: false,
     mixins: [mixin, globalMixin],
     components: {
@@ -152,10 +153,10 @@ export default {
             return parseNumber(this.step) || 1
         },
         isMin() {
-            return !!(validVal(this.min) && this.min * 1 >= this.model / this.getRadix)
+            return !!(validVal(this.min) && this.min - this.model / this.getRadix >= 0)
         },
         isMax() {
-            return !!(validVal(this.max) && this.max * 1 <= this.model / this.getRadix)
+            return !!(validVal(this.max) && this.max - this.model / this.getRadix >= 0)
         },
     },
     methods: {
@@ -172,7 +173,6 @@ export default {
                 clearTimeout(this.__blurTimeOut)
                 this.__blurStatus = false
             }
-            console.log(event.target, "handleFocusin")
             this.isActive = true
             if (this.__isFocused) return
             this.__isFocused = true
@@ -180,10 +180,8 @@ export default {
         },
         handleFocusout(event) {
             this.__blurStatus = true
-            console.log(event.target, "handleFocusout")
             clearTimeout(this.__blurTimeOut)
             this.__blurTimeOut = setTimeout(() => {
-                console.log("handleFocusout =========")
                 this.isActive = this.__isFocused = false
                 this.handleChange(event)
                 this.handleDispatch("on-validate", this.model)
@@ -203,6 +201,7 @@ export default {
             if (curposEnd != curpos) {
                 valueFormat = valueFormat.slice(0, curpos) + valueFormat.slice(curposEnd)
             }
+            console.log(data, type)
             if (isValid) {
                 const isPlus = data === "+",
                     isMinus = data === "-",
@@ -236,22 +235,24 @@ export default {
                     this.setValueFormat(valueFormat)
                     return
                 }
+                if (type === "textInput") {
+                    const newValue = this.getNewValue(valueFormat, curpos, data)
+                    this.updateModel(isNaN(newValue) ? "" : newValue)
+                    // this.$nextTick(() => {
+                    //     target.selectionEnd = target.selectionStart = curpos + `${data}`.length
+                    // })
+                    return
+                }
             }
-            if (isValid && type === "textInput") {
-                const newValue = this.getNewValue(valueFormat, curpos, data)
-                this.updateModel(isNaN(newValue) ? "" : newValue)
-                this.$nextTick(() => {
-                    target.selectionEnd = target.selectionStart = curpos + `${data}`.length
-                })
-                return
-            }
+
             if (!data) {
                 const newValue = this.getNewValue(target.value)
+                console.log(newValue)
                 this.updateModel(newValue)
             }
         },
         handleChange(event) {
-            const value = this.pipeMaxMin(this.model, true)
+            const value = validVal(this.model) ? this.pipeMaxMin(this.model, true) : ""
             this.updateModel(validVal(value) ? value / this.getRadix : "")
             this.$emit("on-change", this.model, event)
         },
@@ -272,13 +273,13 @@ export default {
         },
         handleFormatter(val) {
             //真实值转化显示值
-            const resultRadix = this.resultRadix(val)
+            const resultRadix = this.pipePrecision(val / this.getRadix)
             return typeof this.formatter === "function" ? this.formatter(resultRadix, val) : resultRadix
         },
-        pipeMath(val) {
-            const math = Math[this.math]
-            return math ? math(val) : val
-        },
+        // pipeMath(val) {
+        //     const math = Math[this.math]
+        //     return math ? math(val) : val
+        // },
         pipePrecision(val) {
             return validVal(this.precision) ? parseFloat(val).toFixed(this.precision) : val
         },
@@ -289,25 +290,23 @@ export default {
             if (isMin && validVal(min) && min - val > 0) return parseFloat(min)
             return val
         },
-        pips(val) {
-            val = this.pipePrecision(val)
-            return this.pipeMath(val)
-        },
+        // pips(val) {
+        //     val = this.pipePrecision(val)
+        //     return this.pipeMath(val)
+        // },
         //除数结果
-        resultRadix(val) {
-            val = val / this.getRadix
-            return this.pips(val)
-        },
+        // resultRadix(val) {
+        //     return this.pipePrecision(val / this.getRadix)
+        // },
         updateModel(val) {
             //表现值转化为model真实值
             if (!validVal(val)) {
                 this.model = ""
                 this.setValueFormat("")
             } else {
-                // console.log(val)
                 val = val * this.getRadix
-                if (val == this.model && this.model !== "") return
-                val = this.pips(val)
+                if (val == this.model && validVal(this.model)) return
+                val = this.pipePrecision(val)
                 val = this.pipeMaxMin(val)
                 this.model = val
                 this.setValueFormat(this.handleFormatter(val))
@@ -315,7 +314,7 @@ export default {
             this.$emit("input", val)
             this.handleDispatch("on-change", val)
         },
-        updateValueFormat(val) {
+        updateValue(val) {
             if (!validVal(val)) {
                 this.model = ""
                 this.setValueFormat("")
@@ -324,7 +323,7 @@ export default {
             if (val == this.model) return
             let value = parseFloat(val)
             if (value == val) {
-                value = this.pips(value)
+                value = this.pipePrecision(value)
                 value = this.pipeMaxMin(value)
                 this.model = value
                 this.setValueFormat(this.handleFormatter(value))
@@ -337,27 +336,26 @@ export default {
             let step = this.getStep
             step = type === "up" ? step : -step
             let val = step + this.model / this.getRadix
-            // val = this.pipeMaxMin(val, true);
             this.updateModel(val)
+        },
+    },
+
+    watch: {
+        value: {
+            immediate: true,
+            handler(val) {
+                this.updateValue(val)
+            },
+        },
+        max() {
+            this.updateValue(this.value)
+        },
+        min() {
+            this.updateValue(this.value)
         },
     },
     beforeDestroy() {
         clearTimeout(this.__blurTimeOut)
-    },
-    watch: {
-        value: {
-            immediate: true,
-            deep: true,
-            handler(val) {
-                this.updateValueFormat(val)
-            },
-        },
-        max() {
-            this.updateValueFormat(this.value)
-        },
-        min() {
-            this.updateValueFormat(this.value)
-        },
     },
 }
 </script>

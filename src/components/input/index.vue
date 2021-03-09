@@ -87,6 +87,7 @@ import mixin from "./base/mixin"
 import globalMixin from "../../mixins/global"
 export default {
     name: "Input",
+    componentName: "Input",
     inheritAttrs: false,
     mixins: [mixin, globalMixin],
     components: {

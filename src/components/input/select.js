@@ -2,6 +2,7 @@ import InputMixin from './index'
 import { validVal } from "../../utils/tool";
 export default {
     name: 'Select',
+    componentName: 'Select',
     mixins: [InputMixin],
     computed: {
         isSelect() {
