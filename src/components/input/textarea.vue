@@ -1,5 +1,5 @@
 <template>
-    <section :class="wrapClasses" :data-vue-module="$options.name">
+    <section :class="classes" :data-vue-module="$options.name">
         <aside v-if="prepend" ref="prepend" :class="[_tobogPrefix_ + '-prepend']">
             <slot name="prepend"></slot>
         </aside>
@@ -17,11 +17,14 @@
                 :disabled="disabled"
                 :readonly="readonly"
                 :rows="rows"
-                :cols="cols"
                 @focusin="handleFocus"
                 @keydown="handleKeyCode"
+                @input="handleInput"
                 v-bind="$attrs"
             />
+            <span v-if="maxLength > 0 && showWordCount" :class="[_tobogPrefix_ + '-length']">
+                {{ value | filterLength }}&nbsp;/&nbsp;{{ maxLength }}
+            </span>
             <Icons
                 v-if="isClearable"
                 :class="[_tobogPrefix_ + `-clearicon`]"
@@ -68,8 +71,13 @@ export default {
     mounted() {
         this.handleDispatch("on-change", this.model)
     },
+    filters: {
+        filterLength(val) {
+            return Array.isArray(val) ? val.length : `${val}`.length
+        },
+    },
     computed: {
-        wrapClasses() {
+        classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             const theme = this.getGlobalData("theme")
             return [
@@ -77,7 +85,6 @@ export default {
                 {
                     [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
-                    // [`${_tobogPrefix_}-collapse`]: this.collapse > 0,
                     [`${_tobogPrefix_}-active`]: this.isActive,
                     [`${_tobogPrefix_}-readonly`]: this.readonly,
                     [`${_tobogPrefix_}-clear`]: this.isClearable,
@@ -113,8 +120,13 @@ export default {
             this._isFocused = false
             this.$emit("on-focus", this.model, event)
         },
+        handleInput(event) {
+            if (this.maxLength > 0) {
+                this.model= event.target.value = `${this.model}`.slice(0, this.maxLength)
+            };
+        },
         handleKeyCode(event) {
-            this.$emit("on-keydown", this.model, event)
+            this.$emit("on-keydown", this.model, event);
             if (event.keyCode == 13) {
                 this.$emit("on-enter", this.model, event)
             }
@@ -128,7 +140,7 @@ export default {
                 this.isActive = this._isFocused = false
                 this.$emit("on-change", this.model, event)
                 this.$emit("on-blur", this.model, event)
-                this.handleDispatch("on-validate", this.model)
+                this.handleDispatch("on-validate", this.model,'blur')
             }, 10)
         },
     },
@@ -139,7 +151,8 @@ export default {
         value: {
             deep: true,
             handler(val) {
-                this.model = val
+                if(val === this.model) return;
+                this.model = val;
             },
         },
         model(val) {

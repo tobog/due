@@ -362,6 +362,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 
     &-wrapper {
         height: auto;
+        position: relative;
     }
 
     &-inner {
@@ -369,13 +370,23 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     }
 
     & {
-        padding: 4px 7px;
+        padding: 6px;
         overflow: hidden;
     }
-
+    &-length {
+        position: absolute;
+        bottom: 6px;
+        right: 3px;
+        color: $disable-content;
+        font-size: 1em;
+        display: inline-flex;
+        align-items: center;
+        flex: none;
+        margin-left: auto;
+        padding-right: 5px;
+    }
     &-clear {
         position: relative;
-
         &icon {
             position: absolute;
             top: 50%;
@@ -383,7 +394,6 @@ $prefix-cls-textarea: #{$prefix}-textarea;
             height: auto;
             transform: translateY(-50%);
         }
-
         &:hover > .#{$prefix-cls-textarea}-suffix {
             display: none;
         }

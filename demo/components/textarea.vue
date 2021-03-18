@@ -1,206 +1,184 @@
+<style lang="scss">
+
+</style>
 
 <template>
-	<vRow class="demo-layout" flex>
-		<vCol span="24" class="demo-header">
-			<h2>代码示例 (Textarea 文本框)</h2>
-		</vCol>
-		<vCol lg="14" span="24" class="demo-form">
-			<Formedit :formdata="getBase" v-model="formData"></Formedit>
-		</vCol>
-		<vCol lg="10" span="24" class="demo-view">
-			<vSwitch v-model="show" class="margin-bottom-10">
-				<span slot="open">开</span>
-				<span slot="close">关</span>
-			</vSwitch>
-			<section v-if="show">
-				<vTextarea class="margin-bottom-20" v-bind="formData" v-model="val"></vTextarea>
-			</section>
-		</vCol>
-		<vCol span="24" class="demo-code">
-			<pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-		</vCol>
-		<vCol span="24" class="demo-props">
-			<h2 class="demo-header">Props & Events</h2>
-			<vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-		</vCol>
-	</vRow>
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
+           	<h2>代码示例 (Textarea 文本框)</h2>
+        </template>
+        <template v-slot="config">
+            <vTextarea v-bind="config" v-model="val" class="margin-bottom-20">
+            </vTextarea>
+            <div class="padding-15">{{ val }}</div>
+        </template>
+    </Demo>
 </template>
-
 
 <script>
 export default {
-	// ${this.getCodeString(this.formData)}
-	data() {
-		return {
-			val: '',
-
-		};
-	},
-	computed: {
-		getCode() {
-			return `<vTextarea class="margin-bottom-20" v-bind="${this.getCodeString(this.formData)}" v-model="val"></vTextarea>`;
-		},
-		getBase() {
-			return [
-				{
-					label: "禁用状态",
-					key: "disabled",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "清空按钮",
-					key: "clearable",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "只读",
-					key: "readonly",
-					tag: "vSwitch",
-					default: false
-				},
-				{
-					label: "默认行数",
-					key: "rows",
-					tag: "vInputNumber",
-					default: 4
-				}, {
-					label: "一行字符数",
-					key: "cols",
-					tag: "vInputNumber",
-					default: 28
-				},
-				{
-					label: "头部图标",
-					key: "prefix",
-					tag: "vSelect",
-					default: 'person',
-					options: this.iconslist
-				},
-				{
-					label: "主题",
-					key: "theme",
-					tag: "vSelect",
-					default: '',
-					options: this.getThemes
-				},
-			];
-		},
-		compProps() {
-			return [
-				{
-					prop: 'name',
-					explain: '表单name',
-					type: 'String',
-					default: '',
-				},
-				{
-					prop: 'value',
-					explain: '绑定的值，可使用 v-model 双向绑定',
-					type: 'String|Number|Array',
-					default: '',
-				},
-				{
-					prop: '$attrs',
-					explain: '继承$attrs',
-					type: 'object',
-					default: '-',
-				},
-				{
-					prop: 'disabled',
-					explain: '是否禁用',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'readonly',
-					explain: '只读',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					prop: 'clearable',
-					explain: '是否显示清空按钮',
-					type: 'Boolean',
-					default: 'false',
-				},
-				{
-					explain: "默认行数",
-					prop: "rows",
-					type: "Number",
-					default: 4
-				}, {
-					explain: "一行字符数",
-					prop: "cols",
-					type: "Number",
-					default: 28
-				},
-				{
-					explain: "主题颜色可选值为 gray、primary、dashed、text、info、success、warning、error",
-					prop: "theme",
-					type: "String",
-					default: '',
-				},
-				{
-					prop: 'prefix|slot:prefix',
-					explain: '输入框头部图标',
-					type: 'String|VNode',
-					default: '-',
-				},
-				{
-					prop: 'slots:prepend',
-					explain: '输入框外头部组件',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'slots:append',
-					explain: '输入框外尾部组件',
-					type: 'VNode',
-					default: '-',
-				},
-				{
-					prop: 'on-change',
-					explain: '数据改变时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-focus',
-					explain: '输入框聚焦时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-keydown',
-					explain: '按下键盘时触事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-blur',
-					explain: '输入框失去焦点时触事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-enter',
-					explain: '按下回车键时触发事件',
-					type: 'Function:(val,event)=>{}',
-					default: '-',
-				},
-				{
-					prop: 'on-clear',
-					explain: '点击清除触发事件',
-					type: 'Function',
-					default: '-',
-				},
-
-			];
-		}
-	}
-};
+    data() {
+        return {
+            val: "",
+        }
+    },
+    computed: {
+        getCode() {
+            return `
+                    <vTextarea  v-model="val" class="margin-bottom-20">
+                        <div slot="prepend">prepend</div>
+                        <div slot="append">测试</div>
+                    </vTextarea>
+					`
+        },
+        getConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "禁用状态",
+                    key: "disabled",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "禁用状态",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "清空按钮",
+                    key: "clearable",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "清空按钮",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "只读",
+                    key: "readonly",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否只读",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "头部图标",
+                    key: "prefix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "person",
+                    explain: "prefix|slot:prefix 输入框头部图标",
+                    dataType: "Number|VNode",
+                    options: this.iconslist,
+                },
+                // {
+                //     showConfig: true,
+                //     label: "尾部图标",
+                //     key: "suffix",
+                //     tag: "vSelect",
+                //     default: void 0,
+                //     demoDefault: "person",
+                //     explain: "suffix|slot:suffix输入框尾部图标",
+                //     dataType: "Number|VNode",
+                //     options: this.iconslist,
+                // },
+                {
+                    showConfig: true,
+                    label: "字符长度",
+                    key: "maxLength",
+                    tag: "vInputNumber",
+                    default: void 0,
+                    demoDefault: void 0,
+                    explain: "输入模式下允许输入最大字符",
+                    dataType: "Number",
+                },
+                {
+                    showConfig: true,
+                    label: "字符长度提示",
+                    key: "showWordCount",
+                    tag: "vSwitch",
+                    default: false,
+                    demoDefault: false,
+                    explain: "输入模式下是否显示字符长度提示",
+                    dataType: "Boolean",
+                },
+                {
+                    showConfig: true,
+                    label: "主题",
+                    key: "theme",
+                    tag: "vSelect",
+                    default: "",
+                    demoDefault: "",
+                    explain: "主题",
+                    dataType: "String",
+                    options: this.getThemes,
+                },
+                {
+                    label: "$attrs",
+                    key: "$attrs",
+                    demoDefault: "",
+                    explain: "继承textarea 的 $attrs",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    key: "name",
+                    explain: "表单name",
+                    dataType: "String",
+                },
+                {
+                    key: "value",
+                    explain: "绑定的值，可使用 v-model 双向绑定",
+                    dataType: "String|Number|Array",
+                    default: "",
+                },
+                {
+                    key: "slots:prepend",
+                    explain: "输入框外头部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "scoped:default",
+                    explain: "自定义 opt 配置",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    key: "on-change",
+                    explain: "数据改变时触发事件",
+                    dataType: "Function:(val,__attachData)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-focus",
+                    explain: "输入框聚焦时触发事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-blur",
+                    explain: "输入框失去焦点时触事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-enter",
+                    explain: "按下回车键时触发事件",
+                    dataType: "Function:(val,event)=>{}",
+                    default: "-",
+                },
+                {
+                    key: "on-clear",
+                    explain: "点击清除触发事件",
+                    dataType: "Function",
+                    default: "-",
+                },
+            ]
+        },
+    },
+}
 </script>
