@@ -29,7 +29,7 @@ export default {
     computed: {
         getCode() {
             return `<Anchor v-bind=CODE></Anchor>
-				    <Anchor selector="#Anchor">USER</Anchor>`;
+                    <Anchor selector="#Anchor">USER</Anchor>`;
         },
         getConfig() {
             return [

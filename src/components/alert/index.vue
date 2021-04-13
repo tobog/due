@@ -45,19 +45,19 @@ export default {
         },
         color: String,
         closable: Boolean,
-        showIcon: {
-            type: Boolean,
-            default: true,
-        },
         ghost: Boolean,
         desc: String,
         align: String,
+        broadcast: Boolean,
+        size: String,
         transitionName: {
             type: String,
             default: "fade",
         },
-        broadcast: Boolean,
-        size: String,
+        showIcon: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {
@@ -76,7 +76,7 @@ export default {
                     [`${_tobogPrefix_}-closable`]: this.closable,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-align-${this.align}`]: !!this.align,
-                    [`${_tobogPrefix_}-broadcast`]: this.broadcast,
+                    // [`${_tobogPrefix_}-broadcast`]: this.broadcast,
                     [`${_tobogPrefix_}-size-${size}`]: !!size && !isParseNumber(size),
                 },
             ]
@@ -97,8 +97,10 @@ export default {
         handleStyle() {
             const style = {}
             if (this.color && Color.isColor(this.color)) {
-                const color = new Color(this.color)
-                style.borderColor = color
+                const color = new Color(this.color);
+                const value = color.toCSS();
+                style.borderColor = value;
+                style.boxShadow = `0 0 4px -1px ${value}`
                 !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS())
             }
             return style

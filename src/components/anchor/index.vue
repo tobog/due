@@ -1,15 +1,13 @@
 <template>
-    <a :class="classes" :href="href" :data-selector="selector" @click.prevent="goAnchor" :title="title" v-bind="$attrs">
+    <a :class="[_tobogPrefix_]" :href="href" :data-selector="selector" @click.prevent="goAnchor" :title="title" v-bind="$attrs">
         <slot>{{ title }}</slot>
     </a>
 </template>
 <script>
 import { scrollIntoView, getElement } from "../../utils/dom";
-import globalMixin from "../../mixins/global";
 export default {
     name: "Anchor",
     componentName: "Anchor",
-    mixins: [globalMixin],
     props: {
         href: String,
         title: String,
@@ -23,23 +21,11 @@ export default {
     mounted() {
         this.initGoAnchor();
     },
-    computed: {
-        classes() {
-            const _tobogPrefix_ = this._tobogPrefix_;
-            const size = this.getGlobalData("size");
-            return [
-                _tobogPrefix_,
-                {
-                    [`${_tobogPrefix_}-size-${size}`]: !!size,
-                },
-            ];
-        },
-    },
     methods: {
         initGoAnchor() {
             setTimeout(() => {
                 const data = (sessionStorage[`${this.__$cssPrefix__}AnchorTarget`] || "").split("=@=");
-                if (!data[1]) data[1] = this.position;
+                if (!data[1] && data[1]!='0') data[1] = this.position;
                 this.gotTargetAnchor(...data);
             });
         },
@@ -60,6 +46,7 @@ export default {
             this.gotTargetAnchor(this.selector, this.position);
         },
         gotTargetAnchor(selector, position) {
+            sessionStorage.removeItem(`${this.__$cssPrefix__}AnchorTarget`);
             if (selector) {
                 selector = getElement(selector);
                 selector &&
@@ -67,7 +54,6 @@ export default {
                         this.$emit("on-scroll", selector);
                     });
             }
-            sessionStorage.removeItem(`${this.__$cssPrefix__}AnchorTarget`);
         },
     },
 };

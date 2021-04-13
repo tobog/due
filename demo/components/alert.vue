@@ -1,7 +1,7 @@
 <style lang="scss"></style>
 
 <template>
-    <Demo :config="getConfig">
+    <Demo :config="getConfig" :code="getCode">
         <template slot="header">
             <h2>代码示例 (Alert 警告提示)</h2>
             <h4 class="padding-top-10">静态地呈现一些警告信息，可手动关闭</h4>
@@ -44,10 +44,10 @@ export default {
                     label: "显示图标",
                     key: "showIcon",
                     tag: "vSwitch",
-                    demoDefault: false,
+                    demoDefault: true,
                     explain: "是否显示图标",
                     dataType: "Boolean",
-                    default: false,
+                    default: true,
                 },
                 {
                     showConfig: true,
@@ -59,25 +59,25 @@ export default {
                     dataType: "Boolean",
                     default: false,
                 },
-                {
-                    showConfig: true,
-                    label: "广播",
-                    key: "broadcast",
-                    tag: "vSwitch",
-                    demoDefault: false,
-                    explain: "是否可广播",
-                    dataType: "Boolean",
-                    default: false,
-                },
+                // {
+                //     showConfig: true,
+                //     label: "广播",
+                //     key: "broadcast",
+                //     tag: "vSwitch",
+                //     demoDefault: false,
+                //     explain: "是否可广播",
+                //     dataType: "Boolean",
+                //     default: false,
+                // },
                 {
                     showConfig: true,
                     label: "icon对齐方式",
                     key: "align",
                     tag: "vSelect",
-                    demoDefault: "",
+                    demoDefault: "start",
                     explain: "icon 对齐方式(仅对有desc的设置)，可选值为：start, center, end",
                     dataType: "String",
-                    default: "-",
+                    default: "start",
                     options: ["start", "center", "end"],
                 },
                 {
@@ -106,7 +106,7 @@ export default {
                     showConfig: true,
                     label: "自定义颜色",
                     key: "color",
-                    tag: "vInput",
+                    tag: "vColorPicker",
                     demoDefault: "",
                     explain: "自定义颜色",
                     dataType: "String",
@@ -172,6 +172,14 @@ export default {
                     default: "-",
                 },
             ];
+        },
+        getCode() {
+            return `<Alert v-bind=CODE>
+                        Alert
+                        <div slot="desc">
+                            Content of prompt. Content of prompt. Content of prompt. Content of prompt.
+                        </div>
+                    </Alert>`
         },
     },
 };

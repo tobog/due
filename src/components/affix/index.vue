@@ -12,6 +12,7 @@ export default {
     props: {
         offsetTop: Number,
         offsetBottom: Number,
+        listener: [String, HTMLElement],
         zIndex: {
             type: Number,
             default: 100,
@@ -26,6 +27,7 @@ export default {
                 offsetTop: parseNumber(this.offsetTop),
                 offsetBottom: parseNumber(this.offsetBottom),
                 zIndex: parseNumber(this.zIndex),
+                listener: this.listener
             };
         },
     },

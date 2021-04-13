@@ -406,7 +406,7 @@ Color.RGBtoHex = function (R, G, B, A) {
 };
 
 
-Color.prototype.toCSS = function (type = "rgba") {
+Color.prototype.toString = Color.prototype.toCSS = function (type = "rgba") {
     const last = type.length - 1;
     const hasAlpha = type[last] === 'a' || type[last] === 'A';
     type = hasAlpha ? type.substring(0, last) : type;

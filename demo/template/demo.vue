@@ -167,12 +167,12 @@ export default {
             return this.config
         },
         getFormatCode() {
-            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`)
-            return code.replace(/\s{5,}/g, function() {
+            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`);
+            return code.replace(/[' ']{5,20}/g, function() {
                 const reg = arguments[0],
                     leng = reg.length
                 // console.log(arguments, leng)
-                return `\n${reg.slice(leng > 18 ? 20 : 6)}`
+                return ''
             })
         },
         getColumns() {

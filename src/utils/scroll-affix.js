@@ -1,4 +1,5 @@
-import {EventListener, getStyles} from "../utils/dom"
+
+import {EventListener, getStyles, getElement} from "../utils/dom"
 import Offset from "../utils/offset"
 import {throttle} from "./tool"
 
@@ -7,8 +8,9 @@ export default class Affix {
         this.callback = typeof callback === "function" && callback
         this.offsetTop = options.offsetTop
         this.offsetBottom = options.offsetBottom
-        this.zIndex = options.zIndex
-        this.listener = options.listener instanceof HTMLElement ? options.listener : window
+        this.zIndex = options.zIndex;
+        this.listener = getElement(options.listener);
+        this.listener = this.listener instanceof HTMLElement ? this.listener : window
         this.update = throttle(this._update.bind(this), 60)
     }
     init(el) {
@@ -29,11 +31,12 @@ export default class Affix {
         this._init = true
     }
     resetOpt(options, callback) {
-        const {offsetTop, offsetBottom, zIndex, listener} = options
+        let {offsetTop, offsetBottom, zIndex, listener} = options
         this.callback = typeof callback === "function" && callback
         if (offsetTop != null) this.offsetTop = offsetTop
         if (offsetBottom != null) this.offsetBottom = offsetBottom
         if (zIndex != null) this.zIndex = zIndex
+        listener = getElement(listener);
         if (listener !== this.listener && listener instanceof HTMLElement) {
             EventListener.off(this.listener, "scroll,resize", this.update)
             this.listener = listener
@@ -61,6 +64,7 @@ export default class Affix {
             style.left = `${clientRect.left - (marginLeft === marginLeft ? marginLeft : 0)}px`
             style.zIndex = this.zIndex
             style.bottom = ""
+            this.el.dataset.fixed = 'top';
             if (!this._change) this.callback && this.callback("top")
             this._change = "top"
             return
@@ -76,12 +80,13 @@ export default class Affix {
             style.left = `${clientRect.left - (marginLeft === marginLeft ? marginLeft : 0)}px`
             style.zIndex = this.zIndex
             style.top = ""
+            this.el.dataset.fixed = 'bottom';
             if (!this._change) this.callback && this.callback("bottom")
             this._change = "bottom"
             return
         }
         if (this._change) this.callback && this.callback()
-        this._change = style.transition = style.width = style.height = style.position = style.top = style.bottom = style.left = style.zIndex =
+        this.el.dataset.fixed = this._change = style.transition = style.width = style.height = style.position = style.top = style.bottom = style.left = style.zIndex =
             ""
         this.replaceNode.style.display = "none"
     }

@@ -8,11 +8,12 @@
 </style>
 
 <template>
-    <Demo :config="getConfig">
+    <Demo :config="getConfig" :code="getCode">
         <template slot="header">
             <h2>代码示例(Affix 图钉)</h2>
             <h4>
                 使用图钉，可以将内容固定在屏幕上，并且不随页面的滚动而滚动。
+                仅
             </h4>
         </template>
         <template v-slot="config">
@@ -62,6 +63,13 @@ export default {
                     default: 100,
                 },
                 {
+                    label: "自定义监听器",
+                    key: "listener",
+                    explain: "自定义监听器，有滚动的元素, 仅支持监听器是100vh,100vw的尺寸",
+                    dataType: "String, HTMLElement",
+                    default: 'window',
+                },
+                {
                     label: "事件",
                     key: "on-change",
                     explain: "在固定状态发生改变时触发",
@@ -70,13 +78,11 @@ export default {
                 },
             ]
         },
-        // getCode() {
-        //     return `<vAffix v-bind="${this.getCodeString(this.formData)}">
-        // 				<div class="demo-affix">
-        // 					vAlert offsetBottom
-        // 				</div>
-        // 			</vAffix>`
-        // },
+        getCode() {
+            return `<vAffix v-bind=CODE>
+                        <div class="demo-affix">Affix Demo</div>
+                    </vAffix>`
+        },
     },
 }
 </script>

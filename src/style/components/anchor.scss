@@ -16,8 +16,4 @@ $prefix-cls: #{$prefix}-anchor;
     &:focus {
         color: $light-primary;
     }
-
-    &-size-small {
-        font-size: $subFont;
-    }
 }
