@@ -4,7 +4,7 @@
             <slot></slot>
         </component>
         <span v-if="showSep" :class="[_tobogPrefix_ + '-sep']">
-            <slot name="sep">{{ separator }}</slot>
+            <slot name="sep">{{ getSeparator }}</slot>
         </span>
     </li>
 </template>
@@ -29,6 +29,9 @@ export default {
         this.$parent.updateChildren()
     },
     computed: {
+        getSeparator() {
+            return this.sep || this.separator
+        },
         innerClasses() {
             const {to, href} = this.$attrs
             const type = to || href ? "link" : "item"
