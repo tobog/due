@@ -34,6 +34,7 @@ const install = function (Vue, options = {}) {
         Vue.prototype[`$${compPrefixUpper}Message`] = Components.Message;
         Vue.prototype[`$${compPrefixUpper}Loading`] = Components.Loading;
     } else {
+        // vue 3.0 
         Object.defineProperty(Vue.__proto__, "__$cssPrefix__", {
             get() {
                 return cssPrefix;
@@ -97,7 +98,6 @@ const install = function (Vue, options = {}) {
     Object.keys(Components).forEach(function (key) {
         Vue.component(`${compPrefix}${key}`, Components[key]);
     });
-
 };
 
 if (window !== void 0) {

@@ -15,8 +15,7 @@ export default {
         position: {
             type: [Number, Boolean, String],
             default: "start",
-        },
-        size: String,
+        }
     },
     mounted() {
         this.initGoAnchor();

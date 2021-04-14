@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import {parseNumber, unit, validVal} from "../../utils/tool"
+import {parseNumber, unit, validVal, isParseNumber} from "../../utils/tool"
 import globalMixin from "../../mixins/global"
 export default {
     name: "Badge",
@@ -46,7 +46,7 @@ export default {
                 _tobogPrefix_,
 
                 {
-                    [`${_tobogPrefix_}-size-${size}`]: size,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                     [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                 },
             ]

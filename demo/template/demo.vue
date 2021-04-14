@@ -168,7 +168,7 @@ export default {
         },
         getFormatCode() {
             let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`);
-            return code.replace(/[' ']{5,20}/g, function() {
+            return code.replace(/[' ']{20}/g, function() {
                 const reg = arguments[0],
                     leng = reg.length
                 // console.log(arguments, leng)

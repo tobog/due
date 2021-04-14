@@ -14,6 +14,7 @@
             <vAvatar class="margin-right-10" v-bind="config" src="https://tem/d.png">
                 <img slot="fallback" src="https://i.loli.net/2017/08/21/599a521472424.jpg" alt="" />
             </vAvatar>
+            <vAvatar class="margin-right-10" v-bind="config" src="https://tem/d.png"></vAvatar>
             <vAvatar class="margin-right-10" v-bind="config" style="color: #f56a00;background-color: #fde3cf"
                 >U</vAvatar
             >
@@ -103,7 +104,14 @@ export default {
                     key: "on-error",
                     explain: "icon为外链接图片加载不成功时触发",
                     dataType: "Function:Event",
-                    default: "error",
+                    default: "-",
+                },
+                {
+                    label: "事件",
+                    key: "on-success",
+                    explain: "icon为外链接图片加载成功时触发",
+                    dataType: "Function:Event",
+                    default: "-",
                 },
             ];
         },

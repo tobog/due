@@ -6,6 +6,7 @@
 
 <script>
 import globalMixin from "../../mixins/global"
+import {isParseNumber} from "../../utils/tool"
 export default {
     name: "Bread",
     componentName: "Bread",
@@ -22,9 +23,8 @@ export default {
             const size = this.getGlobalData("size")
             return [
                 _tobogPrefix_,
-
                 {
-                    [`${_tobogPrefix_}-size-${size}`]: size,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                 },
             ]
         },

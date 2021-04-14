@@ -1,6 +1,6 @@
 <template>
     <Transitions :name="transitionName" appear @after-leave="$emit('on-after-close')" v-bind="$attrs">
-        <section v-if="!closed" :class="classes" :data-vue-module="$options.name" :style="handleStyle">
+        <section v-if="!closed" :class="classes" :data-vue-module="$options.name" :style="getStyles">
             <div :class="[_tobogPrefix_ + '-main']">
                 <template v-if="showIcon">
                     <slot name="icon">
@@ -94,14 +94,14 @@ export default {
             }
             return iconMap[this.type] || this.type
         },
-        handleStyle() {
+        getStyles() {
             const style = {}
             if (this.color && Color.isColor(this.color)) {
-                const color = new Color(this.color);
-                const value = color.toCSS();
-                style.borderColor = value;
-                style.boxShadow = `0 0 4px -1px ${value}`
-                !this.ghost && (style.backgroundColor = color.setAlpha(0.08).toCSS())
+                style.borderColor = this.color;
+                style.boxShadow = `0 0 4px -1px ${this.color}`
+                if (!this.ghost) {
+                    style.backgroundColor = new Color(this.color).setAlpha(0.08).toCSS()
+                }
             }
             return style
         },

@@ -57,11 +57,13 @@ export function scrollTop(el, to = 0, endCallback) {
         let d;
         if (start > end) {
             d = start - step <= end ? end : start - step;
+            d = d < 0 ? 0 : d;
         } else {
             d = start + step >= end ? end : start + step;
+            d = d > scrollHeight ? scrollHeight : d;
         }
         el.scrollTop = d;
-        if (start === end || start <= 0 || start >= scrollHeight) {
+        if (start === end || d <= 0 || d >= scrollHeight) {
             typeof endCallback === "function" && endCallback();
             return;
         }

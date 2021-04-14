@@ -1,5 +1,5 @@
 <template>
-    <i :class="classes" :style="styles" :data-vue-module="$options.name" v-on="$listeners">
+    <i :class="classes" :style="getStyles" :data-vue-module="$options.name" v-on="$listeners">
         <img
             v-if="isHttpIcon && !isError"
             v-show="!showLoading"
@@ -11,7 +11,7 @@
         />
         <template v-if="isError">
             <slot name="fallback">
-                <img :class="[_tobogPrefix_ + '-img']" :src="fallback" :alt="fallback" data-type="'fallback'" />
+                <img v-if="isHttpErrorIcon" :class="[_tobogPrefix_ + '-img']" :src="fallback" :alt="fallback" data-type="'fallback'" />
             </slot>
         </template>
         <template v-else-if="(isHttpLoadingIcon || $slots.loading) && isLoading">
@@ -60,11 +60,12 @@ export default {
                 {
                     [`${_tobogPrefix_}-loading`]:
                         this.type && this.loading && this.isLoading && !innerType && !this.isHttpLoadingIcon,
-                    [`${_tobogPrefix_}-${this.type}`]: innerType,
+                    [`${_tobogPrefix_}-${this.type}`]: innerType && !this.isError,
                     [`${_tobogPrefix_}-httpicon`]: this.isHttpIcon,
                     [`${_tobogPrefix_}-center`]: this.center,
                     [`${_tobogPrefix_}-fit-${this.fit}`]: !!this.fit,
                     [`${_tobogPrefix_}-fallback`]: this.isError,
+                    [`${_tobogPrefix_}-${this.fallback}`]: this.isError && !this.isHttpErrorIcon && this.fallback && !this.$slots.fallback,
                     [`${_tobogPrefix_}-loadback`]: !innerType && this.showLoading,
                 },
             ]
@@ -81,7 +82,7 @@ export default {
         showLoading() {
             return (this.loading || this.$slots.loading) && this.isLoading
         },
-        styles() {
+        getStyles() {
             let style = {}
             if (this.size) style["fontSize"] = unit(this.size, "px")
             if (this.color) style.color = this.color
@@ -89,8 +90,9 @@ export default {
         },
     },
     methods: {
-        handleSuccess() {
-            this.isError = this.isLoading = false
+        handleSuccess(e) {
+            this.isError = this.isLoading = false;
+            this.$emit("on-success", e)
         },
         handleError(e) {
             this.isLoading = false

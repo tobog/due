@@ -15,7 +15,6 @@ $prefix-cls: #{$prefix}-avatar;
 }
 
 .#{$prefix-cls} {
-    // @include baseStyle;
     display: inline-flex !important;
     align-items: center;
     justify-content: center;

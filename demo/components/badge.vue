@@ -38,8 +38,8 @@ export default {
     computed: {
         getCode() {
             return `<Badge v-bind=CODE>
-						<a href="#" class="demo-badge"></a>
-					</Badge>`;
+                        <a href="#" class="demo-badge"></a>
+                    </Badge>`;
         },
         getConfig() {
             return [
@@ -77,7 +77,7 @@ export default {
                     showConfig: true,
                     label: "自定义颜色",
                     key: "color",
-                    tag: "vInput",
+                    tag: "vColorPicker",
                     demoDefault: "",
                     explain: "自定义标签颜色",
                     dataType: "String",
@@ -117,11 +117,11 @@ export default {
                     showConfig: true,
                     label: "尺寸大小",
                     key: "size",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),medium,large,或者设置具体数值",
+                    tag: "vSelect",
+                    demoDefault: "normal",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
                     dataType: "String | Number",
-                    default: "",
+                    default: "normal",
                     options: this.getSize,
                 },
                 {

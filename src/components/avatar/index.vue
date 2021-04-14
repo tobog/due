@@ -1,6 +1,6 @@
 <template>
-    <span :class="classes" :style="styles">
-        <span v-if="$slots.default" ref="children" :class="[_tobogPrefix_ + '-slot']" :style="childrenStyle">
+    <span :class="classes" :style="getStyles">
+        <span v-if="!!$slots.default" ref="children" :class="[_tobogPrefix_ + '-slot']" :style="childrenStyle">
             <slot></slot>
         </span>
         <Icons
@@ -8,17 +8,18 @@
             :type="src"
             :fit="fit"
             :fallback="fallback"
-            :data-size="!!styles.height"
+            :data-size="!!getStyles.height"
             :class="[_tobogPrefix_ + '-icon']"
             @on-error="handleError"
+            @on-success="handleSuccess"
         >
-            <slot v-if="$slots.fallback" name="fallback" slot="fallback"></slot>
+            <slot v-if="!!$slots.fallback" name="fallback" slot="fallback"></slot>
         </Icons>
     </span>
 </template>
 <script>
 import Icons from "../icons/index"
-import {unit} from "../../utils/tool"
+import {unit,isParseNumber} from "../../utils/tool"
 import globalMixin from "../../mixins/global"
 export default {
     name: "Avatar",
@@ -59,15 +60,15 @@ export default {
 
                 {
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
-                    [`${_tobogPrefix_}-size-${size}`]: size,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                 },
             ]
         },
-        styles() {
+        getStyles() {
             const style = {}
             const size = this.getGlobalData("size")
-            const isNaN = parseInt(size)
-            if (isNaN === isNaN || size === "auto") {
+            const notNaN = parseInt(size)
+            if (notNaN === notNaN || size === "auto") {
                 style.height = style.width = unit(size)
                 style.fontSize = unit(size, "px", 0.65)
             }
@@ -99,6 +100,9 @@ export default {
         handleError(e) {
             this.$emit("on-error", e)
         },
+        handleSuccess(e) {
+            this.$emit("on-success", e)
+        }
     },
 }
 </script>
