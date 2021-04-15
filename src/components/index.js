@@ -1,3 +1,12 @@
+import Affix from "./affix/src/index"
+import Alert from "./alert/src/index"
+
+
+
+
+
+
+
 import Config from "./config/index"
 import Layout from "./layout/index"
 import Content from "./layout/content"
@@ -64,7 +73,7 @@ import GridItem from "./grid/index/item"
 import Resize from "./resize"
 import Dragmove from "./dragmove"
 import Badge from "./badge/index"
-import Alert from "./alert/index"
+
 import DateBase from "./date/base/index"
 import Datepicker from "./date/datepicker"
 import DatePanel from "./date/index"
@@ -76,7 +85,7 @@ import Popper from './base/popper'
 import Dropdown from "./dropdown/index"
 import DropdownItem from "./dropdown/dropdownItem"
 
-import Affix from "./affix/index"
+
 import Transitions from "./base/transition"
 
 import ScrollSync from "./scrollsync/index"

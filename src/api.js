@@ -2,31 +2,22 @@ import "./style/index.scss";
 import Components from "./components/index";
 import directives from "./directives/index";
 import utils from "./utils/index";
+import { installConfig } from "./utils/tool";
 
 const install = function (Vue, options = {}) {
     if (install.installed && !options.reset) return;
-    console.log(options);
+    install.installed = true;
     global.__VUE__ = Vue;
-
-    const cssPrefix = options.cssPrefix || "due";
-    const langPrefix = options.langPrefix || cssPrefix;
-    const compPrefix = options.compPrefix || "";
-    const directivePrefix = options.directPrefix == null ? compPrefix : directPrefix;
+    const { cssPrefix, langPrefix, compPrefix, directPrefix } = installConfig(Vue, options);
     const compPrefixUpper = compPrefix.toUpperCase();
-    const langMap = options.langMap;
     const directiveList = options.directives === true ? Object.keys(directives) : options.directives;
     const directivesResult = {};
     if (Array.isArray(directiveList) && directiveList.length > 0) {
         directiveList.forEach((key) => {
-            directivesResult[`${directivePrefix}${key}`] = directives[key];
+            directivesResult[`${directPrefix}${key}`] = directives[key];
         })
     }
     if (Vue.prototype) {
-        Vue.prototype.__$cssPrefix__ = cssPrefix;
-        Vue.prototype.__$langPrefix__ = langPrefix;
-        if (langMap && typeof langMap === "object") {
-            Vue.prototype.__$langMap__ = langMap;
-        }
         Vue.prototype[`$${compPrefixUpper}VueWraper`] = Components.VueWraper;
         Vue.prototype[`$${compPrefixUpper}Modal`] = Components.Modal;
         Vue.prototype[`$${compPrefixUpper}LoadingBar`] = Components.LoadingBar;
@@ -35,24 +26,6 @@ const install = function (Vue, options = {}) {
         Vue.prototype[`$${compPrefixUpper}Loading`] = Components.Loading;
     } else {
         // vue 3.0 
-        Object.defineProperty(Vue.__proto__, "__$cssPrefix__", {
-            get() {
-                return cssPrefix;
-            },
-        });
-        Object.defineProperty(Vue.__proto__, "__$langPrefix__", {
-            get() {
-                return langPrefix;
-            },
-        });
-
-        if (langMap && typeof langMap === "object") {
-            Object.defineProperty(Vue.__proto__, "__$langMap__", {
-                get() {
-                    return langMap;
-                },
-            });
-        }
         Object.defineProperties(Vue.__proto__, {
             [`$${compPrefixUpper}VueWraper`]: {
                 get() {
@@ -89,11 +62,6 @@ const install = function (Vue, options = {}) {
 
     Vue.mixin({
         directives: directivesResult,
-        computed: {
-            _tobogPrefix_() {
-                return `${this.__$cssPrefix__}-${(this.$options.name || "").toLowerCase()}`;
-            },
-        },
     });
     Object.keys(Components).forEach(function (key) {
         Vue.component(`${compPrefix}${key}`, Components[key]);

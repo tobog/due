@@ -24,11 +24,11 @@
 </template>
 
 <script>
-import Color from "../../utils/color"
-import {isParseNumber} from "../../utils/tool"
-import Icons from "../icons/index"
-import Transitions from "../base/transition"
-import globalMixin from "../../mixins/global"
+import Color from "../../../utils/color"
+import {isParseNumber} from "../../../utils/tool"
+import Icons from "../../icons/index"
+import Transitions from "../../base/transition"
+import globalMixin from "../../../mixins/global"
 
 export default {
     name: "Alert",

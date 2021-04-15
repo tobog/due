@@ -183,3 +183,58 @@ export function handleStyle(style) {
     }
     return style
 }
+
+
+export function installConfig(Vue, options={}) {
+    const cssPrefix = options.cssPrefix || "due";
+    const langPrefix = options.langPrefix || cssPrefix;
+    const compPrefix = options.compPrefix || "";
+    const directPrefix = options.directPrefix == null ? compPrefix : options.directPrefix;
+    // const compPrefixUpper = compPrefix.toUpperCase();
+    const langMap = options.langMap;
+    const proto = Vue.prototype || Vue.__proto__; // vue 3.0 
+    Object.defineProperty(proto, "__$cssPrefix__", {
+        get() {
+            return cssPrefix;
+        },
+    });
+    Object.defineProperty(proto, "__$langPrefix__", {
+        get() {
+            return langPrefix;
+        },
+    });
+    if (langMap && typeof langMap === "object") {
+        Object.defineProperty(proto, "__$langMap__", {
+            get() {
+                return langMap;
+            },
+        });
+    }
+    Vue.mixin({
+        computed: {
+            _tobogPrefix_() {
+                return `${this.__$cssPrefix__}-${(this.$options.name || "").toLowerCase()}`;
+            },
+        },
+    });
+    return {
+        cssPrefix,
+        langPrefix,
+        compPrefix,
+        directPrefix,
+    }
+} 
+
+
+export function componentInstall (Component, name) {
+    Component.install = function (Vue, options) {
+        if (Component.install.installed && !options.reset) return;
+        Component.install.installed = true;
+        if (!global.__VUE__) {
+            global.__VUE__ = Vue;
+        }
+        const { compPrefix } = installConfig(Vue, options);
+        Vue.component(`${compPrefix}${name || Component.name}`, Component);
+    };
+    return Component;
+}

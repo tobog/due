@@ -4,8 +4,8 @@
     </aside>
 </template>
 <script>
-import { parseNumber } from "../../utils/tool";
-import Affix from "../../utils/scroll-affix";
+import { parseNumber } from "../../../utils/tool";
+import Affix from "../../../utils/scroll-affix";
 export default {
     name: "Affix",
     componentName: "Affix",

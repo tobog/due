@@ -40,7 +40,6 @@ module.exports = {
             hints: false
         },
         devtool: isDev ? 'eval-source-map' : 'none'
-
     },
     chainWebpack: config => {
         // 移除 prefetch 插件
@@ -49,3 +48,11 @@ module.exports = {
         config.plugins.delete('preload');
     }
 }
+
+
+// 1. 微信授权首次打点未发送微信用户信息给伏析  0.5
+// 2. 【冷启动页面】启动逻辑+页面优化 2.5
+// 3. 【公司资料】小程序承载 1.5
+// 4. 【全员推广】调用鲁班接口更换 1.0
+// 5. 【全员推广】持续优化 小程序 + web 2
+// 总计： 8.5
