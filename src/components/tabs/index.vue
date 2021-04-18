@@ -62,7 +62,7 @@
     </section>
 </template>
 <script>
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import Render from "../base/render"
 import Emitter from "../../utils/emitter"
 import {findComponentsDownward} from "../../utils/findComponent"

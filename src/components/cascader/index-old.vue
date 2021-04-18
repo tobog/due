@@ -67,7 +67,7 @@
 <script>
 import linkListMixin from "../../mixins/linkList";
 import Caspanel from "./caspanel-item";
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import InputDrop from "../input/inputdrop-old";
 import emitter from "../../utils/emitter";
 export default {

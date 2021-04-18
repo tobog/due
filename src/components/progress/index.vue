@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import { unit } from "../../utils/tool";
 import mixin from "./mixin";
 export default {

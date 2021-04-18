@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import mixin from "./base/mixin"
 import {parseNumber, validVal} from "../../utils/tool"
 import globalMixin from "../../mixins/global"

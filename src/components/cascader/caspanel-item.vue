@@ -42,7 +42,7 @@
     </ul>
 </template>
 <script>
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Checkbox from "../checkbox";
 import Render from "./render";
 export default {

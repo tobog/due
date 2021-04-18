@@ -60,7 +60,7 @@ import Cell from "./render.js";
 import Sort from "../sort/index";
 import Dropdown from "../dropdown/index";
 import Tooltip from "../tooltip/index";
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Checkbox from "../checkbox/index";
 import DragMove from '../../directives/drag-move';
 import { getStyle } from '../../utils/dom';

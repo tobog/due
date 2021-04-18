@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import globalMixin from "../../mixins/global"
-import {isParseNumber} from "../../utils/tool"
+import globalMixin from "../../../mixins/global"
+import {isParseNumber} from "../../../utils/tool"
 export default {
     name: "Bread",
     componentName: "Bread",

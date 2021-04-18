@@ -26,7 +26,7 @@
 <script>
 import Color from "../../../utils/color"
 import {isParseNumber} from "../../../utils/tool"
-import Icons from "../../icons/index"
+import Icons from "../../icons/src/index"
 import Transitions from "../../base/transition"
 import globalMixin from "../../../mixins/global"
 

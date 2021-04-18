@@ -29,7 +29,7 @@
 
 <script>
 import Emitter from "../../utils/emitter"
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import langMinix from "../../mixins/lang"
 export default {
     name: "Rate",

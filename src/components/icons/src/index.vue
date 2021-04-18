@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {unit} from "../../utils/tool"
+import {unit} from "../../../utils/tool"
 export default {
     name: "Icons",
     componentName: "Icons",

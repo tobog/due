@@ -12,7 +12,7 @@
 
 <script>
 import RenderCell from "../render";
-import Icons from "../../icons/index";
+import Icons from "../../icons/src/index";
 // import { unit } from "../../../utils/tool";
 
 export default {

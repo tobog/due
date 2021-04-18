@@ -36,7 +36,7 @@
 </template>
 <script>
 import Progress from '../progress/index';
-import Icons from '../icons/index';
+import Icons from '../icons/src/index';
 import { formatRate, formatTime, formatFile } from './utils';
 import langMinix from '../../mixins/lang'
 export default {

@@ -3,9 +3,11 @@ import Alert from "./alert/src/index"
 import Anchor from "./anchor/src/index"
 import Avatar from "./avatar/src/index"
 import Badge from "./badge/src/index"
+import Bread from "./bread/src/bread"
+import BreadItem from "./bread/src/breadItem"
 
 
-
+import Icon from "./icons/src/index"
 
 import Config from "./config/index"
 import Layout from "./layout/index"
@@ -37,7 +39,7 @@ import Option from "./input/option"
 import Options from "./input/options"
 import InputNumber from "./input/number"
 import Sort from "./sort/index"
-import Icon from "./icons/index"
+
 import Modal from "./modal/index"
 import Upload from "./upload/index"
 import Progress from "./progress/index"
@@ -50,8 +52,7 @@ import Tooltip from "./tooltip/index"
 import Loading from "./loading/index.js"
 import Page from "./page/page"
 import Rate from "./rate/index"
-import Bread from "./bread/bread"
-import BreadItem from "./bread/breadItem"
+
 import TransferList from "./transfer/list"
 import Transfer from "./transfer/index"
 import Carousel from "./carousel/index"

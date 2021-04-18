@@ -43,7 +43,7 @@
 import DropBase from "../base/dropBase"
 import Color from "./index"
 import Button from "../button"
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import emitter from "../../utils/emitter"
 import {unit, isParseNumber} from "../../utils/tool"
 import langMinix from "../../mixins/lang"

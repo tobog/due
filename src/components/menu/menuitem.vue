@@ -20,7 +20,7 @@
 
 <script>
 import Transitions from "../base/transition";
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import { findComponentUpward } from "../../utils/findComponent";
 
 export default {

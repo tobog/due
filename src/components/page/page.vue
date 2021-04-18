@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Select from "../input/select";
 import InputNumber from "../input/number";
 import Option from "../input/option";

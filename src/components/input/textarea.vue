@@ -41,7 +41,7 @@
 
 <script>
 import {validVal} from "../../utils/tool"
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import mixin from "./base/mixin"
 import globalMixin from "../../mixins/global"
 export default {

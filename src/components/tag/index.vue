@@ -14,7 +14,7 @@
 	</section>
 </template>
 <script>
-	import Icons from "../icons/index";
+	import Icons from "../icons/src/index";
 
 	export default {
 		name: "Tag",

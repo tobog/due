@@ -65,7 +65,7 @@
 <script>
 import Cell from './render';
 // import Colgroups from './colgroups';
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import { typeOf } from '../../utils/tool';
 import Json from '../../utils/json';
 import Checkbox from "../checkbox/index";

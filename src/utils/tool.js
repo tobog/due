@@ -234,7 +234,13 @@ export function componentInstall (Component, name) {
             global.__VUE__ = Vue;
         }
         const { compPrefix } = installConfig(Vue, options);
-        Vue.component(`${compPrefix}${name || Component.name}`, Component);
+        if (Array.isArray(Component)) {
+            Component.forEach(item => {
+                Vue.component(`${compPrefix}${name || item.name}`, item);
+            });
+        } else {
+            Vue.component(`${compPrefix}${name || Component.name}`, Component);
+        }
     };
     return Component;
 }

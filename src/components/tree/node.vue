@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Render from "./render";
 import Checkbox from "../checkbox/index";
 import ueTransition from "../base/transition";

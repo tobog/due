@@ -18,7 +18,7 @@
     </span>
 </template>
 <script>
-import Icons from "../../icons/index"
+import Icons from "../../icons/src/index"
 import {unit,isParseNumber} from "../../../utils/tool"
 import globalMixin from "../../../mixins/global"
 export default {

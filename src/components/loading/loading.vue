@@ -12,7 +12,7 @@
     </transition>
 </template>
 <script>
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import { getElement } from "../../utils/dom"
 export default {
     name: "Loading",

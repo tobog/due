@@ -81,7 +81,7 @@
 
 <script>
 import Cell from "./render"
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import {unit} from "../../utils/tool"
 import Checkbox from "../checkbox/index"
 

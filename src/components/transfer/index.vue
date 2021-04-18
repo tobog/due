@@ -53,7 +53,7 @@
  <script>
 	import List from "./list.vue";
 	import Button from "../button/index";
-	import Icons from "../icons/index";
+	import Icons from "../icons/src/index";
 	import Emitter from "../../utils/emitter";
 
 	export default {

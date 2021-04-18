@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Emitter from "../../utils/emitter";
 
 export default {

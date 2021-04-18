@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Icons from "../icons/index"
+import Icons from "../icons/src/index"
 import Transitions from "../base/transition"
 export default {
     name: "CollapseItem",

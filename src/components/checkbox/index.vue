@@ -38,7 +38,7 @@
 
 <script>
 import emitter from "../../utils/emitter";
-import Icons from "../icons/index";
+import Icons from "../icons/src/index";
 import Color from "../../utils/color";
 import { findComponentUpward } from "../../utils/findComponent";
 import { unit, validVal } from "../../utils/tool";
