@@ -34,7 +34,7 @@
 
 <script>
 import DropBase from "../base/dropBase"
-import Button from "../button/index"
+import Button from "../button/src/index"
 export default {
     name: "Dropdown",
     componentName: "Dropdown",

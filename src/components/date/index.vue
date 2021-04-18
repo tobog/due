@@ -87,7 +87,7 @@
 
 <script>
 import DateBase from "./base"
-import Button from "../button/index"
+import Button from "../button/src/index"
 import Dates from "../../utils/dates"
 import langMinix from "../../mixins/lang"
 export default {

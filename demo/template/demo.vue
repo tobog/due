@@ -167,12 +167,15 @@ export default {
             return this.config
         },
         getFormatCode() {
-            let code = (this.code || "").replace(/v-bind=CODE/g, `v-bind=${this.getCodeString(this.formData)}`);
+            let code = (this.code || "").replace(/v-bind=CODE(\.\w+)?/g, (match, reg) => {
+                // console.log(match, reg);
+                return `v-bind=${this.getCodeString(reg ?  this.formData[reg.slice(1)] : this.formData)}`
+            });
             return code.replace(/[' ']{20}/g, function() {
-                const reg = arguments[0],
-                    leng = reg.length
+                // const reg = arguments[0],
+                //     leng = reg.length
                 // console.log(arguments, leng)
-                return ''
+                return '\n'
             })
         },
         getColumns() {

@@ -52,7 +52,7 @@
  
  <script>
 	import List from "./list.vue";
-	import Button from "../button/index";
+	import Button from "../button/src/index";
 	import Icons from "../icons/src/index";
 	import Emitter from "../../utils/emitter";
 

@@ -77,7 +77,7 @@ import TransferDom from "../../directives/transfer-dom"
 import {EventListener, Fullscreen, DragMove} from "../../utils/dom"
 import {unit, validVal} from "../../utils/tool"
 import Icons from "../icons/src/index"
-import Button from "../button/index"
+import Button from "../button/src/index"
 import Loading from "../loading/loading"
 import langMinix from "../../mixins/lang"
 export default {

@@ -5,7 +5,8 @@ import Avatar from "./avatar/src/index"
 import Badge from "./badge/src/index"
 import Bread from "./bread/src/bread"
 import BreadItem from "./bread/src/breadItem"
-
+import Button from "./button/src/index"
+import ButtonGroup from "./button/src/button-group"
 
 import Icon from "./icons/src/index"
 
@@ -16,8 +17,7 @@ import Aside from "./layout/aside"
 import Header from "./layout/header"
 import Footer from "./layout/footer"
 import VueWraper from "./base/wraper"
-import Button from "./button/index"
-import ButtonGroup from "./button/button-group"
+
 import Notice from "./notice"
 import Message from "./message"
 // import NotificationBase from "./base/notification/notification";

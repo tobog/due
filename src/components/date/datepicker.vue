@@ -85,7 +85,7 @@ import DatePanel from "./index"
 import DropBase from "../base/dropBase"
 import InputBase from "../input/base"
 import mixin from "../input/base/mixin"
-import Button from "../button/index"
+import Button from "../button/src/index"
 import langMinix from "../../mixins/lang"
 export default {
     name: "DatePicter",
