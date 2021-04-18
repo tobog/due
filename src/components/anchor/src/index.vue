@@ -4,7 +4,7 @@
     </a>
 </template>
 <script>
-import { scrollIntoView, getElement } from "../../utils/dom";
+import { scrollIntoView, getElement } from "../../../utils/dom";
 export default {
     name: "Anchor",
     componentName: "Anchor",

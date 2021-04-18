@@ -1,8 +1,8 @@
 import Affix from "./affix/src/index"
 import Alert from "./alert/src/index"
-
-
-
+import Anchor from "./anchor/src/index"
+import Avatar from "./avatar/src/index"
+import Badge from "./badge/src/index"
 
 
 
@@ -72,7 +72,7 @@ import GridLayoutItem from "./grid/layout/item"
 import GridItem from "./grid/index/item"
 import Resize from "./resize"
 import Dragmove from "./dragmove"
-import Badge from "./badge/index"
+
 
 import DateBase from "./date/base/index"
 import Datepicker from "./date/datepicker"
@@ -97,10 +97,10 @@ import Caspanel from "./cascader/caspanel"
 // import Tailor from "./tailor/index"
 import Card from "./card/index"
 import Tag from "./tag/index"
-import Avatar from "./avatar/index"
+
 import Tabs from "./tabs/index"
 import TabPane from "./tabs/panel"
-import Anchor from "./anchor"
+
 import Color from "./color"
 import ColorPicker from "./color/picker"
 

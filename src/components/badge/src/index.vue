@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import {parseNumber, unit, validVal, isParseNumber} from "../../utils/tool"
-import globalMixin from "../../mixins/global"
+import {parseNumber, unit, validVal, isParseNumber} from "../../../utils/tool"
+import globalMixin from "../../../mixins/global"
 export default {
     name: "Badge",
     componentName: "Badge",

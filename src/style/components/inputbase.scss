@@ -129,7 +129,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
     &-suffix,
     &-clearicon,
     &-eyeicon,
-    &-arrowicon {
+    &-inner &-arrowicon {
         display: inline-flex;
         align-items: center;
         flex: none;
@@ -148,7 +148,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         font-size: 1.2em;
     }
 
-    &-arrowicon {
+    &-inner &-arrowicon {
         display: none;
         font-size: 1.2em;
         transition: transform 0.2s;
@@ -157,7 +157,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
         }
     }
 
-    &-clearicon,
+    &-inner &-clearicon,
     &-clear &-inner:hover > &-arrowicon {
         display: none;
     }

@@ -18,9 +18,9 @@
     </span>
 </template>
 <script>
-import Icons from "../icons/index"
-import {unit,isParseNumber} from "../../utils/tool"
-import globalMixin from "../../mixins/global"
+import Icons from "../../icons/index"
+import {unit,isParseNumber} from "../../../utils/tool"
+import globalMixin from "../../../mixins/global"
 export default {
     name: "Avatar",
     componentName: "Avatar",
