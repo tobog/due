@@ -5,14 +5,17 @@
 </template>
 <script>
 export default {
-    name: "Carousel-Item",
+    name: "CarouselItem",
     componentName: "CarouselItem",
     mounted() {
         this.update()
     },
     methods: {
         update() {
-            this.$parent && this.$parent.updateConfig && this.$parent.updateConfig()
+            this.$parent &&
+                this.$parent.$options.name === "Carousel" &&
+                this.$parent.updateConfig &&
+                this.$parent.updateConfig()
         },
     },
     beforeDestroy() {

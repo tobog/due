@@ -12,7 +12,7 @@ export default class Carousel {
         const _prefix = options.prefix || "carousel"
         this.el = el;
         this._prefix = _prefix;
-        this._itemClass = `${_prefix}-item`;
+        this._itemClass = `${_prefix}item`;
         this._activeClass = `${_prefix}-active`;
         this._leftClass = `${_prefix}-left`;
         this._nextClass = `${_prefix}-next`;

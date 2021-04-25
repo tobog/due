@@ -1,4 +1,4 @@
-<style lang="scss">
+<style lang="scss" scoped>
 .demo-vcarousel {
     width: 100%;
     height: 100%;
@@ -55,22 +55,22 @@ export default {
     computed: {
         getCode() {
             return `<Carousel v-model="val" v-bind=CODE>
-						<CarouselItem>
-							<div class="demo-vcarousel">1</div>
-						</CarouselItem>
-						<CarouselItem>
-							<div class="demo-vcarousel">2</div>
-						</CarouselItem>
-						<CarouselItem>
-							<div class="demo-vcarousel">3</div>
-						</CarouselItem>
-						<CarouselItem>
-							<div class="demo-vcarousel">4</div>
-						</CarouselItem>
-						<CarouselItem>
-							<div class="demo-vcarousel">5</div>
-						</CarouselItem>
-					</Carousel>`
+                        <CarouselItem>
+                            <div class="demo-vcarousel">1</div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="demo-vcarousel">2</div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="demo-vcarousel">3</div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="demo-vcarousel">4</div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="demo-vcarousel">5</div>
+                        </CarouselItem>
+                    </Carousel>`
         },
         getConfig() {
             return [

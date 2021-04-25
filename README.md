@@ -34,6 +34,8 @@ medio 响应式组件或指令
 17. https://bilif.github.io/react-drag-grid/
 18. 表单验证时机 类型
 19. 优化组件name findComponentUpward 优化使用内部name 过滤，特提供全局配置，防止其他组件库影响
+20. 画布树节点组件
+21. 富文本编辑器
 ## app  规划
 1. 提供手机系统和版本包裹组件
 2. 1px 组件

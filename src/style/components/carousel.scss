@@ -23,7 +23,7 @@ $timeTest: 0.5s;
                 display: inline-flex;
                 transition: transform $timeTest ease, opacity $timeTest ease;
             }
-            &-item {
+            &item {
                 position: static;
                 width: auto;
                 height: 100%;
@@ -39,7 +39,7 @@ $timeTest: 0.5s;
                     height: auto;
                     width: 100%;
                 }
-                &-item {
+                &item {
                     width: 100%;
                     height: auto;
                 }
@@ -58,7 +58,7 @@ $timeTest: 0.5s;
         flex-wrap: nowrap;
     }
 
-    &-item {
+    &item {
         display: flex;
         height: 100%;
         width: 100%;
@@ -324,7 +324,7 @@ $timeTest: 0.5s;
     // card
     &-card {
         .#{$prefix-cls} {
-            &-item {
+            &item {
                 width: 50%;
                 transform-origin: center center;
                 opacity: 0;
@@ -368,7 +368,7 @@ $timeTest: 0.5s;
 
         &.#{$prefix-cls}-vertical {
             .#{$prefix-cls} {
-                &-item {
+                &item {
                     height: 50%;
                     width: 100%;
                 }
