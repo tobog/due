@@ -8,8 +8,8 @@
         v-on="$listeners"
         tabindex="-1"
     >
-        <div v-if="type === 'horizontal'" :style="headStyles" :class="[_tobogPrefix_ + '-content']">
-            <div :class="headClasses" v-if="showHead" :style="headStyles">
+        <div v-if="type === 'horizontal'" :class="[_tobogPrefix_ + '-content']">
+            <div :class="headClasses" v-if="title || $slots.title">
                 <slot name="title">
                     <p v-if="title">
                         <Icons v-if="icon" :type="icon"></Icons>
@@ -17,12 +17,12 @@
                     </p>
                 </slot>
             </div>
-            <div :class="[_tobogPrefix_ + '-body']" :style="bodyStyles" :order="bodyOrder">
+            <div :class="[_tobogPrefix_ + '-body']">
                 <slot></slot>
             </div>
         </div>
         <template v-else>
-            <div :class="headClasses" v-if="showHead" :style="headStyles">
+            <div :class="headClasses" v-if="title || $slots.title">
                 <slot name="title">
                     <p v-if="title">
                         <Icons v-if="icon" :type="icon"></Icons>
@@ -30,18 +30,18 @@
                     </p>
                 </slot>
             </div>
-            <div :class="[_tobogPrefix_ + '-body']" :style="bodyStyles" :order="bodyOrder">
+            <div :class="[_tobogPrefix_ + '-body']" :style="bodyStyles">
                 <slot></slot>
             </div>
         </template>
-        <div :class="[_tobogPrefix_ + '-extra']" v-if="$slots.extra" :style="extraStyles">
+        <div :class="[_tobogPrefix_ + '-extra']" v-if="$slots.extra">
             <slot name="extra"></slot>
         </div>
     </component>
 </template>
 <script>
-import Icons from "../icons/src/index"
-import {unit} from "../../utils/tool"
+import Icons from "../../icons/src/index"
+import {unit} from "../../../utils/tool"
 export default {
     name: "Card",
     componentName: "Card",
@@ -68,19 +68,10 @@ export default {
     },
     data() {
         return {
-            extraOrder: 7,
-            headOrder: 3,
-            bodyOrder: 5,
             fliped: false,
         }
     },
-    mounted() {
-        this.handleOrder()
-    },
     computed: {
-        showHead() {
-            return this.title || this.$slots.title
-        },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
@@ -103,45 +94,21 @@ export default {
                 },
             ]
         },
-        headStyles() {
-            return this.headOrder != 3
-                ? {
-                      order: this.headOrder,
-                  }
-                : {}
-        },
-        extraStyles() {
-            return this.extraOrder != 7
-                ? {
-                      order: this.extraOrder,
-                  }
-                : {}
-        },
         bodyStyles() {
             const style = {}
-            if (this.padding !== 16) {
+            if (this.padding != 16) {
                 style.padding = `${unit(this.padding, "px")} 16px`
-            }
-            if (this.bodyOrder != 5) {
-                style.order = this.bodyOrder
             }
             return style
         },
-        // Point out if it should render as <a> tag
         getTag() {
-            const {to, href, tag = "div"} = this.$attrs
+            const {to, href, tag} = this.$attrs
             if (to) return this.$router ? "router-link" : "a"
             if (href) return "a"
-            return tag
+            return tag ||  "div"
         },
     },
     methods: {
-        handleOrder() {
-            const type = this.type
-            if (type === "tile") {
-                this.extraOrder = 0
-            }
-        },
         handleClick(e) {
             if (this.type !== "flip") return
             if (e.type === "focusout") {

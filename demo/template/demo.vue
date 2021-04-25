@@ -135,7 +135,7 @@ export default {
                 .demo-view {
                     --title: #fff;
                     --content: #e6e6e6;
-                    --sub-content: #777; // 待优化
+                    --sub-content: #ccc;
                     --disable-content: #56565a;
                     --backColor:#151518;
                     --border:#555;

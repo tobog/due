@@ -1,10 +1,9 @@
-<style lang="scss">
+<style lang="scss" scoped>
 .demo-card {
     background: url(https://ej2.syncfusion.com/vue/demos/dist/vertical_img.png?9a97a89e546a825747304b53d9ad0f79)
         no-repeat;
     background-size: cover;
     height: 300px;
-    color: #000;
 }
 .demo-card-wrapper {
     display: flex;
@@ -142,7 +141,7 @@ export default {
                     key: "padding",
                     tag: "vInputNumber",
                     demoDefault: 16,
-                    explain: "反向布局",
+                    explain: "卡片内部间距",
                     dataType: "Number",
                     default: "",
                 },

@@ -8,11 +8,6 @@ $prefix-cls: #{$prefix}-card;
     border-radius: $radius;
     position: relative;
     transition: all 0.2s ease-in-out;
-
-    &.#{$prefix-cls}-reverse {
-        flex-direction: column-reverse;
-    }
-
     &-border {
         border: 1px solid $divider;
     }
@@ -25,7 +20,6 @@ $prefix-cls: #{$prefix}-card;
     &-head {
         padding: 12px 16px;
         order: 3;
-        color: $content;
         font-size: $titleFont;
         &-divider {
             border-bottom: 1px solid $divider;
@@ -35,24 +29,30 @@ $prefix-cls: #{$prefix}-card;
             margin-top: -1px;
         }
     }
-
+    &-head:not(.#{$prefix-cls}-head-divider) + &-body {
+        padding-top: 2px;
+    }
+    &-body {
+        padding: 16px;
+        order: 5;
+        color: $sub-content;
+    }
     &-extra {
         position: absolute;
         right: 16px;
         top: 12px;
         order: 7;
+        overflow: hidden;
     }
-
-    &-body {
-        padding: 16px;
-        order: 5;
-        color: $sub-content;
+    &-reverse {
+        order: 0;
     }
 
     &-tile &-extra {
         position: relative;
         top: 0;
         right: 0;
+        order:0 ;
     }
 
     &-flip &-head,

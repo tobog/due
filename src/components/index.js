@@ -7,6 +7,9 @@ import Bread from "./bread/src/bread"
 import BreadItem from "./bread/src/breadItem"
 import Button from "./button/src/index"
 import ButtonGroup from "./button/src/button-group"
+import Card from "./card/src/index"
+
+
 
 import Icon from "./icons/src/index"
 
@@ -96,7 +99,7 @@ import Cascader from "./cascader"
 import Caspanel from "./cascader/caspanel"
 
 // import Tailor from "./tailor/index"
-import Card from "./card/index"
+
 import Tag from "./tag/index"
 
 import Tabs from "./tabs/index"
