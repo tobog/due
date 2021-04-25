@@ -213,15 +213,14 @@ $timeTest: 0.5s;
     }
 
     &-dots {
-        display: flex;
+        display: inline-block;
         position: absolute;
         z-index: 50;
         bottom: 6px;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: nowrap;
-        left: 10%;
-        right: 10%;
+        white-space: nowrap;
+        left: 50%;
+        max-width: 50%;
+        transform: translateX(-50%);
         overflow: hidden;
 
         .#{$prefix-cls}-dot {

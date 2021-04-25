@@ -2,7 +2,7 @@
 import { EventListener } from '../utils/dom'
 export default class Carousel {
     constructor (el, options, callback) {
-        if (!el) throw new Error("el must be the HTMLElement");
+        if (!el) throw new Error("el must not be null");
         if (typeof options === 'function') {
             this._callback = options;
             options = {};

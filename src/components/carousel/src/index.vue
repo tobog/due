@@ -5,13 +5,12 @@
                 <slot></slot>
             </ul>
         </div>
-        <template v-if="arrow && arrow !== 'never'">
+        <!-- <template v-if="arrow && arrow !== 'never'">
             <span
                 :class="arrowClasses"
                 :data-disabled="!loop && model == 0"
                 data-type="left"
                 @click="play(true)"
-                ref="arrowLeft"
             >
                 <Icons type="ios-arrow-back"></Icons>
             </span>
@@ -20,30 +19,31 @@
                 :data-disabled="!loop && model == childrenLen - 1"
                 data-type="right"
                 @click="play(false)"
-                ref="arrowRight"
             >
                 <Icons type="ios-arrow-forward"></Icons>
             </span>
-        </template>
+        </template> -->
         <aside v-if="showDot && childrenLen" :class="dotsClasses">
-            <slot name="dot" :slide="slide" :value="model">
-                <template v-if="dotType !== 'page'">
-                    <span
-                        v-for="index in childrenLen"
-                        :key="index"
-                        :class="[_tobogPrefix_ + '-dot']"
-                        :data-type="dotType"
-                        v-on:[getTriggerEvent]="slide(index)"
-                        >{{ dotType === "bullet" ? index : "" }}</span
-                    >
-                </template>
-                <span v-else :class="[_tobogPrefix_ + '-dot']" data-type="page">
-                    <template v-if="direction !== 'vertical' && dotPosition !== 'left' && dotPosition !== 'right'">
-                        {{ model + 1 }}&nbsp;/&nbsp;{{ childrenLen }}
+            <div :class="[_tobogPrefix_ + '-dots-inner']">
+                <slot name="dot" :slide="slide" :value="model">
+                    <template v-if="dotType !== 'page'">
+                        <span
+                            v-for="index in childrenLen"
+                            :key="index"
+                            :class="[_tobogPrefix_ + '-dot']"
+                            :data-type="dotType"
+                            v-on:[getTriggerEvent]="slide(index)"
+                            >{{ dotType === "bullet" ? index : "" }}</span
+                        >
                     </template>
-                    <template v-else> {{ model + 1 }}<br />—&nbsp;<br />{{ childrenLen }} </template>
-                </span>
-            </slot>
+                    <span v-else :class="[_tobogPrefix_ + '-dot']" data-type="page">
+                        <template v-if="direction !== 'vertical' && dotPosition !== 'left' && dotPosition !== 'right'">
+                            {{ model + 1 }}&nbsp;/&nbsp;{{ childrenLen }}
+                        </template>
+                        <template v-else> {{ model + 1 }}<br />—&nbsp;<br />{{ childrenLen }} </template>
+                    </span>
+                </slot>
+            </div>
         </aside>
     </section>
 </template>
@@ -55,9 +55,9 @@ export default {
     name: "Carousel",
     componentName: "Carousel",
     components: {Icons},
-    model:{
-        prop:'value',
-        event:'on-change'
+    model: {
+        prop: "value",
+        event: "on-change",
     },
     props: {
         value: {
