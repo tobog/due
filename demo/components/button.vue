@@ -10,14 +10,9 @@
             <vButton v-bind="config.Button" to="/button">vButton</vButton>
             <vButton v-bind="config.Button" to="/button" icon="ios-alert-outline"></vButton>
             <vButtonGroup v-bind="config.ButtonGroup" class="margin-top-20">
-                <vButton v-bind="config.Button">vButton</vButton>
+                <vButton>vButton</vButton>
                 <vButton v-bind="config.Button">vButton</vButton>
                 <vButton v-bind="config.Button" icon="ios-alert-outline"></vButton>
-            </vButtonGroup>
-            <vButtonGroup v-bind="config.ButtonGroup" class="margin-top-20">
-                <vButton>vButton</vButton>
-                <vButton>vButton</vButton>
-                <vButton icon="ios-alert-outline"></vButton>
             </vButtonGroup>
             <vButtonGroup v-bind="config.ButtonGroup" class="margin-top-20">
                 <vButton v-bind="config.Button">vButton</vButton>
@@ -29,15 +24,16 @@
 <script>
 export default {
     data() {
-        return {};
+        return {}
     },
     computed: {
         getCode() {
-            return `<Button v-bind=CODE.Button>Button</Button>
+            return `<Button v-bind=CODE.Button to="/button">Button</Button>
                     <ButtonGroup v-bind=CODE.ButtonGroup class="margin-top-20">
-                        <Button v-bind=CODE.Button>Button</Button>
-                        <Button v-bind=CODE.Button>Button</Button>
-                    </ButtonGroup>`;
+                        <vButton>vButton</vButton>
+                        <vButton v-bind="CODE.Button">vButton</vButton>
+                        <vButton v-bind="CODE.Button" icon="ios-alert-outline"></vButton>
+                    </ButtonGroup>`
         },
         getConfig() {
             return {
@@ -230,10 +226,40 @@ export default {
                             default: "",
                             options: this.getSize,
                         },
+                        {
+                            showConfig: true,
+                            label: "按钮形状",
+                            key: "shape",
+                            tag: "vSelect",
+                            demoDefault: "",
+                            explain: "按钮形状",
+                            dataType: "String",
+                            default: "",
+                            options: ["circle", "round", "square"],
+                        },
+                        {
+                            showConfig: true,
+                            label: "按钮主题",
+                            key: "theme",
+                            tag: "vSelect",
+                            demoDefault: "",
+                            explain:
+                                "按钮主题(ButtonGroupd和Button):可选值为 gray、primary、info、success、warning、error",
+                            dataType: "String",
+                            default: "",
+                            options: ["primary", "info", "success", "warning", "error", "default", "confirm"],
+                        },
+                        {
+                            label: "子元素",
+                            key: "slot:default",
+                            explain: "Button子元素",
+                            dataType: "VNode",
+                            default: "-",
+                        },
                     ],
                 },
-            };
+            }
         },
     },
-};
+}
 </script>

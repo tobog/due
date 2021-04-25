@@ -4,7 +4,7 @@
         :data-vue-module="$options.name"
         :class="classes"
         :type="type"
-        :style="styles"
+        :style="getStyles"
         @click="handleClick"
         v-on="getListeners"
         v-bind="$attrs"
@@ -18,7 +18,7 @@
 <script>
 import Icons from "../../icons/src/index";
 import Color from "../../../utils/color";
-import { unit } from "../../../utils/tool";
+import { unit, isParseNumber } from "../../../utils/tool";
 import globalMixin from "../../../mixins/global";
 export default {
     name: "Button",
@@ -56,23 +56,24 @@ export default {
         },
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_,
-                size = this.getGlobalData("size");
+                size = this.getGlobalData("size"),
+                theme = this.getGlobalData("theme");
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-loading`]: this.icon === "loading" || this.loading,
-                    [`${_tobogPrefix_}-theme-${this.theme}`]: !!this.theme,
+                    [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-${this.shape}`]: !!this.shape,
                     [`${_tobogPrefix_}-border-${this.borderType}`]:
                         this.borderType === "dashed" || this.borderType === "text",
-                    [`${_tobogPrefix_}-size-${size}`]: size && !this.styles.lineHeight,
+                    [`${_tobogPrefix_}-size-${size}`]: size && !isParseNumber(size),
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-long`]: this.long,
                     [`${_tobogPrefix_}-only`]: this.isOnly,
                     [`${_tobogPrefix_}-plain`]: this.plain,
                     [`${_tobogPrefix_}-disabled`]: this.disabled,
-                    [`${_tobogPrefix_}-custome-color`]: !!this.styles.color,
-                    [`${_tobogPrefix_}-custome-size`]: !!this.styles.lineHeight,
+                    [`${_tobogPrefix_}-custome-color`]: !!this.getStyles.color,
+                    [`${_tobogPrefix_}-custome-size`]: size && isParseNumber(size),
                 },
             ];
         },
@@ -81,11 +82,10 @@ export default {
             delete listeners["click"];
             return listeners;
         },
-        styles() {
+        getStyles() {
             const style = {},
-                size = this.getGlobalData("size"),
-                isNaN = parseInt(size);
-            if (isNaN === isNaN) {
+                size = this.getGlobalData("size");
+            if (isParseNumber(size)) {
                 style.lineHeight = unit(size);
                 style.paddingLeft = style.paddingRight = style.fontSize = unit(size, "px", 0.5);
                 if (this.shape === "circle") {
@@ -94,17 +94,16 @@ export default {
                 }
             }
             if (this.color && Color.isColor(this.color)) {
-                const data = new Color(this.color);
-                const value = data.toCSS();
                 if (this.ghost) {
                     style.backgroundColor = "transparent";
-                    style.borderColor = style.color = value;
+                    style.borderColor = style.color = this.color;
                 } else if (this.plain) {
+                    const data = new Color(this.color);
                     style.backgroundColor = data.setAlpha(0.08).toCSS();
-                    style.borderColor = style.color = value;
+                    style.borderColor = style.color = this.color;
                 } else {
                     style.color = "#fff";
-                    style.backgroundColor = style.borderColor = value;
+                    style.backgroundColor = style.borderColor = this.color;
                 }
             }
             return style;
@@ -115,14 +114,13 @@ export default {
             if (this.__runningClick) return;
             const click = this.$listeners["click"];
             if (typeof click === "function") {
+                this.__runningClick = true;
                 try {
-                    this.__runningClick = true;
                     await click(e);
                 } catch (err) {
                     console.error(err);
-                } finally {
-                    this.__runningClick = false;
                 }
+                this.__runningClick = false;
             }
         },
     },

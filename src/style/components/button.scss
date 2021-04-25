@@ -232,6 +232,24 @@ button.#{$prefix-cls} {
             &:last-child {
                 margin-right: 0;
             }
+            &#{&}-square {
+                border-radius: 0;
+            }
+            &#{&}-round {
+                border-radius: 9999px;
+            }
+            &#{&}-circle {
+                display: inline-flex !important;
+                justify-content: center;
+                align-items: center;
+                & > * {
+                    margin: 0;
+                }
+                padding: 0;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+            }
         }
     }
     &-vertical {
@@ -303,8 +321,34 @@ button.#{$prefix-cls} {
 }
 
 @each $key, $value in $colors-map {
-    .#{$prefix-cls}-theme-#{$key},
     .#{$prefix-cls-group}-theme-#{$key} > .#{$prefix-cls} {
+        @include btn-base($white, $value, $value);
+        @include btn-active($white, $value, $value);
+
+        &.#{$prefix-cls}-plain {
+            background-color: rgba($value, 0.08);
+            color: $value;
+
+            &:hover,
+            &:focus {
+                background-color: $value;
+                color: $white;
+            }
+        }
+        &.#{$prefix-cls}-border-text,
+        &.#{$prefix-cls}-ghost {
+            color: $value;
+
+            &:hover,
+            &:focus {
+                background-color: rgba($value, 0.08);
+                opacity: 1;
+            }
+        }
+    }
+}
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-theme-#{$key}.#{$prefix-cls} {
         @include btn-base($white, $value, $value);
         @include btn-active($white, $value, $value);
 
