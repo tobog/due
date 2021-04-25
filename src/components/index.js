@@ -8,7 +8,8 @@ import BreadItem from "./bread/src/breadItem"
 import Button from "./button/src/index"
 import ButtonGroup from "./button/src/button-group"
 import Card from "./card/src/index"
-
+import Carousel from "./carousel/src/index"
+import CarouselItem from "./carousel/src/carousel-item"
 
 
 import Icon from "./icons/src/index"
@@ -58,8 +59,7 @@ import Rate from "./rate/index"
 
 import TransferList from "./transfer/list"
 import Transfer from "./transfer/index"
-import Carousel from "./carousel/index"
-import CarouselItem from "./carousel/carousel-item"
+
 import Timeline from "./timeline/index"
 import TimelineItem from "./timeline/timelineitem"
 

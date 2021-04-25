@@ -48,8 +48,8 @@
     </section>
 </template>
 <script>
-import Icons from "../icons/src/index"
-import Carousel from "../../utils/carousel"
+import Icons from "../../icons/src/index"
+import Carousel from "../../../utils/carousel"
 
 export default {
     name: "Carousel",
