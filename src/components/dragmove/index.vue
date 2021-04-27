@@ -57,7 +57,6 @@ export default {
                             axis: obj.axis,
                             tempSpeed: obj.tempSpeed,
                             speed: obj.speed,
-                            speed: obj.speed,
                             cancel: obj.cancel,
                             style: obj.style,
                             props: obj.props,

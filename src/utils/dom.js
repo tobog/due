@@ -834,7 +834,8 @@ export class DragMove {
                       };
         }
         this._options = {
-            style: ["translateX", "translateY"],
+            props: null,
+            style: ["translateX", "translateY"], // null 表示只计算鼠标运动状态
             boundaryElement: null, //添加边界元素,
             timeOut: null,
             boundaryPoint: null, // {left,right,top,bottom}
@@ -857,6 +858,7 @@ export class DragMove {
     }
     _setOptions(options = {}) {
         this._options = Object.assign(this._options, options);
+        if (!this._options.style) return;
         this._isTransform =
             this._options.style.indexOf("translateX") > -1 || this._options.style.indexOf("translateY") > -1;
     }
@@ -871,6 +873,7 @@ export class DragMove {
             EventListener.on(this._boundaryElement, "mousedown", this._initAxis);
         }
     }
+    // 获取初始化所取样式和属性
     _getInitStyle(element) {
         if (!element) return {};
         const styles = getStyles(element);
@@ -891,6 +894,7 @@ export class DragMove {
         }
         return target;
     }
+    // 计算鼠标相对边界元素移动的范围
     _handleBoundaryRange(event) {
         const boundaryData = this._boundaryElement ? Offset.boundingClientRect(this._boundaryElement) : null;
         if (!this._options.boundaryCalc) return boundaryData;
@@ -927,18 +931,18 @@ export class DragMove {
         }
         return null;
     }
+    // mousedown 记录开始
     _handleInitAxis(event) {
         this._axis = this._tempAxis = [event.clientX, event.clientY];
         this._initOffset = this._getInitStyle(this._relatedElement || this._element);
-        //设置样式
+        //设置样式,禁止选中文字
         this._initUserSelect = document.body.style.userSelect;
+        document.body.style.userSelect = "none";
         if (this._element) {
             this._element.dataset.perCursor = this._element.style.cursor;
             this._element.style.cursor = this._options.cursor;
         }
-        document.body.style.userSelect = "none";
         event.stopPropagation();
-        // event.preventDefault();
         if (this._isRun) return;
         this._isRun = true;
         this._initTime = this._tempTime = Date.now();
@@ -954,12 +958,13 @@ export class DragMove {
         this._boundaryData = this._handleBoundaryRange(event);
         if (this._isCursorMove) this._handleCallback(event);
     }
+    // 性能节流
     _isMousemove(pos) {
         if (this._innerPos === pos) return;
         this._innerPos = pos;
         return true;
     }
-    // 获取边界位置设置
+    // 获取边界限制移动的总距离
     _getBoundaryPosition([distanceX, distanceY], [clientX, clientY]) {
         // console.log(distanceX, distanceY)
         if (this._boundaryData) {
@@ -1006,47 +1011,72 @@ export class DragMove {
         if (!this._isRun || !this._handler || !this._isMousemove(`${clientX}&${clientY}`)) return;
         event.stopPropagation();
         event.preventDefault();
+        const getSpeed = (data, time) => {
+            time = (time || 17) / 1000;
+            let radix = (data[0] < 0 || data[1] < 0) ? 1 : -1;
+            return [
+                data[0] / time,
+                data[1] / time,
+                Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time * radix,
+                time,
+            ]
+        };
         const { style, props } = this._options,
+            // 瞬时距离
             tempDistance = [clientX - this._tempAxis[0], clientY - this._tempAxis[1]],
+            // 总距离
             distance = [clientX - this._axis[0], clientY - this._axis[1]],
             nowTime = Date.now(),
-            tempSpeed =
-                Math.sqrt(Math.pow(tempDistance[0], 2) + Math.pow(tempDistance[1], 2)) / (nowTime - this._tempTime),
-            speed = Math.sqrt(Math.pow(distance[0], 2) + Math.pow(distance[1], 2)) / (nowTime - this._initTime),
+            // 临时速度
+            tempSpeed = getSpeed([clientX - this._tempAxis[0], clientY - this._tempAxis[1]], nowTime - this._tempTime),
+            // 总速度
+            speed = getSpeed(distance, nowTime - this._initTime),
             boundaryData = this._getBoundaryPosition(distance, [clientX, clientY]);
         this._tempAxis = [clientX, clientY];
         this._tempTime = nowTime;
         this._distance = distance;
         this._handler(
             {
-                // boundaryPosition：鼠标相对边界元素的位置或者移动元素相对边界元素的位置
                 boundaryPosition: boundaryData && boundaryData[1],
                 distance: boundaryData ? boundaryData[0] : distance, // 移动总距离
                 data: this._initOffset, // 起始数据
                 element: this._element,
                 relatedElement: this._relatedElement,
                 boundaryElement: this._boundaryElement,
-                // boundaryData:this._boundaryData,
                 style,
                 props,
                 axis: this._axis,
                 isTransform: this._isTransform,
-                tempSpeed: (tempDistance[0] < 0 || tempDistance[1] < 0 ? -tempSpeed : tempSpeed) * 1000, // 临时速度
-                speed: (distance[0] < 0 || distance[1] < 0 ? -speed : speed) * 1000,
+                tempSpeed, // 临时速度
+                tempDistance, // 临时速度
+                speed
             },
             event
         );
     }
     _handleCancel(event) {
         if (event && this._handler && !this._isDestroy && this._isRun) {
+            const getSpeed = (data, time) => {
+                time = (time || 17) / 1000;
+                let radix = (data[0] < 0 || data[1] < 0) ? 1 : -1;
+                return [
+                    data[0] / time,
+                    data[1] / time,
+                    Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time * radix,
+                    time,
+                ]
+            };
             const { style, props } = this._options,
                 { clientX = 0, clientY = 0 } = event,
+                // 瞬时距离
                 tempDistance = [clientX - this._tempAxis[0], clientY - this._tempAxis[1]],
+                // 总距离
                 distance = [clientX - this._axis[0], clientY - this._axis[1]],
                 nowTime = Date.now(),
-                tempSpeed =
-                    Math.sqrt(Math.pow(tempDistance[0], 2) + Math.pow(tempDistance[1], 2)) / (nowTime - this._tempTime),
-                speed = Math.sqrt(Math.pow(distance[0], 2) + Math.pow(distance[1], 2)) / (nowTime - this._initTime),
+                // 临时速度
+                tempSpeed = getSpeed([clientX - this._tempAxis[0], clientY - this._tempAxis[1]], nowTime - this._tempTime),
+                // 总速度
+                speed = getSpeed(distance, nowTime - this._initTime),
                 boundaryData = this._getBoundaryPosition(this._distance, [clientX, clientY]);
             this._handler({
                 boundaryPosition: boundaryData && boundaryData[1],
@@ -1060,8 +1090,8 @@ export class DragMove {
                 axis: this._axis,
                 isTransform: this._isTransform,
                 cancel: true,
-                tempSpeed: (tempDistance[0] < 0 || tempDistance[1] < 0 ? -tempSpeed : tempSpeed) * 1000, // 临时速度
-                speed: (distance[0] < 0 || distance[1] < 0 ? -speed : speed) * 1000,
+                tempSpeed, // 临时速度
+                speed,
             });
             this._distance = [0, 0];
         }

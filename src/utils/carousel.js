@@ -1,5 +1,5 @@
 
-import { EventListener } from '../utils/dom'
+import { EventListener, DragMove, getElement } from '../utils/dom'
 export default class Carousel {
     constructor (el, options, callback) {
         if (!el) throw new Error("el must not be null");
@@ -10,8 +10,9 @@ export default class Carousel {
             this._callback = callback;
         }
         const _prefix = options.prefix || "carousel"
-        this.el = el;
+        this.el = getElement(el);
         this._prefix = _prefix;
+        this._listClass = `${_prefix}-list`;
         this._itemClass = `${_prefix}item`;
         this._activeClass = `${_prefix}-active`;
         this._leftClass = `${_prefix}-left`;
@@ -28,6 +29,7 @@ export default class Carousel {
             // reverse: false,
             // speed: 0,
             // autoplay: false,
+            // isTouchmove: false,
             ...options
         });
         this.play();
@@ -161,7 +163,20 @@ export default class Carousel {
         this._handleCallback(index);
         setTimeout(() => {
             this._selectedSlide(index);
-        }, 0)
+        }, 0);
+        if (this._options.isTouchmove && !this._DragMove) {
+            const el = getElement(this._listClass, this.el) || this.el;
+            this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
+                console.log(obj)
+                this._stepMove(obj)
+            });
+            return;
+        }
+        if (!this._options.isTouchmove) {
+            this._DragMove && this._DragMove.destroy();
+            this._DragMove = null;
+            return;
+        }
     }
     slide(event) {
         let slideIndex;
@@ -212,7 +227,75 @@ export default class Carousel {
             return true;
         }
     }
+    // 鼠标移动
+    _stepMove(obj) {
+        let isRight = obj.distance[0] > 0;
+        if (this._running) return;
+        if (!this._touchRuning && !this._getNextActiveEle(isRight)) {
+            this._touchRuning = false;
+            return;
+        }
+        this._touchRuning = !obj.cancel;
+        const nextActiveEle = this._nextActiveEle;
+        if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
+        const activeEleClass = this._activeEle.classList,
+            nextActiveEleClass = nextActiveEle.classList;
+        if (this._elementSiblings) {
+            if (isRight) {
+                activeEleClass.add(this._cardNextClass);
+                this._elementSiblings[0].classList.add(this._cardPreClass);
+            } else {
+                activeEleClass.add(this._cardPreClass);
+                this._elementSiblings[1].classList.add(this._cardNextClass);
+            }
+        }
+        let preNextClass, rightLeftClass;
+        if (isRight) {
+            preNextClass = this._preClass;
+            rightLeftClass = this._rightClass;
+        } else {
+            preNextClass = this._nextClass;
+            rightLeftClass = this._leftClass;
+        }
+
+        nextActiveEleClass.add(preNextClass);
+        this._speed();
+        this._reflow(nextActiveEle);
+        this._activeEle.style.transition = this._activeEle.style.transition = 'none';
+        this._activeEle.style.transform=`translateX(${obj.distance[0]}px)`;
+        nextActiveEle.style.transform=`translateX(${444+obj.distance[0]}px)`;
+        console.log(this._touchRuning, obj.distance)
+        if (this._touchRuning) return;
+        this._running = true;
+        this._activeEle.style.transition = this._activeEle.style.transition = '';
+        nextActiveEleClass.add(rightLeftClass);
+        activeEleClass.add(rightLeftClass);
+        const index = this._getChildIndex(nextActiveEle);
+        this._selectedSlide(index);
+        this._handleCallback(index);
+        this._once(nextActiveEle, () => {
+            nextActiveEleClass.remove(preNextClass, rightLeftClass, this._cardNextClass, this._cardPreClass);
+            activeEleClass.remove(this._activeClass, rightLeftClass);
+            if (this._elementSiblings) {
+                if (isRight) {
+                    // activeEleClass.add(this._cardNextClass);
+                    this._elementSiblings[1].classList.remove(this._cardNextClass);
+                } else {
+                    // activeEleClass.add(this._cardPreClass);
+                    this._elementSiblings[0].classList.remove(this._cardPreClass);
+                }
+            }
+            this._activeEle.style.transform = nextActiveEle.style.transform = '';
+            this._activeEle.style.transition = this._activeEle.style.transition = '';
+            this._speed(true);
+            nextActiveEleClass.add(this._activeClass);
+            this._activeEle = nextActiveEle;
+            if (this._runQueue() || this._isPaused) return;
+            this.play(isRight, this.autoplay);
+        })
+    }
     _step(isRight = this.reverse) {
+        console.log(isRight, 'isRight')
         const nextActiveEle = this._nextActiveEle;
         if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
         this._running = true;
@@ -267,6 +350,7 @@ export default class Carousel {
         this._isPaused = true;
         this._queue = null;
         this._setTimeout && clearTimeout(this._setTimeout);
+        this._DragMove && this._DragMove.destroy();
+        this._DragMove = null;
     }
-
 }

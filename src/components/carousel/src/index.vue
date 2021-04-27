@@ -1,7 +1,7 @@
 <template>
     <section :class="classes" @mouseleave="playControl" @mouseenter="pause">
         <div :class="[_tobogPrefix_ + '-outer']">
-            <ul :class="[_tobogPrefix_ + '-list']" @mouseup="handelMouseup" @mousedown="handleMousedown">
+            <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
             </ul>
         </div>
@@ -50,7 +50,7 @@
 <script>
 import Icons from "../../icons/src/index"
 import Carousel from "../../../utils/carousel"
-
+import {DragMove} from "../../../utils/dom"
 export default {
     name: "Carousel",
     componentName: "Carousel",
@@ -145,6 +145,7 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
+                isTouchmove: this.isTouchmove || true
             }
         },
         classes() {

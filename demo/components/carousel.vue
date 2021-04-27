@@ -28,14 +28,14 @@
                     <div class="demo-vcarousel">{{ i }}</div>
                 </vCarouselItem>
             </vCarousel>
-            <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
+            <!-- <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
                 <vCarouselItem>
                     <div class="demo-vcarousel">1</div>
                 </vCarouselItem>
                 <vCarouselItem>
                     <div class="demo-vcarousel">2</div>
                 </vCarouselItem>
-            </vCarousel>
+            </vCarousel> -->
             <!-- <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
                 <vCarouselItem>
                     <div class="demo-vcarousel">1</div>
