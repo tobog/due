@@ -29,7 +29,8 @@ export default class Carousel {
             // reverse: false,
             // speed: 0,
             // autoplay: false,
-            // isTouchmove: false,
+            // touchmove: false,
+            // vertical: false,
             ...options
         });
         this.play();
@@ -73,7 +74,7 @@ export default class Carousel {
         const nextActiveEle = this._nextActiveEle;
         if (!nextActiveEle || this.mode !== 'scroll') return false;
         const parentNode = nextActiveEle.parentNode;
-        const isVertical = this.direction === 'vertical';
+        const isVertical = this.direction === ' === ';
         const maxData = isVertical ? (parentNode.scrollHeight - parentNode.parentNode.clientHeight) : (parentNode.scrollWidth - parentNode.parentNode.clientWidth);
         let data = isVertical ? nextActiveEle.offsetTop : nextActiveEle.offsetLeft;
         console.log(maxData, data)
@@ -164,15 +165,15 @@ export default class Carousel {
         setTimeout(() => {
             this._selectedSlide(index);
         }, 0);
-        if (this._options.isTouchmove && !this._DragMove) {
+        if (this._options.touchmove && !this._DragMove) {
             const el = getElement(this._listClass, this.el) || this.el;
             this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
                 console.log(obj)
-                this._stepMove(obj)
+                this._stepMove(obj.distance, obj.cancel)
             });
             return;
         }
-        if (!this._options.isTouchmove) {
+        if (!this._options.touchmove) {
             this._DragMove && this._DragMove.destroy();
             this._DragMove = null;
             return;
@@ -228,11 +229,11 @@ export default class Carousel {
         }
     }
     // 鼠标移动
-    _stepMove(obj) {
-        let isRight = obj.distance[0] > 0;
-        if (this._running) return;
+    _stepMove(distance, isCancel) {
+        const isRight = obj.distance[0] > 0;
+        const isVertical = this._options.vertical !== void 0 ? this._options.vertical : this.el.dataset.direction === 'vertical'
         if (!this._touchRuning && !this._getNextActiveEle(isRight)) {
-            this._touchRuning = false;
+            this._running = false;
             return;
         }
         this._touchRuning = !obj.cancel;
@@ -257,13 +258,13 @@ export default class Carousel {
             preNextClass = this._nextClass;
             rightLeftClass = this._leftClass;
         }
-
         nextActiveEleClass.add(preNextClass);
+        
         this._speed();
         this._reflow(nextActiveEle);
         this._activeEle.style.transition = this._activeEle.style.transition = 'none';
-        this._activeEle.style.transform=`translateX(${obj.distance[0]}px)`;
-        nextActiveEle.style.transform=`translateX(${444+obj.distance[0]}px)`;
+        this._activeEle.style.transform = `translateX(${obj.distance[0]}px)`;
+        nextActiveEle.style.transform = `translateX(${444 + obj.distance[0]}px)`;
         console.log(this._touchRuning, obj.distance)
         if (this._touchRuning) return;
         this._running = true;

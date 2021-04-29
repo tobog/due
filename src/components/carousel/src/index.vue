@@ -1,5 +1,5 @@
 <template>
-    <section :class="classes" @mouseleave="playControl" @mouseenter="pause">
+    <section :class="classes" :data-direction="direction" @mouseleave="playControl" @mouseenter="pause">
         <div :class="[_tobogPrefix_ + '-outer']">
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
@@ -50,7 +50,6 @@
 <script>
 import Icons from "../../icons/src/index"
 import Carousel from "../../../utils/carousel"
-import {DragMove} from "../../../utils/dom"
 export default {
     name: "Carousel",
     componentName: "Carousel",
@@ -145,7 +144,7 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                isTouchmove: this.isTouchmove || true
+                touchmove: this.touchmove || true
             }
         },
         classes() {
