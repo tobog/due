@@ -230,13 +230,13 @@ export default class Carousel {
     }
     // 鼠标移动
     _stepMove(distance, isCancel) {
-        const isRight = obj.distance[0] > 0;
+        const isRight = distance[0] > 0;
         const isVertical = this._options.vertical !== void 0 ? this._options.vertical : this.el.dataset.direction === 'vertical'
         if (!this._touchRuning && !this._getNextActiveEle(isRight)) {
             this._running = false;
             return;
         }
-        this._touchRuning = !obj.cancel;
+        this._touchRuning = !isCancel;
         const nextActiveEle = this._nextActiveEle;
         if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
         const activeEleClass = this._activeEle.classList,
@@ -259,16 +259,13 @@ export default class Carousel {
             rightLeftClass = this._leftClass;
         }
         nextActiveEleClass.add(preNextClass);
-        
-        this._speed();
-        this._reflow(nextActiveEle);
         this._activeEle.style.transition = this._activeEle.style.transition = 'none';
-        this._activeEle.style.transform = `translateX(${obj.distance[0]}px)`;
-        nextActiveEle.style.transform = `translateX(${444 + obj.distance[0]}px)`;
-        console.log(this._touchRuning, obj.distance)
+        this._activeEle.style.transform = `translateX(${distance[0]}px)`;
+        nextActiveEle.style.transform = `translateX(${nextActiveEle.offsetWidth + distance[0]}px)`;
         if (this._touchRuning) return;
         this._running = true;
         this._activeEle.style.transition = this._activeEle.style.transition = '';
+        this._speed();
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
         const index = this._getChildIndex(nextActiveEle);
@@ -279,10 +276,8 @@ export default class Carousel {
             activeEleClass.remove(this._activeClass, rightLeftClass);
             if (this._elementSiblings) {
                 if (isRight) {
-                    // activeEleClass.add(this._cardNextClass);
                     this._elementSiblings[1].classList.remove(this._cardNextClass);
                 } else {
-                    // activeEleClass.add(this._cardPreClass);
                     this._elementSiblings[0].classList.remove(this._cardPreClass);
                 }
             }

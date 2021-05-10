@@ -89,7 +89,7 @@ $timeTest: 0.5s;
         }
 
         &.#{$prefix-cls}-right {
-            transform: translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0) !important;
         }
     }
 
@@ -103,11 +103,11 @@ $timeTest: 0.5s;
 
     &-vertical &-active {
         &.#{$prefix-cls}-left {
-            transform: translate3d(0, -100%, 0);
+            transform: translate3d(0, -100%, 0) !important;
         }
 
         &.#{$prefix-cls}-right {
-            transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0) !important;
         }
     }
 
