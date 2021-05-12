@@ -30,7 +30,7 @@ export default class Carousel {
             // speed: 0,
             // autoplay: false,
             // touchmove: false,
-            // vertical: false,
+            // direction:null // vertical  horizontal
             ...options
         });
         this.play();
@@ -80,7 +80,7 @@ export default class Carousel {
         console.log(maxData, data)
         // if(isVertical)
         if (maxData < data) data = maxData;
-        this._speed(false, parentNode);
+        this._setSpeed(false, parentNode);
         parentNode.style.transform = isVertical ? `translateY(-${data}px)` : `translateX(-${data}px)`;
         nextActiveEle.classList.add(this._activeClass);
         this._activeEle.classList.remove(this._activeClass);
@@ -89,7 +89,7 @@ export default class Carousel {
         this._handleCallback(index);
         if (data === maxData) return true;
         this._once(parentNode, () => {
-            this._speed(true, parentNode);
+            this._setSpeed(true, parentNode);
             this._activeEle = nextActiveEle;
             if (this._isPaused) return;
             this.play(isRight, this.autoplay);
@@ -122,9 +122,10 @@ export default class Carousel {
         }
 
     }
-    _speed(isRemove, ele) {
-        if (this.speed) {
-            const speed = isRemove ? '' : this.speed;
+    _setSpeed(isRemove, ele, speed) {
+        speed = speed || this.speed;
+        if (speed) {
+            speed = isRemove ? '' : speed + 'ms';
             if (ele) {
                 ele.style.transitionDuartion = speed;
             } else {
@@ -230,26 +231,25 @@ export default class Carousel {
     }
     // 鼠标移动
     _stepMove(distance, isCancel) {
+        if (this._running) return;
         const isRight = distance[0] > 0;
-        const isVertical = this._options.vertical !== void 0 ? this._options.vertical : this.el.dataset.direction === 'vertical'
-        if (!this._touchRuning && !this._getNextActiveEle(isRight)) {
+        console.log(distance, isRight);
+        const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
+        // 方向是否改变
+        if (typeof this._isRight === 'boolean' && this._isRight !== isRight && this._nextActiveEle) {
+            this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
+            this._touchMoveRuning = false;
+        }
+        this._isRight = isRight;
+        if (!this._touchMoveRuning && !this._getNextActiveEle(isRight)) {
             this._running = false;
             return;
         }
-        this._touchRuning = !isCancel;
+        this._touchMoveRuning = !isCancel;
         const nextActiveEle = this._nextActiveEle;
-        if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
+        if (!nextActiveEle || this._children.length < 2) return;
         const activeEleClass = this._activeEle.classList,
             nextActiveEleClass = nextActiveEle.classList;
-        if (this._elementSiblings) {
-            if (isRight) {
-                activeEleClass.add(this._cardNextClass);
-                this._elementSiblings[0].classList.add(this._cardPreClass);
-            } else {
-                activeEleClass.add(this._cardPreClass);
-                this._elementSiblings[1].classList.add(this._cardNextClass);
-            }
-        }
         let preNextClass, rightLeftClass;
         if (isRight) {
             preNextClass = this._preClass;
@@ -258,14 +258,34 @@ export default class Carousel {
             preNextClass = this._nextClass;
             rightLeftClass = this._leftClass;
         }
+        // 鼠标结束，移动距离不超过20%
+        if (!this._touchMoveRuning && Math.abs(distance[0]/this._activeEle.offsetWidth) < 0.9) {
+            console.log(Math.abs(distance[0]/this._activeEle.offsetWidth), this._touchMoveRuning);
+            this._activeEle.style.transition = nextActiveEle.style.transition = 'transform 3000ms ease, opacity 100ms ease';
+            // this._reflow(this._activeEle);
+            this._activeEle.style.transform  = nextActiveEle.style.transform = '';
+            // setTimeout(() => {
+            //     // this._activeEle.style.transform = `translateX(0px)`;
+            //     // nextActiveEle.style.transform = `translateX(${(this._isRight ? -1 : 1) * 100}%)`;
+            //     this._activeEle.style.transform  = nextActiveEle.style.transform = '';
+            // }, 10)
+            // setTimeout(() => {
+            //     this._setSpeed(true);
+            //     this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
+            //     this._touchMoveRuning = false;
+            //     this.running = false;
+            // }, 10)
+            return;
+        }
         nextActiveEleClass.add(preNextClass);
-        this._activeEle.style.transition = this._activeEle.style.transition = 'none';
+        this._activeEle.style.transition = nextActiveEle.style.transition = 'none';
         this._activeEle.style.transform = `translateX(${distance[0]}px)`;
-        nextActiveEle.style.transform = `translateX(${nextActiveEle.offsetWidth + distance[0]}px)`;
-        if (this._touchRuning) return;
+        nextActiveEle.style.transform = `translateX(${nextActiveEle.offsetWidth * (this._isRight ? -1 : 1) + distance[0]}px)`;
+        if (this._touchMoveRuning) return;
         this._running = true;
-        this._activeEle.style.transition = this._activeEle.style.transition = '';
-        this._speed();
+        this._isRight = false;
+        this._activeEle.style.transition = nextActiveEle.style.transition = '';
+        this._setSpeed();
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
         const index = this._getChildIndex(nextActiveEle);
@@ -281,9 +301,8 @@ export default class Carousel {
                     this._elementSiblings[0].classList.remove(this._cardPreClass);
                 }
             }
-            this._activeEle.style.transform = nextActiveEle.style.transform = '';
-            this._activeEle.style.transition = this._activeEle.style.transition = '';
-            this._speed(true);
+            this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = this._activeEle.style.transition= '';
+            this._setSpeed(true);
             nextActiveEleClass.add(this._activeClass);
             this._activeEle = nextActiveEle;
             if (this._runQueue() || this._isPaused) return;
@@ -316,7 +335,7 @@ export default class Carousel {
         }
 
         nextActiveEleClass.add(preNextClass);
-        this._speed();
+        this._setSpeed();
         this._reflow(nextActiveEle);
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
@@ -335,7 +354,7 @@ export default class Carousel {
                     this._elementSiblings[0].classList.remove(this._cardPreClass);
                 }
             }
-            this._speed(true);
+            this._setSpeed(true);
             nextActiveEleClass.add(this._activeClass);
             this._activeEle = nextActiveEle;
             if (this._runQueue() || this._isPaused) return;
