@@ -5,7 +5,7 @@
                 <slot></slot>
             </ul>
         </div>
-        <!-- <template v-if="arrow && arrow !== 'never'">
+        <template v-if="arrow && arrow !== 'never'">
             <span
                 :class="arrowClasses"
                 :data-disabled="!loop && model == 0"
@@ -22,7 +22,7 @@
             >
                 <Icons type="ios-arrow-forward"></Icons>
             </span>
-        </template> -->
+        </template>
         <aside v-if="showDot && childrenLen" :class="dotsClasses">
             <div :class="[_tobogPrefix_ + '-dots-inner']">
                 <slot name="dot" :slide="slide" :value="model">

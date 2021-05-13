@@ -24,8 +24,8 @@
         </template>
         <template v-slot="config">
             <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
-                <vCarouselItem v-for="i in 15" :key="i">
-                    <div class="demo-vcarousel">{{ i }}</div>
+                <vCarouselItem v-for="i in 9" :key="i">
+                    <div class="demo-vcarousel" :style="{background: `#${i}f${i}f${i}c`}">{{ i }}</div>
                 </vCarouselItem>
             </vCarousel>
             <!-- <vCarousel v-bind="config" style="height:200px;border:1px solid red;">
