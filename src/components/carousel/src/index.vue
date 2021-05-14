@@ -193,7 +193,7 @@ export default {
                 top: -1 * index * this.dotSize + 'px',
                 maxHeight: dotCount * this.dotSize + 'px',
             } : {
-                top: -1 * index * this.dotSize + 'px',
+                left: -1 * index * this.dotSize + 'px',
                 maxWidth: dotCount * this.dotSize + 'px',
             }
         },
@@ -279,13 +279,19 @@ export default {
             }
         },
         dotCount() {
-            this.resetDotSize(true)
+            this.$nextTick(() => {
+               this.resetDotSize(true)
+            });
         },
         dotType() {
-            this.resetDotSize(true)
+            this.$nextTick(() => {
+               this.resetDotSize(true)
+            });
         },
         getDotPosition() {
-            this.resetDotSize(true)
+            this.$nextTick(() => {
+               this.resetDotSize(true)
+            });
         },
     },
     beforeDestroy() {

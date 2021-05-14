@@ -23,7 +23,7 @@ $timeTest: 0.5s;
                 display: inline-flex;
                 transition: transform $timeTest ease, opacity $timeTest ease;
             }
-            &item {
+            &-item {
                 position: static;
                 width: auto;
                 height: 100%;
@@ -39,7 +39,7 @@ $timeTest: 0.5s;
                     height: auto;
                     width: 100%;
                 }
-                &item {
+                &-item {
                     width: 100%;
                     height: auto;
                 }
@@ -58,7 +58,7 @@ $timeTest: 0.5s;
         flex-wrap: nowrap;
     }
 
-    &item {
+    &-item {
         display: flex;
         height: 100%;
         width: 100%;
@@ -125,29 +125,6 @@ $timeTest: 0.5s;
     &-pre#{&}-right {
         transition: transform $timeTest ease, opacity $timeTest ease;
         transform: translate3d(0, 0, 0) !important;
-    }
-
-    &-fade {
-        .#{$prefix-cls}-item,
-        .#{$prefix-cls}-next,
-        .#{$prefix-cls}-pre,
-        .#{$prefix-cls}-active.#{$prefix-cls}-left,
-        .#{$prefix-cls}-active.#{$prefix-cls}-right {
-            transition: opacity $timeTest cubic-bezier(0.93, 0.25, 0.68, 0.49);
-            opacity: 0.1;
-            transform: translate3d(0, 0, 0);
-        }
-
-        .#{$prefix-cls}-next.#{$prefix-cls}-left,
-        .#{$prefix-cls}-pre.#{$prefix-cls}-right {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
-
-        .#{$prefix-cls}-active {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
     }
 
     &-arrow {
@@ -247,14 +224,14 @@ $timeTest: 0.5s;
                 opacity: 0.7;
                 transform: scale(1.3);
             }
-            &[data-active=true]::before {
+            &[data-active="true"]::before {
                 opacity: 1 !important;
                 transform: scale(1.3);
                 background: $white;
             }
             &[data-type="round"]::before {
-                width: 7px;
-                height: 7px;
+                width: 7px !important;
+                height: 7px !important;
                 border-radius: 50%;
             }
             &[data-type="page"] {
@@ -280,7 +257,7 @@ $timeTest: 0.5s;
                 &::before {
                     display: none;
                 }
-                &[data-active=true]{
+                &[data-active="true"] {
                     background-color: $primary;
                     color: $whiteTitle;
                     transform: scale(1.2);
@@ -297,7 +274,7 @@ $timeTest: 0.5s;
         &#{&}-right {
             bottom: unset;
             bottom: initial;
-            left: 0;
+            left: 3px;
             top: 50%;
             transform: translateY(-50%);
             .#{$prefix-cls}-dots-inner {
@@ -315,95 +292,126 @@ $timeTest: 0.5s;
         &#{&}-right {
             left: unset;
             left: initial;
-            right: 0;
+            right: 3px;
         }
     }
 
-    // card
-    &-card {
+    // fade
+    &-fade {
         .#{$prefix-cls} {
-            &item {
-                width: 50%;
-                transform-origin: center center;
-                opacity: 0;
-                margin: auto;
-            }
-
-            &-card-pre,
-            &-card-next {
-                left: 25%;
-                transform: translateX(-80%) scale(0.8);
-                opacity: 0.8;
-                z-index: 5;
-            }
-
-            &-card-next {
-                transform: translateX(80%) scale(0.8);
-            }
-
-            &-active {
-                left: 0;
-                opacity: 1;
-
-                &.#{$prefix-cls}-left {
-                    opacity: 0.8;
-                    transform: translate3d(-80%, 0, 0) scale(0.8);
+            &-list {
+                .#{$prefix-cls} {
+                    &-item {
+                        transition: none;
+                        opacity: 0;
+                        transform: translate3d(0, 0, 0) !important;
+                        z-index: 0;
+                    }
+                    &-active:not(.#{$prefix-cls}-left),
+                    &-active:not(.#{$prefix-cls}-right) {
+                        opacity: 1;
+                        z-index: 5;
+                    }
+                    &-pre,
+                    &-next {
+                        z-index: 10;
+                        transition: opacity $timeTest ease-out;
+                    }
+                    &-right.#{$prefix-cls}-pre,
+                    &-left.#{$prefix-cls}-next {
+                        opacity: 1;
+                    }
                 }
-
-                &.#{$prefix-cls}-right {
-                    opacity: 0.8;
-                    transform: translate3d(80%, 0, 0) scale(0.8);
-                }
-            }
-
-            &-next.#{$prefix-cls}-left,
-            &-pre.#{$prefix-cls}-right {
-                transform: translate3d(0, 0, 0) scale(1);
-                z-index: 30;
-                opacity: 1;
             }
         }
-
-        &.#{$prefix-cls}-vertical {
+    }
+    // card
+    &-card {
+        .#{$prefix-cls}-list {
             .#{$prefix-cls} {
-                &item {
-                    height: 50%;
-                    width: 100%;
+                &-item {
+                    width: 50%;
+                    transform-origin: center center;
+                    opacity: 0;
+                    margin: auto;
                 }
 
                 &-card-pre,
                 &-card-next {
-                    left: 0;
-                    top: 25%;
-                    transform: translateY(-80%) scale(0.8);
-                    opacity: 0.3;
+                    left: 25%;
+                    transform: translateX(-80%) scale(0.8) !important;
+                    opacity: 0.8;
                     z-index: 5;
                 }
 
                 &-card-next {
-                    transform: translateY(80%) scale(0.8);
+                    transform: translateX(80%) scale(0.8) !important;
                 }
 
                 &-active {
-                    top: 25%;
+                    left: 0;
                     opacity: 1;
 
                     &.#{$prefix-cls}-left {
-                        opacity: 0.3;
-                        transform: translate3d(0, -80%, 0) scale(0.8);
+                        opacity: 0.8;
+                        transform: translate3d(-80%, 0, 0) scale(0.8) !important;
                     }
 
                     &.#{$prefix-cls}-right {
-                        opacity: 0.3;
-                        transform: translate3d(0, 80%, 0) scale(0.8);
+                        opacity: 0.8;
+                        transform: translate3d(80%, 0, 0) scale(0.8) !important;
                     }
                 }
 
                 &-next.#{$prefix-cls}-left,
                 &-pre.#{$prefix-cls}-right {
-                    transform: translate3d(0, 0, 0) scale(1);
+                    transform: translate3d(0, 0, 0) scale(1) !important;
                     z-index: 30;
                     opacity: 1;
+                }
+            }
+
+            &.#{$prefix-cls}-vertical {
+                .#{$prefix-cls} {
+                    &-item {
+                        height: 50%;
+                        width: 100%;
+                    }
+
+                    &-card-pre,
+                    &-card-next {
+                        left: 0;
+                        top: 25%;
+                        transform: translateY(-80%) scale(0.8) !important;
+                        opacity: 0.3;
+                        z-index: 5;
+                    }
+
+                    &-card-next {
+                        transform: translateY(80%) scale(0.8) !important;
+                    }
+
+                    &-active {
+                        top: 25%;
+                        opacity: 1;
+
+                        &.#{$prefix-cls}-left {
+                            opacity: 0.3;
+                            transform: translate3d(0, -80%, 0) scale(0.8) !important;
+                        }
+
+                        &.#{$prefix-cls}-right {
+                            opacity: 0.3;
+                            transform: translate3d(0, 80%, 0) scale(0.8) !important;
+                        }
+                    }
+
+                    &-next.#{$prefix-cls}-left,
+                    &-pre.#{$prefix-cls}-right {
+                        transform: translate3d(0, 0, 0) scale(1) !important;
+                        z-index: 30;
+                        opacity: 1;
+                    }
                 }
             }
         }

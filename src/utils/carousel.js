@@ -13,7 +13,7 @@ export default class Carousel {
         this.el = getElement(el);
         this._prefix = _prefix;
         this._listClass = `${_prefix}-list`;
-        this._itemClass = `${_prefix}item`;
+        this._itemClass = `${_prefix}-item`;
         this._activeClass = `${_prefix}-active`;
         this._leftClass = `${_prefix}-left`;
         this._nextClass = `${_prefix}-next`;
@@ -307,6 +307,7 @@ export default class Carousel {
         })
     }
     _step(isRight = this.reverse) {
+        console.log(isRight);
         const nextActiveEle = this._nextActiveEle;
         if (!nextActiveEle || this._children.length < 2 || this._setScrollData(isRight)) return;
         this._running = true;
@@ -314,10 +315,10 @@ export default class Carousel {
             nextActiveEleClass = nextActiveEle.classList;
         if (this._elementSiblings) {
             if (isRight) {
-                // activeEleClass.add(this._cardNextClass);
+                activeEleClass.add(this._cardNextClass);
                 this._elementSiblings[0].classList.add(this._cardPreClass);
             } else {
-                // activeEleClass.add(this._cardPreClass);
+                activeEleClass.add(this._cardPreClass);
                 this._elementSiblings[1].classList.add(this._cardNextClass);
             }
         }
@@ -342,10 +343,10 @@ export default class Carousel {
             activeEleClass.remove(this._activeClass, rightLeftClass);
             if (this._elementSiblings) {
                 if (isRight) {
-                    // activeEleClass.add(this._cardNextClass);
+                    activeEleClass.add(this._cardNextClass);
                     this._elementSiblings[1].classList.remove(this._cardNextClass);
                 } else {
-                    // activeEleClass.add(this._cardPreClass);
+                    activeEleClass.add(this._cardPreClass);
                     this._elementSiblings[0].classList.remove(this._cardPreClass);
                 }
             }
