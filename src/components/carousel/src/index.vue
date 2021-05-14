@@ -6,12 +6,7 @@
             </ul>
         </div>
         <template v-if="arrow && arrow !== 'never'">
-            <span
-                :class="arrowClasses"
-                :data-disabled="!loop && model == 0"
-                data-type="left"
-                @click="play(true)"
-            >
+            <span :class="arrowClasses" :data-disabled="!loop && model == 0" data-type="left" @click="play(true)">
                 <Icons type="ios-arrow-back"></Icons>
             </span>
             <span
@@ -24,7 +19,7 @@
             </span>
         </template>
         <aside v-if="showDot && childrenLen" :class="dotsClasses">
-            <div :class="[_tobogPrefix_ + '-dots-inner']">
+            <div :class="[_tobogPrefix_ + '-dots-inner']" :style="getActiveDotPosition">
                 <slot name="dot" :slide="slide" :value="model">
                     <template v-if="dotType !== 'page'">
                         <span
@@ -32,9 +27,9 @@
                             :key="index"
                             :class="[_tobogPrefix_ + '-dot']"
                             :data-type="dotType"
+                            :data-active="model == index-1"
                             v-on:[getTriggerEvent]="slide(index)"
-                            >{{ dotType === "bullet" ? index : "" }}</span
-                        >
+                        >{{ dotType === "bullet" ? index : "" }}</span>
                     </template>
                     <span v-else :class="[_tobogPrefix_ + '-dot']" data-type="page">
                         <template v-if="direction !== 'vertical' && dotPosition !== 'left' && dotPosition !== 'right'">
@@ -91,9 +86,14 @@ export default {
             type: Boolean,
             default: true,
         },
+        dotCount: {
+            type: Number,
+            default: 5,
+        },
+        touchmove: Boolean,
         trigger: {
             type: String,
-            default: "click",
+            default: "click", // 'click', 'hover'
             // validator (value) {
             //     return oneOf(value, ['click', 'hover']);
             // }
@@ -122,7 +122,8 @@ export default {
     data() {
         return {
             childrenLen: 0,
-            model: this.value,
+            model: this.value || 0,
+            dotSize: 0,
         }
     },
     mounted() {
@@ -144,7 +145,7 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                touchmove: this.touchmove || true
+                touchmove: this.touchmove && this.mode === 'carousel',
             }
         },
         classes() {
@@ -181,6 +182,21 @@ export default {
             if (this.direction === "vertical") return "right"
             return false
         },
+        getActiveDotPosition() {
+            let dotCount = this.dotCount || 5;
+            if (dotCount < 1 || this.dotType === 'page' || this.childrenLen < dotCount) return;
+            let dotCountHalf = parseInt(dotCount/2),
+                index = this.model - dotCountHalf;
+            if (index < 0) index = 0;
+            if (index >= this.childrenLen - dotCountHalf * 2) index = this.childrenLen - dotCount;
+            return (this.getDotPosition === "left" || this.getDotPosition === "right") ? {
+                top: -1 * index * this.dotSize + 'px',
+                maxHeight: dotCount * this.dotSize + 'px',
+            } : {
+                top: -1 * index * this.dotSize + 'px',
+                maxWidth: dotCount * this.dotSize + 'px',
+            }
+        },
     },
     methods: {
         init() {
@@ -193,9 +209,23 @@ export default {
                         this.model = index
                         this.$emit("on-change", index, oldValue)
                     }
+                    this.resetDotSize();
                 })
                 this._Carousel.slide(this.model)
             })
+        },
+        resetDotSize(reset) {
+            clearTimeout(this._clearDotTime);
+            if (this.showDot && (!this.dotSize || reset) && this.childrenLen > 0) {
+                this._clearDotTime =setTimeout(() => {
+                    let offsetKey = (this.getDotPosition === "left" || this.getDotPosition === "right") ? "offsetHeight" : "offsetWidth";
+                    let size = (this.$el.querySelector(`.${this._tobogPrefix_}-dot`) || {})[offsetKey]
+                    if (size) {
+                        this.dotSize = size + 12;
+                    }
+                    console.log(size, 'size');
+                }, 100);
+            }
         },
         play(isPre) {
             if (
@@ -231,9 +261,11 @@ export default {
         },
         // use when slot changed
         updateConfig() {
+            console.log('updateConfig');
             this.$nextTick(() => {
-                this._Carousel && this._Carousel.update(this.getConfig)
-            })
+                this._Carousel && this._Carousel.update(this.getConfig);
+                this.resetDotSize(true);
+            });
         },
     },
     watch: {
@@ -242,14 +274,24 @@ export default {
         },
         value(val) {
             if (val != this.model) {
-                this.model = val
+                this.model = val;
                 this._Carousel && this._Carousel.slide(val)
             }
         },
+        dotCount() {
+            this.resetDotSize(true)
+        },
+        dotType() {
+            this.resetDotSize(true)
+        },
+        getDotPosition() {
+            this.resetDotSize(true)
+        },
     },
     beforeDestroy() {
-        this._Carousel && this._Carousel.destroy()
-        this._Carousel = null
+        this._Carousel && this._Carousel.destroy();
+        clearTimeout(this._clearDotTime);
+        this._Carousel = this._clearDotTime = null
     },
 }
 </script>

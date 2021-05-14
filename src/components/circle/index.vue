@@ -32,8 +32,8 @@
 import {unit, isParseNumber} from "../../utils/tool"
 import globalMixin from "../../mixins/global"
 export default {
-    name: "Circle",
-    componentName: "Circle",
+    name: "CircleCard",
+    componentName: "CircleCard",
     mixins: [globalMixin],
     inheritAttrs: false,
     props: {
