@@ -1,10 +1,10 @@
 <template>
     <section :class="classes" :data-direction="direction" @mouseleave="playControl" @mouseenter="pause">
-        <div :class="[_tobogPrefix_ + '-outer']">
+        <!-- <div :class="[_tobogPrefix_ + '-outer']"> -->
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
             </ul>
-        </div>
+        <!-- </div> -->
         <template v-if="arrow && arrow !== 'never'">
             <span :class="arrowClasses" :data-disabled="!loop && model == 0" data-type="left" @click="play(true)">
                 <Icons type="ios-arrow-back"></Icons>
@@ -127,7 +127,9 @@ export default {
         }
     },
     mounted() {
-        this.init()
+        console.log(this)
+        this.init();
+        // this.setVnodeProps();
     },
     computed: {
         getTriggerEvent() {
@@ -262,11 +264,22 @@ export default {
         // use when slot changed
         updateConfig() {
             console.log('updateConfig');
+            // this.setVnodeProps();
             this.$nextTick(() => {
                 this._Carousel && this._Carousel.update(this.getConfig);
                 this.resetDotSize(true);
             });
         },
+        // setVnodeProps() {
+        //     if (Array.isArray(this.$slots.default)) {
+        //         this.$slots.default.forEach((item, index) => {
+        //             let attrs = item.data.attrs || {};
+        //             attrs['data-index'] = index;
+        //             item.data.attrs = attrs;
+        //         })
+        //     }
+        //     console.log(this.$slots.default)
+        // }
     },
     watch: {
         getConfig() {
