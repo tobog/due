@@ -124,20 +124,20 @@ export default class Carousel {
         setTimeout(() => {
             this._selectedSlide(index);
         }, 0);
-        // if (this._options.touchmove && !this._DragMove) {
-        //     console.log(getElement(this._listClass, this.el));
-        //     const el = getElement(this._listClass, this.el) || this.el;
-        //     this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
-        //         console.log(obj);
-        //         this.stepMove(obj.distance, obj.cancel);
-        //     });
-        //     return;
-        // }
-        // if (!this._options.touchmove) {
-        //     this._DragMove && this._DragMove.destroy();
-        //     this._DragMove = null;
-        //     return;
-        // }
+        if (this._options.touchmove && !this._DragMove) {
+            console.log(getElement(this._listClass, this.el));
+            const el = getElement(this._listClass, this.el) || this.el;
+            this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
+                console.log(obj);
+                this.stepMove(obj.distance, obj.cancel);
+            });
+            return;
+        }
+        if (!this._options.touchmove) {
+            this._DragMove && this._DragMove.destroy();
+            this._DragMove = null;
+            return;
+        }
     }
     slide(event) {
         let slideIndex;
@@ -193,7 +193,6 @@ export default class Carousel {
         if (this._running) return;
         const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
         const offsetKey = isVertical ? "offsetHeight" : "offsetWidth";
-        const translateKey = isVertical ? "translateY" : "translateX";
         distance = distance[isVertical ? 1 : 0];
         const isRight = distance > 0;
         console.log(distance, isRight, isVertical);
@@ -222,11 +221,12 @@ export default class Carousel {
             rightLeftClass = this._leftClass;
         }
         // 鼠标结束，移动距离不超过20%
-        if (!this._touchMoveRuning && Math.abs(distance / this._activeEle[offsetKey]) < 0.2) {
+        if (!this._touchMoveRuning && Math.abs(distance / this._activeEle[offsetKey]) < 0.3) {
             this._activeEle.style.transition = nextActiveEle.style.transition =
                 "transform 100ms ease, opacity 100ms ease";
             this._activeEle.style.transform = nextActiveEle.style.transform = "";
             setTimeout(() => {
+                nextActiveEle.style.backfaceVisibility =  '';
                 this._activeEle.style.transition = nextActiveEle.style.transition = "";
                 this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
                 this._touchMoveRuning = false;
@@ -235,14 +235,25 @@ export default class Carousel {
             return;
         }
         nextActiveEleClass.add(preNextClass);
-        this._activeEle.style.transition = nextActiveEle.style.transition = "none";
-        this._activeEle.style.transform = `${translateKey}(${distance}px)`;
-        nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (this._isRight ? -1 : 1) +
-            distance}px)`;
+        if (this.mode === "flip") {
+            const rotate = (distance / this._activeEle[offsetKey]) * 180;
+            const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
+            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+            this._activeEle.style.transform = `${translateKey}(${rotate}deg)`;
+            nextActiveEle.style.transform = `${translateKey}(${this._isRight ? -180 + rotate: 180 + rotate}deg)`;
+            nextActiveEle.style.backfaceVisibility =  'visible';
+        } else {
+            const translateKey = isVertical ? "translateY" : "translateX";
+            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+            this._activeEle.style.transform = `${translateKey}(${distance}px)`;
+            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (this._isRight ? -1 : 1) +
+                distance}px)`;
+        }
         if (this._touchMoveRuning) return;
         this._running = true;
         this._isRight = false;
-        this._activeEle.style.transition = nextActiveEle.style.transition = "";
+        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition =
+            "";
         this._setSpeed();
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
@@ -252,10 +263,9 @@ export default class Carousel {
         this._destoryBindAnimation = this._bindAnimation(
             nextActiveEle,
             () => {
+                nextActiveEle.style.backfaceVisibility =  '';
                 nextActiveEleClass.remove(preNextClass, rightLeftClass);
                 activeEleClass.remove(this._activeClass, rightLeftClass);
-                this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition =
-                    "";
                 this._setSpeed(true);
                 nextActiveEleClass.add(this._activeClass);
                 this._activeEle = nextActiveEle;
@@ -267,7 +277,7 @@ export default class Carousel {
         );
     }
     _step(isRight = this.reverse) {
-        if (this._children.length < 2 || (this._stepScroll(isRight))) return;
+        if (this._children.length < 2 || this._stepScroll(isRight)) return;
         const nextActiveEle = this._nextActiveEle;
         if (!nextActiveEle) return;
         this._running = true;

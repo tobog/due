@@ -37,7 +37,7 @@
         </template>
         <template v-slot="config">
             <vCarousel v-bind="config" style="border:1px solid red;">
-                <vCarouselItem v-for="i in 9" :key="i" :style="{widt1h: `${i % 3 * 20 + 200}px`}">
+                <vCarouselItem v-for="i in 9" :key="i" :style="config.mode === 'scroll' && {width: `${i % 3 * 20 + 200}px`}">
                     <div class="demo-vcarousel" :style="{background: `#${i}f${i}f${i}c111`}">
                         <span class="demo-index">{{i}}</span>
                         <img v-if="i % 2 == 0" src="https://bj.bcebos.com/onlineguanwang/2020-12/1608886364105/%E5%AE%98%E7%BD%91%E9%A6%96%E9%A1%B5-%E5%85%83%E6%97%A6banner-web%E7%AB%AF%E5%88%87%E5%9B%BE%E5%A4%87%E4%BB%BD.jpg" class="banner-img">

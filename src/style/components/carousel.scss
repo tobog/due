@@ -100,6 +100,7 @@ $timeTest: 0.4s;
             &-pre {
                 transform: translateY(-100%);
             }
+
             &-next.#{$prefix-cls}-left,
             &-pre.#{$prefix-cls}-right {
                 transform: translate3d(0, 0, 0);
@@ -330,6 +331,8 @@ $timeTest: 0.4s;
             transform-style: preserve-3d;
             perspective: 1000px;
             overflow: visible;
+            width: 300px;
+            margin: auto;
 
             .#{$prefix-cls} {
                 &-item {
@@ -341,24 +344,24 @@ $timeTest: 0.4s;
                 }
 
                 &-next {
-                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(180deg);
+                    transform: rotateX(0deg) rotateY(180deg);
                 }
 
                 &-pre {
-                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(-180deg);
+                    transform: rotateX(0deg) rotateY(-180deg);
                 }
 
                 &-active {
-                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+                    transform: rotateX(0deg) rotateY(0deg);
 
                     &.#{$prefix-cls}-left {
                         transition: transform $timeTest ease;
-                        transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(-180deg);
+                        transform: rotateX(0deg) rotateY(-180deg);
                     }
 
                     &.#{$prefix-cls}-right {
                         transition: transform $timeTest ease;
-                        transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(180deg);
+                        transform: rotateX(0deg) rotateY(180deg);
                     }
                 }
 
@@ -366,44 +369,50 @@ $timeTest: 0.4s;
                 &-pre.#{$prefix-cls}-right {
                     backface-visibility: visible;
                     transition: transform $timeTest ease;
-                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+                    transform: rotateX(0deg) rotateY(0deg);
                 }
 
-                &-vertical {
-                    .#{$prefix-cls} {
-                        &-next {
-                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(180deg);
-                        }
 
-                        &-pre {
-                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(-180deg);
-                        }
+            }
+        }
 
-                        &-active {
-                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(0deg);
+        &.#{$prefix-cls}-vertical {
+            .#{$prefix-cls}-list {
 
-                            &.#{$prefix-cls}-left {
-                                transition: transform $timeTest ease;
-                                transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(-180deg);
-                            }
 
-                            &.#{$prefix-cls}-right {
-                                transition: transform $timeTest ease;
-                                transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(180deg);
-                            }
-                        }
+                .#{$prefix-cls} {
+                    &-next {
+                        transform: rotateY(0deg) rotateX(180deg);
+                    }
 
-                        &-next.#{$prefix-cls}-left,
-                        &-pre.#{$prefix-cls}-right {
-                            backface-visibility: visible;
+                    &-pre {
+                        transform: rotateY(0deg) rotateX(-180deg);
+                    }
+
+                    &-active {
+                        transform: rotateY(0deg) rotateX(0deg);
+
+                        &.#{$prefix-cls}-left {
                             transition: transform $timeTest ease;
-                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(0deg);
+                            transform: rotateY(0deg) rotateX(-180deg);
                         }
+
+                        &.#{$prefix-cls}-right {
+                            transition: transform $timeTest ease;
+                            transform: rotateY(0deg) rotateX(180deg);
+                        }
+                    }
+
+                    &-next.#{$prefix-cls}-left,
+                    &-pre.#{$prefix-cls}-right {
+                        backface-visibility: visible;
+                        transition: transform $timeTest ease;
+                        transform: rotateY(0deg) rotateX(0deg);
                     }
                 }
             }
-
         }
+
     }
 
     // &-cube {

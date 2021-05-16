@@ -129,7 +129,6 @@ export default {
     mounted() {
         console.log(this)
         this.init();
-        // this.setVnodeProps();
     },
     computed: {
         getTriggerEvent() {
@@ -147,7 +146,7 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                // touchmove: this.touchmove && this.mode === 'carousel' || true,
+                touchmove: (this.touchmove || 1) && (this.mode === 'carousel' || this.mode === 'flip'),
                 align: 0, // -1,0,1,
                 // slidesPerView
             }
