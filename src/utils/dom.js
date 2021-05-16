@@ -933,6 +933,8 @@ export class DragMove {
     }
     // mousedown 记录开始
     _handleInitAxis(event) {
+        event.stopPropagation();
+        event.preventDefault();
         this._axis = this._tempAxis = [event.clientX, event.clientY];
         this._initOffset = this._getInitStyle(this._relatedElement || this._element);
         //设置样式,禁止选中文字
@@ -942,7 +944,6 @@ export class DragMove {
             this._element.dataset.perCursor = this._element.style.cursor;
             this._element.style.cursor = this._options.cursor;
         }
-        event.stopPropagation();
         if (this._isRun) return;
         this._isRun = true;
         this._initTime = this._tempTime = Date.now();
@@ -1090,7 +1091,8 @@ export class DragMove {
                 axis: this._axis,
                 isTransform: this._isTransform,
                 cancel: true,
-                tempSpeed, // 临时速度
+                tempSpeed, // 临时速度，
+                tempDistance,
                 speed,
             });
             this._distance = [0, 0];

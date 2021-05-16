@@ -1,10 +1,10 @@
 <template>
     <section :class="classes" :data-direction="direction" @mouseleave="playControl" @mouseenter="pause">
-        <!-- <div :class="[_tobogPrefix_ + '-outer']"> -->
+        <div :class="[_tobogPrefix_ + '-outer']">
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
             </ul>
-        <!-- </div> -->
+        </div>
         <template v-if="arrow && arrow !== 'never'">
             <span :class="arrowClasses" :data-disabled="!loop && model == 0" data-type="left" @click="play(true)">
                 <Icons type="ios-arrow-back"></Icons>
@@ -100,7 +100,7 @@ export default {
         },
         mode: {
             type: String,
-            default: "carousel", //carousel,fade,card,scroll
+            default: "carousel", //carousel,fade,scroll
         },
         direction: String, // horizontal,vertical
         dotPosition: String, // top,right,left,bottom
@@ -147,7 +147,9 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                touchmove: this.touchmove && this.mode === 'carousel',
+                // touchmove: this.touchmove && this.mode === 'carousel' || true,
+                align: 0, // -1,0,1,
+                // slidesPerView
             }
         },
         classes() {
@@ -204,6 +206,7 @@ export default {
         init() {
             this.$nextTick(() => {
                 this._Carousel = new Carousel(this.$el, this.getConfig, (that, index) => {
+                    console.log(index, 'indexindex')
                     const childrenLen = that._children.length,
                         oldValue = this.model
                     if (childrenLen != this.childrenLen) this.childrenLen = childrenLen

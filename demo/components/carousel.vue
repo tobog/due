@@ -10,8 +10,20 @@
     align-items: center;
     color: #fff;
     font-size: 20px;
-    background: #506b9e;
+    background: linear-gradient(to right,#fff, #000);
     border: 1px solid #fff;
+    position: relative;
+    img {
+        width: 100%;
+    }
+    .demo-index {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        color: #fff;
+        font-size: 32px;
+        z-index: 20;
+    }
 }
 </style>
 
@@ -25,8 +37,9 @@
         </template>
         <template v-slot="config">
             <vCarousel v-bind="config" style="border:1px solid red;">
-                <vCarouselItem v-for="i in 9" :key="i" :style="{height: `${i % 3 * 20 + 200}px`}">
+                <vCarouselItem v-for="i in 9" :key="i" :style="{widt1h: `${i % 3 * 20 + 200}px`}">
                     <div class="demo-vcarousel" :style="{background: `#${i}f${i}f${i}c111`}">
+                        <span class="demo-index">{{i}}</span>
                         <img v-if="i % 2 == 0" src="https://bj.bcebos.com/onlineguanwang/2020-12/1608886364105/%E5%AE%98%E7%BD%91%E9%A6%96%E9%A1%B5-%E5%85%83%E6%97%A6banner-web%E7%AB%AF%E5%88%87%E5%9B%BE%E5%A4%87%E4%BB%BD.jpg" class="banner-img">
                         <img v-else  src="https://bj.bcebos.com/onlineguanwang/2021-3/1614582690438/%E5%AE%98%E7%BD%91%E9%A6%96%E9%A1%B5-3.3%E7%95%AA%E7%95%AA%E8%8A%82banner-web%E7%AB%AF%E5%88%87%E5%9B%BE.jpg" class="banner-img">
                     </div>
@@ -103,7 +116,7 @@ export default {
                     label: "自动播放",
                     key: "autoplay",
                     tag: "vSwitch",
-                    demoDefault: true,
+                    demoDefault: false,
                     explain: "是否自动播放",
                     dataType: "Boolean",
                     default: false,
@@ -133,11 +146,11 @@ export default {
                     label: "模式",
                     key: "mode",
                     tag: "vSelect",
-                    demoDefault: "card",
-                    explain: "模式:carousel, fade, card, scroll",
+                    demoDefault: "cube",
+                    explain: "模式:carousel, fade, scroll,flip",
                     dataType: "String",
                     default: "carousel",
-                    options: ["carousel", "fade", "card", "scroll"],
+                    options: ["carousel", "fade", "scroll", "flip"],
                 },
                 {
                     showConfig: true,
@@ -177,7 +190,7 @@ export default {
                     label: "指示器类型",
                     key: "dotType",
                     tag: "vSelect",
-                    demoDefault: "default",
+                    demoDefault: "bullet",
                     explain: "指示器类型:round,default,page,bullet",
                     dataType: "String",
                     default: "inside",

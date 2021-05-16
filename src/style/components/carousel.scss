@@ -1,19 +1,20 @@
 $prefix-cls: #{$prefix}-carousel;
-$timeTest: 0.3s;
+$timeTest: 0.4s;
 
 .#{$prefix-cls} {
     position: relative;
     display: block;
     box-sizing: border-box;
     user-select: none;
-    touch-action: pan-y;
     -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
 
-    // &-outer {
-    //     display: block;
-    //     overflow: hidden;
-    //     height: 100%;
-    // }
+    &-outer {
+        height: 100%;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
 
     &-list {
         position: relative;
@@ -23,29 +24,27 @@ $timeTest: 0.3s;
         margin: 0;
         padding: 0;
         list-style: none;
-        flex-wrap: nowrap;
         transition: all $timeTest ease;
     }
 
     &-item {
         display: none;
-        height: 100%;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: nowrap;
         overflow: hidden;
         position: absolute;
-        top: 0;
+        text-align: center;
         list-style: none;
+        height: 100%;
+        width: 100%;
+        top: 0;
         padding: 0;
         margin: 0;
         opacity: 0;
+
     }
 
     &-next,
     &-pre {
-        display: flex;
+        display: block;
         z-index: 10;
         left: 0;
         opacity: 1;
@@ -57,7 +56,7 @@ $timeTest: 0.3s;
     }
 
     &-active {
-        display: flex;
+        display: block;
         position: relative;
         z-index: 20;
         transition: transform $timeTest ease, opacity $timeTest ease;
@@ -65,19 +64,20 @@ $timeTest: 0.3s;
 
         &.#{$prefix-cls}-left {
             position: absolute;
-            transform: translate3d(-100%, 0, 0) !important;
+            transform: translate3d(-100%, 0, 0);
         }
 
         &.#{$prefix-cls}-right {
             position: absolute;
-            transform: translate3d(100%, 0, 0) !important;
+            transform: translate3d(100%, 0, 0);
         }
     }
+
     &-next#{&}-left,
     &-pre#{&}-right {
         position: relative;
         transition: transform $timeTest ease, opacity $timeTest ease;
-        transform: translate3d(0, 0, 0) !important;
+        transform: translate3d(0, 0, 0);
     }
 
 
@@ -85,11 +85,11 @@ $timeTest: 0.3s;
         .#{$prefix-cls} {
             &-active {
                 &.#{$prefix-cls}-left {
-                    transform: translate3d(0, -100%, 0) !important;
+                    transform: translate3d(0, -100%, 0);
                 }
 
                 &.#{$prefix-cls}-right {
-                    transform: translate3d(0, 100%, 0) !important;
+                    transform: translate3d(0, 100%, 0);
                 }
             }
 
@@ -100,10 +100,12 @@ $timeTest: 0.3s;
             &-pre {
                 transform: translateY(-100%);
             }
+            &-next.#{$prefix-cls}-left,
+            &-pre.#{$prefix-cls}-right {
+                transform: translate3d(0, 0, 0);
+            }
         }
     }
-
-
 
     &-arrow {
         padding: 0;
@@ -293,53 +295,192 @@ $timeTest: 0.3s;
 
     // fade
     &-fade {
-        .#{$prefix-cls} {
-            &-list {
-                .#{$prefix-cls} {
-                    &-item {
-                        transition: none;
-                        opacity: 0;
-                        transform: translate3d(0, 0, 0) !important;
-                        z-index: 0;
+        .#{$prefix-cls}-list {
+            .#{$prefix-cls} {
+                &-item {
+                    transition: none;
+                    opacity: 0;
+                    transform: translate3d(0, 0, 0) !important;
+                    z-index: 0;
+                }
+
+                &-active:not(.#{$prefix-cls}-left),
+                &-active:not(.#{$prefix-cls}-right) {
+                    opacity: 1;
+                    z-index: 5;
+                }
+
+                &-pre,
+                &-next {
+                    z-index: 10;
+                    transition: opacity $timeTest ease-out;
+                }
+
+                &-right.#{$prefix-cls}-pre,
+                &-left.#{$prefix-cls}-next {
+                    opacity: 1;
+                }
+            }
+
+        }
+    }
+
+    &-flip {
+        .#{$prefix-cls}-list {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            overflow: visible;
+
+            .#{$prefix-cls} {
+                &-item {
+                    transform: none;
+                    pointer-events: none;
+                    backface-visibility: hidden;
+                    transform-origin: center center;
+                    transform-style: preserve-3d;
+                }
+
+                &-next {
+                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(180deg);
+                }
+
+                &-pre {
+                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(-180deg);
+                }
+
+                &-active {
+                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+
+                    &.#{$prefix-cls}-left {
+                        transition: transform $timeTest ease;
+                        transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(-180deg);
                     }
 
-                    &-active:not(.#{$prefix-cls}-left),
-                    &-active:not(.#{$prefix-cls}-right) {
-                        opacity: 1;
-                        z-index: 5;
+                    &.#{$prefix-cls}-right {
+                        transition: transform $timeTest ease;
+                        transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(180deg);
                     }
+                }
 
-                    &-pre,
-                    &-next {
-                        z-index: 10;
-                        transition: opacity $timeTest ease-out;
-                    }
+                &-next.#{$prefix-cls}-left,
+                &-pre.#{$prefix-cls}-right {
+                    backface-visibility: visible;
+                    transition: transform $timeTest ease;
+                    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+                }
 
-                    &-right.#{$prefix-cls}-pre,
-                    &-left.#{$prefix-cls}-next {
-                        opacity: 1;
+                &-vertical {
+                    .#{$prefix-cls} {
+                        &-next {
+                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(180deg);
+                        }
+
+                        &-pre {
+                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(-180deg);
+                        }
+
+                        &-active {
+                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(0deg);
+
+                            &.#{$prefix-cls}-left {
+                                transition: transform $timeTest ease;
+                                transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(-180deg);
+                            }
+
+                            &.#{$prefix-cls}-right {
+                                transition: transform $timeTest ease;
+                                transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(180deg);
+                            }
+                        }
+
+                        &-next.#{$prefix-cls}-left,
+                        &-pre.#{$prefix-cls}-right {
+                            backface-visibility: visible;
+                            transition: transform $timeTest ease;
+                            transform: translate3d(0px, 0px, 0px) rotateY(0deg) rotateX(0deg);
+                        }
                     }
                 }
             }
+
         }
     }
+
+    // &-cube {
+    //     .#{$prefix-cls}-list {
+    //         transform-style: preserve-3d;
+    //         perspective: 1000px;
+    //         overflow: visible;
+    //         width: 300px;
+    //         margin: auto;
+    //         transform: rotate3d(0, 1, 0, 0deg);
+    //         &[data-3d='1'] {
+    //             transition: transform $timeTest ease;
+    //             transform: rotate3d(0, 1, 0, 90deg);
+    //         }
+
+    //         .#{$prefix-cls} {
+    //             &-item {
+    //                 transform: none;
+    //                 pointer-events: none;
+    //                 backface-visibility: hidden;
+    //                 transform-origin: center center -150px;
+    //             }
+
+    //             &-next {
+    //                 transform: translate3d(50%, 0px, 0px) rotate3d(0, 1, 0, 70deg);
+    //             }
+
+    //             &-pre {
+    //                 transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(-180deg);
+    //             }
+
+    //             &-active {
+    //                 transform: translate3d(0px, 0px, 0px) rotate3d(0, 1, 0, 0deg);
+    //                 // &.#{$prefix-cls}-left {
+    //                 //     transition: transform $timeTest ease;
+    //                 //     transform: translate3d(-50%, 0px, 0px) rotate3d(0, 1, 0, -90deg);
+    //                 // }
+
+    //                 // &.#{$prefix-cls}-right {
+    //                 //     transition: transform $timeTest ease;
+    //                 //     transform: rotate3d(0, 1, 0, 90deg) translate3d(0px, 50%, 0px);
+    //                 // }
+    //             }
+
+    //             // &-next.#{$prefix-cls}-left,
+    //             // &-pre.#{$prefix-cls}-right {
+    //             //     backface-visibility: visible;
+    //             //     transition: transform $timeTest ease;
+    //             //     transform: rotate3d(0, 1, 0, 0deg) translate3d(0px, 0px, 0px);
+    //             // }
+    //         }
+
+    //     }
+    // }
 
     // scroll
     &-scroll {
         .#{$prefix-cls} {
             &-list {
-                position: relative;
-                display: inline-flex;
-                transition: transform $timeTest ease, opacity $timeTest ease;
+                display: flex;
+                flex-wrap: nowrap;
+                overflow: unset;
+                overflow: inherit;
+                box-sizing: content-box;
             }
 
-            &-item {
+            &-item,
+            &-active {
+                display: block;
                 position: static;
                 width: auto;
-                height: 100%;
+                max-width: 100%;
                 flex: none;
-                transform: none;
-                transition: none;
+                transform: none !important;
+                transition: none !important;
+                opacity: 1;
+                order: 0;
             }
         }
 
@@ -354,99 +495,6 @@ $timeTest: 0.3s;
                 &-item {
                     width: 100%;
                     height: auto;
-                }
-            }
-        }
-    }
-
-    // card
-    &-card {
-        .#{$prefix-cls}-list {
-            .#{$prefix-cls} {
-                &-item {
-                    width: 50%;
-                    transform-origin: center center;
-                    opacity: 0;
-                    margin: auto;
-                    display: flex;
-                }
-
-                &-card-pre,
-                &-card-next {
-                    left: 25%;
-                    transform: translateX(-80%) scale(0.8) !important;
-                    opacity: 0.8;
-                    z-index: 5;
-                }
-
-                &-card-next {
-                    transform: translateX(80%) scale(0.8) !important;
-                }
-
-                &-active {
-                    left: 0;
-                    opacity: 1;
-
-                    &.#{$prefix-cls}-left {
-                        opacity: 0.8;
-                        transform: translate3d(-80%, 0, 0) scale(0.8) !important;
-                    }
-
-                    &.#{$prefix-cls}-right {
-                        opacity: 0.8;
-                        transform: translate3d(80%, 0, 0) scale(0.8) !important;
-                    }
-                }
-
-                &-next.#{$prefix-cls}-left,
-                &-pre.#{$prefix-cls}-right {
-                    transform: translate3d(0, 0, 0) scale(1) !important;
-                    z-index: 30;
-                    opacity: 1;
-                }
-            }
-
-            &.#{$prefix-cls}-vertical {
-                .#{$prefix-cls} {
-                    &-item {
-                        height: 50%;
-                        width: 100%;
-                    }
-
-                    &-card-pre,
-                    &-card-next {
-                        left: 0;
-                        top: 25%;
-                        transform: translateY(-80%) scale(0.8) !important;
-                        opacity: 0.3;
-                        z-index: 5;
-                    }
-
-                    &-card-next {
-                        transform: translateY(80%) scale(0.8) !important;
-                    }
-
-                    &-active {
-                        top: 25%;
-                        opacity: 1;
-
-                        &.#{$prefix-cls}-left {
-                            opacity: 0.3;
-                            transform: translate3d(0, -80%, 0) scale(0.8) !important;
-                        }
-
-                        &.#{$prefix-cls}-right {
-                            opacity: 0.3;
-                            transform: translate3d(0, 80%, 0) scale(0.8) !important;
-                        }
-                    }
-
-                    &-next.#{$prefix-cls}-left,
-                    &-pre.#{$prefix-cls}-right {
-                        transform: translate3d(0, 0, 0) scale(1) !important;
-                        z-index: 30;
-                        opacity: 1;
-                    }
                 }
             }
         }

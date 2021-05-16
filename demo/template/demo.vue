@@ -65,7 +65,7 @@
             <slot name="desc"> </slot>
         </div>
         <vRow class="demo-layout" flex>
-            <vCol :lg="isAll ? 24 : 14" span="24" class="demo-form">
+            <vCol :lg="isAll ? 24 : 10" span="24" class="demo-form">
                 <template v-for="(item, key) in getConfig">
                     <div v-if="!item.hide" :key="key">
                         <h2 class="demo-form-header">{{ key }}属性配置</h2>
@@ -74,7 +74,7 @@
                     </div>
                 </template>
             </vCol>
-            <vCol :lg="isAll ? 24 : 10" span="24" class="demo-view" :data-dark="isDark">
+            <vCol :lg="isAll ? 24 : 14" span="24" class="demo-view" :data-dark="isDark">
                 <vSwitch v-model="show" class="margin-bottom-10">
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -84,7 +84,7 @@
                 </div>
             </vCol>
         </vRow>
-        <div class="demo-code">
+        <!-- <div class="demo-code">
             <pre v-highlight>
 				<code v-text="getFormatCode" class="html"></code>
 			</pre>
@@ -95,7 +95,7 @@
         </div>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>
-        </div>
+        </div> -->
     </div>
 </template>
 
