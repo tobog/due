@@ -1,6 +1,6 @@
 import { EventListener, DragMove, getElement } from "../utils/dom";
 export default class Carousel {
-    constructor(el, options, callback) {
+    constructor (el, options, callback) {
         if (!el) throw new Error("el must not be null");
         if (typeof options === "function") {
             this._callback = options;
@@ -34,9 +34,9 @@ export default class Carousel {
     }
     _getNextActiveEle(isRight) {
         const activeEle =
-                this.el.querySelector(`.${this._activeClass}`) ||
-                this.el.querySelector(`.${this._itemClass}[data-active]`) ||
-                this._children[0],
+            this.el.querySelector(`.${this._activeClass}`) ||
+            this.el.querySelector(`.${this._itemClass}[data-active]`) ||
+            this._children[0],
             loop = this.loop && this.mode !== "scroll";
         if (!activeEle) {
             return (this._activeEle = this._nextActiveEle = null);
@@ -120,6 +120,7 @@ export default class Carousel {
         this._getChildren();
         this._getNextActiveEle(this.reverse);
         const index = this._getChildIndex(this._activeEle);
+        this._setInitScrollPos(this._activeEle);
         this._handleCallback(index);
         setTimeout(() => {
             this._selectedSlide(index);
@@ -188,94 +189,7 @@ export default class Carousel {
             return true;
         }
     }
-    // 鼠标移动
-    stepMove(distance, isCancel) {
-        if (this._running) return;
-        const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
-        const offsetKey = isVertical ? "offsetHeight" : "offsetWidth";
-        distance = distance[isVertical ? 1 : 0];
-        const isRight = distance > 0;
-        console.log(distance, isRight, isVertical);
-        // 方向是否改变
-        if (typeof this._isRight === "boolean" && this._isRight !== isRight && this._nextActiveEle) {
-            this._nextActiveEle.style.transform = "";
-            this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
-            this._touchMoveRuning = false;
-        }
-        this._isRight = isRight;
-        if (!this._touchMoveRuning && !this._getNextActiveEle(isRight)) {
-            this._running = false;
-            return;
-        }
-        this._touchMoveRuning = !isCancel;
-        const nextActiveEle = this._nextActiveEle;
-        if (!nextActiveEle || this._children.length < 2) return;
-        const activeEleClass = this._activeEle.classList,
-            nextActiveEleClass = nextActiveEle.classList;
-        let preNextClass, rightLeftClass;
-        if (isRight) {
-            preNextClass = this._preClass;
-            rightLeftClass = this._rightClass;
-        } else {
-            preNextClass = this._nextClass;
-            rightLeftClass = this._leftClass;
-        }
-        // 鼠标结束，移动距离不超过20%
-        if (!this._touchMoveRuning && Math.abs(distance / this._activeEle[offsetKey]) < 0.3) {
-            this._activeEle.style.transition = nextActiveEle.style.transition =
-                "transform 100ms ease, opacity 100ms ease";
-            this._activeEle.style.transform = nextActiveEle.style.transform = "";
-            setTimeout(() => {
-                nextActiveEle.style.backfaceVisibility =  '';
-                this._activeEle.style.transition = nextActiveEle.style.transition = "";
-                this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
-                this._touchMoveRuning = false;
-                this.running = false;
-            }, 110);
-            return;
-        }
-        nextActiveEleClass.add(preNextClass);
-        if (this.mode === "flip") {
-            const rotate = (distance / this._activeEle[offsetKey]) * 180;
-            const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
-            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
-            this._activeEle.style.transform = `${translateKey}(${rotate}deg)`;
-            nextActiveEle.style.transform = `${translateKey}(${this._isRight ? -180 + rotate: 180 + rotate}deg)`;
-            nextActiveEle.style.backfaceVisibility =  'visible';
-        } else {
-            const translateKey = isVertical ? "translateY" : "translateX";
-            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
-            this._activeEle.style.transform = `${translateKey}(${distance}px)`;
-            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (this._isRight ? -1 : 1) +
-                distance}px)`;
-        }
-        if (this._touchMoveRuning) return;
-        this._running = true;
-        this._isRight = false;
-        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition =
-            "";
-        this._setSpeed();
-        nextActiveEleClass.add(rightLeftClass);
-        activeEleClass.add(rightLeftClass);
-        const index = this._getChildIndex(nextActiveEle);
-        this._selectedSlide(index);
-        this._handleCallback(index);
-        this._destoryBindAnimation = this._bindAnimation(
-            nextActiveEle,
-            () => {
-                nextActiveEle.style.backfaceVisibility =  '';
-                nextActiveEleClass.remove(preNextClass, rightLeftClass);
-                activeEleClass.remove(this._activeClass, rightLeftClass);
-                this._setSpeed(true);
-                nextActiveEleClass.add(this._activeClass);
-                this._activeEle = nextActiveEle;
-                this._nextActiveEle = null;
-                if (this._runQueue() || this._isPaused) return;
-                this.play(isRight, this.autoplay);
-            },
-            true
-        );
-    }
+
     _step(isRight = this.reverse) {
         if (this._children.length < 2 || this._stepScroll(isRight)) return;
         const nextActiveEle = this._nextActiveEle;
@@ -316,24 +230,36 @@ export default class Carousel {
             true
         );
     }
+    // mode srcoll Pos
+    _setInitScrollPos(nextEle) {
+        if (!nextEle) return;
+        let { slideOffsetBefore, slideBounds, direction } = this._options;
+        let isVertical = (direction || this.el.dataset.direction) === 'vertical';
+        let total = nextEle[isVertical ? 'offsetTop' : 'offsetLeft'];
+        let distance = 0;
+        if (slideBounds) {
+            if (total + nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 > nextEle.parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2) {
+                total = 0;
+            }
+        }
+        if (slideOffsetBefore === 'center') {
+            distance = nextEle.parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2 - nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2
+        } else if (slideOffsetBefore) {
+            distance = slideOffsetBefore;
+        }
+        total = total - distance;
+        nextEle.parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+        return total;
+    }
     // mode srcoll
     _stepScroll(isRight) {
         if (this.mode !== "scroll" || !this._nextActiveEle) return false;
         this._running = true;
         const parentNode = this._activeEle.parentNode;
-        // const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
-        const getTotalSize = function(ele) {
-            let total = 0;
-            while (ele.previousElementSibling) {
-                total += ele.previousElementSibling.offsetWidth;
-                ele = ele.previousElementSibling;
-            }
-            return total;
-        };
+        const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
         const index = this._getChildIndex(this._nextActiveEle);
-        const total = getTotalSize(this._nextActiveEle);
         this._setSpeed(false, parentNode);
-        parentNode.style.transform = `translateX(-${total}px)`;
+        this._setInitScrollPos(this._nextActiveEle);
         this._nextActiveEle.classList.add(this._activeClass);
         this._activeEle.classList.remove(this._activeClass);
         this._selectedSlide(index);
@@ -348,6 +274,94 @@ export default class Carousel {
             this.play(this._isScrollRight, this.autoplay);
         });
         return true;
+    }
+    // 鼠标移动
+    stepMove(distance, isCancel) {
+        if (this._running) return;
+        const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
+        const offsetKey = isVertical ? "offsetHeight" : "offsetWidth";
+        distance = distance[isVertical ? 1 : 0];
+        const isRight = distance > 0;
+        console.log(distance, isRight, isVertical);
+        // 方向是否改变
+        if (typeof this._isRight === "boolean" && this._isRight !== isRight && this._nextActiveEle) {
+            this._nextActiveEle.style.transform = "";
+            this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
+            this._touchMoveRuning = false;
+        }
+        this._isRight = isRight;
+        if (!this._touchMoveRuning && !this._getNextActiveEle(isRight)) {
+            this._running = false;
+            return;
+        }
+        this._touchMoveRuning = !isCancel;
+        const nextActiveEle = this._nextActiveEle;
+        if (!nextActiveEle || this._children.length < 2) return;
+        const activeEleClass = this._activeEle.classList,
+            nextActiveEleClass = nextActiveEle.classList;
+        let preNextClass, rightLeftClass;
+        if (isRight) {
+            preNextClass = this._preClass;
+            rightLeftClass = this._rightClass;
+        } else {
+            preNextClass = this._nextClass;
+            rightLeftClass = this._leftClass;
+        }
+        // 鼠标结束，移动距离不超过20%
+        if (!this._touchMoveRuning && Math.abs(distance / this._activeEle[offsetKey]) < 0.3) {
+            this._activeEle.style.transition = nextActiveEle.style.transition =
+                "transform 100ms ease, opacity 100ms ease";
+            this._activeEle.style.transform = nextActiveEle.style.transform = "";
+            setTimeout(() => {
+                nextActiveEle.style.backfaceVisibility = '';
+                this._activeEle.style.transition = nextActiveEle.style.transition = "";
+                this._nextActiveEle.classList.remove(this._isRight ? this._preClass : this._nextClass);
+                this._touchMoveRuning = false;
+                this.running = false;
+            }, 110);
+            return;
+        }
+        nextActiveEleClass.add(preNextClass);
+        if (this.mode === "flip") {
+            const rotate = (distance / this._activeEle[offsetKey]) * 180;
+            const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
+            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+            this._activeEle.style.transform = `${translateKey}(${rotate}deg)`;
+            nextActiveEle.style.transform = `${translateKey}(${this._isRight ? -180 + rotate : 180 + rotate}deg)`;
+            nextActiveEle.style.backfaceVisibility = 'visible';
+        } else {
+            const translateKey = isVertical ? "translateY" : "translateX";
+            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+            this._activeEle.style.transform = `${translateKey}(${distance}px)`;
+            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (this._isRight ? -1 : 1) +
+                distance}px)`;
+        }
+        if (this._touchMoveRuning) return;
+        this._running = true;
+        this._isRight = false;
+        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition =
+            "";
+        this._setSpeed();
+        nextActiveEleClass.add(rightLeftClass);
+        activeEleClass.add(rightLeftClass);
+        const index = this._getChildIndex(nextActiveEle);
+        this._selectedSlide(index);
+        this._handleCallback(index);
+        this._destoryBindAnimation = this._bindAnimation(
+            nextActiveEle,
+            () => {
+                nextActiveEle.style.backfaceVisibility = '';
+                nextActiveEleClass.remove(preNextClass, rightLeftClass);
+                activeEleClass.remove(this._activeClass, rightLeftClass);
+                this._setSpeed(true);
+                nextActiveEleClass.add(this._activeClass);
+                this._activeEle = nextActiveEle;
+                this._nextActiveEle = null;
+                if (this._runQueue() || this._isPaused) return;
+                this.play(isRight, this.autoplay);
+            },
+            true
+        );
     }
     destroy() {
         this._isPaused = true;

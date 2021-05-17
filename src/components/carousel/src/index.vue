@@ -3,6 +3,7 @@
         <div :class="[_tobogPrefix_ + '-outer']">
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
+                <slot v-if="mode === 'scroll' && loop"></slot>
             </ul>
         </div>
         <template v-if="arrow && arrow !== 'never'">
@@ -103,7 +104,9 @@ export default {
             default: "carousel", //carousel,fade,scroll
         },
         direction: String, // horizontal,vertical
-        dotPosition: String, // top,right,left,bottom
+        dotPosition: String, // top,right,left,bottom，
+        slideOffsetBefore: [String, Number], // center 100
+        slideBounds: Boolean
         // slidesToShow: 3,
         // slidesToScroll: 3,
         // responsive: [
@@ -147,7 +150,8 @@ export default {
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
                 touchmove: (this.touchmove || 1) && (this.mode === 'carousel' || this.mode === 'flip'),
-                align: 0, // -1,0,1,
+                slideOffsetBefore: this.slideOffsetBefore || 'center',
+                slideBounds: this.slideBounds
                 // slidesPerView
             }
         },
