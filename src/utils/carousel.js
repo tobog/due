@@ -120,7 +120,7 @@ export default class Carousel {
         this._getChildren();
         this._getNextActiveEle(this.reverse);
         const index = this._getChildIndex(this._activeEle);
-        this._setInitScrollPos(this._activeEle);
+        this._getScrollPosByActiveEle(this._activeEle);
         this._handleCallback(index);
         setTimeout(() => {
             this._selectedSlide(index);
@@ -229,7 +229,8 @@ export default class Carousel {
         );
     }
     // mode srcoll Pos
-    _setInitScrollPos(nextEle) {
+    // 通过激活元素获取偏移距离
+    _getScrollPosByActiveEle(nextEle) {
         console.log(nextEle);
         if (!nextEle) return;
         let { slideOffset, slideBounds, direction } = this._options;
@@ -269,7 +270,7 @@ export default class Carousel {
         const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
         const index = this._getChildIndex(this._nextActiveEle);
         this._setSpeed(false, parentNode);
-        const status = this._setInitScrollPos(this._nextActiveEle);
+        this._getScrollPosByActiveEle(this._nextActiveEle);
         this._nextActiveEle.classList.add(this._activeClass);
         this._activeEle.classList.remove(this._activeClass);
         this._selectedSlide(index);
@@ -285,6 +286,10 @@ export default class Carousel {
         });
         return true;
     }
+    // 通过偏移距离获取最近激活的元素
+    _getNextActiveEleBydistance(distance) {
+
+    }
     // 鼠标移动
     stepMove(distance, isCancel) {
         if (this._running) return;
@@ -294,13 +299,14 @@ export default class Carousel {
         const isRight = distance > 0;
         console.log(distance, isRight, isVertical);
         if (this.mode === 'scroll') {
-            const parentNode = this._activeEle.parentNode;
+            const parentNode = this.el.querySelector(`.${this._activeClass}`).parentNode;
             const total = parentNode.dataset.translate - distance;
             if (isCancel) {
                 parentNode.style.transition = "";
                 this._setSpeed(null, parentNode);
                 parentNode.dataset.translate = total;
                 parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+                this._getScrollPosByActiveEle(this._nextActiveEle)
             } else {
                 parentNode.style.transition = "none";
                 parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
