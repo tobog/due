@@ -210,14 +210,12 @@ export default class Carousel {
         this._reflow(nextActiveEle);
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
-        // nextActiveEle.parentNode.dataset['3d'] = isRight ? -1 : 1;
         const index = this._getChildIndex(nextActiveEle);
         this._selectedSlide(index);
         this._handleCallback(index);
         this._destoryBindAnimation = this._bindAnimation(
             nextActiveEle,
             () => {
-                // nextActiveEle.parentNode.dataset['3d'] = 0;
                 nextActiveEleClass.remove(preNextClass, rightLeftClass);
                 activeEleClass.remove(this._activeClass, rightLeftClass);
                 this._setSpeed(true);
@@ -232,22 +230,34 @@ export default class Carousel {
     }
     // mode srcoll Pos
     _setInitScrollPos(nextEle) {
+        console.log(nextEle);
         if (!nextEle) return;
-        let { slideOffsetBefore, slideBounds, direction } = this._options;
+        let { slideOffset, slideBounds, direction } = this._options;
         let isVertical = (direction || this.el.dataset.direction) === 'vertical';
         let total = nextEle[isVertical ? 'offsetTop' : 'offsetLeft'];
         let distance = 0;
-        if (slideBounds) {
-            if (total + nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 > nextEle.parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2) {
-                total = 0;
-            }
-        }
-        if (slideOffsetBefore === 'center') {
-            distance = nextEle.parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2 - nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2
-        } else if (slideOffsetBefore) {
-            distance = slideOffsetBefore;
+        const activeSize = nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
+        const lastEleSize = nextEle.parentNode.lastElementChild[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
+        const parentSize = nextEle.parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2;
+        if (slideOffset === 'center') {
+            distance = parentSize - activeSize
+        } else if (slideOffset >= 0) {
+            distance = slideOffset;
+        } else if (slideOffset < 0) {
+            distance = parentSize * 2 - lastEleSize - slideOffset;
         }
         total = total - distance;
+        // 左右贴边
+        if (slideBounds) {
+            const lastEleTotal = nextEle.parentNode.lastElementChild[isVertical ? 'offsetTop' : 'offsetLeft'];
+            console.log(lastEleTotal, lastEleSize, parentSize, activeSize, total);
+            if (total + activeSize < parentSize) {
+                total = 0.2 * Math.random();
+            } else if (lastEleTotal + lastEleSize * 2 - total < parentSize * 2) {
+                total = lastEleTotal + lastEleSize * 2 - parentSize * 2 - 0.2 * Math.random();
+            }
+        }
+        nextEle.parentNode.dataset.translate = total;
         nextEle.parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
         return total;
     }
@@ -259,7 +269,7 @@ export default class Carousel {
         const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
         const index = this._getChildIndex(this._nextActiveEle);
         this._setSpeed(false, parentNode);
-        this._setInitScrollPos(this._nextActiveEle);
+        const status = this._setInitScrollPos(this._nextActiveEle);
         this._nextActiveEle.classList.add(this._activeClass);
         this._activeEle.classList.remove(this._activeClass);
         this._selectedSlide(index);
@@ -271,7 +281,7 @@ export default class Carousel {
             this._activeEle = this._nextActiveEle;
             this._nextActiveEle = null;
             if (this._runQueue() || this._isPaused) return;
-            this.play(this._isScrollRight, this.autoplay);
+            this.play(isRight, this.autoplay);
         });
         return true;
     }
@@ -283,6 +293,20 @@ export default class Carousel {
         distance = distance[isVertical ? 1 : 0];
         const isRight = distance > 0;
         console.log(distance, isRight, isVertical);
+        if (this.mode === 'scroll') {
+            const parentNode = this._activeEle.parentNode;
+            const total = parentNode.dataset.translate - distance;
+            if (isCancel) {
+                parentNode.style.transition = "";
+                this._setSpeed(null, parentNode);
+                parentNode.dataset.translate = total;
+                parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+            } else {
+                parentNode.style.transition = "none";
+                parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+            }
+            return;
+        }
         // 方向是否改变
         if (typeof this._isRight === "boolean" && this._isRight !== isRight && this._nextActiveEle) {
             this._nextActiveEle.style.transform = "";

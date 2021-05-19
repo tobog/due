@@ -105,7 +105,7 @@ export default {
         },
         direction: String, // horizontal,vertical
         dotPosition: String, // top,right,left,bottom，
-        slideOffsetBefore: [String, Number], // center 100
+        slideOffset: [String, Number], // center 100
         slideBounds: Boolean
         // slidesToShow: 3,
         // slidesToScroll: 3,
@@ -149,8 +149,8 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                touchmove: (this.touchmove || 1) && (this.mode === 'carousel' || this.mode === 'flip'),
-                slideOffsetBefore: this.slideOffsetBefore || 'center',
+                touchmove: this.touchmove || true,
+                slideOffset: this.slideOffset || 'center',
                 slideBounds: this.slideBounds
                 // slidesPerView
             }
