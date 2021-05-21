@@ -28,7 +28,7 @@ export default class Carousel {
             // autoplay: false,
             // touchmove: false,
             // direction:null // vertical  horizontal，
-            // spacing:0 
+            spacing: 60,
             ...options,
         });
         this.play();
@@ -139,10 +139,10 @@ export default class Carousel {
             this._selectedSlide(index);
         }, 0);
         if (this._options.touchmove && this.mode !== 'fade' && !this._DragMove) {
-            const el = this._getParentEle() || this.el;
+            const el =  this.el;
             this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
                 console.log(obj);
-                this.stepMove(obj.distance, obj.cancel);
+                this.stepMove(obj.distance, obj.cancel, obj);
             });
             return;
         }
@@ -289,13 +289,15 @@ export default class Carousel {
         const activeEle = this._children.find((item, index) => {
             const offset = item[isVertical ? 'offsetTop' : 'offsetLeft'];
             if (slideOffset === 'center') {
-                console.log(index, item[isVertical ? 'offsetHeight' : 'offsetWidth'], total, offset);
                 return total - item[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 <= offset
             }
             return total <= offset;
         }) || this._children[this._children.length-1];
         this._activeEle.classList.remove(this._activeClass);
         activeEle.classList.add(this._activeClass);
+        const index = this._getChildIndex(activeEle);
+        this._selectedSlide(index);
+        this._handleCallback(index);
         return activeEle;
     }
     // mode srcoll
@@ -323,7 +325,7 @@ export default class Carousel {
         return true;
     }
     // 鼠标移动
-    stepMove(distance, isCancel) {
+    stepMove(distance, isCancel, obj) {
         if (this._running) return;
         const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
         distance = distance[isVertical ? 1 : 0];
@@ -331,10 +333,11 @@ export default class Carousel {
         // 滚动模式下
         if (this.mode === 'scroll') {
             const parentNode = this._getParentEle(this._activeEle);
-            const total = parentNode.dataset.translate - distance;
+            let total = parentNode.dataset.translate - distance;
             if (isCancel) {
                 parentNode.style.transition = "";
                 this._setSpeed(null, parentNode);
+                total = total - (obj.tempDistance || [0, 0])[isVertical ? 1 : 0] * 10;
                 const nextActiveEle = this._getNextActiveEleBydistance(total);
                 if (nextActiveEle) {
                     this._getScrollPosByActiveEle(nextActiveEle);

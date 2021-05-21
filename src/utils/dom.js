@@ -1036,6 +1036,9 @@ export class DragMove {
         this._tempAxis = [clientX, clientY];
         this._tempTime = nowTime;
         this._distance = distance;
+        this._tempSpeed = tempSpeed;
+        this._tempDistance = tempDistance;
+        this._tempNowTime = nowTime;
         this._handler(
             {
                 boundaryPosition: boundaryData && boundaryData[1],
@@ -1070,15 +1073,16 @@ export class DragMove {
             const { style, props } = this._options,
                 { clientX = 0, clientY = 0 } = event,
                 // 瞬时距离
-                tempDistance = [clientX - this._tempAxis[0], clientY - this._tempAxis[1]],
+                // tempDistance = [clientX - this._tempAxis[0], clientY - this._tempAxis[1]],
                 // 总距离
                 distance = [clientX - this._axis[0], clientY - this._axis[1]],
                 nowTime = Date.now(),
                 // 临时速度
-                tempSpeed = getSpeed([clientX - this._tempAxis[0], clientY - this._tempAxis[1]], nowTime - this._tempTime),
+                // tempSpeed = getSpeed([clientX - this._tempAxis[0], clientY - this._tempAxis[1]], nowTime - this._tempTime),
                 // 总速度
                 speed = getSpeed(distance, nowTime - this._initTime),
                 boundaryData = this._getBoundaryPosition(this._distance, [clientX, clientY]);
+            console.log(nowTime - this._tempNowTime, 'nowTime2')
             this._handler({
                 boundaryPosition: boundaryData && boundaryData[1],
                 distance: boundaryData ? boundaryData[0] : this._distance, // 移动总距离
@@ -1091,10 +1095,11 @@ export class DragMove {
                 axis: this._axis,
                 isTransform: this._isTransform,
                 cancel: true,
-                tempSpeed, // 临时速度，
-                tempDistance,
+                tempSpeed: nowTime - this._tempNowTime < 30 && this._tempSpeed, // 临时速度，
+                tempDistance: nowTime - this._tempNowTime < 30 && this._tempDistance,
                 speed,
             });
+            this._tempSpeed = this._tempSpeed = this._tempNowTime = null;
             this._distance = [0, 0];
         }
         EventListener.off(document, "mousemove", this._callback);

@@ -180,6 +180,7 @@ $timeTest: 0.4s;
         left: 50%;
         transform: translateX(-50%);
         overflow: hidden;
+        color: $sub-content;
 
         &-inner {
             position: relative;
