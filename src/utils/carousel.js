@@ -139,7 +139,7 @@ export default class Carousel {
             this._selectedSlide(index);
         }, 0);
         if (this._options.touchmove && this.mode !== 'fade' && !this._DragMove) {
-            const el =  this.el;
+            const el =  this._getParentEle() || this.el;
             this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
                 console.log(obj);
                 this.stepMove(obj.distance, obj.cancel, obj);
@@ -185,6 +185,7 @@ export default class Carousel {
         this._setTimeout && clearTimeout(this._setTimeout);
     }
     step(isRight = this.reverse) {
+        if (this._touchMoveRuning) return;
         if (this._running) {
             this._queue = !this._queue && ["step", isRight];
             return;
@@ -333,10 +334,12 @@ export default class Carousel {
         // 滚动模式下
         if (this.mode === 'scroll') {
             const parentNode = this._getParentEle(this._activeEle);
+            this._touchMoveRuning = true;
             let total = parentNode.dataset.translate - distance;
             if (isCancel) {
                 parentNode.style.transition = "";
                 this._setSpeed(null, parentNode);
+                this._touchMoveRuning = false;
                 total = total - (obj.tempDistance || [0, 0])[isVertical ? 1 : 0] * 10;
                 const nextActiveEle = this._getNextActiveEleBydistance(total);
                 if (nextActiveEle) {
