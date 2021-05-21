@@ -27,7 +27,8 @@ export default class Carousel {
             // speed: 0,
             // autoplay: false,
             // touchmove: false,
-            // direction:null // vertical  horizontal
+            // direction:null // vertical  horizontal，
+            // spacing:0 
             ...options,
         });
         this.play();
@@ -53,10 +54,12 @@ export default class Carousel {
     // 获取所有子元素
     _getChildren() {
         const children = this.el.querySelectorAll(`.${this._itemClass}`);
+        const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
         this._children = children ? [...children] : [];
         this._children.forEach((ele, index) => {
             ele.classList.add(this._itemClass);
             ele.dataset.index = index;
+            this._options.spacing &&( ele.style[isVertical ? 'marginBottom' : 'marginRight'] = this._options.spacing + 'px');
         });
         return this._children;
     }
@@ -282,7 +285,18 @@ export default class Carousel {
         } else if (slideOffset < 0) {
             distance = parentSize * 2 - slideOffset;
         }
-        // total = total - distance;
+        total = total + distance;
+        const activeEle = this._children.find((item, index) => {
+            const offset = item[isVertical ? 'offsetTop' : 'offsetLeft'];
+            if (slideOffset === 'center') {
+                console.log(index, item[isVertical ? 'offsetHeight' : 'offsetWidth'], total, offset);
+                return total - item[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 <= offset
+            }
+            return total <= offset;
+        }) || this._children[this._children.length-1];
+        this._activeEle.classList.remove(this._activeClass);
+        activeEle.classList.add(this._activeClass);
+        return activeEle;
     }
     // mode srcoll
     _stepScroll(isRight) {
@@ -321,13 +335,17 @@ export default class Carousel {
             if (isCancel) {
                 parentNode.style.transition = "";
                 this._setSpeed(null, parentNode);
+                const nextActiveEle = this._getNextActiveEleBydistance(total);
+                if (nextActiveEle) {
+                    this._getScrollPosByActiveEle(nextActiveEle);
+                    return;
+                }
                 parentNode.dataset.translate = total;
                 parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
-                // this._getScrollPosByActiveEle(this._nextActiveEle)
-            } else {
-                parentNode.style.transition = "none";
-                parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+                return;
             }
+            parentNode.style.transition = "none";
+            parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
             return;
         }
         // 非滚动模式下
@@ -366,6 +384,7 @@ export default class Carousel {
         }
 
         nextActiveEleClass.add(preNextClass);
+        // flip 模式
         if (this.mode === "flip") {
             const rotate = (distance / this._activeEle[offsetKey]) * 180;
             const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
@@ -377,14 +396,12 @@ export default class Carousel {
             const translateKey = isVertical ? "translateY" : "translateX";
             this._activeEle.style.transition = nextActiveEle.style.transition = "none";
             this._activeEle.style.transform = `${translateKey}(${distance}px)`;
-            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (isRight ? -1 : 1) +
-                distance}px)`;
+            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (isRight ? -1 : 1) + distance}px)`;
         }
         if (this._touchMoveRuning) return;
         this._running = true;
         this._isRightStepMove = false;
-        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition =
-            "";
+        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition = "";
         this._setSpeed();
         nextActiveEleClass.add(rightLeftClass);
         activeEleClass.add(rightLeftClass);
