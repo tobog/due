@@ -29,6 +29,15 @@ export default {
             type: String,
             // default: "single", //multiple,single,无
         },
+        // 提供避免外部数据转化
+        propsMap: {
+            type: Object,
+            default() {
+                return {};
+                // disabled, selected, label, value,
+                // identifier, parentKey
+            },
+        },
     },
     data() {
         return {
@@ -45,6 +54,20 @@ export default {
         },
     },
     methods: {
+        // 获取转化后的字段名称
+        getFieldMap(key) {
+            const defaultMap = this.defaultFieldMap || {
+                disabled: "disabled",
+                selected: "selected",
+                label: "label",
+                value: "value",
+                identifier: "id",
+                parentKey: "parentId",
+                selectSelf: "selectSelf",
+                indeterminate: "indeterminate",
+            };
+            return (this.propsMap || {})[key] || defaultMap[key] || key;
+        },
         initStatusData(nodeList) {
             if (this.selection === "multiple") {
                 const len = nodeList.length;
@@ -66,7 +89,7 @@ export default {
          * @param {} length
          */
         getRootData(length) {
-            const identifier = this.identifier,
+            const identifier = this.getFieldMap("identifier"),
                 childIds = [],
                 childIndexs = [];
             this.nodeList.slice(0, length).forEach((node) => {
@@ -84,8 +107,8 @@ export default {
          */
         getRootNodes(data = this.data) {
             const type = typeOf(data),
-                identifier = this.identifier,
-                parentKey = this.parentKey;
+                identifier = this.getFieldMap("identifier"),
+                parentKey = this.getFieldMap("parentKey");
             // 原始数据类型
             if (type === "array") {
                 // 是数据结构
@@ -121,14 +144,16 @@ export default {
             let _length = nodeList.length,
                 sourceData = data || this.data;
             const list = nodeList,
+                parentKey = this.getFieldMap("parentKey"),
+                identifier = this.getFieldMap("identifier"),
                 // 性能优化，减少搜索
                 getAllChild = (id) => {
                     let _sourceData = [];
                     let children = sourceData.filter((node) => {
-                        const parentId = node[this.parentKey];
+                        const parentId = node[parentKey];
                         if (!validVal(parentId)) return false;
                         if (parentId === id) return true;
-                        _sourceData.push(node[this.identifier]);
+                        _sourceData.push(node[identifier]);
                         return false;
                     });
                     sourceData = _sourceData;
@@ -138,7 +163,7 @@ export default {
                     let childrenList = [];
                     data.forEach((node, index) => {
                         const data = { ...node },
-                            id = data[this.identifier],
+                            id = data[identifier],
                             _index = _length++,
                             obj = { data, index: _index, sortIndex: index };
                         list[_index] = obj;
@@ -210,22 +235,26 @@ export default {
             if (!node) return;
             if (!validVal(node.parent)) return;
             const parent = this.nodeList[node.parent],
+                selfKey = this.getFieldMap("selectSelf"),
+                selected = this.getFieldMap("selected"),
+                indeterminate = this.getFieldMap("indeterminate"),
                 parentData = parent.data,
-                selectSelf = this.getSelectOnlySelf(parentData.selectSelf),
+                selectSelf = this.getSelectOnlySelf(parentData[selfKey]),
                 data = node.data;
             if (!selectSelf) {
-                if (data.selected) {
-                    const isAll = parent.childIndexs.every((index) => this.nodeList[index].data.selected);
-                    this.$set(parentData, "selected", isAll);
-                    this.$set(parentData, "indeterminate", !isAll);
+                if (data[selected]) {
+                    const isAll = parent.childIndexs.every((index) => this.nodeList[index]["data"][selected]);
+                    this.$set(parentData, selected, isAll);
+                    this.$set(parentData, indeterminate, !isAll);
                 } else {
-                    this.$set(parentData, "selected", false);
+                    this.$set(parentData, selected, false);
                     this.$set(
                         parentData,
-                        "indeterminate",
+                        indeterminate,
                         parent.childIndexs.some((index) => {
-                            const { selected, indeterminate } = this.nodeList[index].data;
-                            return selected || indeterminate;
+                            return (
+                                this.nodeList[index]["data"][selected] || this.nodeList[index]["data"][indeterminate]
+                            );
                         })
                     );
                 }
@@ -239,7 +268,7 @@ export default {
          */
         updateDownTree(node, changes = {}) {
             for (let key in changes) {
-                this.$set(node.data, key, changes[key]);
+                this.$set(node.data, this.getFieldMap(key), changes[key]);
             }
             if (node.childIndexs && node.childIndexs.length) {
                 node.childIndexs.forEach((index) => {
@@ -259,10 +288,11 @@ export default {
          */
         getSelectedData() {
             let result = [],
+                selected = this.getFieldMap("selected"),
                 linkIndexs = [];
             for (let index = this.nodeList.length - 1; index >= 0; index--) {
                 const node = this.nodeList[index];
-                if (node.data.selected) {
+                if (node.data[selected]) {
                     if (!linkIndexs.some((item) => item.indexOf(node.linkIndex) === 0)) {
                         result.push(this.nodeList[node.index]);
                     }
@@ -275,42 +305,50 @@ export default {
          *通过value 获取结构数据
          * @param {*} value
          */
-        getDataByValue(value, valueKey = 'value') {
-            const findData = (value) => {
-                return this.nodeList.find((node) => node.data[valueKey] === value);
-            };
+        getDataByValue(value) {
+            const valueKey = this.getFieldMap("value"),
+                findData = (val) => {
+                    return this.nodeList.find((node) => node.data[valueKey] === val);
+                };
             return value.map((item) => {
                 return this.selection === "multiple" ? item.map(findData) : findData(item);
             });
         },
         /**
          *通过label 获取结构数据
-         * @param {Array} labels
-         * @return {Array}
+         * @param {String} label
          */
-        getDataByLabel(labels = [], valueKey = 'value', labelKey = 'label') {
-            const findData = (label) => {
-                return this.nodeList.find((node) => `${node.data[labelKey] || node.data[valueKey]}`.indexOf(label) > -1);
-            };
-            let data = labels.map((label) => findData(label.trim())).filter((value) => !!value);
-            data = data[data.length - 1];
-            if (data) {
-                let linkParentIndexs = data.linkParentIndex
-                    ? (data.linkParentIndex + "," + data.index).split(",")
-                    : [data.index];
-                return linkParentIndexs.map((index) => this.nodeList[index]);
-            }
-            return [];
+        getDataByLabel(label) {
+            if (!label) return [];
+            let result = [],
+                valueKey = this.getFieldMap("value"),
+                labelKey = this.getFieldMap("label");
+            this.nodeList.some((item) => {
+                let linkParentIndexs = item.linkParentIndex
+                    ? (item.linkParentIndex + "," + item.index).split(",")
+                    : [item.index];
+                let str = "";
+                let index = linkParentIndexs.findIndex((index) => {
+                    str = str + (this.nodeList[index].data[labelKey] || this.nodeList[index].data[valueKey]) + "/";
+                    return str === label + "/";
+                });
+                if (index === 0 || index) {
+                    result = linkParentIndexs.slice(0, index + 1).map((index) => this.nodeList[index]);
+                    return true;
+                }
+                return false;
+            });
+            return result;
         },
         /**
          *通过label 获取平铺后数据list
-         * @param {Array} labels
+         * @param {String} label
          */
-        getFlatDataByLabel(labels, valueKey ="value", labelKey = 'label') {
-            if (!labels || !labels.length) return [];
-            console.log(labels);
-            labels = labels.map((item) => item.trim()).join("/");
-            let result = [];
+        getFlatDataByLabel(label) {
+            if (!label) return [];
+            let result = [],
+                valueKey = this.getFieldMap("value"),
+                labelKey = this.getFieldMap("label");
             this.nodeList.forEach((item) => {
                 if (!item.childIndexs || !item.childIndexs.length) {
                     let linkParentIndexs = item.linkParentIndex
@@ -322,7 +360,7 @@ export default {
                         str = str + (node.data[labelKey] || node.data[valueKey]) + "/";
                         return node;
                     });
-                    if (str.indexOf(labels) > -1) result.push(linkData);
+                    if (str.indexOf(label) > -1) result.push(linkData);
                 }
             });
             return result;

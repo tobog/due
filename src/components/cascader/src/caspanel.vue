@@ -115,6 +115,7 @@ export default {
     },
     methods: {
         initModelStatus() {
+            // 通过value获取数据
             const data = this.getDataByValue(this.value);
             if (this.selection === "multiple") {
                 this.nodeList.forEach((node) => {
@@ -125,6 +126,7 @@ export default {
                     const lastNode = item[item.length - 1];
                     this.$set(lastNode.data, "selected", true);
                 });
+                更新;
                 this.initStatusData(this.nodeList);
             } else {
                 this.modelList = data;
@@ -166,14 +168,14 @@ export default {
             isAsync && this.$emit("on-async", this.modelList);
             this.$emit("on-updateDrop");
         },
-        handleSearch(labels) {
+        handleSearch(label) {
             if (this.filterType === "flat") {
-                this.flatFilterData = this.getFlatDataByLabel(labels);
+                this.flatFilterData = this.getFlatDataByLabel(label);
                 this.$emit("on-updateDrop");
                 return;
             }
             this.flatFilterData = null;
-            this.modelList = this.getDataByLabel(labels);
+            this.modelList = this.getDataByLabel(label);
             let lastNode = this.modelList[this.modelList.length - 1];
             let result;
             if (!lastNode || (this.hasChildren(lastNode) && this.selection !== "single")) {

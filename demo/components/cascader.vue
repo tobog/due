@@ -14,11 +14,11 @@
         </template>
         <template v-slot="config">
             <div class="margin-bottom-20">{{ value1 }}</div>
-            <!-- <vCascader class="margin-bottom-20" v-bind="config" :data="data" v-model="value1">
+            <vCascader class="margin-bottom-20" v-bind="config" :data="data" v-model="value1">
                 <template v-slot="{ data, index }">
                     <span>{{ data.data.label }}{{ index }}</span>
                 </template>
-            </vCascader> -->
+            </vCascader>
 
             <!-- <vCascader class="margin-bottom-20" :data="data" :asyncData="asyncData" :render="renderfn"></vCascader> -->
             <div class="margin-bottom-20">Caspanel面板</div>

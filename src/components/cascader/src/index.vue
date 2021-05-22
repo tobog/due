@@ -67,10 +67,9 @@
             :trigger="trigger"
             :asyncData="asyncData"
             :render="render"
-            :identifier="identifier"
-            :parentKey="parentKey"
             :filterType="filterType"
             :noDataText="noDataText"
+            :propsMap="propsMap"
             @input="handleChange"
             @on-search="handleSearch"
             @hook:created="updateValueText += 1"
@@ -109,14 +108,6 @@ export default {
                 return []
             },
         },
-        identifier: {
-            type: String,
-            default: "id",
-        },
-        parentKey: {
-            type: String,
-            default: "parentId",
-        },
         asyncData: Function,
         render: Function,
         renderFlat: Function,
@@ -132,6 +123,7 @@ export default {
         noDataText: String,
         filterType: String, // default(cascader),flat(平铺),
         popperConfig: Object,
+        propsMap: Object
     },
     data() {
         return {
@@ -196,7 +188,7 @@ export default {
             const value = event.target.value || ""
             this.visible = true
             if (!value && this.selection !== "multiple") this.updateModel([])
-            this.$refs.caspanel && this.$refs.caspanel.handleSearch(value.split("/"))
+            this.$refs.caspanel && this.$refs.caspanel.handleSearch(value)
         },
         handleBlur(event) {
             if (this.__model) {
