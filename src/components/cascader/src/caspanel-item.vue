@@ -8,25 +8,16 @@
             @mouseenter.stop="hover(node)"
         >
             <Checkbox
-                v-if="selection === 'multiple'"
+                v-if="selection === 'multiple' || selection === 'single'"
                 readonly
                 :size="size"
                 :theme="theme"
                 :class="[_tobogPrefix_ + '-checkbox']"
                 :value="!!node.data.selected"
+                :radio="selection === 'single'"
                 :disabled="node.data.disabled"
                 :indeterminate="node.data.indeterminate"
-                @click.native="handleCheck(node, true)"
-            />
-            <Radio
-                v-if="selection === 'single'"
-                cancelClick
-                :size="size"
-                :theme="theme"
-                :class="[_tobogPrefix_ + '-radio']"
-                :value="!!node.data.selected"
-                :disabled="node.data.disabled"
-                @click.native="handleCheck(node, false)"
+                @click.native="handleCheck(node, selection === 'multiple')"
             />
             <span :class="[_tobogPrefix_ + '-content']">
                 <slot :data="node" :index="index">
@@ -53,7 +44,6 @@
 <script>
 import Icons from "../../icons/src/index";
 import Checkbox from "../../checkbox";
-import Radio from "../../radio/index";
 import Render from "./render";
 export default {
     name: "Caspanel-Item",
@@ -62,7 +52,6 @@ export default {
         Icons,
         Render,
         Checkbox,
-        Radio,
     },
     props: {
         data: {
@@ -112,6 +101,7 @@ export default {
             if (this.trigger === "hover" && node.childIndexs && node.childIndexs.length > 0) this.select(node);
         },
         handleCheck(node, isMulti) {
+            if (node.data.disabled) return;
             this.$emit("on-check", node, isMulti);
         },
     },
