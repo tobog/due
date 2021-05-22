@@ -1,5 +1,11 @@
 <template>
-    <section :class="classes" :data-direction="direction" @mouseleave="playControl" @mouseenter="pause">
+    <section
+        :class="classes"
+        :data-direction="direction"
+        :data-vue-module="$options.name"
+        @mouseleave="playControl"
+        @mouseenter="pause"
+    >
         <div :class="[_tobogPrefix_ + '-outer']">
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>

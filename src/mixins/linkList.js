@@ -1,5 +1,14 @@
 import { typeOf, validVal } from "../utils/tool";
-
+// nodeList 数据结构设计
+// {
+//     childIds: [] 子元素id
+//     childIndexs: [] 在list 中的位置
+//     data: {} 原始数据
+//     index: 0， 在list 中的位置
+//     linkIndex: "0", 树节点位置
+//     linkParentIndex: ""， 父级树节点位置
+//     sortIndex: 0， 顺序位置
+// }
 export default {
     props: {
         data: {
@@ -12,7 +21,7 @@ export default {
             type: String,
             default: "id",
         },
-        parentId: {
+        parentKey: {
             type: String,
             default: "parentId",
         },
@@ -40,16 +49,17 @@ export default {
             if (this.selection === "multiple") {
                 const len = nodeList.length;
                 for (let i = len; i--; i > -1) {
-                    this.updateUpTree(nodeList[i]);
+                    if (!nodeList[i].childIndexs || !nodeList[i].childIndexs.length) {
+                        this.updateUpTree(nodeList[i]);
+                    }
                 }
             }
         },
         initData(data = this.data) {
             const rootNodes = this.getRootNodes(data);
             this.nodeList = this.handleNodeList(rootNodes);
-            // this.initStatusData(this.nodeList);
             this.rootData = this.getRootData(rootNodes.length);
-            // console.log(this.nodeList, "-------------");
+            console.log(this.nodeList, this.rootData, "-------------");
         },
         /**
          * 获取根数据
@@ -75,24 +85,24 @@ export default {
         getRootNodes(data = this.data) {
             const type = typeOf(data),
                 identifier = this.identifier,
-                parentIdKey = this.parentId;
+                parentKey = this.parentKey;
+            // 原始数据类型
             if (type === "array") {
+                // 是数据结构
                 if (data.some((node) => node && Array.isArray(node.children))) return data;
-                const isRootNode = function(parentId) {
-                    return !data.some((item) => validVal(item[identifier]) && item[identifier] == parentId);
+                const isRootNode = (parentId) => {
+                    return !data.some((item) => validVal(item[identifier]) && item[identifier] === parentId);
                 };
                 return data.filter((node) => {
-                    const parentId = node[parentIdKey];
-                    return !!(!validVal(parentId) || isRootNode(parentId));
+                    return !validVal(node[parentKey]) || isRootNode(node[parentKey]);
                 });
             }
             if (type === "object") {
                 let result = [];
                 Object.keys(data).forEach((key) => {
                     const item = data[key];
-                    const parentId = item[parentIdKey];
-                    if (!validVal(parentId) || !data[parentId]) {
-                        item[identifier] = item[identifier] || key;
+                    if (!validVal(item[parentKey]) || !validVal(data[item[parentKey]])) {
+                        // item[identifier] = item[identifier] || key;
                         result.push(item);
                     }
                 });
@@ -111,16 +121,14 @@ export default {
             let _length = nodeList.length,
                 sourceData = data || this.data;
             const list = nodeList,
-                identifier = this.identifier,
-                parentIdKey = this.parentId,
                 // 性能优化，减少搜索
                 getAllChild = (id) => {
                     let _sourceData = [];
                     let children = sourceData.filter((node) => {
-                        const parentId = node[parentIdKey];
+                        const parentId = node[this.parentKey];
                         if (!validVal(parentId)) return false;
-                        if (parentId == id) return true;
-                        _sourceData.push(node[identifier]);
+                        if (parentId === id) return true;
+                        _sourceData.push(node[this.identifier]);
                         return false;
                     });
                     sourceData = _sourceData;
@@ -130,7 +138,7 @@ export default {
                     let childrenList = [];
                     data.forEach((node, index) => {
                         const data = { ...node },
-                            id = data[identifier],
+                            id = data[this.identifier],
                             _index = _length++,
                             obj = { data, index: _index, sortIndex: index };
                         list[_index] = obj;
@@ -152,6 +160,7 @@ export default {
                         if (children && children.length) {
                             obj.childIds = [];
                             obj.childIndexs = [];
+                            // 清空原始数据
                             data.children = null;
                             childrenList.push([children, obj]);
                         }
@@ -199,17 +208,14 @@ export default {
          */
         updateUpTree(node, loop = false) {
             if (!node) return;
-            const parentIndex = node.parent;
-            if (!validVal(parentIndex)) return;
-            const parent = this.nodeList[parentIndex],
+            if (!validVal(node.parent)) return;
+            const parent = this.nodeList[node.parent],
                 parentData = parent.data,
-                isOnlySelf = this.getSelectOnlySelf(parentData.onlySelf),
+                selectSelf = this.getSelectOnlySelf(parentData.selectSelf),
                 data = node.data;
-            if (!isOnlySelf) {
+            if (!selectSelf) {
                 if (data.selected) {
-                    const isAll = parent.childIndexs.every((index) => {
-                        return this.nodeList[index].data.selected;
-                    });
+                    const isAll = parent.childIndexs.every((index) => this.nodeList[index].data.selected);
                     this.$set(parentData, "selected", isAll);
                     this.$set(parentData, "indeterminate", !isAll);
                 } else {
@@ -232,23 +238,21 @@ export default {
          * @param {*} changes
          */
         updateDownTree(node, changes = {}) {
-            const data = node.data;
             for (let key in changes) {
-                this.$set(data, key, changes[key]);
+                this.$set(node.data, key, changes[key]);
             }
-            const childIndexs = node.childIndexs;
-            if (childIndexs && childIndexs.length) {
-                childIndexs.forEach((index) => {
+            if (node.childIndexs && node.childIndexs.length) {
+                node.childIndexs.forEach((index) => {
                     this.updateDownTree(this.nodeList[index], changes);
                 });
             }
         },
         /**
          * 是否仅仅自己
-         * @param {*} onlySelf
+         * @param {*} selectSelf
          */
-        getSelectOnlySelf(onlySelf) {
-            return onlySelf == void 0 || onlySelf === "" ? this.onlySelf : onlySelf;
+        getSelectOnlySelf(selectSelf) {
+            return selectSelf == void 0 || selectSelf === "" ? this.selectSelf : selectSelf;
         },
         /**
          * 获取所有最后选择数据
@@ -271,9 +275,9 @@ export default {
          *通过value 获取结构数据
          * @param {*} value
          */
-        getDataByValue(value) {
+        getDataByValue(value, valueKey = 'value') {
             const findData = (value) => {
-                return this.nodeList.find((node) => node.data.value === value);
+                return this.nodeList.find((node) => node.data[valueKey] === value);
             };
             return value.map((item) => {
                 return this.selection === "multiple" ? item.map(findData) : findData(item);
@@ -284,9 +288,9 @@ export default {
          * @param {Array} labels
          * @return {Array}
          */
-        getDataByLabel(labels = []) {
+        getDataByLabel(labels = [], valueKey = 'value', labelKey = 'label') {
             const findData = (label) => {
-                return this.nodeList.find((node) => `${node.data.label || node.data.value}`.indexOf(label) > -1);
+                return this.nodeList.find((node) => `${node.data[labelKey] || node.data[valueKey]}`.indexOf(label) > -1);
             };
             let data = labels.map((label) => findData(label.trim())).filter((value) => !!value);
             data = data[data.length - 1];
@@ -302,7 +306,7 @@ export default {
          *通过label 获取平铺后数据list
          * @param {Array} labels
          */
-        getFlatDataByLabel(labels) {
+        getFlatDataByLabel(labels, valueKey ="value", labelKey = 'label') {
             if (!labels || !labels.length) return [];
             console.log(labels);
             labels = labels.map((item) => item.trim()).join("/");
@@ -315,7 +319,7 @@ export default {
                     let str = "";
                     let linkData = linkParentIndexs.map((index) => {
                         let node = this.nodeList[index];
-                        str = str + (node.data.label || node.data.value) + "/";
+                        str = str + (node.data[labelKey] || node.data[valueKey]) + "/";
                         return node;
                     });
                     if (str.indexOf(labels) > -1) result.push(linkData);

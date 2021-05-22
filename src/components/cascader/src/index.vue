@@ -68,7 +68,7 @@
             :asyncData="asyncData"
             :render="render"
             :identifier="identifier"
-            :parentId="parentId"
+            :parentKey="parentKey"
             :filterType="filterType"
             :noDataText="noDataText"
             @input="handleChange"
@@ -84,9 +84,9 @@
 </template>
 
 <script>
-import DropBase from "../base/dropBase"
-import InputBase from "../input/base"
-import mixin from "../input/base/mixin"
+import DropBase from "../../base/dropBase"
+import InputBase from "../../input/base"
+import mixin from "../../input/base/mixin"
 import Caspanel from "./caspanel"
 export default {
     name: "Cascader",
@@ -113,7 +113,7 @@ export default {
             type: String,
             default: "id",
         },
-        parentId: {
+        parentKey: {
             type: String,
             default: "parentId",
         },

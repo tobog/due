@@ -51,6 +51,7 @@ export default {
         size: [String, Number],
         theme: String,
         border: Boolean,
+        cancelClick: Boolean
     },
     data() {
         return {
@@ -154,7 +155,7 @@ export default {
     },
     methods: {
         toggle() {
-            if (this.getAttrs.disabled || this.getAttrs.readonly) return
+            if (this.getAttrs.disabled || this.getAttrs.readonly || this.cancelClick) return
             this.$refs.radio.click()
         },
         // handleChange() {

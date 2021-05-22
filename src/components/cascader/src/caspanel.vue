@@ -1,5 +1,5 @@
 <template>
-    <div :class="classes">
+    <div :class="classes" :data-vue-module="$options.name">
         <div
             v-if="!nodeList.length || (filterType === 'flat' && flatFilterData && !flatFilterData.length)"
             :class="[_tobogPrefix_ + '-nodata']"
@@ -59,9 +59,9 @@
 <script>
 import CaspanelItem from "./caspanel-item";
 import CaspanelSearch from "./caspanel-search";
-import linkList from "../../mixins/linkList";
-import globalMixin from "../../mixins/global";
-import langMinix from "../../mixins/lang";
+import linkList from "../../../mixins/linkList";
+import globalMixin from "../../../mixins/global";
+import langMinix from "../../../mixins/lang";
 export default {
     name: "Caspanel",
     componentName: "Caspanel",
@@ -213,19 +213,11 @@ export default {
             }
             this.$emit("input", result);
         },
-        handleCheck(node) {
-            // debugger;
+        handleCheck(node, isMulti) {
             const data = node.data,
                 isOnlySelf = this.getSelectOnlySelf(data.selectOnlySelf),
-                val = !data.selected,
-                isSingle = this.selection === "single";
-            if (isSingle) {
-                this.nodeList.forEach(({ data }) => {
-                    this.$set(data, "selected", false);
-                    this.$set(data, "indeterminate", false);
-                });
-                this.$set(data, "selected", val);
-            } else {
+                val = !data.selected;
+            if (isMulti) {
                 if (isOnlySelf) {
                     this.$set(data, "selected", val);
                     this.$set(data, "indeterminate", false);
@@ -235,10 +227,16 @@ export default {
                         indeterminate: false,
                     });
                 }
+            } else {
+                this.nodeList.forEach(({ data }) => {
+                    this.$set(data, "selected", false);
+                    this.$set(data, "indeterminate", false);
+                });
+                this.$set(data, "selected", val);
             }
             this.$nextTick(() => {
-                if (!isOnlySelf && !isSingle) this.updateUpTree(node, true);
-                this.handleChange(true, this.selection);
+                if (!isOnlySelf && isMulti) this.updateUpTree(node, true);
+                this.handleChange(true, isMulti);
                 this.$emit(
                     "on-check-change",
                     val,
@@ -250,7 +248,6 @@ export default {
     },
     watch: {
         data: {
-            // deep: true,
             handler() {
                 this.initData();
                 this.initModelStatus();

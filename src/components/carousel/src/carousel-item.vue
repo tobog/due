@@ -1,5 +1,5 @@
 <template>
-    <li :class="[_tobogPrefix_]">
+    <li :class="[_tobogPrefix_]" :data-vue-module="$options.name">
         <slot></slot>
     </li>
 </template>

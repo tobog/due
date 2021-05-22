@@ -1,5 +1,5 @@
 <template>
-    <ul v-if="data && data.length" :class="[_tobogPrefix_ + '-wrapper']">
+    <ul v-if="data && data.length" :class="[_tobogPrefix_ + '-wrapper']" :data-vue-module="$options.name">
         <li
             v-for="(node, index) in data"
             :key="index"
@@ -8,16 +8,25 @@
             @mouseenter.stop="hover(node)"
         >
             <Checkbox
-                v-if="selection === 'multiple' || selection === 'single'"
+                v-if="selection === 'multiple'"
                 readonly
                 :size="size"
                 :theme="theme"
-                :radio="selection === 'single'"
                 :class="[_tobogPrefix_ + '-checkbox']"
                 :value="!!node.data.selected"
                 :disabled="node.data.disabled"
                 :indeterminate="node.data.indeterminate"
-                @click.native="handleCheck(node)"
+                @click.native="handleCheck(node, true)"
+            />
+            <Radio
+                v-if="selection === 'single'"
+                cancelClick
+                :size="size"
+                :theme="theme"
+                :class="[_tobogPrefix_ + '-radio']"
+                :value="!!node.data.selected"
+                :disabled="node.data.disabled"
+                @click.native="handleCheck(node, false)"
             />
             <span :class="[_tobogPrefix_ + '-content']">
                 <slot :data="node" :index="index">
@@ -42,8 +51,9 @@
     </ul>
 </template>
 <script>
-import Icons from "../icons/src/index";
-import Checkbox from "../checkbox";
+import Icons from "../../icons/src/index";
+import Checkbox from "../../checkbox";
+import Radio from "../../radio/index";
 import Render from "./render";
 export default {
     name: "Caspanel-Item",
@@ -52,6 +62,7 @@ export default {
         Icons,
         Render,
         Checkbox,
+        Radio,
     },
     props: {
         data: {
@@ -84,6 +95,7 @@ export default {
         classes(node) {
             const _tobogPrefix_ = this._tobogPrefix_,
                 data = this.modelList[this.index] || {};
+            console.log(this.modelList);
             return [
                 _tobogPrefix_,
                 {
@@ -99,11 +111,8 @@ export default {
         hover(node) {
             if (this.trigger === "hover" && node.childIndexs && node.childIndexs.length > 0) this.select(node);
         },
-        // hasChildren(node) {
-        //     return node.childIndexs && node.childIndexs.length > 0;
-        // },
-        handleCheck(node) {
-            this.$emit("on-check", node);
+        handleCheck(node, isMulti) {
+            this.$emit("on-check", node, isMulti);
         },
     },
 };

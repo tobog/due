@@ -3,7 +3,7 @@ $prefix-cls-panel: #{$prefix}-caspanel;
 
 .#{$prefix-cls-panel} {
     &-list {
-        display: flex !important;
+        display: inline-flex !important;
         justify-content: flex-start;
         align-items: stretch;
         border: 1px solid $border;
@@ -43,7 +43,7 @@ $prefix-cls-panel: #{$prefix}-caspanel;
         &-content {
             padding-right: 6px;
         }
-
+        &-radio,
         &-checkbox {
             margin-right: 6px;
         }

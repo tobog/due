@@ -2,6 +2,7 @@
     <component
         :is="getTag"
         :class="classes"
+        :data-vue-module="$options.name"
         @click="handleClick"
         @focusout="handleClick"
         v-bind="$attrs"

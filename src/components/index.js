@@ -10,7 +10,8 @@ import ButtonGroup from "./button/src/button-group"
 import Card from "./card/src/index"
 import Carousel from "./carousel/src/index"
 import CarouselItem from "./carousel/src/carousel-item"
-
+import Cascader from "./cascader/src"
+import Caspanel from "./cascader/src/caspanel"
 
 import Icon from "./icons/src/index"
 
@@ -95,8 +96,7 @@ import Transitions from "./base/transition"
 import ScrollSync from "./scrollsync/index"
 import Scroll from "./scroll/index"
 import Virtuallist from "./scroll/virtuallist"
-import Cascader from "./cascader"
-import Caspanel from "./cascader/caspanel"
+
 
 // import Tailor from "./tailor/index"
 
