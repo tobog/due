@@ -14,7 +14,10 @@
                 </div>
             </vAlert>
             <vAlert v-bind="config">
-                Alert offsetBottom
+                Content of prompt. Content of prompt. Content of prompt. Content of prompt.123
+            </vAlert>
+            <vAlert v-bind="config">
+                Content of prompt. Content of prompt
             </vAlert>
             <vAnchor v-show="false"></vAnchor>
         </template>
@@ -59,16 +62,36 @@ export default {
                     dataType: "Boolean",
                     default: false,
                 },
-                // {
-                //     showConfig: true,
-                //     label: "广播",
-                //     key: "broadcast",
-                //     tag: "vSwitch",
-                //     demoDefault: false,
-                //     explain: "是否可广播",
-                //     dataType: "Boolean",
-                //     default: false,
-                // },
+                {
+                    showConfig: true,
+                    label: "多行",
+                    key: "wrapable",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否多行",
+                    dataType: "Boolean",
+                    default: true,
+                },
+                {
+                    showConfig: true,
+                    label: "广播速度",
+                    key: "speed",
+                    tag: "vInputNumber",
+                    demoDefault: 30,
+                    explain: "广播速度",
+                    dataType: "Number",
+                    default: 30,
+                },
+                {
+                     showConfig: true,
+                    label: "广播",
+                    key: "scrollable",
+                    tag: "vSelect",
+                    demoDefault: false,
+                    explain: "是否可广播",
+                    dataType: "Boolean,String",
+                    options: [true, false, "auto"],
+                },
                 {
                     showConfig: true,
                     label: "icon对齐方式",
@@ -179,7 +202,7 @@ export default {
                         <div slot="desc">
                             Content of prompt. Content of prompt. Content of prompt. Content of prompt.
                         </div>
-                    </Alert>`
+                    </Alert>`;
         },
     },
 };

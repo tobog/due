@@ -7,10 +7,12 @@
                         <Icons :color="color" :type="iconType" :class="[_tobogPrefix_ + '-icon']"></Icons>
                     </slot>
                 </template>
-                <div :class="[_tobogPrefix_ + '-content']">
-                    <slot></slot>
-                    <div v-if="showDesc" :class="[_tobogPrefix_ + '-desc']">
-                        <slot name="desc">{{ desc }}</slot>
+                <div ref="content" :class="[_tobogPrefix_ + '-content']">
+                    <div :class="[_tobogPrefix_ + '-content-title']" :style="scrollStyle" @transitionend="handleScroll">
+                        <slot>{{ title }}</slot>
+                        <div v-if="showDesc" :class="[_tobogPrefix_ + '-desc']">
+                            <slot name="desc">{{ desc }}</slot>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -24,11 +26,11 @@
 </template>
 
 <script>
-import Color from "../../../utils/color"
-import {isParseNumber} from "../../../utils/tool"
-import Icons from "../../icons/src/index"
-import Transitions from "../../base/transition"
-import globalMixin from "../../../mixins/global"
+import Color from "../../../utils/color";
+import { isParseNumber } from "../../../utils/tool";
+import Icons from "../../icons/src/index";
+import Transitions from "../../base/transition";
+import globalMixin from "../../../mixins/global";
 
 export default {
     name: "Alert",
@@ -48,8 +50,8 @@ export default {
         ghost: Boolean,
         desc: String,
         align: String,
-        broadcast: Boolean,
         size: String,
+        title: String,
         transitionName: {
             type: String,
             default: "fade",
@@ -58,16 +60,32 @@ export default {
             type: Boolean,
             default: true,
         },
+        wrapable: {
+            type: Boolean,
+            default: true,
+        },
+        scrollable: {
+            type: [Boolean, String], // auto,bool
+            default: "auto",
+        },
+        spend: {
+            type: Number, // auto,bool
+            default: 30,
+        },
     },
     data() {
         return {
             closed: false,
-        }
+            scrollStyle: null,
+        };
+    },
+    mounted() {
+        this.$nextTick(this.handleScroll);
     },
     computed: {
         classes() {
-            const _tobogPrefix_ = this._tobogPrefix_
-            const size = this.getGlobalData("size")
+            const _tobogPrefix_ = this._tobogPrefix_;
+            const size = this.getGlobalData("size");
             return [
                 _tobogPrefix_,
                 {
@@ -76,13 +94,14 @@ export default {
                     [`${_tobogPrefix_}-closable`]: this.closable,
                     [`${_tobogPrefix_}-ghost`]: this.ghost,
                     [`${_tobogPrefix_}-align-${this.align}`]: !!this.align,
-                    // [`${_tobogPrefix_}-broadcast`]: this.broadcast,
+                    [`${_tobogPrefix_}-wrapable`]: this.wrapable,
+                    [`${_tobogPrefix_}-scrollable`]: this.scrollable,
                     [`${_tobogPrefix_}-size-${size}`]: !!size && !isParseNumber(size),
                 },
-            ]
+            ];
         },
         showDesc() {
-            return !!this.desc || !!this.$slots.desc
+            return !!this.desc || !!this.$slots.desc;
         },
         iconType() {
             const iconMap = {
@@ -91,26 +110,50 @@ export default {
                 warning: "alert",
                 error: "close-circle",
                 loading: "loading",
-            }
-            return iconMap[this.type] || this.type
+            };
+            return iconMap[this.type] || this.type;
         },
         getStyles() {
-            const style = {}
+            const style = {};
             if (this.color && Color.isColor(this.color)) {
                 style.borderColor = this.color;
-                style.boxShadow = `0 0 4px -1px ${this.color}`
+                style.boxShadow = `0 0 4px -1px ${this.color}`;
                 if (!this.ghost) {
-                    style.backgroundColor = new Color(this.color).setAlpha(0.08).toCSS()
+                    style.backgroundColor = new Color(this.color).setAlpha(0.08).toCSS();
                 }
             }
-            return style
+            return style;
         },
     },
     methods: {
         close() {
-            this.closed = true
-            this.$emit("on-close")
+            this.closed = true;
+            this.$emit("on-close");
+        },
+        handleScroll() {
+            if (!this.scrollable) return  this.scrollStyle = null;
+            const contentOffset = this.$refs.content.offsetWidth;
+            const titleOffset = this.$refs.content.firstElementChild.offsetWidth;
+            if (this.scrollable === "auto" && contentOffset > titleOffset + 6) {
+                return this.scrollStyle = null;
+            }
+            this.scrollStyle = {
+                transform: `translateX(${contentOffset + 30}px)`,
+                transitionDuration: "0s",
+            };
+            this.$nextTick(() => {
+                const length = titleOffset + 30;
+                this.scrollStyle = {
+                    transform: `translateX(${-length}px)`,
+                    transitionDuration: `${length / (this.speed || 30)}s`,
+                };
+            });
         },
     },
-}
+    watch: {
+        scrollable() {
+            this.handleScroll();
+        }
+    }
+};
 </script>

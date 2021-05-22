@@ -1,4 +1,4 @@
-import { EventListener, DragMove, getElement } from "../utils/dom";
+import { EventListener, getElement } from "../utils/dom";
 export default class Carousel {
     constructor (el, options, callback) {
         if (!el) throw new Error("el must not be null");
@@ -28,7 +28,7 @@ export default class Carousel {
             // autoplay: false,
             // touchmove: false,
             // direction:null // vertical  horizontal，
-            spacing: 60,
+            // spacing: 60,
             ...options,
         });
         this.play();
@@ -54,12 +54,12 @@ export default class Carousel {
     // 获取所有子元素
     _getChildren() {
         const children = this.el.querySelectorAll(`.${this._itemClass}`);
-        const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
+        // const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
         this._children = children ? [...children] : [];
         this._children.forEach((ele, index) => {
             ele.classList.add(this._itemClass);
             ele.dataset.index = index;
-            this._options.spacing &&( ele.style[isVertical ? 'marginBottom' : 'marginRight'] = this._options.spacing + 'px');
+            // this._options.spacing &&( ele.style[isVertical ? 'marginBottom' : 'marginRight'] = this._options.spacing + 'px');
         });
         return this._children;
     }
@@ -133,23 +133,23 @@ export default class Carousel {
         this._getChildren();
         this._getNextActiveEle(this.reverse);
         const index = this._getChildIndex(this._activeEle);
-        this._getScrollPosByActiveEle(this._activeEle);
+        // this._getScrollPosByActiveEle(this._activeEle);
         this._handleCallback(index);
         setTimeout(() => {
             this._selectedSlide(index);
         }, 0);
-        if (this._options.touchmove && this.mode !== 'fade' && !this._DragMove) {
-            const el =  this._getParentEle() || this.el;
-            this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
-                console.log(obj);
-                this.stepMove(obj.distance, obj.cancel, obj);
-            });
-            return;
-        }
-        if (!this._options.touchmove) {
-            this._DragMove && this._DragMove.destroy();
-            this._DragMove = null;
-        }
+        // if (this._options.touchmove && this.mode !== 'fade' && !this._DragMove) {
+        //     const el =  this._getParentEle() || this.el;
+        //     this._DragMove = new DragMove(el, { style: null, cursor: null }, (obj) => {
+        //         console.log(obj);
+        //         this.stepMove(obj.distance, obj.cancel, obj);
+        //     });
+        //     return;
+        // }
+        // if (!this._options.touchmove) {
+        //     this._DragMove && this._DragMove.destroy();
+        //     this._DragMove = null;
+        // }
     }
     // 置顶滚动
     slide(event) {
@@ -185,7 +185,7 @@ export default class Carousel {
         this._setTimeout && clearTimeout(this._setTimeout);
     }
     step(isRight = this.reverse) {
-        if (this._touchMoveRuning) return;
+        // if (this._touchMoveRuning) return;
         if (this._running) {
             this._queue = !this._queue && ["step", isRight];
             return;
@@ -207,9 +207,9 @@ export default class Carousel {
         }
     }
     _step(isRight = this.reverse) {
-        if (this._children.length < 2 || this._stepScroll(isRight)) return;
+        // if (this._children.length < 2) return;
         const nextActiveEle = this._nextActiveEle;
-        if (!nextActiveEle) return;
+        if (!nextActiveEle || this._children.length < 2) return;
         this._running = true;
         const activeEleClass = this._activeEle.classList,
             nextActiveEleClass = nextActiveEle.classList,
@@ -240,196 +240,196 @@ export default class Carousel {
     }
     // mode srcoll Pos
     // 通过激活元素获取偏移距离
-    _getScrollPosByActiveEle(nextEle) {
-        if (!nextEle) return;
-        let { slideOffset, slideBounds, direction } = this._options;
-        let isVertical = (direction || this.el.dataset.direction) === 'vertical';
-        let total = nextEle[isVertical ? 'offsetTop' : 'offsetLeft'];
-        let distance = 0;
-        const parentNode = this._getParentEle(nextEle);
-        const activeSize = nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
-        const lastEleSize = parentNode.lastElementChild[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
-        const parentSize = parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2;
-        if (slideOffset === 'center') {
-            distance = parentSize - activeSize
-        } else if (slideOffset >= 0) {
-            distance = slideOffset;
-        } else if (slideOffset < 0) {
-            distance = parentSize * 2 - lastEleSize - slideOffset;
-        }
-        total = total - distance;
-        // 左右贴边
-        if (slideBounds) {
-            const lastEleTotal = parentNode.lastElementChild[isVertical ? 'offsetTop' : 'offsetLeft'];
-            console.log(lastEleTotal, lastEleSize, parentSize, activeSize, total);
-            if (total + activeSize < parentSize) {
-                total = 0.2 * Math.random();
-            } else if (lastEleTotal + lastEleSize * 2 - total < parentSize * 2) {
-                total = lastEleTotal + lastEleSize * 2 - parentSize * 2 - 0.2 * Math.random();
-            }
-        }
-        parentNode.dataset.translate = total;
-        parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
-        return total;
-    }
-    // 通过偏移距离获取最近激活的元素
-    _getNextActiveEleBydistance(total) {
-        let { slideOffset, slideBounds, direction } = this._options;
-        let distance = 0;
-        const isVertical = (direction || this.el.dataset.direction) === 'vertical';
-        const parentNode = this._getParentEle(this._activeEle);
-        const parentSize = parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2;
-        if (slideOffset === 'center') {
-            distance = parentSize
-        } else if (slideOffset >= 0) {
-            distance = slideOffset;
-        } else if (slideOffset < 0) {
-            distance = parentSize * 2 - slideOffset;
-        }
-        total = total + distance;
-        const activeEle = this._children.find((item, index) => {
-            const offset = item[isVertical ? 'offsetTop' : 'offsetLeft'];
-            if (slideOffset === 'center') {
-                return total - item[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 <= offset
-            }
-            return total <= offset;
-        }) || this._children[this._children.length-1];
-        this._activeEle.classList.remove(this._activeClass);
-        activeEle.classList.add(this._activeClass);
-        const index = this._getChildIndex(activeEle);
-        this._selectedSlide(index);
-        this._handleCallback(index);
-        return activeEle;
-    }
-    // mode srcoll
-    _stepScroll(isRight) {
-        if (this.mode !== "scroll" || !this._nextActiveEle) return false;
-        const parentNode = this._getParentEle(this._activeEle);
-        const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
-        const index = this._getChildIndex(this._nextActiveEle);
-        this._running = true;
-        this._setSpeed(false, parentNode);
-        this._getScrollPosByActiveEle(this._nextActiveEle);
-        this._nextActiveEle.classList.add(this._activeClass);
-        this._activeEle.classList.remove(this._activeClass);
-        this._selectedSlide(index);
-        this._handleCallback(index);
-        if (this._destoryBindAnimation) {
-            return true;
-        }
-        this._destoryBindAnimation = this._bindAnimation(parentNode, () => {
-            this._activeEle = this._nextActiveEle;
-            this._nextActiveEle = null;
-            if (this._runQueue() || this._isPaused) return;
-            this.play(isRight, this.autoplay);
-        });
-        return true;
-    }
-    // 鼠标移动
-    stepMove(distance, isCancel, obj) {
-        if (this._running) return;
-        const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
-        distance = distance[isVertical ? 1 : 0];
-        const isRight = distance > 0;
-        // 滚动模式下
-        if (this.mode === 'scroll') {
-            const parentNode = this._getParentEle(this._activeEle);
-            this._touchMoveRuning = true;
-            let total = parentNode.dataset.translate - distance;
-            if (isCancel) {
-                parentNode.style.transition = "";
-                this._setSpeed(null, parentNode);
-                this._touchMoveRuning = false;
-                total = total - (obj.tempDistance || [0, 0])[isVertical ? 1 : 0] * 10;
-                const nextActiveEle = this._getNextActiveEleBydistance(total);
-                if (nextActiveEle) {
-                    this._getScrollPosByActiveEle(nextActiveEle);
-                    return;
-                }
-                parentNode.dataset.translate = total;
-                parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
-                return;
-            }
-            parentNode.style.transition = "none";
-            parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
-            return;
-        }
-        // 非滚动模式下
-        // 方向是否改变
-        if (typeof this._isRightStepMove === "boolean" && this._isRightStepMove !== isRight && this._nextActiveEle) {
-            this._nextActiveEle.style.transform = "";
-            this._nextActiveEle.classList.remove(this._isRightStepMove ? this._preClass : this._nextClass);
-            this._touchMoveRuning = false;
-        }
-        this._isRightStepMove = isRight;
-        if (!this._touchMoveRuning && !this._getNextActiveEle(isRight)) {
-            this._running = false;
-            return;
-        }
-        const nextActiveEle = this._nextActiveEle;
-        this._touchMoveRuning = !isCancel;
-        if (!nextActiveEle || this._children.length < 2) return;
-        const activeEleClass = this._activeEle.classList,
-            nextActiveEleClass = nextActiveEle.classList,
-            preNextClass = isRight ? this._preClass : this._nextClass,
-            rightLeftClass = isRight ? this._rightClass : this._leftClass,
-            offsetKey = isVertical ? "offsetHeight" : "offsetWidth";
-        // 鼠标滑动结束，移动距离不超过20%
-        if (isCancel && Math.abs(distance / this._activeEle[offsetKey]) < 0.3) {
-            this._activeEle.style.transition = nextActiveEle.style.transition =
-                "transform 100ms ease, opacity 100ms ease";
-            this._activeEle.style.transform = nextActiveEle.style.transform = "";
-            clearTimeout(this._touchMoveOverTime);
-            this._touchMoveOverTime = setTimeout(() => {
-                nextActiveEle.style.backfaceVisibility = '';
-                this._activeEle.style.transition = nextActiveEle.style.transition = "";
-                this._nextActiveEle.classList.remove(preNextClass);
-                this._running = this._touchMoveRuning = false;
-            }, 110);
-            return;
-        }
+    // _getScrollPosByActiveEle(nextEle) {
+    //     if (!nextEle) return;
+    //     let { slideOffset, slideBounds, direction } = this._options;
+    //     let isVertical = (direction || this.el.dataset.direction) === 'vertical';
+    //     let total = nextEle[isVertical ? 'offsetTop' : 'offsetLeft'];
+    //     let distance = 0;
+    //     const parentNode = this._getParentEle(nextEle);
+    //     const activeSize = nextEle[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
+    //     const lastEleSize = parentNode.lastElementChild[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2;
+    //     const parentSize = parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2;
+    //     if (slideOffset === 'center') {
+    //         distance = parentSize - activeSize
+    //     } else if (slideOffset >= 0) {
+    //         distance = slideOffset;
+    //     } else if (slideOffset < 0) {
+    //         distance = parentSize * 2 - lastEleSize - slideOffset;
+    //     }
+    //     total = total - distance;
+    //     // 左右贴边
+    //     if (slideBounds) {
+    //         const lastEleTotal = parentNode.lastElementChild[isVertical ? 'offsetTop' : 'offsetLeft'];
+    //         console.log(lastEleTotal, lastEleSize, parentSize, activeSize, total);
+    //         if (total + activeSize < parentSize) {
+    //             total = 0.2 * Math.random();
+    //         } else if (lastEleTotal + lastEleSize * 2 - total < parentSize * 2) {
+    //             total = lastEleTotal + lastEleSize * 2 - parentSize * 2 - 0.2 * Math.random();
+    //         }
+    //     }
+    //     parentNode.dataset.translate = total;
+    //     parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+    //     return total;
+    // }
+    // // 通过偏移距离获取最近激活的元素
+    // _getNextActiveEleBydistance(total) {
+    //     let { slideOffset, slideBounds, direction } = this._options;
+    //     let distance = 0;
+    //     const isVertical = (direction || this.el.dataset.direction) === 'vertical';
+    //     const parentNode = this._getParentEle(this._activeEle);
+    //     const parentSize = parentNode[isVertical ? 'clientHeight' : 'clientWidth'] / 2;
+    //     if (slideOffset === 'center') {
+    //         distance = parentSize
+    //     } else if (slideOffset >= 0) {
+    //         distance = slideOffset;
+    //     } else if (slideOffset < 0) {
+    //         distance = parentSize * 2 - slideOffset;
+    //     }
+    //     total = total + distance;
+    //     const activeEle = this._children.find((item, index) => {
+    //         const offset = item[isVertical ? 'offsetTop' : 'offsetLeft'];
+    //         if (slideOffset === 'center') {
+    //             return total - item[isVertical ? 'offsetHeight' : 'offsetWidth'] / 2 <= offset
+    //         }
+    //         return total <= offset;
+    //     }) || this._children[this._children.length-1];
+    //     this._activeEle.classList.remove(this._activeClass);
+    //     activeEle.classList.add(this._activeClass);
+    //     const index = this._getChildIndex(activeEle);
+    //     this._selectedSlide(index);
+    //     this._handleCallback(index);
+    //     return activeEle;
+    // }
+    // // mode srcoll
+    // _stepScroll(isRight) {
+    //     if (this.mode !== "scroll" || !this._nextActiveEle) return false;
+    //     const parentNode = this._getParentEle(this._activeEle);
+    //     const isVertical = (this._options.direction || this.el.dataset.direction) === 'vertical';
+    //     const index = this._getChildIndex(this._nextActiveEle);
+    //     this._running = true;
+    //     this._setSpeed(false, parentNode);
+    //     this._getScrollPosByActiveEle(this._nextActiveEle);
+    //     this._nextActiveEle.classList.add(this._activeClass);
+    //     this._activeEle.classList.remove(this._activeClass);
+    //     this._selectedSlide(index);
+    //     this._handleCallback(index);
+    //     if (this._destoryBindAnimation) {
+    //         return true;
+    //     }
+    //     this._destoryBindAnimation = this._bindAnimation(parentNode, () => {
+    //         this._activeEle = this._nextActiveEle;
+    //         this._nextActiveEle = null;
+    //         if (this._runQueue() || this._isPaused) return;
+    //         this.play(isRight, this.autoplay);
+    //     });
+    //     return true;
+    // }
+    // // 鼠标移动
+    // stepMove(distance, isCancel, obj) {
+    //     if (this._running) return;
+    //     const isVertical = (this._options.direction || this.el.dataset.direction) === "vertical";
+    //     distance = distance[isVertical ? 1 : 0];
+    //     const isRight = distance > 0;
+    //     // 滚动模式下
+    //     if (this.mode === 'scroll') {
+    //         const parentNode = this._getParentEle(this._activeEle);
+    //         this._touchMoveRuning = true;
+    //         let total = parentNode.dataset.translate - distance;
+    //         if (isCancel) {
+    //             parentNode.style.transition = "";
+    //             this._setSpeed(null, parentNode);
+    //             this._touchMoveRuning = false;
+    //             total = total - (obj.tempDistance || [0, 0])[isVertical ? 1 : 0] * 10;
+    //             const nextActiveEle = this._getNextActiveEleBydistance(total);
+    //             if (nextActiveEle) {
+    //                 this._getScrollPosByActiveEle(nextActiveEle);
+    //                 return;
+    //             }
+    //             parentNode.dataset.translate = total;
+    //             parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+    //             return;
+    //         }
+    //         parentNode.style.transition = "none";
+    //         parentNode.style.transform = `${isVertical ? 'translateY' : 'translateX'}(${total * -1}px)`;
+    //         return;
+    //     }
+    //     // 非滚动模式下
+    //     // 方向是否改变
+    //     if (typeof this._isRightStepMove === "boolean" && this._isRightStepMove !== isRight && this._nextActiveEle) {
+    //         this._nextActiveEle.style.transform = "";
+    //         this._nextActiveEle.classList.remove(this._isRightStepMove ? this._preClass : this._nextClass);
+    //         this._touchMoveRuning = false;
+    //     }
+    //     this._isRightStepMove = isRight;
+    //     if (!this._touchMoveRuning && !this._getNextActiveEle(isRight)) {
+    //         this._running = false;
+    //         return;
+    //     }
+    //     const nextActiveEle = this._nextActiveEle;
+    //     this._touchMoveRuning = !isCancel;
+    //     if (!nextActiveEle || this._children.length < 2) return;
+    //     const activeEleClass = this._activeEle.classList,
+    //         nextActiveEleClass = nextActiveEle.classList,
+    //         preNextClass = isRight ? this._preClass : this._nextClass,
+    //         rightLeftClass = isRight ? this._rightClass : this._leftClass,
+    //         offsetKey = isVertical ? "offsetHeight" : "offsetWidth";
+    //     // 鼠标滑动结束，移动距离不超过20%
+    //     if (isCancel && Math.abs(distance / this._activeEle[offsetKey]) < 0.3) {
+    //         this._activeEle.style.transition = nextActiveEle.style.transition =
+    //             "transform 100ms ease, opacity 100ms ease";
+    //         this._activeEle.style.transform = nextActiveEle.style.transform = "";
+    //         clearTimeout(this._touchMoveOverTime);
+    //         this._touchMoveOverTime = setTimeout(() => {
+    //             nextActiveEle.style.backfaceVisibility = '';
+    //             this._activeEle.style.transition = nextActiveEle.style.transition = "";
+    //             this._nextActiveEle.classList.remove(preNextClass);
+    //             this._running = this._touchMoveRuning = false;
+    //         }, 110);
+    //         return;
+    //     }
 
-        nextActiveEleClass.add(preNextClass);
-        // flip 模式
-        if (this.mode === "flip") {
-            const rotate = (distance / this._activeEle[offsetKey]) * 180;
-            const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
-            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
-            this._activeEle.style.transform = `${translateKey}(${rotate}deg)`;
-            nextActiveEle.style.transform = `${translateKey}(${isRight ? -180 + rotate : 180 + rotate}deg)`;
-            nextActiveEle.style.backfaceVisibility = 'visible';
-        } else {
-            const translateKey = isVertical ? "translateY" : "translateX";
-            this._activeEle.style.transition = nextActiveEle.style.transition = "none";
-            this._activeEle.style.transform = `${translateKey}(${distance}px)`;
-            nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (isRight ? -1 : 1) + distance}px)`;
-        }
-        if (this._touchMoveRuning) return;
-        this._running = true;
-        this._isRightStepMove = false;
-        this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition = "";
-        this._setSpeed();
-        nextActiveEleClass.add(rightLeftClass);
-        activeEleClass.add(rightLeftClass);
-        const index = this._getChildIndex(nextActiveEle);
-        this._selectedSlide(index);
-        this._handleCallback(index);
-        this._destoryBindAnimation = this._bindAnimation(
-            nextActiveEle,
-            () => {
-                nextActiveEle.style.backfaceVisibility = '';
-                nextActiveEleClass.remove(preNextClass, rightLeftClass);
-                activeEleClass.remove(this._activeClass, rightLeftClass);
-                this._setSpeed(true);
-                nextActiveEleClass.add(this._activeClass);
-                this._activeEle = nextActiveEle;
-                this._nextActiveEle = null;
-                if (this._runQueue() || this._isPaused) return;
-                this.play(isRight, this.autoplay);
-            },
-            true
-        );
-    }
+    //     nextActiveEleClass.add(preNextClass);
+    //     // flip 模式
+    //     if (this.mode === "flip") {
+    //         const rotate = (distance / this._activeEle[offsetKey]) * 180;
+    //         const translateKey = isVertical ? " rotateY(0deg) rotateX" : "rotateX(0deg) rotateY";
+    //         this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+    //         this._activeEle.style.transform = `${translateKey}(${rotate}deg)`;
+    //         nextActiveEle.style.transform = `${translateKey}(${isRight ? -180 + rotate : 180 + rotate}deg)`;
+    //         nextActiveEle.style.backfaceVisibility = 'visible';
+    //     } else {
+    //         const translateKey = isVertical ? "translateY" : "translateX";
+    //         this._activeEle.style.transition = nextActiveEle.style.transition = "none";
+    //         this._activeEle.style.transform = `${translateKey}(${distance}px)`;
+    //         nextActiveEle.style.transform = `${translateKey}(${nextActiveEle[offsetKey] * (isRight ? -1 : 1) + distance}px)`;
+    //     }
+    //     if (this._touchMoveRuning) return;
+    //     this._running = true;
+    //     this._isRightStepMove = false;
+    //     this._activeEle.style.transform = nextActiveEle.style.transform = this._activeEle.style.transition = nextActiveEle.style.transition = "";
+    //     this._setSpeed();
+    //     nextActiveEleClass.add(rightLeftClass);
+    //     activeEleClass.add(rightLeftClass);
+    //     const index = this._getChildIndex(nextActiveEle);
+    //     this._selectedSlide(index);
+    //     this._handleCallback(index);
+    //     this._destoryBindAnimation = this._bindAnimation(
+    //         nextActiveEle,
+    //         () => {
+    //             nextActiveEle.style.backfaceVisibility = '';
+    //             nextActiveEleClass.remove(preNextClass, rightLeftClass);
+    //             activeEleClass.remove(this._activeClass, rightLeftClass);
+    //             this._setSpeed(true);
+    //             nextActiveEleClass.add(this._activeClass);
+    //             this._activeEle = nextActiveEle;
+    //             this._nextActiveEle = null;
+    //             if (this._runQueue() || this._isPaused) return;
+    //             this.play(isRight, this.autoplay);
+    //         },
+    //         true
+    //     );
+    // }
     destroy() {
         this._isPaused = true;
         this._queue = null;

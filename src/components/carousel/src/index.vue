@@ -3,7 +3,6 @@
         <div :class="[_tobogPrefix_ + '-outer']">
             <ul :class="[_tobogPrefix_ + '-list']" ref="list">
                 <slot></slot>
-                <slot v-if="mode === 'scroll' && loop"></slot>
             </ul>
         </div>
         <template v-if="arrow && arrow !== 'never'">
@@ -89,9 +88,9 @@ export default {
         },
         dotCount: {
             type: Number,
-            default: 5,
+            default: 0,
         },
-        touchmove: Boolean,
+        // touchmove: Boolean,
         trigger: {
             type: String,
             default: "click", // 'click', 'hover'
@@ -101,26 +100,12 @@ export default {
         },
         mode: {
             type: String,
-            default: "carousel", //carousel,fade,scroll
+            default: "carousel", //carousel,fade,flip
         },
         direction: String, // horizontal,vertical
         dotPosition: String, // top,right,left,bottom，
-        slideOffset: [String, Number], // center 100
-        slideBounds: Boolean
-        // slidesToShow: 3,
-        // slidesToScroll: 3,
-        // responsive: [
-        // 	{
-        // 		breakpoint: 1024,
-        // 		settings: {
-        // 			slidesToShow: 3,
-        // 			slidesToScroll: 3,
-        // 			infinite: true,
-        // 			dots: true
-        // 		}
-        // 	},
-        // ],
-        // scrolltrigger
+        // slideOffset: [String, Number], // center 100
+        // slideBounds: Boolean
     },
     data() {
         return {
@@ -149,10 +134,9 @@ export default {
                 speed: this.speed,
                 prefix: this._tobogPrefix_,
                 direction: this.direction,
-                touchmove: this.touchmove || true,
-                slideOffset: this.slideOffset || 'center',
-                slideBounds: this.slideBounds
-                // slidesPerView
+                // touchmove: this.touchmove || true,
+                // slideOffset: this.slideOffset || 'center',
+                // slideBounds: this.slideBounds
             }
         },
         classes() {
@@ -190,7 +174,10 @@ export default {
             return false
         },
         getActiveDotPosition() {
-            let dotCount = this.dotCount || 5;
+            let dotCount = this.dotCount;
+            if (!(dotCount > 3)) {
+                return;
+            }
             if (dotCount < 1 || this.dotType === 'page' || this.childrenLen < dotCount) return;
             let dotCountHalf = parseInt(dotCount/2),
                 index = this.model - dotCountHalf;
@@ -269,23 +256,11 @@ export default {
         },
         // use when slot changed
         updateConfig() {
-            console.log('updateConfig');
-            // this.setVnodeProps();
             this.$nextTick(() => {
                 this._Carousel && this._Carousel.update(this.getConfig);
                 this.resetDotSize(true);
             });
         },
-        // setVnodeProps() {
-        //     if (Array.isArray(this.$slots.default)) {
-        //         this.$slots.default.forEach((item, index) => {
-        //             let attrs = item.data.attrs || {};
-        //             attrs['data-index'] = index;
-        //             item.data.attrs = attrs;
-        //         })
-        //     }
-        //     console.log(this.$slots.default)
-        // }
     },
     watch: {
         getConfig() {
