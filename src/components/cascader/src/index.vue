@@ -73,7 +73,7 @@
             @input="handleChange"
             @on-search="handleSearch"
             @hook:created="updateValueText += 1"
-            @on-updateDrop="updatedDrop"
+            @on-update="updatedDrop"
         >
             <template v-if="$scopedSlots.default" v-slot="data">
                 <slot v-bind="data"></slot>

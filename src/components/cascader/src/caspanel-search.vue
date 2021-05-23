@@ -10,7 +10,7 @@
                         :isFilter="true"
                         :data="node"
                     ></Render>
-                    <template v-else> {{ node | labelFormat }}</template>
+                    <template v-else> {{ node | labelFormat(getFieldMap("label")) }}</template>
                 </slot>
             </span>
             <Icons v-if="isSelected(node)" type="checkmark" :class="[_tobogPrefix_ + '-icon']" />
@@ -43,10 +43,11 @@ export default {
         },
         selection: String, //multiple,single
         render: Function,
+        getFieldMap: Function,
     },
     filters: {
-        labelFormat(val) {
-            return val.map((item) => item.data.label).join(" / ");
+        labelFormat(val, label = "label") {
+            return val.map((item) => item.data[label]).join(" / ");
         },
     },
     methods: {
@@ -64,7 +65,6 @@ export default {
             if (node.some((item) => item.data.disabled)) return;
             if (this.selection === "multiple" || this.selection === "single") {
                 this.$emit("on-check", node[node.length - 1]);
-                // debugger;
                 return;
             }
             this.$emit("on-select", node, 0, "flat");

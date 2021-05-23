@@ -28,7 +28,7 @@
                         :data="node"
                     ></Render>
                     <templatet v-else>
-                        {{ node.data.label }}
+                        {{ node.data[getFieldMap('label')] }}
                     </templatet>
                 </slot>
             </span>
@@ -75,6 +75,7 @@ export default {
         render: Function,
         size: String,
         theme: String,
+        getFieldMap: Function
     },
     methods: {
         getRender(item) {

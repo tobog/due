@@ -16,6 +16,7 @@
                 :render="render"
                 :size="size"
                 :theme="theme"
+                :getFieldMap="getFieldMap"
                 @on-select="select"
                 @on-check="handleCheck"
             >
@@ -34,6 +35,7 @@
                 :render="render"
                 :size="size"
                 :theme="theme"
+                :getFieldMap="getFieldMap"
                 @on-select="select"
                 @on-check="handleCheck"
             >
@@ -49,6 +51,7 @@
             :selection="selection"
             :render="renderFlat"
             :noDataText="noDataText"
+            :getFieldMap="getFieldMap"
             @on-select="select"
             @on-check="handleCheck"
         >
@@ -126,7 +129,6 @@ export default {
                     const lastNode = item[item.length - 1];
                     this.$set(lastNode.data, "selected", true);
                 });
-                更新;
                 this.initStatusData(this.nodeList);
             } else {
                 this.modelList = data;
@@ -152,7 +154,7 @@ export default {
             if (isAsync) {
                 if (node.loading) return;
                 this.$set(node, "loading", true);
-                const result = await this.asyncData(node).catch(() => {});
+                const result = await (node.asyncData || this.asyncData)(node).catch(() => {});
                 const children = result || node.children;
                 this.$set(node, "loading", false);
                 if (Array.isArray(children) && children.length > 0) {
@@ -161,27 +163,29 @@ export default {
                         this.updateUpTree(node, true);
                         this.updateDownTree(node, { selected: node.data.selected, indeterminate: false });
                     }
+                    // 强制更新
                     this.modelList = [...this.modelList];
                 }
             }
             this.selection !== "multiple" && this.handleChange(!hasChildren && !isAsync, null);
             isAsync && this.$emit("on-async", this.modelList);
-            this.$emit("on-updateDrop");
+            this.$emit("on-update");
         },
         handleSearch(label) {
             if (this.filterType === "flat") {
                 this.flatFilterData = this.getFlatDataByLabel(label);
-                this.$emit("on-updateDrop");
+                this.$emit("on-update");
                 return;
             }
             this.flatFilterData = null;
             this.modelList = this.getDataByLabel(label);
-            let lastNode = this.modelList[this.modelList.length - 1];
-            let result;
+            let lastNode = this.modelList[this.modelList.length - 1],
+                result,
+                valueKey = this.getFieldMap("value");
             if (!lastNode || (this.hasChildren(lastNode) && this.selection !== "single")) {
                 result = null;
             } else {
-                let value = this.modelList.map((node) => node.data.value);
+                let value = this.modelList.map((node) => node.data[valueKey]);
                 if (this.selection === "multiple") {
                     result = lastNode.data.selected ? this.value : [...this.value, value];
                 } else {
@@ -193,14 +197,15 @@ export default {
         handleChange(isOver, selection) {
             if (!isOver) return;
             this.$emit("on-search", null);
-            let result = [];
+            let result = [],
+                valueKey = this.getFieldMap("value");
             if (selection === "multiple") {
                 const data = this.getSelectedData();
                 result = data.map((item) => {
                     let linkParentIndexs = item.linkParentIndex
                         ? (item.linkParentIndex + "," + item.index).split(",")
                         : [item.index];
-                    return linkParentIndexs.map((index) => this.nodeList[index].data.value);
+                    return linkParentIndexs.map((index) => this.nodeList[index].data[valueKey]);
                 });
             } else if (selection === "single") {
                 const [data] = this.getSelectedData();
@@ -208,16 +213,16 @@ export default {
                     let linkParentIndexs = data.linkParentIndex
                         ? (data.linkParentIndex + "," + data.index).split(",")
                         : [data.index];
-                    result = linkParentIndexs.map((index) => this.nodeList[index].data.value);
+                    result = linkParentIndexs.map((index) => this.nodeList[index].data[valueKey]);
                 }
             } else {
-                result = this.modelList.map((node) => node.data.value);
+                result = this.modelList.map((node) => node.data[valueKey]);
             }
             this.$emit("input", result);
         },
         handleCheck(node, isMulti) {
             const data = node.data,
-                isOnlySelf = this.getSelectOnlySelf(data.selectOnlySelf),
+                isOnlySelf = this.getSelectOnlySelf(data.selectSelf),
                 val = !data.selected;
             if (isMulti) {
                 if (isOnlySelf) {

@@ -56,17 +56,17 @@ export default {
     methods: {
         // 获取转化后的字段名称
         getFieldMap(key) {
-            const defaultMap = this.defaultFieldMap || {
-                disabled: "disabled",
-                selected: "selected",
+            const defaultMap = {
+                // disabled: "disabled",
+                // selected: "selected",
                 label: "label",
                 value: "value",
                 identifier: "id",
                 parentKey: "parentId",
-                selectSelf: "selectSelf",
-                indeterminate: "indeterminate",
+                // selectSelf: "selectSelf",
+                // indeterminate: "indeterminate",
             };
-            return (this.propsMap || {})[key] || defaultMap[key] || key;
+            return (this.propsMap || {})[key] || defaultMap[key] || this.key || key;
         },
         initStatusData(nodeList) {
             if (this.selection === "multiple") {
@@ -235,25 +235,22 @@ export default {
             if (!node) return;
             if (!validVal(node.parent)) return;
             const parent = this.nodeList[node.parent],
-                selfKey = this.getFieldMap("selectSelf"),
-                selected = this.getFieldMap("selected"),
-                indeterminate = this.getFieldMap("indeterminate"),
                 parentData = parent.data,
-                selectSelf = this.getSelectOnlySelf(parentData[selfKey]),
+                selectSelf = this.getSelectOnlySelf(parentData.selectSelf),
                 data = node.data;
             if (!selectSelf) {
-                if (data[selected]) {
-                    const isAll = parent.childIndexs.every((index) => this.nodeList[index]["data"][selected]);
-                    this.$set(parentData, selected, isAll);
-                    this.$set(parentData, indeterminate, !isAll);
+                if (data["selected"]) {
+                    const isAll = parent.childIndexs.every((index) => this.nodeList[index]["data"]["selected"]);
+                    this.$set(parentData, "selected", isAll);
+                    this.$set(parentData, "indeterminate", !isAll);
                 } else {
-                    this.$set(parentData, selected, false);
+                    this.$set(parentData, "selected", false);
                     this.$set(
                         parentData,
-                        indeterminate,
+                        "indeterminate",
                         parent.childIndexs.some((index) => {
                             return (
-                                this.nodeList[index]["data"][selected] || this.nodeList[index]["data"][indeterminate]
+                                this.nodeList[index]["data"]["selected"] || this.nodeList[index]["data"]["indeterminate"]
                             );
                         })
                     );
@@ -268,7 +265,7 @@ export default {
          */
         updateDownTree(node, changes = {}) {
             for (let key in changes) {
-                this.$set(node.data, this.getFieldMap(key), changes[key]);
+                this.$set(node.data, key, changes[key]);
             }
             if (node.childIndexs && node.childIndexs.length) {
                 node.childIndexs.forEach((index) => {
@@ -288,11 +285,10 @@ export default {
          */
         getSelectedData() {
             let result = [],
-                selected = this.getFieldMap("selected"),
                 linkIndexs = [];
             for (let index = this.nodeList.length - 1; index >= 0; index--) {
                 const node = this.nodeList[index];
-                if (node.data[selected]) {
+                if (node.data.selected) {
                     if (!linkIndexs.some((item) => item.indexOf(node.linkIndex) === 0)) {
                         result.push(this.nodeList[node.index]);
                     }
