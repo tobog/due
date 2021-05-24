@@ -266,11 +266,11 @@ export default {
                     label: "选择模式",
                     key: "selection",
                     tag: "vSelect",
-                    demoDefault: "",
+                    demoDefault: "none",
                     explain: "选择模式",
                     dataType: "String",
-                    default: "",
-                    options: ["single", "multiple", "none"],
+                    default: "none",
+                    options: ["single", "multiple", "none", "lastMultiple", "lastSingle"],
                 },
 
                 {
