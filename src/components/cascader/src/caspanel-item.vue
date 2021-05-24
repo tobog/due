@@ -8,16 +8,16 @@
             @mouseenter.stop="hover(node)"
         >
             <Checkbox
-                v-if="selection === 'multiple' || selection === 'single'"
+                v-if="hasCheckbox(node)"
                 readonly
                 :size="size"
                 :theme="theme"
                 :class="[_tobogPrefix_ + '-checkbox']"
                 :value="!!node.data.selected"
-                :radio="selection === 'single'"
+                :radio="selection === 'single' || selection === 'lastSingle'"
                 :disabled="node.data.disabled"
                 :indeterminate="node.data.indeterminate"
-                @click.native="handleCheck(node, selection === 'multiple')"
+                @click.native="handleCheck(node)"
             />
             <span :class="[_tobogPrefix_ + '-content']">
                 <slot :data="node" :index="index">
@@ -28,7 +28,7 @@
                         :data="node"
                     ></Render>
                     <templatet v-else>
-                        {{ node.data[getFieldMap('label')] }}
+                        {{ node.data[getFieldMap("label")] }}
                     </templatet>
                 </slot>
             </span>
@@ -42,9 +42,9 @@
     </ul>
 </template>
 <script>
-import Icons from "../../icons/src/index";
-import Checkbox from "../../checkbox";
-import Render from "./render";
+import Icons from "../../icons/src/index"
+import Checkbox from "../../checkbox"
+import Render from "./render"
 export default {
     name: "Caspanel-Item",
     componentName: "CaspanelItem",
@@ -57,13 +57,13 @@ export default {
         data: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         modelList: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         index: {
@@ -75,36 +75,46 @@ export default {
         render: Function,
         size: String,
         theme: String,
-        getFieldMap: Function
+        getFieldMap: Function,
     },
     methods: {
         getRender(item) {
-            const render = item.render || this.render;
-            return typeof render === "function" ? render : false;
+            const render = item.render || this.render
+            return typeof render === "function" ? render : false
         },
         classes(node) {
             const _tobogPrefix_ = this._tobogPrefix_,
-                data = this.modelList[this.index] || {};
-            console.log(this.modelList);
+                data = this.modelList[this.index] || {}
+            console.log(this.modelList)
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-active`]: data.index === node.index,
                     [`${_tobogPrefix_}-disabled`]: node.data.disabled,
                 },
-            ];
+            ]
         },
         select(node) {
-            if (node.data.disabled) return;
-            this.$emit("on-select", node, this.index);
+            if (node.data.disabled) return
+            this.$emit("on-select", node, this.index)
         },
         hover(node) {
-            if (this.trigger === "hover" && node.childIndexs && node.childIndexs.length > 0) this.select(node);
+            if (this.trigger === "hover" && node.childIndexs && node.childIndexs.length > 0) this.select(node)
         },
         handleCheck(node, isMulti) {
-            if (node.data.disabled) return;
-            this.$emit("on-check", node, isMulti);
+            if (node.data.disabled) return
+            this.$emit("on-check", node, isMulti)
+        },
+        hasCheckbox(node) {
+            const isAsync = typeof (node.asyncData || this.asyncData) === "function"
+            return (
+                this.selection === "multiple" ||
+                this.selection === "single" ||
+                ((this.selection === "lastMultiple" || selection === "lastSingle") &&
+                    !isAsync &&
+                    (!node.childIndexs || node.childIndexs.length === 0))
+            )
         },
     },
-};
+}
 </script>

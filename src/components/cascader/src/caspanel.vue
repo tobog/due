@@ -17,6 +17,7 @@
                 :size="size"
                 :theme="theme"
                 :getFieldMap="getFieldMap"
+                :asyncData="asyncData"
                 @on-select="select"
                 @on-check="handleCheck"
             >
@@ -36,6 +37,7 @@
                 :size="size"
                 :theme="theme"
                 :getFieldMap="getFieldMap"
+                :asyncData="asyncData"
                 @on-select="select"
                 @on-check="handleCheck"
             >
@@ -120,7 +122,7 @@ export default {
         initModelStatus() {
             // 通过value获取数据
             const data = this.getDataByValue(this.value);
-            if (this.selection === "multiple") {
+            if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 this.nodeList.forEach((node) => {
                     this.$set(node.data, "selected", false);
                     this.$set(node.data, "indeterminate", false);
@@ -132,7 +134,7 @@ export default {
                 this.initStatusData(this.nodeList);
             } else {
                 this.modelList = data;
-                if (this.selection === "single" && this.modelList.length) {
+                if ((this.selection === "single" || this.selection === "lastSingle") && this.modelList.length) {
                     this.nodeList.forEach((node) => {
                         this.$set(node.data, "selected", false);
                         this.$set(node.data, "indeterminate", false);
@@ -151,6 +153,7 @@ export default {
             }
             const hasChildren = this.hasChildren(node);
             const isAsync = !hasChildren && typeof (node.asyncData || this.asyncData) === "function";
+            const isMulti = this.selection === "multiple" || this.selection === "lastMultiple";
             if (isAsync) {
                 if (node.loading) return;
                 this.$set(node, "loading", true);
@@ -159,7 +162,7 @@ export default {
                 this.$set(node, "loading", false);
                 if (Array.isArray(children) && children.length > 0) {
                     this.nodeList = this.asyncAddNodeList(children, node);
-                    if (this.selection === "multiple") {
+                    if (isMulti) {
                         this.updateUpTree(node, true);
                         this.updateDownTree(node, { selected: node.data.selected, indeterminate: false });
                     }
@@ -167,7 +170,7 @@ export default {
                     this.modelList = [...this.modelList];
                 }
             }
-            this.selection !== "multiple" && this.handleChange(!hasChildren && !isAsync, null);
+            !isMulti && this.handleChange(!hasChildren && !isAsync, null);
             isAsync && this.$emit("on-async", this.modelList);
             this.$emit("on-update");
         },
@@ -181,25 +184,26 @@ export default {
             this.modelList = this.getDataByLabel(label);
             let lastNode = this.modelList[this.modelList.length - 1],
                 result,
-                valueKey = this.getFieldMap("value");
-            if (!lastNode || (this.hasChildren(lastNode) && this.selection !== "single")) {
+                valueKey = this.getFieldMap("value"),
+                
+            if (!lastNode || (this.hasChildren(lastNode) && (this.selection === "single" || this.selection === "lastSingle"))) {
                 result = null;
             } else {
                 let value = this.modelList.map((node) => node.data[valueKey]);
-                if (this.selection === "multiple") {
-                    result = lastNode.data.selected ? this.value : [...this.value, value];
+                if (this.selection === "multiple" || this.selection === "lastMultiple") {
+                    result = lastNode.data.selected ? value : [...this.value, value];
                 } else {
                     result = value;
                 }
             }
             this.$emit("on-search", result);
         },
-        handleChange(isOver, selection) {
+        handleChange(isOver) {
             if (!isOver) return;
             this.$emit("on-search", null);
             let result = [],
                 valueKey = this.getFieldMap("value");
-            if (selection === "multiple") {
+            if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 const data = this.getSelectedData();
                 result = data.map((item) => {
                     let linkParentIndexs = item.linkParentIndex
@@ -207,7 +211,7 @@ export default {
                         : [item.index];
                     return linkParentIndexs.map((index) => this.nodeList[index].data[valueKey]);
                 });
-            } else if (selection === "single") {
+            } else if (this.selection === "single" || this.selection === "lastSingle") {
                 const [data] = this.getSelectedData();
                 if (data) {
                     let linkParentIndexs = data.linkParentIndex
@@ -220,10 +224,11 @@ export default {
             }
             this.$emit("input", result);
         },
-        handleCheck(node, isMulti) {
+        handleCheck(node) {
             const data = node.data,
                 isOnlySelf = this.getSelectOnlySelf(data.selectSelf),
-                val = !data.selected;
+                val = !data.selected,
+                isMulti = this.selection === "multiple" || this.selection === "lastMultiple";
             if (isMulti) {
                 if (isOnlySelf) {
                     this.$set(data, "selected", val);
@@ -243,12 +248,12 @@ export default {
             }
             this.$nextTick(() => {
                 if (!isOnlySelf && isMulti) this.updateUpTree(node, true);
-                this.handleChange(true, isMulti);
+                this.handleChange(true);
                 this.$emit(
                     "on-check-change",
                     val,
                     node,
-                    this.nodeList.filter(({ data }) => data.selected || data.indeterminate)
+                    this.nodeList.filter((item) => item.data.selected || item.data.indeterminate)
                 );
             });
         },

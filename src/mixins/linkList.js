@@ -27,14 +27,14 @@ export default {
         },
         selection: {
             type: String,
-            // default: "single", //multiple,single,无
+            // default: "single", //multiple,single,无, lastSingle,lastMultiple
         },
         // 提供避免外部数据转化
         propsMap: {
             type: Object,
             default() {
                 return {};
-                // disabled, selected, label, value,
+                // label, value,
                 // identifier, parentKey
             },
         },
@@ -57,16 +57,12 @@ export default {
         // 获取转化后的字段名称
         getFieldMap(key) {
             const defaultMap = {
-                // disabled: "disabled",
-                // selected: "selected",
                 label: "label",
                 value: "value",
                 identifier: "id",
                 parentKey: "parentId",
-                // selectSelf: "selectSelf",
-                // indeterminate: "indeterminate",
             };
-            return (this.propsMap || {})[key] || defaultMap[key] || this.key || key;
+            return (this.propsMap || {})[key] || defaultMap[key] || this[key] || key;
         },
         initStatusData(nodeList) {
             if (this.selection === "multiple") {
@@ -239,8 +235,8 @@ export default {
                 selectSelf = this.getSelectOnlySelf(parentData.selectSelf),
                 data = node.data;
             if (!selectSelf) {
-                if (data["selected"]) {
-                    const isAll = parent.childIndexs.every((index) => this.nodeList[index]["data"]["selected"]);
+                if (data.selected) {
+                    const isAll = parent.childIndexs.every((index) => this.nodeList[index].data.selected);
                     this.$set(parentData, "selected", isAll);
                     this.$set(parentData, "indeterminate", !isAll);
                 } else {
@@ -250,7 +246,7 @@ export default {
                         "indeterminate",
                         parent.childIndexs.some((index) => {
                             return (
-                                this.nodeList[index]["data"]["selected"] || this.nodeList[index]["data"]["indeterminate"]
+                                this.nodeList[index].data.selected || this.nodeList[index].data.indeterminate
                             );
                         })
                     );
@@ -299,13 +295,14 @@ export default {
         },
         /**
          *通过value 获取结构数据
-         * @param {*} value
+         * @param {Array} value
          */
         getDataByValue(value) {
             const valueKey = this.getFieldMap("value"),
                 findData = (val) => {
                     return this.nodeList.find((node) => node.data[valueKey] === val);
                 };
+            if (!Array.isArray(value)) return;
             return value.map((item) => {
                 return this.selection === "multiple" ? item.map(findData) : findData(item);
             });

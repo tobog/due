@@ -23,6 +23,7 @@
             <!-- <vCascader class="margin-bottom-20" :data="data" :asyncData="asyncData" :render="renderfn"></vCascader> -->
             <div class="margin-bottom-20">Caspanel面板</div>
             <vCaspanel class="margin-bottom-20" :data="data" :asyncData="asyncData" :render="renderfn" v-bind="config"></vCaspanel>
+            {{value1}}
         </template>
     </Demo>
 </template>

@@ -123,7 +123,7 @@ export default {
         noDataText: String,
         filterType: String, // default(cascader),flat(平铺),
         popperConfig: Object,
-        propsMap: Object
+        propsMap: Object,
     },
     data() {
         return {
@@ -139,19 +139,21 @@ export default {
     computed: {
         getValueText() {
             if (!this.$refs.caspanel && this.updateValueText) return
-            const data = this.$refs.caspanel.getDataByValue(this.model)
-            const levelFn = (item) => {
-                let result = []
-                if (this.showAllLevels) {
-                    result = item.map((node) => (node.data.label == void 0 ? node.data.value : node.data.label))
-                } else {
-                    item = item[item.length - 1]
-                    if (item) {
-                        result = [item.data.label == void 0 ? item.data.value : item.data.label]
+            const data = this.$refs.caspanel.getDataByValue(this.model),
+                value = this.getFieldMap("value"),
+                label = this.getFieldMap("label"),
+                levelFn = (item) => {
+                    let result = []
+                    if (this.showAllLevels) {
+                        result = item.map((node) => (node.data[label] == void 0 ? node.data[value] : node.data[label]))
+                    } else {
+                        item = item[item.length - 1]
+                        if (item) {
+                            result = [item.data[label] == void 0 ? item.data[value] : item.data.label]
+                        }
                     }
+                    return result.join(" / ")
                 }
-                return result.join(" / ")
-            }
             if (this.selection === "multiple") {
                 return data.map(levelFn)
             }
@@ -159,6 +161,16 @@ export default {
         },
     },
     methods: {
+        // 获取转化后的字段名称
+        getFieldMap(key) {
+            const defaultMap = {
+                label: "label",
+                value: "value",
+                identifier: "id",
+                parentKey: "parentId",
+            }
+            return (this.propsMap || {})[key] || defaultMap[key] || this[key] || key
+        },
         getDataByValue(data = this.model) {
             if (!this.$refs.caspanel) return
             return this.$refs.caspanel.getDataByValue(data)
