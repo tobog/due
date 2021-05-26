@@ -154,7 +154,7 @@ export default {
                     }
                     return result.join(" / ")
                 }
-            if (this.selection === "multiple") {
+            if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 return data.map(levelFn)
             }
             return levelFn(data)
@@ -176,6 +176,7 @@ export default {
             return this.$refs.caspanel.getDataByValue(data)
         },
         handleKeydown(event) {
+            debugger
             if (event.keyCode === 13) {
                 if (this.__model) {
                     this.updateModel(this.__model)
@@ -183,7 +184,7 @@ export default {
                 }
                 this.visible = false
             }
-            if (this.selection === "multiple" && event.keyCode === 46 && !event.target.value) {
+            if ((this.selection === "multiple" || this.selection === "lastMultiple") && event.keyCode === 46 && !event.target.value) {
                 this.handleClearTag(this.model.length - 1)
             }
         },

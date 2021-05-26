@@ -184,14 +184,13 @@ export default {
             this.modelList = this.getDataByLabel(label);
             let lastNode = this.modelList[this.modelList.length - 1],
                 result,
-                valueKey = this.getFieldMap("value"),
-                
+                valueKey = this.getFieldMap("value");
             if (!lastNode || (this.hasChildren(lastNode) && (this.selection === "single" || this.selection === "lastSingle"))) {
                 result = null;
             } else {
-                let value = this.modelList.map((node) => node.data[valueKey]);
+                const value = this.modelList.map((node) => node.data[valueKey]);
                 if (this.selection === "multiple" || this.selection === "lastMultiple") {
-                    result = lastNode.data.selected ? value : [...this.value, value];
+                    result = lastNode.data.selected ? this.value : [...this.value, value];
                 } else {
                     result = value;
                 }

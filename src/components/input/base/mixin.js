@@ -22,7 +22,7 @@ export default {
         size: [String, Number],
         collapse: {
             type: [Boolean, Number],
-            default:0,
+            default: 0,
         },
         maxLength: Number,
         showWordCount:Boolean,

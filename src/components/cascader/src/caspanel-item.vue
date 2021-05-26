@@ -110,7 +110,7 @@ export default {
             return (
                 this.selection === "multiple" ||
                 this.selection === "single" ||
-                ((this.selection === "lastMultiple" || selection === "lastSingle") &&
+                ((this.selection === "lastMultiple" || this.selection === "lastSingle") &&
                     !isAsync &&
                     (!node.childIndexs || node.childIndexs.length === 0))
             )
