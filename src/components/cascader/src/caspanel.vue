@@ -1,12 +1,9 @@
 <template>
     <div :class="classes" :data-vue-module="$options.name">
-        <div
-            v-if="!nodeList.length || (filterType === 'flat' && flatFilterData && !flatFilterData.length)"
-            :class="[_tobogPrefix_ + '-nodata']"
-        >
+        <div v-if="!nodeList.length || (flatFilterData && !flatFilterData.length)" :class="[_tobogPrefix_ + '-nodata']">
             {{ langs("caspanel.noDataText", noDataText) }}
         </div>
-        <template v-else-if="filterType !== 'flat' || !flatFilterData">
+        <template v-else-if="!flatFilterData || !flatFilterData.length">
             <CaspanelItem
                 index="0"
                 :modelList="modelList"
@@ -51,9 +48,8 @@
             :data="flatFilterData"
             :modelList="modelList"
             :selection="selection"
-            :render="renderFlat"
+            :render="render"
             :noDataText="noDataText"
-            :getFieldMap="getFieldMap"
             @on-select="select"
             @on-check="handleCheck"
         >
@@ -62,21 +58,21 @@
 </template>
 
 <script>
-import CaspanelItem from "./caspanel-item";
-import CaspanelSearch from "./caspanel-search";
-import linkList from "../../../mixins/linkList";
-import globalMixin from "../../../mixins/global";
-import langMinix from "../../../mixins/lang";
+import CaspanelItem from "./caspanel-item"
+import CaspanelSearch from "./caspanel-search"
+import linkList from "../../../mixins/linkList"
+import globalMixin from "../../../mixins/global"
+import langMinix from "../../../mixins/lang"
 export default {
     name: "Caspanel",
     componentName: "Caspanel",
     mixins: [linkList, globalMixin, langMinix],
-    components: { CaspanelItem, CaspanelSearch },
+    components: {CaspanelItem, CaspanelSearch},
     props: {
         value: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         trigger: {
@@ -87,8 +83,6 @@ export default {
         render: Function,
         theme: String,
         size: String,
-        renderFlat: Function,
-        filterType: String,
         noDataText: {
             type: String,
             default: "无匹配数据",
@@ -98,178 +92,151 @@ export default {
         return {
             modelList: [],
             flatFilterData: null,
-        };
+        }
     },
     created() {
-        this.initData();
-        this.initModelStatus();
+        this.initData()
+        this.initModelStatus()
     },
     computed: {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_,
                 size = this.getGlobalData("size"),
-                theme = this.getGlobalData("theme");
+                theme = this.getGlobalData("theme")
             return [
                 `${_tobogPrefix_}-list`,
                 {
                     [`${_tobogPrefix_}-theme-${theme}`]: !!theme,
                     [`${_tobogPrefix_}-size-${size}`]: !!size,
                 },
-            ];
+            ]
         },
     },
     methods: {
         initModelStatus() {
             // 通过value获取数据
-            const data = this.getDataByValue(this.value);
+            const data = this.getDataByValue(this.value) || []
             if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 this.nodeList.forEach((node) => {
-                    this.$set(node.data, "selected", false);
-                    this.$set(node.data, "indeterminate", false);
-                });
+                    this.$set(node.data, "selected", false)
+                    this.$set(node.data, "indeterminate", false)
+                })
                 data.forEach((item) => {
-                    const lastNode = item[item.length - 1];
-                    this.$set(lastNode.data, "selected", true);
-                });
-                this.initStatusData(this.nodeList);
+                    this.$set(item[item.length - 1].data, "selected", true)
+                })
+                this.initStatusData(this.nodeList)
             } else {
-                this.modelList = data;
+                this.modelList = data
                 if ((this.selection === "single" || this.selection === "lastSingle") && this.modelList.length) {
                     this.nodeList.forEach((node) => {
-                        this.$set(node.data, "selected", false);
-                        this.$set(node.data, "indeterminate", false);
-                    });
-                    this.$set(this.modelList[this.modelList.length - 1].data, "selected", true);
+                        this.$set(node.data, "selected", false)
+                        this.$set(node.data, "indeterminate", false)
+                    })
+                    this.$set(this.modelList[this.modelList.length - 1].data, "selected", true)
                 }
             }
         },
         async select(node, index, type) {
             if (type === "flat") {
-                this.modelList = node;
-                node = node[node.length - 1];
+                this.modelList = node
+                node = node[node.length - 1]
             } else {
-                this.modelList = this.modelList.slice(0, index);
-                this.$set(this.modelList, index, node);
+                this.modelList = this.modelList.slice(0, index)
+                this.$set(this.modelList, index, node)
             }
-            const hasChildren = this.hasChildren(node);
-            const isAsync = !hasChildren && typeof (node.asyncData || this.asyncData) === "function";
-            const isMulti = this.selection === "multiple" || this.selection === "lastMultiple";
+            const hasChildren = this.hasChildren(node)
+            const isAsync = !hasChildren && typeof (node.asyncData || this.asyncData) === "function"
+            const isMulti = this.selection === "multiple" || this.selection === "lastMultiple"
             if (isAsync) {
-                if (node.loading) return;
-                this.$set(node, "loading", true);
-                const result = await (node.asyncData || this.asyncData)(node).catch(() => {});
-                const children = result || node.children;
-                this.$set(node, "loading", false);
+                if (node.loading) return
+                this.$set(node, "loading", true)
+                const result = await (node.asyncData || this.asyncData)(node).catch(() => {})
+                const children = result || node.children
+                this.$set(node, "loading", false)
                 if (Array.isArray(children) && children.length > 0) {
-                    this.nodeList = this.asyncAddNodeList(children, node);
+                    this.nodeList = this.asyncAddNodeList(children, node)
                     if (isMulti) {
-                        this.updateUpTree(node, true);
-                        this.updateDownTree(node, { selected: node.data.selected, indeterminate: false });
+                        this.updateUpTree(node, true)
+                        this.updateDownTree(node, {selected: node.data.selected, indeterminate: false})
                     }
                     // 强制更新
-                    this.modelList = [...this.modelList];
+                    this.modelList = [...this.modelList]
                 }
             }
-            !isMulti && this.handleChange(!hasChildren && !isAsync, null);
-            isAsync && this.$emit("on-async", this.modelList);
-            this.$emit("on-update");
+            !isMulti && this.handleChange(!hasChildren && !isAsync)
+            isAsync && this.$emit("on-async", this.modelList)
+            this.$emit("on-update")
         },
         handleSearch(label) {
-            if (this.filterType === "flat") {
-                this.flatFilterData = this.getFlatDataByLabel(label);
-                this.$emit("on-update");
-                return;
-            }
-            this.flatFilterData = null;
-            this.modelList = this.getDataByLabel(label);
-            let lastNode = this.modelList[this.modelList.length - 1],
-                result,
-                valueKey = this.getFieldMap("value");
-            if (!lastNode || (this.hasChildren(lastNode) && (this.selection === "single" || this.selection === "lastSingle"))) {
-                result = null;
-            } else {
-                const value = this.modelList.map((node) => node.data[valueKey]);
-                if (this.selection === "multiple" || this.selection === "lastMultiple") {
-                    result = lastNode.data.selected ? this.value : [...this.value, value];
-                } else {
-                    result = value;
-                }
-            }
-            this.$emit("on-search", result);
+            this.flatFilterData = this.getFlatDataByLabel(label)
+            this.$emit("on-update")
         },
         handleChange(isOver) {
-            if (!isOver) return;
-            this.$emit("on-search", null);
+            if (!isOver) return
             let result = [],
-                valueKey = this.getFieldMap("value");
+                valueKey = this.getFieldMap("value")
             if (this.selection === "multiple" || this.selection === "lastMultiple") {
-                const data = this.getSelectedData();
+                const data = this.getLastSelectedData()
                 result = data.map((item) => {
-                    let linkParentIndexs = item.linkParentIndex
-                        ? (item.linkParentIndex + "," + item.index).split(",")
-                        : [item.index];
-                    return linkParentIndexs.map((index) => this.nodeList[index].data[valueKey]);
-                });
+                    return item.linkValue
+                })
             } else if (this.selection === "single" || this.selection === "lastSingle") {
-                const [data] = this.getSelectedData();
+                const [data] = this.getLastSelectedData()
                 if (data) {
-                    let linkParentIndexs = data.linkParentIndex
-                        ? (data.linkParentIndex + "," + data.index).split(",")
-                        : [data.index];
-                    result = linkParentIndexs.map((index) => this.nodeList[index].data[valueKey]);
+                    result = data.linkValue
                 }
             } else {
-                result = this.modelList.map((node) => node.data[valueKey]);
+                result = this.modelList.map((node) => node.data[valueKey])
             }
-            this.$emit("input", result);
+            this.$emit("input", result)
         },
         handleCheck(node) {
             const data = node.data,
                 isOnlySelf = this.getSelectOnlySelf(data.selectSelf),
                 val = !data.selected,
-                isMulti = this.selection === "multiple" || this.selection === "lastMultiple";
+                isMulti = this.selection === "multiple" || this.selection === "lastMultiple"
             if (isMulti) {
                 if (isOnlySelf) {
-                    this.$set(data, "selected", val);
-                    this.$set(data, "indeterminate", false);
+                    this.$set(data, "selected", val)
+                    this.$set(data, "indeterminate", false)
                 } else {
                     this.updateDownTree(node, {
                         selected: val,
                         indeterminate: false,
-                    });
+                    })
                 }
             } else {
-                this.nodeList.forEach(({ data }) => {
-                    this.$set(data, "selected", false);
-                    this.$set(data, "indeterminate", false);
-                });
-                this.$set(data, "selected", val);
+                this.nodeList.forEach(({data}) => {
+                    this.$set(data, "selected", false)
+                    this.$set(data, "indeterminate", false)
+                })
+                this.$set(data, "selected", val)
             }
             this.$nextTick(() => {
-                if (!isOnlySelf && isMulti) this.updateUpTree(node, true);
-                this.handleChange(true);
+                if (!isOnlySelf && isMulti) this.updateUpTree(node, true)
+                this.handleChange(true)
                 this.$emit(
                     "on-check-change",
                     val,
                     node,
                     this.nodeList.filter((item) => item.data.selected || item.data.indeterminate)
-                );
-            });
+                )
+            })
         },
     },
     watch: {
         data: {
             handler() {
-                this.initData();
-                this.initModelStatus();
+                this.initData()
+                this.initModelStatus()
             },
         },
         value() {
-            this.initModelStatus();
+            this.initModelStatus()
         },
         selection() {
-            this.initModelStatus();
+            this.initModelStatus()
         },
     },
-};
+}
 </script>

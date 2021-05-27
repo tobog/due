@@ -142,6 +142,8 @@ export default {
             const list = nodeList,
                 parentKey = this.getFieldMap("parentKey"),
                 identifier = this.getFieldMap("identifier"),
+                valueKey = this.getFieldMap("value"),
+                labelKey = this.getFieldMap("label"),
                 // 性能优化，减少搜索
                 getAllChild = (id) => {
                     let _sourceData = [];
@@ -163,6 +165,9 @@ export default {
                             _index = _length++,
                             obj = { data, index: _index, sortIndex: index };
                         list[_index] = obj;
+                        if (data[labelKey] === void 0) {
+                            data[labelKey] = data[valueKey];
+                        }
                         if (parent) {
                             obj.parent = parent.index;
                             // 在平铺数组的位置
@@ -171,11 +176,15 @@ export default {
                                 : `${parent.index}`;
                             // 树结构层级
                             obj.linkIndex = `${parent.linkIndex},${index}`;
+                            obj.linkLabel = `${parent.linkLabel}/${data[labelKey]}`;
+                            obj.linkValue && obj.linkValue.push(data[valueKey]);
                             parent.childIds.push(id);
                             parent.childIndexs.push(_index);
                         } else {
                             obj.linkIndex = `${index}`;
                             obj.linkParentIndex = "";
+                            obj.linkLabel = data[labelKey];
+                            obj.linkValue = [data[valueKey]];
                         }
                         const children = data.children ? data.children : validVal(id) && getAllChild(id);
                         if (children && children.length) {
@@ -279,14 +288,16 @@ export default {
         /**
          * 获取所有最后选择数据
          */
-        getSelectedData() {
+        getLastSelectedData() {
             let result = [],
-                linkIndexs = [];
+                linkIndexs = [],
+                isSingle = this.selection === "single" || this.selection === "lastSingle";
             for (let index = this.nodeList.length - 1; index >= 0; index--) {
                 const node = this.nodeList[index];
                 if (node.data.selected) {
                     if (!linkIndexs.some((item) => item.indexOf(node.linkIndex) === 0)) {
                         result.push(this.nodeList[node.index]);
+                        if (isSingle) break;
                     }
                     linkIndexs.push(node.linkIndex);
                 }
@@ -299,13 +310,25 @@ export default {
          */
         getDataByValue(value) {
             const valueKey = this.getFieldMap("value"),
-                findData = (val) => {
-                    return this.nodeList.find((node) => node.data[valueKey] === val);
-                };
-            if (!Array.isArray(value)) return;
-            return value.map((item) => {
-                return this.selection === "multiple" ? item.map(findData) : findData(item);
-            });
+                findLinkData = (val) => {
+                    const node = this.nodeList.find((node) => node.data[valueKey] === val);
+                    if (node) {
+                        const linkParentIndexs = node.linkParentIndex
+                            ? (node.linkParentIndex + "," + node.index).split(",")
+                            : [node.index];
+                        return linkParentIndexs.map((index) => this.nodeList[index]);
+                    }
+                    return [];
+                },
+                isMulti = this.selection === "multiple" || this.selection === "lastMultiple";
+            if (value == null) return [];
+            if (!Array.isArray(value)) value = [value];
+            if (isMulti) {
+                return value.map((item) => {
+                    return findLinkData(Array.isArray(item) ? item[item.length - 1] : item);
+                });
+            }
+            return findLinkData(value[value.length - 1]);
         },
         /**
          *通过label 获取结构数据
@@ -314,19 +337,13 @@ export default {
         getDataByLabel(label) {
             if (!label) return [];
             let result = [],
-                valueKey = this.getFieldMap("value"),
                 labelKey = this.getFieldMap("label");
             this.nodeList.some((item) => {
-                let linkParentIndexs = item.linkParentIndex
-                    ? (item.linkParentIndex + "," + item.index).split(",")
-                    : [item.index];
-                let str = "";
-                let index = linkParentIndexs.findIndex((index) => {
-                    str = str + (this.nodeList[index].data[labelKey] || this.nodeList[index].data[valueKey]) + "/";
-                    return str === label + "/";
-                });
-                if (index === 0 || index) {
-                    result = linkParentIndexs.slice(0, index + 1).map((index) => this.nodeList[index]);
+                if (item.linkLabel === label) {
+                    const linkParentIndexs = item.linkParentIndex
+                        ? (item.linkParentIndex + "," + item.index).split(",")
+                        : [item.index];
+                    result = linkParentIndexs.map((index) => this.nodeList[index]);
                     return true;
                 }
                 return false;
@@ -334,26 +351,22 @@ export default {
             return result;
         },
         /**
-         *通过label 获取平铺后数据list
+         *通过label 获取平铺后数据list, 用于搜索
          * @param {String} label
+         * @param {Boolean} filterDisabled 是否过滤掉disabled
          */
-        getFlatDataByLabel(label) {
+        getFilterDataByLabel(label) {
             if (!label) return [];
-            let result = [],
-                valueKey = this.getFieldMap("value"),
-                labelKey = this.getFieldMap("label");
+            // if (typeof label === 'string') label = label.replace(/\s/g, '');
+            let result = [];
             this.nodeList.forEach((item) => {
                 if (!item.childIndexs || !item.childIndexs.length) {
-                    let linkParentIndexs = item.linkParentIndex
-                        ? (item.linkParentIndex + "," + item.index).split(",")
-                        : [item.index];
-                    let str = "";
-                    let linkData = linkParentIndexs.map((index) => {
-                        let node = this.nodeList[index];
-                        str = str + (node.data[labelKey] || node.data[valueKey]) + "/";
-                        return node;
-                    });
-                    if (str.indexOf(label) > -1) result.push(linkData);
+                    if (item.linkLabel.indexOf(label) > -1) {
+                        const linkParentIndexs = item.linkParentIndex
+                            ? (item.linkParentIndex + "," + item.index).split(",")
+                            : [item.index];
+                        result.push(linkParentIndexs.map((index) => this.nodeList[index]));
+                    }
                 }
             });
             return result;

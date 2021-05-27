@@ -85,7 +85,6 @@ export default {
         classes(node) {
             const _tobogPrefix_ = this._tobogPrefix_,
                 data = this.modelList[this.index] || {}
-            console.log(this.modelList)
             return [
                 _tobogPrefix_,
                 {

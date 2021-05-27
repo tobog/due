@@ -67,11 +67,9 @@
             :trigger="trigger"
             :asyncData="asyncData"
             :render="render"
-            :filterType="filterType"
             :noDataText="noDataText"
             :propsMap="propsMap"
             @input="handleChange"
-            @on-search="handleSearch"
             @hook:created="updateValueText += 1"
             @on-update="updatedDrop"
         >
@@ -110,7 +108,6 @@ export default {
         },
         asyncData: Function,
         render: Function,
-        renderFlat: Function,
         selection: String,
         trigger: {
             type: String,
@@ -121,7 +118,6 @@ export default {
             default: true,
         },
         noDataText: String,
-        filterType: String, // default(cascader),flat(平铺),
         popperConfig: Object,
         propsMap: Object,
     },
@@ -176,12 +172,11 @@ export default {
             return this.$refs.caspanel.getDataByValue(data)
         },
         handleKeydown(event) {
-            debugger
             if (event.keyCode === 13) {
-                if (this.__model) {
-                    this.updateModel(this.__model)
-                    this.__model = null
-                }
+                // if (this.__model) {
+                //     this.updateModel(this.__model)
+                //     this.__model = null
+                // }
                 this.visible = false
             }
             if ((this.selection === "multiple" || this.selection === "lastMultiple") && event.keyCode === 46 && !event.target.value) {
@@ -194,20 +189,18 @@ export default {
                 this.visible = false
             }
         },
-        handleSearch(val) {
-            this.__model = val
-        },
         handleInput(event) {
+            debugger
             const value = event.target.value || ""
             this.visible = true
             if (!value && this.selection !== "multiple") this.updateModel([])
             this.$refs.caspanel && this.$refs.caspanel.handleSearch(value)
         },
         handleBlur(event) {
-            if (this.__model) {
-                this.updateModel(this.__model)
-                this.__model = null
-            }
+            // if (this.__model) {
+            //     this.updateModel(this.__model)
+            //     this.__model = null
+            // }
             this.$nextTick(() => {
                 this.updateValueText += 1
                 this.$emit("on-change", this.model, event)

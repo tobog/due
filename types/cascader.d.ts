@@ -60,10 +60,6 @@ export declare class Caspanel extends UIComponent {
      */
     render?: (h: Function, props: object) => void;
     /**
-     * 搜索过滤时自定义渲染函数
-     */
-    renderFlat?: (h: Function, props: object) => void;
-    /**
      * 选择模式，可选值为 "single" | "multiple" | "none"
      */
     selection?: "single" | "multiple" | "none";
@@ -164,10 +160,6 @@ export declare class Cascader extends InputBase {
      * 自定义渲染函数
      */
     render?: (h: Function, props: object) => void;
-    /**
-     * 搜索过滤时自定义渲染函数
-     */
-    renderFlat?: (h: Function, props: object) => void;
     /**
      * 选择模式，可选值为 "single" | "multiple" | "none"
      */

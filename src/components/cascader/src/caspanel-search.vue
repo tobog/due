@@ -10,7 +10,7 @@
                         :isFilter="true"
                         :data="node"
                     ></Render>
-                    <template v-else> {{ node | labelFormat(getFieldMap("label")) }}</template>
+                    <template v-else> {{ node[node.length - 1].linkLabel }}</template>
                 </slot>
             </span>
             <Icons v-if="isSelected(node)" type="checkmark" :class="[_tobogPrefix_ + '-icon']" />
@@ -18,8 +18,8 @@
     </ul>
 </template>
 <script>
-import Icons from "../../icons/src/index";
-import Render from "./render";
+import Icons from "../../icons/src/index"
+import Render from "./render"
 
 export default {
     name: "Caspanel-Search",
@@ -32,50 +32,54 @@ export default {
         modelList: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         data: {
             type: Array,
             default() {
-                return [];
+                return []
             },
         },
         selection: String, //multiple,single
         render: Function,
-        getFieldMap: Function,
-    },
-    filters: {
-        labelFormat(val, label = "label") {
-            return val.map((item) => item.data[label]).join(" / ");
-        },
     },
     methods: {
         classes(node) {
-            const _tobogPrefix_ = this._tobogPrefix_;
+            const _tobogPrefix_ = this._tobogPrefix_
             return [
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-active`]: this.isSelected(node),
                     [`${_tobogPrefix_}-disabled`]: node.some((item) => item.data.disabled),
                 },
-            ];
+            ]
         },
         select(node) {
-            if (node.some((item) => item.data.disabled)) return;
-            if (this.selection === "multiple" || this.selection === "single") {
-                this.$emit("on-check", node[node.length - 1]);
-                return;
+            if (node.some((item) => item.data.disabled)) return
+            if (
+                this.selection === "multiple" ||
+                this.selection === "single" ||
+                this.selection === "lastMultiple" ||
+                this.selection === "lastSingle"
+            ) {
+                this.$emit("on-check", node[node.length - 1])
+                return
             }
-            this.$emit("on-select", node, 0, "flat");
+            this.$emit("on-select", node, 0, "flat")
         },
         isSelected(node) {
-            if (this.selection === "multiple" || this.selection === "single") {
-                return node[node.length - 1].data.selected;
+            if (
+                this.selection === "multiple" ||
+                this.selection === "single" ||
+                this.selection === "lastMultiple" ||
+                this.selection === "lastSingle"
+            ) {
+                return node[node.length - 1].data.selected
             }
-            const item = this.modelList[this.modelList.length - 1] || {};
-            return item.linkIndex === node[node.length - 1].linkIndex;
+            const item = this.modelList[this.modelList.length - 1] || {}
+            return item.linkIndex === node[node.length - 1].linkIndex
         },
     },
-};
+}
 </script>
