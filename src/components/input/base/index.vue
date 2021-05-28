@@ -59,7 +59,7 @@
             <input
                 v-else
                 ref="input"
-                :value="value"
+                :value="value | filterValue"
                 :type="isPassword ? 'text' : type"
                 :name="type === 'file' ? name : null"
                 :class="[_tobogPrefix_]"
@@ -73,7 +73,7 @@
                 v-bind="$attrs"
             />
             <div v-if="type === 'file' && !multiple" :class="[_tobogPrefix_ + '-tags']" @click.stop="handleFileClick">
-                {{ value }}
+                {{ value | filterValue}}
             </div>
             <span v-if="maxLength > 0 && showWordCount" :class="[_tobogPrefix_ + '-length']"
                 >{{ value | filterLength }}&nbsp;/&nbsp;{{ maxLength }}</span
@@ -119,7 +119,6 @@ export default {
         Icons,
     },
     props: {
-        dataVueModule: String,
         valueData: [String, Number, Array, Boolean, Object],
         active: Boolean,
         isInput: Boolean,
@@ -180,11 +179,12 @@ export default {
         filterLength(val) {
             return Array.isArray(val) ? val.length : `${val}`.length
         },
+        filterValue(val) {
+            return typeOf(val) === "object" ? val.label : val;
+        },
     },
     methods: {
         handleFocus(event) {
-            console.log(this)
-            // console.log("handleFocus");
             this.isActive = true
             clearTimeout(this.__blurTimeOut)
             this.__isBlur = this.__blurEvent = null
@@ -199,7 +199,6 @@ export default {
             this.$refs.input.focus()
         },
         handleBlur(event) {
-            // console.log(event, "*******");
             clearTimeout(this.__blurTimeOut)
             if (!this.isActive) return
             this.__blurTimeOut = setTimeout(() => {

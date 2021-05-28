@@ -78,7 +78,7 @@ export default {
             const rootNodes = this.getRootNodes(data);
             this.nodeList = this.handleNodeList(rootNodes);
             this.rootData = this.getRootData(rootNodes.length);
-            console.log(this.nodeList, this.rootData, "-------------");
+            // console.log(this.nodeList, this.rootData, "-------------");
         },
         /**
          * 获取根数据
@@ -177,7 +177,7 @@ export default {
                             // 树结构层级
                             obj.linkIndex = `${parent.linkIndex},${index}`;
                             obj.linkLabel = `${parent.linkLabel}/${data[labelKey]}`;
-                            obj.linkValue && obj.linkValue.push(data[valueKey]);
+                            parent.linkValue && (obj.linkValue = [...parent.linkValue, data[valueKey]]);
                             parent.childIds.push(id);
                             parent.childIndexs.push(_index);
                         } else {
@@ -357,15 +357,16 @@ export default {
          */
         getFilterDataByLabel(label) {
             if (!label) return [];
-            // if (typeof label === 'string') label = label.replace(/\s/g, '');
+            if (typeof label === 'string') label = label.replace(/\s/g, '');
             let result = [];
             this.nodeList.forEach((item) => {
                 if (!item.childIndexs || !item.childIndexs.length) {
-                    if (item.linkLabel.indexOf(label) > -1) {
+                    if (`${item.linkLabel}`.replace(/\s/g, '').indexOf(label) > -1) {
                         const linkParentIndexs = item.linkParentIndex
                             ? (item.linkParentIndex + "," + item.index).split(",")
                             : [item.index];
-                        result.push(linkParentIndexs.map((index) => this.nodeList[index]));
+                        const arr = linkParentIndexs.map((index) => this.nodeList[index]);
+                        result.push(arr);
                     }
                 }
             });

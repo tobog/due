@@ -76,6 +76,7 @@ export default {
         size: String,
         theme: String,
         getFieldMap: Function,
+        asyncData: Function,
     },
     methods: {
         getRender(item) {
@@ -105,13 +106,11 @@ export default {
             this.$emit("on-check", node, isMulti)
         },
         hasCheckbox(node) {
-            const isAsync = typeof (node.asyncData || this.asyncData) === "function"
+            const isAsync = typeof (node.data.asyncData || this.asyncData) === "function"
             return (
                 this.selection === "multiple" ||
                 this.selection === "single" ||
-                ((this.selection === "lastMultiple" || this.selection === "lastSingle") &&
-                    !isAsync &&
-                    (!node.childIndexs || node.childIndexs.length === 0))
+                ((this.selection === "lastMultiple" || this.selection === "lastSingle") && !(isAsync || (node.childIndexs && node.childIndexs.length)))
             )
         },
     },

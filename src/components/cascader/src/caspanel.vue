@@ -1,6 +1,6 @@
 <template>
     <div :class="classes" :data-vue-module="$options.name">
-        <div v-if="!nodeList.length || (flatFilterData && !flatFilterData.length)" :class="[_tobogPrefix_ + '-nodata']">
+        <div v-if="!nodeList.length" :class="[_tobogPrefix_ + '-nodata']">
             {{ langs("caspanel.noDataText", noDataText) }}
         </div>
         <template v-else-if="!flatFilterData || !flatFilterData.length">
@@ -145,12 +145,12 @@ export default {
                 this.$set(this.modelList, index, node)
             }
             const hasChildren = this.hasChildren(node)
-            const isAsync = !hasChildren && typeof (node.asyncData || this.asyncData) === "function"
+            const isAsync = !hasChildren && typeof (node.data.asyncData || this.asyncData) === "function"
             const isMulti = this.selection === "multiple" || this.selection === "lastMultiple"
             if (isAsync) {
                 if (node.loading) return
                 this.$set(node, "loading", true)
-                const result = await (node.asyncData || this.asyncData)(node).catch(() => {})
+                const result = await (node.data.asyncData || this.asyncData)(node).catch(() => {})
                 const children = result || node.children
                 this.$set(node, "loading", false)
                 if (Array.isArray(children) && children.length > 0) {
@@ -165,30 +165,31 @@ export default {
             }
             !isMulti && this.handleChange(!hasChildren && !isAsync)
             isAsync && this.$emit("on-async", this.modelList)
-            this.$emit("on-update")
+            this.$emit("on-updateDrop")
         },
         handleSearch(label) {
-            this.flatFilterData = this.getFlatDataByLabel(label)
-            this.$emit("on-update")
+            this.flatFilterData = this.getFilterDataByLabel(label)
+            this.$emit("on-updateDrop")
         },
         handleChange(isOver) {
             if (!isOver) return
             let result = [],
+                resultData = [],
                 valueKey = this.getFieldMap("value")
             if (this.selection === "multiple" || this.selection === "lastMultiple") {
-                const data = this.getLastSelectedData()
-                result = data.map((item) => {
-                    return item.linkValue
-                })
+                resultData = this.getLastSelectedData()
+                result = resultData.map((item) => item.linkValue)
             } else if (this.selection === "single" || this.selection === "lastSingle") {
-                const [data] = this.getLastSelectedData()
-                if (data) {
-                    result = data.linkValue
+                resultData = this.getLastSelectedData()
+                if (resultData[0]) {
+                    result = resultData[0].linkValue
                 }
             } else {
-                result = this.modelList.map((node) => node.data[valueKey])
+                resultData = this.modelList;
+                result = resultData.map((node) => node.data[valueKey])
             }
-            this.$emit("input", result)
+            this.$emit("input", result, resultData);
+            this.$emit("on-change", resultData);
         },
         handleCheck(node) {
             const data = node.data,

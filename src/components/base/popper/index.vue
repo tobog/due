@@ -81,7 +81,7 @@ export default {
             })
         },
         handleChange(...args) {
-            this.$emit("on-visible-change", ...args)
+            this.$emit("on-status", ...args)
         },
         getReference() {
             if (this.reference instanceof HTMLElement) return this.reference

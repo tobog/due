@@ -37,6 +37,7 @@ export default {
         Popper,
     },
     props: {
+        dataVueModule: String,
         placement: String,
         dropStyle: [Object, String],
         transfer: Boolean,
@@ -47,7 +48,6 @@ export default {
         isToggle: Boolean,
         autoClose: Boolean,
         dropClass: [Object, String, Array],
-        dataVueModule: String,
         trigger: {
             type: String,
             default: "click", // 'click','hover','custom'

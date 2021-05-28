@@ -26,7 +26,7 @@
             :clearable="clearable"
             :disabled="disabled"
             :theme="theme"
-            :multiple="selection === 'multiple'"
+            :multiple="selection === 'multiple' || selection === 'lastMultiple'"
             :collapse="collapse"
             :active="visible"
             :size="size"
@@ -53,6 +53,9 @@
             <template v-if="showSuffix" slot="suffix">
                 <slot name="suffix"></slot>
             </template>
+            <template v-if="$scopedSlots.tag" slot="tag" slot-scope="data">
+                <slot name="tag" v-bind="data"></slot>
+            </template>
         </InputBase>
 
         <Caspanel
@@ -71,9 +74,9 @@
             :propsMap="propsMap"
             @input="handleChange"
             @hook:created="updateValueText += 1"
-            @on-update="updatedDrop"
+            @on-updateDrop="updatedDrop"
         >
-            <template v-if="$scopedSlots.default" v-slot="data">
+            <template v-if="$scopedSlots.default" slot-scope="data">
                 <slot v-bind="data"></slot>
             </template>
         </Caspanel>
@@ -136,16 +139,18 @@ export default {
         getValueText() {
             if (!this.$refs.caspanel && this.updateValueText) return
             const data = this.$refs.caspanel.getDataByValue(this.model),
-                value = this.getFieldMap("value"),
-                label = this.getFieldMap("label"),
+                valueKey = this.getFieldMap("value"),
+                labelKey = this.getFieldMap("label"),
                 levelFn = (item) => {
                     let result = []
                     if (this.showAllLevels) {
-                        result = item.map((node) => (node.data[label] == void 0 ? node.data[value] : node.data[label]))
+                        result = item.map((node) =>
+                            node.data[labelKey] == void 0 ? node.data[valueKey] : node.data[labelKey]
+                        )
                     } else {
                         item = item[item.length - 1]
                         if (item) {
-                            result = [item.data[label] == void 0 ? item.data[value] : item.data.label]
+                            result = [item.data[labelKey] == void 0 ? item.data[valueKey] : item.data[labelKey]]
                         }
                     }
                     return result.join(" / ")
@@ -173,13 +178,13 @@ export default {
         },
         handleKeydown(event) {
             if (event.keyCode === 13) {
-                // if (this.__model) {
-                //     this.updateModel(this.__model)
-                //     this.__model = null
-                // }
                 this.visible = false
             }
-            if ((this.selection === "multiple" || this.selection === "lastMultiple") && event.keyCode === 46 && !event.target.value) {
+            if (
+                (this.selection === "multiple" || this.selection === "lastMultiple") &&
+                event.keyCode === 46 &&
+                !event.target.value
+            ) {
                 this.handleClearTag(this.model.length - 1)
             }
         },
@@ -190,17 +195,12 @@ export default {
             }
         },
         handleInput(event) {
-            debugger
             const value = event.target.value || ""
             this.visible = true
-            if (!value && this.selection !== "multiple") this.updateModel([])
+            if (!value && (this.selection !== "multiple" && this.selection !== "lastMultiple")) this.updateModel([])
             this.$refs.caspanel && this.$refs.caspanel.handleSearch(value)
         },
         handleBlur(event) {
-            // if (this.__model) {
-            //     this.updateModel(this.__model)
-            //     this.__model = null
-            // }
             this.$nextTick(() => {
                 this.updateValueText += 1
                 this.$emit("on-change", this.model, event)
@@ -233,6 +233,7 @@ export default {
             this.handleDispatch("on-change", this.model)
         },
         handleVisible(val) {
+            console.log(val, "handleVisible")
             this.updateValueText += 1
             this.$emit("on-visible-change", val)
             clearTimeout(this.__caspanelTime)

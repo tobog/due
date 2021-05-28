@@ -185,6 +185,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
             align-self: stretch;
             max-width: 95%;
             flex-shrink: 2;
+            min-height: 28px;
         }
     }
 
