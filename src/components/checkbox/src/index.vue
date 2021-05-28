@@ -16,7 +16,7 @@
                 </template>
             </span>
         </slot>
-        <span v-if="$slots.default || showLabel" :class="[_tobogPrefix_ + '-label']">
+        <span v-if="$slots.default || !!label || label === 0" :class="[_tobogPrefix_ + '-label']">
             <slot>{{ label }}</slot>
         </span>
         <input
@@ -117,9 +117,6 @@ export default {
         },
     },
     computed: {
-        showLabel() {
-            return validVal(this.label);
-        },
         getBorderStyle() {
             let style = {},
                 color = this.getGlobalData(

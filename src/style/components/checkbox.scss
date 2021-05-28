@@ -29,6 +29,7 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
     outline: none !important;
     vertical-align: middle;
     padding: 1px;
+    background-color: initial;
 
     &:hover>&-inner {
         box-shadow: 0 0 3px -1px $primary;
@@ -111,10 +112,10 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
 
         &.#{$prefix-cls}-checked {
             &>.#{$prefix-cls}-inner {
-                background-color: $white;
+                background-color: transparent;
 
                 &::after {
-                    transition: all 0.3s ease-in-out;
+                    transition: all 0.2s ease-in-out;
                     content: '';
                     background-color: $primary;
                     width: calc(100% - 6px);
@@ -196,7 +197,7 @@ $value in $colors-map {
         }
 
         &.#{$prefix-cls}-radio.#{$prefix-cls}-checked:not(.#{$prefix-cls}-disabled)>.#{$prefix-cls}-inner {
-            background-color: $white;
+            background-color: transparent;
 
             &::after {
                 background-color: $value;
