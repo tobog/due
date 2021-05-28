@@ -30,7 +30,6 @@
                 class="margin-bottom-20"
                 :data="data"
                 :asyncData="asyncData"
-                :render="renderfn"
                 v-bind="config.Caspanel"
             ></vCaspanel>
         </template>
@@ -141,14 +140,6 @@ export default {
         }
     },
     methods: {
-        renderfn(h, {data, index}) {
-            return (
-                <span>
-                    {data.data.label}
-                    {index}
-                </span>
-            )
-        },
         async asyncData() {
             return new Promise((a, b) => {
                 setTimeout(() => {
@@ -187,7 +178,6 @@ export default {
                         class="margin-bottom-20"
                         :data="data"
                         :asyncData="asyncData"
-                        :render="renderfn"
                         v-bind="config.Caspanel"
                     ></vCaspanel>
 					`

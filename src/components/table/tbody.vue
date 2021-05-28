@@ -83,7 +83,7 @@
 import Cell from "./render"
 import Icons from "../icons/src/index"
 import {unit} from "../../utils/tool"
-import Checkbox from "../checkbox/index"
+import Checkbox from "../checkbox/src/index"
 
 export default {
     name: "TableBody",

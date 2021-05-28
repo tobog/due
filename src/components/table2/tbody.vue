@@ -68,7 +68,7 @@ import Cell from './render';
 import Icons from "../icons/src/index";
 import { typeOf } from '../../utils/tool';
 import Json from '../../utils/json';
-import Checkbox from "../checkbox/index";
+import Checkbox from "../checkbox/src/index";
 
 export default {
 	name: 'TableBody',

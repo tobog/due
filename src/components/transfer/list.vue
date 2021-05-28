@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import Checkbox from "../checkbox/index";
+import Checkbox from "../checkbox/src/index";
 import Input from "../input/index";
 // import Render from "../render";
 

@@ -27,9 +27,9 @@
                         :index="index"
                         :data="node"
                     ></Render>
-                    <templatet v-else>
+                    <template v-else>
                         {{ node.data[getFieldMap("label")] }}
-                    </templatet>
+                    </template>
                 </slot>
             </span>
             <Icons
@@ -43,7 +43,7 @@
 </template>
 <script>
 import Icons from "../../icons/src/index"
-import Checkbox from "../../checkbox"
+import Checkbox from "../../checkbox/src"
 import Render from "./render"
 export default {
     name: "Caspanel-Item",

@@ -91,7 +91,7 @@
 <script>
 import Icons from "../icons/src/index";
 import Render from "./render";
-import Checkbox from "../checkbox/index";
+import Checkbox from "../checkbox/src/index";
 import ueTransition from "../base/transition";
 
 export default {

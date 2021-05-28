@@ -227,7 +227,7 @@ export default {
             if (val === this.model) return
             if (!val) val = []
             if (!Array.isArray(val)) val = [val]
-            if (this.selection === "multiple" && val[0] != null && !Array.isArray(val[0])) val = [val]
+            if ((this.selection === "multiple" || this.selection === "lastMultiple") && val[0] != null && !Array.isArray(val[0])) val = [val]
             this.model = val
             this.$emit("input", this.model)
             this.handleDispatch("on-change", this.model)
@@ -238,7 +238,7 @@ export default {
             this.$emit("on-visible-change", val)
             clearTimeout(this.__caspanelTime)
             this.$nextTick(() => {
-                if (this.selection === "multiple") this.$refs.inputBase.getInputDom().value = ""
+                if (this.selection === "multiple" || this.selection === "lastMultiple") this.$refs.inputBase.getInputDom().value = ""
                 this.__caspanelTime = setTimeout(() => {
                     this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null)
                 }, 200)

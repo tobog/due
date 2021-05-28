@@ -68,7 +68,7 @@ import Sort from "../sort/index";
 import Dropdown from "../dropdown/index";
 import DropdownItem from "../dropdown/dropdownItem";
 import Icons from "../icons/src/index";
-import Checkbox from "../checkbox/index";
+import Checkbox from "../checkbox/src/index";
 import { DragMove } from "../../utils/dom";
 import { unit } from "../../utils/tool";
 export default {

@@ -61,7 +61,7 @@ import Sort from "../sort/index";
 import Dropdown from "../dropdown/index";
 import Tooltip from "../tooltip/index";
 import Icons from "../icons/src/index";
-import Checkbox from "../checkbox/index";
+import Checkbox from "../checkbox/src/index";
 import DragMove from '../../directives/drag-move';
 import { getStyle } from '../../utils/dom';
 export default {
