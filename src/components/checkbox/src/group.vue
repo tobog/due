@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import emitter from '../../utils/emitter';
+import emitter from '../../../utils/emitter';
 import CheckBox from './index';
 export default {
     name: 'CheckBoxGroup',

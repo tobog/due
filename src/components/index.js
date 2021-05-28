@@ -12,6 +12,9 @@ import Carousel from "./carousel/src/index"
 import CarouselItem from "./carousel/src/carousel-item"
 import Cascader from "./cascader/src"
 import Caspanel from "./cascader/src/caspanel"
+import CheckBox from "./checkbox/src"
+import CheckBoxGroup from "./checkbox/src/group"
+
 
 import Icon from "./icons/src/index"
 
@@ -30,8 +33,7 @@ import Table, { Tablefix } from "./table"
 import Fluid from "./fluid"
 import FluidPanel from "./fluid/fluidPanel"
 
-import CheckBox from "./checkbox"
-import CheckBoxGroup from "./checkbox/group"
+
 import Radio from "./radio"
 import RadioGroup from "./radio/group"
 import Switch from "./switchs"

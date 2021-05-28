@@ -37,12 +37,12 @@
 </template>
 
 <script>
-import emitter from "../../utils/emitter";
-import Icons from "../icons/src/index";
-import Color from "../../utils/color";
-import { findComponentUpward } from "../../utils/findComponent";
-import { unit, validVal } from "../../utils/tool";
-import globalMixin from "../../mixins/global";
+import emitter from "../../../utils/emitter";
+import Icons from "../../icons/src/index";
+import Color from "../../../utils/color";
+import { findComponentUpward } from "../../../utils/findComponent";
+import { unit, validVal } from "../../../utils/tool";
+import globalMixin from "../../../mixins/global";
 export default {
     name: "CheckBox",
     componentName: "CheckBox",
