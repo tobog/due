@@ -172,6 +172,11 @@ $prefix-cls-picker: #{$prefix}-colorpicker;
         &:focus {
             border-color: $primary;
         }
+
+        &[readonly=readonly] {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     }
 
     &-sort {

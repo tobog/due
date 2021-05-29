@@ -137,12 +137,14 @@ export default {
             } else if (this.demoType === "hsl") {
                 let data = Color.RGBtoHSL(...this.getRGBA);
                 val = this.alpha
-                    ? `hsla(${data[0]},${data[1]}%,${data[2]}%,${data[3]})`
-                    : `hsl(${data[0]},${data[1]}%,${data[2]}%)`;
+                    ? `hsla(${parseInt(data[0])},${parseInt(data[1])}%,${parseInt(data[2])}%,${data[3]})`
+                    : `hsl(${parseInt(data[0])},${parseInt(data[1])}%,${parseInt(data[2])}%)`;
             } else if (this.demoType === "hsv") {
                 val = this.alpha
-                    ? `hsva(${this.model[0]},${this.model[1]}%,${this.model[2]}%,${this.model[3]})`
-                    : `hsv(${this.model[0]},${this.model[1]}%,${this.model[2]}%)`;
+                    ? `hsva(${parseInt(this.model[0])},${parseInt(this.model[1])}%,${parseInt(this.model[2])}%,${
+                          this.model[3]
+                      })`
+                    : `hsv(${parseInt(this.model[0])},${parseInt(this.model[1])}%,${parseInt(this.model[2])}%)`;
             } else {
                 let data = this.getRGBA;
                 if (!this.alpha) data = data.slice(0, 3);
@@ -249,9 +251,15 @@ export default {
             this.$set(this.model, 2, colors[2]);
         },
         handleInput(event, data, index) {
+            console.log(event);
             let val = event.target.value;
-            if (this.demoType === "hex" && Color.isColor(val)) {
-                this.model = Color.parse(val, "hsv");
+            if (this.demoType === "hex") {
+                if (event.inputType === "deleteContentBackward") {
+                    return;
+                }
+                if (Color.isColor(val)) {
+                    this.model = Color.parse(val, "hsv");
+                }
                 return;
             }
             val = parseInt(val);
@@ -270,6 +278,7 @@ export default {
             return;
         },
         handleScrollStep(e, data, index) {
+            if (!this.alpha && index == 3) return;
             let alpha = "";
             if (this.demoType === "hex") {
                 alpha = this.alpha ? `${data}`.slice(7, 9) : "";
