@@ -1,6 +1,6 @@
 <template>
     <div :class="[_tobogPrefix_]" :data-vue-module="$options.name">
-        <div :class="[_tobogPrefix_ + `-basic`]" :style="{background: `hsl(${model[0]},100%,50%)`}" ref="basic">
+        <div :class="[_tobogPrefix_ + `-basic`]" :style="{ background: `hsl(${model[0]},100%,50%)` }" ref="basic">
             <div :class="[_tobogPrefix_ + '-basic-white']"></div>
             <div :class="[_tobogPrefix_ + '-basic-black']"></div>
             <div :class="[_tobogPrefix_ + '-basic-pointer']" :style="getPointerStyle"></div>
@@ -20,7 +20,7 @@
             </div>
             <div :class="[_tobogPrefix_ + `-sliders`]">
                 <div :class="[_tobogPrefix_ + `-bar`]" @click.self="(event) => handleColor(event, 'color')">
-                    <span ref="color" :style="{left: (model[0] * 100) / 360 + '%'}"></span>
+                    <span ref="color" :style="{ left: (model[0] * 100) / 360 + '%' }"></span>
                 </div>
                 <div v-if="alpha" :class="[_tobogPrefix_ + `-alpha-wrapper`]">
                     <div
@@ -28,7 +28,7 @@
                         :style="getAlphaStyle"
                         @click.self="(event) => handleColor(event, 'alpha')"
                     >
-                        <span ref="alpha" :style="{left: model[3] * 100 + '%'}"></span>
+                        <span ref="alpha" :style="{ left: calcAlphaPos(model[3]) + '%' }"></span>
                     </div>
                 </div>
             </div>
@@ -40,8 +40,9 @@
                         type="text"
                         :class="[_tobogPrefix_ + `-input`]"
                         :readonly="!alpha && index == 3"
+                        :value="handleInputVal(item, getDemoData[2][index])"
                         @input="(event) => handleInput(event, getDemoData[1], index)"
-                        :value="item + getDemoData[2][index]"
+                        @mousewheel.prevent.stop="(event) => handleScrollStep(event, item, index)"
                     />
                     <span>{{ getDemoData[0][index] }}</span>
                 </div>
@@ -56,19 +57,15 @@
                 <span v-for="index in 19" :key="index" tabindex="-1" @click="handleSwitchColor(index)"></span>
                 <span v-for="color in colors" :key="color" tabindex="-1" @click="handleSwitchColor(color)"></span>
             </div>
-            <!-- <div :class="[_tobogPrefix_ + `-sort`]" @click="handleSwitch">
-                <span></span>
-                <span></span>
-            </div> -->
         </div>
         <slot></slot>
     </div>
 </template>
 <script>
-import {DragMove} from "../../../utils/dom"
-import Color from "../../../utils/color"
-import Clipboard from "../../../utils/clipboard"
-import Icons from "../../icons/src/index"
+import { DragMove } from "../../../utils/dom";
+import Color from "../../../utils/color";
+import Clipboard from "../../../utils/clipboard";
+import Icons from "../../icons/src/index";
 export default {
     name: "Color",
     componentName: "Color",
@@ -83,7 +80,7 @@ export default {
         colors: {
             type: Array,
             default() {
-                return []
+                return [];
             },
         },
         size: [Number, String],
@@ -94,130 +91,135 @@ export default {
             ready: false,
             demoType: this.type || "rgb",
             copySuccessed: false,
-        }
+        };
+    },
+    created() {
+        window.Color = Color;
+        let d = Color.RGBtoHSL(255, 0, 80);
+        Color.HSLtoRGB(...d);
     },
     mounted() {
         this.$nextTick(() => {
-            this.dragMove()
-            this.ready = true
+            this.dragMove();
+            this.ready = true;
             this._clipBoard = new Clipboard(this.$refs.copy, {
                 container: this.$el,
                 copy: (value) => {
-                    console.log(value, "copySuccessed---------")
-                    this.copySuccessed = true
+                    console.log(value, "copySuccessed---------");
+                    this.copySuccessed = true;
                 },
-            })
-        })
+            });
+        });
     },
     computed: {
         getRGBA() {
-            return Color.HSVtoRGB(...this.model)
+            return Color.HSVtoRGB(...this.model);
         },
         getAlphaStyle() {
-            const rgba = this.getRGBA
+            const rgba = this.getRGBA;
             return {
                 background: `linear-gradient(to right, rgba(${rgba[0]},${rgba[1]},${rgba[2]},0) 0%, rgba(${rgba[0]},${rgba[1]},${rgba[2]},1) 100%)`,
-            }
+            };
         },
         getPointerStyle() {
-            const {clientWidth = 0, clientHeight = 0} = (this.ready && this.$refs.basic) || {}
+            const { clientWidth = 0, clientHeight = 0 } = (this.ready && this.$refs.basic) || {};
             return {
                 left: (this.model[1] / 100) * clientWidth + "px",
                 top: (1 - this.model[2] / 100) * clientHeight + "px",
-            }
+            };
         },
         getModel() {
-            let val
+            let val;
             if (this.demoType === "hex") {
-                let data = Color.RGBtoHex(...this.getRGBA)
-                if (!this.alpha) data = data.slice(0, 3)
-                val = "#" + data.join("")
+                let data = Color.RGBtoHex(...this.getRGBA);
+                if (!this.alpha) data = data.slice(0, 3);
+                val = "#" + data.join("");
             } else if (this.demoType === "hsl") {
-                let data = Color.RGBtoHSL(...this.getRGBA)
+                let data = Color.RGBtoHSL(...this.getRGBA);
                 val = this.alpha
                     ? `hsla(${data[0]},${data[1]}%,${data[2]}%,${data[3]})`
-                    : `hsl(${data[0]},${data[1]}%,${data[2]}%)`
+                    : `hsl(${data[0]},${data[1]}%,${data[2]}%)`;
             } else if (this.demoType === "hsv") {
                 val = this.alpha
                     ? `hsva(${this.model[0]},${this.model[1]}%,${this.model[2]}%,${this.model[3]})`
-                    : `hsv(${this.model[0]},${this.model[1]}%,${this.model[2]}%)`
+                    : `hsv(${this.model[0]},${this.model[1]}%,${this.model[2]}%)`;
             } else {
-                let data = this.getRGBA
-                if (!this.alpha) data = data.slice(0, 3)
-                val = this.alpha ? `rgba(${data.join(",")})` : `rgb(${data.join(",")})`
+                let data = this.getRGBA;
+                if (!this.alpha) data = data.slice(0, 3);
+                val = this.alpha ? `rgba(${data.join(",")})` : `rgb(${data.join(",")})`;
             }
-            return val
+            return val;
         },
         getDemoData() {
             if (this.demoType === "hex") {
-                const data = this.alpha ? this.getRGBA : this.getRGBA.slice(0, 3)
-                return [["HEX"], ["#" + Color.RGBtoHex(...data).join("")], [""]]
+                const data = Color.RGBtoHex(...this.getRGBA);
+                return [["HEX"], ["#" + (this.alpha ? data.join("") : data.slice(0, 3).join(""))], [""]];
             }
             if (this.demoType === "hsl") {
-                return [["H", "S", "L", "A"], Color.RGBtoHSL(...this.getRGBA), ["", "%", "%", ""]]
+                return [["H", "S", "L", "A"], Color.RGBtoHSL(...this.getRGBA), ["", "%", "%", ""]];
             }
             if (this.demoType === "hsv") {
-                return [["H", "S", "V", "A"], this.model, ["", "%", "%", ""]]
+                return [["H", "S", "V", "A"], this.model, ["", "%", "%", ""]];
             }
-            return [["R", "G", "B", "A"], this.getRGBA, ["", "", "", ""]]
+            return [["R", "G", "B", "A"], this.getRGBA, ["", "", "", ""]];
         },
     },
     methods: {
         dragMove() {
-            const {color, alpha, basic} = this.$refs
+            const { color, alpha, basic } = this.$refs;
             if (color) {
-                this._colorDragMove = new DragMove(color, {style: ["left"]}, (obj) => this.handlePos("color", obj))
+                this._colorDragMove = new DragMove(color, { style: ["left"] }, (obj) => this.handlePos("color", obj));
             }
             if (alpha) {
-                this._alphaDragMove = new DragMove(alpha, {style: ["left"]}, (obj) => this.handlePos("alpha", obj))
+                this._alphaDragMove = new DragMove(alpha, { style: ["left"] }, (obj) => this.handlePos("alpha", obj));
             }
             if (basic) {
-                this._basicDragMove = new DragMove(null, {props: [], boundaryElement: basic}, (obj) =>
+                this._basicDragMove = new DragMove(null, { props: [], boundaryElement: basic }, (obj) =>
                     this.handleColor(obj, "basic")
-                )
+                );
             }
         },
         handlePos(type, obj) {
-            const {data, distance, element} = obj,
-                clientWidth = element.offsetParent.clientWidth
-            let val = parseFloat(data.left) + distance[0]
-            if (val < 0) val = 0
-            if (val > clientWidth) val = clientWidth
+            const { data, distance, element } = obj,
+                clientWidth = element.offsetParent.clientWidth;
+            let val = parseFloat(data.left) + distance[0];
+            if (val < 0) val = 0;
+            if (val > clientWidth) val = clientWidth;
             if (type === "color") {
-                let value = Math.round((val / clientWidth) * 360)
-                this.$set(this.model, 0, value >= 360 ? 359 : value)
+                let value = Math.round((val / clientWidth) * 360);
+                this.$set(this.model, 0, value >= 360 ? 359 : value);
             } else if (type === "alpha") {
-                this.$set(this.model, 3, (val / clientWidth).toFixed(2))
+                this.$set(this.model, 3, (val / clientWidth).toFixed(2));
             }
         },
         handleColor(event, type) {
-            const value = [100, 50]
+            const value = [100, 50];
             if (type === "basic") {
-                const {clientWidth, clientHeight} = event.boundaryElement
-                value[0] = (event.boundaryPosition.left / clientWidth) * 100
-                value[1] = (1 - event.boundaryPosition.top / clientHeight) * 100
+                const { clientWidth, clientHeight } = event.boundaryElement;
+                value[0] = (event.boundaryPosition.left / clientWidth) * 100;
+                value[1] = (1 - event.boundaryPosition.top / clientHeight) * 100;
             } else {
-                const {clientWidth, clientHeight} = event.currentTarget
-                const data = event.currentTarget.getBoundingClientRect()
-                value[0] = ((event.clientX - data.left) / clientWidth) * 100
-                value[1] = (1 - (event.clientY - data.top) / clientHeight) * 100
+                const { clientWidth, clientHeight } = event.currentTarget;
+                const data = event.currentTarget.getBoundingClientRect();
+                value[0] = ((event.clientX - data.left) / clientWidth) * 100;
+                value[1] = (1 - (event.clientY - data.top) / clientHeight) * 100;
             }
-            if (value[0] > 100) value[0] = 100
-            if (value[1] > 100) value[1] = 100
+            if (value[0] > 100) value[0] = 100;
+            if (value[1] > 100) value[1] = 100;
             if (type === "color") {
-                this.$set(this.model, 0, Math.round(value[0] * 3.6))
+                this.$set(this.model, 0, Math.round(value[0] * 3.6));
             } else if (type === "alpha") {
-                this.$set(this.model, 3, (value[0] / 100).toFixed(2))
+                this.$set(this.model, 3, (value[0] / 100).toFixed(2));
             } else {
-                this.$set(this.model, 1, Math.round(value[0]))
-                this.$set(this.model, 2, Math.round(value[1]))
+                this.$set(this.model, 1, Math.round(value[0]));
+                this.$set(this.model, 2, Math.round(value[1]));
             }
         },
         handleSwitch() {
-            let data = ["hex", "rgb", "hsl", "hsv"]
-            let index = data.indexOf(this.demoType || "rgb") + 1
-            if (index > 3) index = 0
-            this.demoType = data[index]
+            let data = ["hex", "rgb", "hsl", "hsv"];
+            let index = data.indexOf(this.demoType || "rgb") + 1;
+            if (index > 3) index = 0;
+            this.demoType = data[index];
         },
         handleSwitchColor(value) {
             let colors = {
@@ -240,32 +242,83 @@ export default {
                 17: "#795548",
                 18: "#9e9e9e",
                 19: "#607d8b",
-            }
-            colors = Color.parse(colors[value] || value, "hsv")
-            this.$set(this.model, 0, colors[0])
-            this.$set(this.model, 1, colors[1])
-            this.$set(this.model, 2, colors[2])
+            };
+            colors = Color.parse(colors[value] || value, "hsv");
+            this.$set(this.model, 0, colors[0]);
+            this.$set(this.model, 1, colors[1]);
+            this.$set(this.model, 2, colors[2]);
         },
         handleInput(event, data, index) {
-            let val = event.target.value
+            let val = event.target.value;
             if (this.demoType === "hex" && Color.isColor(val)) {
-                this.model = Color.parse(val, "hsv")
-                return
+                this.model = Color.parse(val, "hsv");
+                return;
             }
-            val = parseInt(val)
-            if (!val && val !== 0) return
-            data = [...data]
-            data[index] = val
+            val = parseInt(val);
+            if (!val && val !== 0) return;
+            data = [...data];
+            data[index] = val;
             if (this.demoType === "hsl") {
-                this.model = Color.HSLtoHSV(...data)
-                return
+                this.model = Color.HSLtoHSV(...data);
+                return;
             }
             if (this.demoType === "hsv") {
-                this.model = data
-                return
+                this.model = data;
+                return;
             }
-            this.model = Color.RGBtoHSV(...data)
-            return
+            this.model = Color.RGBtoHSV(...data);
+            return;
+        },
+        handleScrollStep(e, data, index) {
+            let alpha = "";
+            if (this.demoType === "hex") {
+                alpha = this.alpha ? `${data}`.slice(7, 9) : "";
+                data = parseInt(`${data}`.slice(1, 7) || 0, 16);
+                if (data !== data) data = 0;
+                data = data + (e.wheelDelta > 0 ? 5 : -5);
+            } else {
+                data = parseFloat(data);
+                if (data !== data) data = 0;
+                if (index === 3) {
+                    data = data + (e.wheelDelta > 0 ? 1 : -1);
+                } else {
+                    data = data + (e.wheelDelta > 0 ? 2 : -2);
+                }
+            }
+            if (data <= 0) data = 0;
+            if (this.demoType === "hex") {
+                data = "#" + Number(data).toString(16) + alpha;
+            }
+            if ((!this.demoType || this.demoType === "rgb") && data >= 255) {
+                data = 255;
+            }
+            if (this.demoType === "hsv" || this.demoType === "hsl") {
+                if (index === 0 && data >= 360) {
+                    data = 360;
+                }
+                if ((index === 1 || index === 2) && data >= 100) {
+                    data = 100;
+                }
+            }
+            this.handleInput(
+                {
+                    target: {
+                        value: data + "" + this.getDemoData[2][index],
+                    },
+                },
+                this.getDemoData[1],
+                index
+            );
+        },
+        calcAlphaPos(val) {
+            val = val * 100;
+            if (val < 0) return 0;
+            if (val > 100) return 100;
+            return val;
+        },
+        handleInputVal(val, unit) {
+            if (val && (this.demoType === "hsv" || this.demoType === "hsl")) val = parseInt(val);
+            return val + unit;
         },
     },
     watch: {
@@ -274,32 +327,32 @@ export default {
             deep: true,
             handler(value) {
                 // 纠正Color 类转化不精确问题
-                if (this.__innerModel === value) return
-                console.log(value, "------------")
-                const val = Color.parse(value || "", "hsva")
-                if (val.join("") === this.model.join("") || val.length < 3) return
-                this.model = val
+                if (this.__innerModel === value) return;
+                // console.log(value, "------------");
+                const val = Color.parse(value || "", "hsva");
+                if (val.join("") === this.model.join("") || val.length < 3) return;
+                this.model = val;
             },
         },
         model: {
             deep: true,
             handler() {
                 // 是否内部引起的变化
-                this.__innerModel = this.getModel
-                this.$emit("input", this.getModel)
-                this.$emit("on-change", this.getModel)
+                this.__innerModel = this.getModel;
+                this.$emit("input", this.getModel);
+                this.$emit("on-change", this.getModel);
             },
         },
         type() {
-            this.demoType = this.type
+            this.demoType = this.type;
         },
     },
     beforeDestroy() {
-        this._colorDragMove && this._colorDragMove.destroy()
-        this._alphaDragMove && this._alphaDragMove.destroy()
-        this._basicDragMove && this._basicDragMove.destroy()
-        this._clipBoard && this._clipBoard.destroy()
-        this._clipBoard = this._colorDragMove = this._alphaDragMove = this._basicDragMove = null
+        this._colorDragMove && this._colorDragMove.destroy();
+        this._alphaDragMove && this._alphaDragMove.destroy();
+        this._basicDragMove && this._basicDragMove.destroy();
+        this._clipBoard && this._clipBoard.destroy();
+        this._clipBoard = this._colorDragMove = this._alphaDragMove = this._basicDragMove = null;
     },
-}
+};
 </script>

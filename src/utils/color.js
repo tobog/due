@@ -201,7 +201,7 @@ Color.parse = function (color, type) {
     if (rgba[3] === void 0 || rgba[3] === "") {
         rgba[3] = 1;
     }
-    rgba = rgba.map((val) => Math.min(val, 255));
+    rgba = rgba.map((val) => Color.limit(val));
     rgba[3] = rgba[3].toFixed(2) / 1;
     if (type === 'rgba' || type === 'rgb') {
         return rgba
@@ -222,7 +222,11 @@ Color.isColor = function (color) {
     color = CSS_COLOR[color] || color.replace(/\s*/g, "");
     return hexReg.test(color) || rgbaIntReg.test(color) || rgbaPerReg.test(color) || hslaReg.test(color) || hsvaReg.test(color);
 };
-
+Color.limit = function(val = 0, min = 0, max = 255) {
+    if (val - min < 0) return min;
+    if (val - max > 0) return max;
+    return val - 0;
+}
 Color.concat = function (...colors) {
     let R = 0,
         G = 0,
@@ -265,20 +269,25 @@ Color.HSLtoRGB = Color.prototype.HSLtoRGB = function (H, S, L, A = 1, noMath) {
         G = Hue2RGB(temp1, temp2, H);
         B = Hue2RGB(temp1, temp2, H - 1 / 3);
     }
-    return noMath ? [(R * 255), (G * 255), (B * 255), A] : [Math.round(R * 255), Math.round(G * 255), Math.round(B * 255), A];
+    return noMath ? [Color.limit(R * 255), Color.limit(G * 255), Color.limit(B * 255), A] : [Color.limit(Math.round(R * 255)), Color.limit(Math.round(G * 255)), Color.limit(Math.round(B * 255)), A];
 };
 
 
 Color.HSVtoRGB = Color.prototype.HSVtoRGB = function (H, S, V, A = 1, noMath) {
     S = S / 100;
     V = V / 100;
-    let R,
-        G,
-        B;
+    let R = 0,
+        G = 0,
+        B = 0;
+    if (S < 0) S = 0;
+    if (S > 1) S = 1;
+    if (V < 0) V = 0;
+    if (V > 1) V = 1;
     if (S === 0) {
         R = G = B = V;
     } else {
-        let Hi = Math.floor(H / 60) % 6,
+        H = (H + 360) % 360;
+        let Hi = Math.floor(H / 60),
             f = H / 60 - Hi,
             p = V * (1 - S),
             q = V * (1 - S * f),
@@ -317,7 +326,7 @@ Color.HSVtoRGB = Color.prototype.HSVtoRGB = function (H, S, V, A = 1, noMath) {
                 break;
         }
     }
-    return noMath ? [(R * 255), (G * 255), (B * 255), A] : [Math.round(R * 255), Math.round(G * 255), Math.round(B * 255), A];
+    return noMath ? [Color.limit(R * 255), Color.limit(G * 255), Color.limit(B * 255), A] : [Color.limit(Math.round(R * 255)), Color.limit(Math.round(G * 255)), Color.limit(Math.round(B * 255)), A];
 };
 
 Color.RGBtoHSLV = Color.prototype.RGBtoHSLV = function (R, G, B, A = 1) {
@@ -326,34 +335,36 @@ Color.RGBtoHSLV = Color.prototype.RGBtoHSLV = function (R, G, B, A = 1) {
         delta = max - min,
         hslv = { a: A };
     hslv.l = (max + min) / 510;
-    hslv.v = (max / 255 * 100);
-    if (delta == 0 || max == 0) {
-        hslv.h = hslv.s = hslv.vs = 0;
+    hslv.v = Color.limit(max / 255 * 100, 0, 100);
+    if (delta == 0) {
+        hslv.h = hslv.s = 0;
     } else {
         hslv.s = hslv.l <= 0.5 ? delta / (max + min) : delta / (510 - 510 * hslv.l);
-        if (R == max) {
+        if (R == max && G >= B) {
             hslv.h = (G - B) / delta;
+        }  else if (R == max) {
+            hslv.h = 6 + (G - B) / delta;
         } else if (G == max) {
             hslv.h = 2 + (B - R) / delta;
         } else {
             hslv.h = 4 + (R - G) / delta;
         }
-        hslv.h = (hslv.h * 60 + 360) % 360;
-        hslv.s = (hslv.s * 100);
-        hslv.vs = ((1 - min / max) * 100);
+        hslv.h = Color.limit((hslv.h * 60 + 360) % 360, 0, 360);
+        hslv.s = Color.limit(hslv.s * 100, 0, 100);
     }
-    hslv.l = (hslv.l * 100);
+    hslv.vs = max == 0 ? 0 :  Color.limit((1 - min / max) * 100, 0, 100);
+    hslv.l = Color.limit(hslv.l * 100, 0 ,100);
     return hslv;
 };
 
-Color.RGBtoHSL = Color.prototype.RGBtoHSL = function (R, G, B, A = 1, noMath) {
+Color.RGBtoHSL = Color.prototype.RGBtoHSL = function (R, G, B, A = 1) {
     const data = this.RGBtoHSLV(R, G, B, A);
-    return noMath ? [data.h, data.s, data.l, data.a] : [Math.round(data.h), Math.round(data.s), Math.round(data.l), (data.a)];
+    return [(data.h), (data.s), (data.l), (data.a)];
 };
 
-Color.RGBtoHSV = Color.prototype.RGBtoHSV = function (R, G, B, A = 1, noMath) {
+Color.RGBtoHSV = Color.prototype.RGBtoHSV = function (R, G, B, A = 1) {
     const data = this.RGBtoHSLV(R, G, B, A);
-    return noMath ? [data.h, data.vs, data.v, data.a] : [Math.round(data.h), Math.round(data.vs), Math.round(data.v), (data.a)];
+    return [data.h, data.vs, data.v, data.a];
 };
 
 Color.HSLtoHSV = Color.prototype.HSLtoHSV = function (H, S, L, A = 1, noMath) {
@@ -384,6 +395,10 @@ Color.HextoRGBA = Color.prototype.HextoRGBA = function (color) {
 };
 
 Color.RGBtoHex = function (R, G, B, A) {
+    R = Color.limit(R);
+    G = Color.limit(G);
+    B = Color.limit(B);
+    A = Color.limit(A, 0, 1);
     const pad = function (str = "", length) {
         let len = str.length;
         if (len < length) {
@@ -398,9 +413,9 @@ Color.RGBtoHex = function (R, G, B, A) {
         }
         return str;
     };
-    const result = [pad(Number(R).toString(16), 2), pad(Number(G).toString(16), 2), pad(Number(B).toString(16), 2)];
+    const result = [pad(parseInt(R).toString(16), 2), pad(parseInt(G).toString(16), 2), pad(parseInt(B).toString(16), 2)];
     if (A || A === 0) {
-        result.push(pad(Math.round(Number(A * 255)).toString(16), 2))
+        result.push(pad(Math.round(A * 255).toString(16), 2))
     }
     return result;
 };
@@ -447,7 +462,7 @@ Color.prototype.blend = function (color, alpha) {
     if (!(color instanceof Color)) {
         color = new Color(color);
     }
-    alpha = Math.min(Math.max(alpha, 0), 1);
+    alpha = Color.limit(alpha, 0, 1);
     this.RGBA_INT_DATA = this.RGBA_INT_DATA.map((val, index) => val * (1 - alpha) + color.RGBA_INT_DATA[index] * alpha);
     return this;
 };
@@ -476,7 +491,7 @@ Object.defineProperty(Color.prototype, "alpha", {
         return this.RGBA_INT_DATA[3];
     },
     set(value) {
-        this.RGBA_INT_DATA[3] = Math.min(Math.max(0, value), 1);
+        this.RGBA_INT_DATA[3] = Color.limit(value, 0, 1);
     },
 });
 
