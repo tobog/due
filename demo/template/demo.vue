@@ -45,6 +45,9 @@
     .demo-form-header {
         padding: 10px;
     }
+    .border-none{
+        border: 0 !important
+    }
 }
 </style>
 
@@ -85,13 +88,29 @@
             </vCol>
         </vRow>
         <div class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
+            <vCollapse :value="0">
+                <vCollapseItem>
+                    <pre v-highlight>
+                        <code v-text="getFormatCode" class="html"></code>
+                    </pre>
+                    <template slot="footer" slot-scope="data">
+                        <div class="p-10 text-center" @click="data.toggle">{{ data.active ? "隐藏" : "显示" }}代码</div>
+                    </template>
+                </vCollapseItem>
+            </vCollapse>
         </div>
         <div v-for="(item, key) in getConfig" :key="key" class="demo-props-table">
-            <h2 class="demo-header">{{ key }} 参数说明- {{ item.title || "Props & Events" }}</h2>
-            <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
+            <h2 class="demo-header border-none">{{ key }} 参数说明- {{ item.title || "Props & Events" }}</h2>
+            <vCollapse>
+                <vCollapseItem>
+                    <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
+                    <template slot="footer" slot-scope="data">
+                        <div class="p-10 text-center" @click="data.toggle">
+                            {{ data.active ? "隐藏" : "显示" }}参数说明
+                        </div>
+                    </template>
+                </vCollapseItem>
+            </vCollapse>
         </div>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>
@@ -110,7 +129,7 @@
 //     options: "false|top|bottom", // 可选值
 //     explain: "在固定状态发生改变时触发",
 // }
-import FormEdit from "./formedit"
+import FormEdit from "./formedit";
 export default {
     components: {
         FormEdit,
@@ -121,7 +140,7 @@ export default {
         config: {
             type: [Array, Object],
             default() {
-                return []
+                return [];
             },
         },
         code: String,
@@ -143,40 +162,40 @@ export default {
                     --disabled: #151518;
                     --hover: #000;
             }`,
-        }
+        };
     },
     watch: {
         formData: {
             deep: true,
             handler(val) {
-                this.$emit("on-formData", val)
+                this.$emit("on-formData", val);
             },
         },
     },
     computed: {
         getConfig() {
-            if (!this.config) return {}
+            if (!this.config) return {};
             if (Array.isArray(this.config)) {
                 return {
                     component: {
                         title: "Props & Events",
                         data: this.config,
                     },
-                }
+                };
             }
-            return this.config
+            return this.config;
         },
         getFormatCode() {
             let code = (this.code || "").replace(/v-bind=CODE(\.\w+)?/g, (match, reg) => {
                 // console.log(match, reg);
-                return `v-bind=${this.getCodeString(reg ?  this.formData[reg.slice(1)] : this.formData)}`
+                return `v-bind=${this.getCodeString(reg ? this.formData[reg.slice(1)] : this.formData)}`;
             });
             return code.replace(/[' ']{20}/g, function() {
                 // const reg = arguments[0],
                 //     leng = reg.length
                 // console.log(arguments, leng)
-                return '\n'
-            })
+                return "\n";
+            });
         },
         getColumns() {
             return [
@@ -205,8 +224,8 @@ export default {
                     title: "可选值",
                     key: "options",
                     render(h, data) {
-                        let opts = data.row.options || []
-                        return <div class="table-opt">{opts.length > 20 ? "" : opts.join(",")}</div>
+                        let opts = data.row.options || [];
+                        return <div class="table-opt">{opts.length > 20 ? "" : opts.join(",")}</div>;
                         // console.log(data);
                     },
                 },
@@ -214,17 +233,17 @@ export default {
                 //     title: "切换",
                 //     key: "options",
                 // },
-            ]
+            ];
         },
     },
     methods: {
         getCodeString(val = {}) {
             try {
-                return JSON.stringify(val)
+                return JSON.stringify(val);
             } catch (error) {
-                return val
+                return val;
             }
         },
     },
-}
+};
 </script>

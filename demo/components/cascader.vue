@@ -163,7 +163,7 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vCascader
+            return `<Cascader
                         class="margin-bottom-20"
                         v-model="value1"
                         v-bind="config.Cascader"
@@ -173,13 +173,13 @@ export default {
                         <template v-slot="{data, index}">
                             <span>{{ data.data.label }}{{ index }}</span>
                         </template>
-                    </vCascader>
-                    <vCaspanel
+                    </Cascader>
+                    <Caspanel
                         class="margin-bottom-20"
                         :data="data"
                         :asyncData="asyncData"
                         v-bind="config.Caspanel"
-                    ></vCaspanel>
+                    ></Caspanel>
 					`
         },
         getConfig() {

@@ -1,5 +1,5 @@
 $prefix-cls: #{$prefix}-collapse;
-$prefix-cls-panel: #{$prefix}-collapseitem;
+$prefix-cls-panel: #{$prefix}-collapse-item;
 
 .#{$prefix-cls} {
     @include baseStyle;
@@ -9,8 +9,12 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
     overflow: overlay;
     list-style: none;
 
-    .#{$prefix-cls-panel}:first-child > .#{$prefix-cls-panel}-header {
+    .#{$prefix-cls-panel}:first-child>.#{$prefix-cls-panel}-header {
         border-top: none;
+    }
+
+    .#{$prefix-cls-panel}:not(:last-child)>.#{$prefix-cls-panel}-footer {
+        border-bottom: 1px solid $border;
     }
 
     &-simple {
@@ -18,9 +22,11 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
         border-left: 0;
         border-radius: 0;
         background-color: $white;
-        .#{$prefix-cls-panel}-active > .#{$prefix-cls-panel}-header {
+
+        .#{$prefix-cls-panel}-active>.#{$prefix-cls-panel}-header {
             border-bottom: 0;
         }
+
         .#{$prefix-cls}-simple {
             border-bottom: 0;
         }
@@ -35,13 +41,15 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
 
 .#{$prefix-cls-panel} {
     list-style: none;
-    &-active > &-header {
+
+    &-active>&-header {
         border-bottom-color: $border;
 
-        & > .#{$prefix}-icons {
+        &>.#{$prefix}-icons {
             transform: rotate(90deg);
         }
     }
+
     &-header {
         max-width: 100%;
         height: 36px;
@@ -56,11 +64,12 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
         transition: all 0.2s ease-in-out;
         user-select: none;
 
-        & > .#{$prefix}-icons {
+        &>.#{$prefix}-icons {
             transition: all 0.3s ease;
             margin: 0 8px;
         }
     }
+
     &-content {
         margin: 0;
         max-width: 100%;
@@ -69,27 +78,42 @@ $prefix-cls-panel: #{$prefix}-collapseitem;
         overflow: auto;
         background-color: $backColor;
     }
-    &-disabled > &-header,
-    &-disabled > &-content {
+
+    &-disabled>&-header,
+    &-disabled>&-content {
         color: $sub-content;
+    }
+
+    &-footer {
+        cursor: pointer;
+    }
+
+    :not(:first-child)>&-footer:nth-child(2),
+    &>&-footer:nth-child(3),
+    &-active>&-footer:last-child {
+        border-top: 1px solid $border;
     }
 }
 
 .#{$prefix-cls} {
     &-size-small {
         font-size: $subFont;
-        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+
+        .#{$prefix-cls-panel}>.#{$prefix-cls-panel}-header {
             height: 32px;
         }
     }
+
     &-size-medium {
-        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+        .#{$prefix-cls-panel}>.#{$prefix-cls-panel}-header {
             height: 42px;
         }
     }
+
     &-size-large {
         font-size: $titleFont;
-        .#{$prefix-cls-panel} > .#{$prefix-cls-panel}-header {
+
+        .#{$prefix-cls-panel}>.#{$prefix-cls-panel}-header {
             height: 48px;
         }
     }

@@ -13,7 +13,7 @@
             <vCheckBox v-model="val" true-value="2" v-bind="config.Checkbox"></vCheckBox>
             <vCheckBox v-model="val" true-value="3" v-bind="config.Checkbox"></vCheckBox>
             <vCheckBox v-model="val" :true-value="4" v-bind="config.Checkbox"></vCheckBox>
-            <div class="margin-20">vCheckBoxGroup{{ val2 }}</div>
+            <div class="margin-20">CheckBoxGroup{{ val2 }}</div>
             <vCheckBoxGroup v-model="val2" v-bind="config.CheckboxGroup">
                 <vCheckBox true-value="3" v-bind="config.Checkbox"></vCheckBox>
                 <vCheckBox true-value="1" v-bind="config.Checkbox"></vCheckBox>
@@ -36,19 +36,19 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vCheckBox v-model="val1" true-value="1" false-value="0" v-bind="config.Checkbox"></vCheckBox>
-                    <vCheckBox v-model="val" true-value="1" v-bind="config.Checkbox"></vCheckBox>
-                    <vCheckBox v-model="val" true-value="2" v-bind="config.Checkbox"></vCheckBox>
-                    <vCheckBox v-model="val" true-value="3" v-bind="config.Checkbox"></vCheckBox>
-                    <vCheckBox v-model="val" :true-value="4" v-bind="config.Checkbox"></vCheckBox>
-                    <div class="margin-20">vCheckBoxGroup{{ val2 }}</div>
-                    <vCheckBoxGroup v-model="val2" v-bind="config.CheckboxGroup">
-                        <vCheckBox true-value="3" v-bind="config.Checkbox"></vCheckBox>
-                        <vCheckBox true-value="1" v-bind="config.Checkbox"></vCheckBox>
-                        <vCheckBox true-value="2" v-bind="config.Checkbox"></vCheckBox>
-                        <vCheckBox :true-value="4" v-bind="config.Checkbox"></vCheckBox>
-                        <vCheckBox true-value="4" v-bind="config.Checkbox"></vCheckBox>
-                    </vCheckBoxGroup>
+            return `<CheckBox v-model="val1" true-value="1" false-value="0" v-bind="config.Checkbox"></CheckBox>
+                    <CheckBox v-model="val" true-value="1" v-bind="config.Checkbox"></CheckBox>
+                    <CheckBox v-model="val" true-value="2" v-bind="config.Checkbox"></CheckBox>
+                    <CheckBox v-model="val" true-value="3" v-bind="config.Checkbox"></CheckBox>
+                    <CheckBox v-model="val" :true-value="4" v-bind="config.Checkbox"></CheckBox>
+                    <div class="margin-20">CheckBoxGroup{{ val2 }}</div>
+                    <CheckBoxGroup v-model="val2" v-bind="config.CheckboxGroup">
+                        <CheckBox true-value="3" v-bind="config.Checkbox"></CheckBox>
+                        <CheckBox true-value="1" v-bind="config.Checkbox"></CheckBox>
+                        <CheckBox true-value="2" v-bind="config.Checkbox"></CheckBox>
+                        <CheckBox :true-value="4" v-bind="config.Checkbox"></CheckBox>
+                        <CheckBox true-value="4" v-bind="config.Checkbox"></CheckBox>
+                    </CheckBoxGroup>
 					`;
         },
         getConfig() {

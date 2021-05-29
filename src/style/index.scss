@@ -10,11 +10,12 @@
     font-weight: normal;
     font-style: normal;
 }
+@import 'common';
 
+@import 'box';
 
 @import 'animation/index';
 
-@import 'common';
 
 @import 'grid';
 

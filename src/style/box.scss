@@ -1,0 +1,172 @@
+
+
+.inline {
+    display: inline;
+}
+
+.block {
+    display: block;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+.flex {
+    display: flex;
+}
+.justify-center{
+    justify-content: center;
+}
+.align-center{
+   align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.relative {
+    position: relative;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.auto-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.position-middle {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.position-center {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.position-core {
+    @extend .position-middle;
+    @extend .position-center;
+    transform: translate(-50%, -50%);
+}
+
+@each $size in 10 12 13 14 16 18 20 24 28 32 {
+    .font-#{$size} {
+        font-size: #{$size}px;
+    }
+    .lh-#{$size} {
+        line-height: #{$size}px;
+    }
+}
+
+.m-auto {
+    margin: auto;
+}
+.ml-auto {
+    margin-left: auto;
+}
+.mr-auto {
+    margin-right: auto;
+}
+
+
+@for $i from 0 through 10 {
+    $box: $i * 5;
+
+    .m-#{$box} {
+        margin: #{$box}px;
+    }
+
+    .mt-#{$box} {
+        margin-top: #{$box}px;
+    }
+
+    .ml-#{$box} {
+        margin-left: #{$box}px;
+    }
+
+    .mr-#{$box} {
+        margin-right: #{$box}px;
+    }
+
+    .mb-#{$box} {
+        margin-bottom: #{$box}px;
+    }
+
+    .p-#{$box} {
+        padding: #{$box}px;
+    }
+
+    .pt-#{$box} {
+        padding-top: #{$box}px;
+    }
+
+    .pl-#{$box} {
+        padding-left: #{$box}px;
+    }
+
+    .pr-#{$box} {
+        padding-right: #{$box}px;
+    }
+
+    .pb-#{$box} {
+        padding-bottom: #{$box}px;
+    }
+}
+
+@for $i from 1 through 20 {
+    $size: $i * 10;
+
+    .w-#{$size} {
+        width: #{$size}px;
+    }
+
+    $per: $i * 5;
+
+    .w-#{$per}per {
+        width: $per * 1%;
+    }
+
+    .h-#{$per}per {
+        height: $per * 1%;
+    }
+}
+
+@for $i from 1 through 10 {
+    $size: $i * 10;
+
+    .w-#{$size}v {
+        width: #{$size}vw;
+    }
+    .h-#{$size}v {
+        height: #{$size}vh;
+    }
+}

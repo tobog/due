@@ -15,6 +15,9 @@ import Caspanel from "./cascader/src/caspanel"
 import CheckBox from "./checkbox/src"
 import CheckBoxGroup from "./checkbox/src/group"
 import CircleCard from "./circle/src/index"
+import Collapse from "./collapse/src/index"
+import CollapseItem from "./collapse/src/item"
+
 
 import Icon from "./icons/src/index"
 
@@ -85,8 +88,7 @@ import DateBase from "./date/base/index"
 import Datepicker from "./date/datepicker"
 import DatePanel from "./date/index"
 
-import Collapse from "./collapse/index"
-import CollapseItem from "./collapse/item"
+
 import Split from "./split/index"
 import Popper from './base/popper'
 import Dropdown from "./dropdown/index"

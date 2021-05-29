@@ -27,8 +27,8 @@ export default {
     methods: {},
     computed: {
         getCode() {
-            return `<vCircleCard class="margin-10" v bind="config">{{ config.percent }}%</vCircleCard>
-                    <vCircleCard class="margin-10" v-bind="config"></vCircleCard>`;
+            return `<CircleCard class="margin-10" v bind="config">{{ config.percent }}%</CircleCard>
+                    <CircleCard class="margin-10" v-bind="config"></CircleCard>`;
         },
         getConfig() {
             return [
