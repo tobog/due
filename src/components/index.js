@@ -17,6 +17,9 @@ import CheckBoxGroup from "./checkbox/src/group"
 import CircleCard from "./circle/src/index"
 import Collapse from "./collapse/src/index"
 import CollapseItem from "./collapse/src/item"
+import Color from "./color/src/index"
+import ColorPicker from "./color/src/picker"
+
 
 
 import Icon from "./icons/src/index"
@@ -109,8 +112,7 @@ import Tag from "./tag/index"
 import Tabs from "./tabs/index"
 import TabPane from "./tabs/panel"
 
-import Color from "./color"
-import ColorPicker from "./color/picker"
+
 
 export default {
     Config,

@@ -10,7 +10,7 @@
             <div class="mb-20">{{ val }}</div>
             <vCollapse v-model="val" v-bind="config.Collapse">
                 <vCollapseItem title="乔纳森·伊夫">
-                    <vCollapse v-bind="config">
+                    <vCollapse>
                         <vCollapseItem title="史蒂夫·乔布斯">
                             <span>史蒂夫·乔布斯</span>
                             <p>

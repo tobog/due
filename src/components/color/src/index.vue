@@ -65,10 +65,10 @@
     </div>
 </template>
 <script>
-import {DragMove} from "../../utils/dom"
-import Color from "../../utils/color"
-import Clipboard from "../../utils/clipboard"
-import Icons from "../icons/src/index"
+import {DragMove} from "../../../utils/dom"
+import Color from "../../../utils/color"
+import Clipboard from "../../../utils/clipboard"
+import Icons from "../../icons/src/index"
 export default {
     name: "Color",
     componentName: "Color",

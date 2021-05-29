@@ -23,18 +23,12 @@ $prefix-cls-panel: #{$prefix}-collapse-item;
         border-radius: 0;
         background-color: $white;
 
-        .#{$prefix-cls-panel}-active>.#{$prefix-cls-panel}-header {
+        &>.#{$prefix-cls-panel}-active>.#{$prefix-cls-panel}-header {
             border-bottom: 0;
         }
 
         .#{$prefix-cls}-simple {
             border-bottom: 0;
-        }
-
-        .#{$prefix-cls-panel} {
-            &-content {
-                padding-top: 0;
-            }
         }
     }
 }
