@@ -7,33 +7,74 @@ $prefix-cls: #{$prefix}-circlecard;
     z-index: 0;
     overflow: hidden;
     background-color: transparent;
+
     &-svg {
         width: 120px;
         height: 120px;
+        stroke: #eaeef2;
+        stroke-width: 5px;
+        stroke-linecap: round;
     }
+
     &-inner {
         width: 100%;
         text-align: center;
         position: absolute;
         left: 0;
         top: 50%;
-        transform: translateY(-50%) scale(1.2);
-        line-height: 1;
+        transform: translateY(-50%);
+
+        .#{$prefix}-icons[data-inner-icon] {
+            font-size: 50px;
+        }
+        .#{$prefix}-icons[data-inner-icon=ios-alert] {
+            font-size: 30px;
+        }
     }
+
+    &-bar {
+        stroke: #2db7f5;
+        stroke-width: 6px;
+    }
+
     &-size-small &-svg {
         width: 100px;
         height: 100px;
     }
+
     &-size-small &-svg {
         width: 100px;
         height: 100px;
     }
+
     &-size-medium &-svg {
         width: 140px;
         height: 140px;
     }
+
     &-size-large &-svg {
         width: 160px;
         height: 160px;
+    }
+}
+
+// 颜色配置
+$circle-colors-map: (success: $success,
+    warning: $warning,
+    error: $error,
+);
+
+@each $key,
+$value in $circle-colors-map {
+    .#{$prefix-cls}-theme-#{$key} {
+        .#{$prefix-cls} {
+            &-bar {
+                stroke: $value;
+            }
+
+            &-inner {
+                color: $value;
+            }
+        }
     }
 }

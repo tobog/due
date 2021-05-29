@@ -14,7 +14,7 @@ import Cascader from "./cascader/src"
 import Caspanel from "./cascader/src/caspanel"
 import CheckBox from "./checkbox/src"
 import CheckBoxGroup from "./checkbox/src/group"
-
+import CircleCard from "./circle/src/index"
 
 import Icon from "./icons/src/index"
 
@@ -51,7 +51,7 @@ import Modal from "./modal/index"
 import Upload from "./upload/index"
 import Progress from "./progress/index"
 
-import CircleCard from "./circle/index"
+
 import LoadingBar from "./loading-bar/index.js"
 import Step from "./steps/step"
 import Steps from "./steps/steps"

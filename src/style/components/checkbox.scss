@@ -86,7 +86,7 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
         }
     }
 
-    &-checked#{&}-border {
+    &-checked#{&}-border:not(.#{$prefix-cls}-disabled) {
         border-color: $primary;
     }
 
@@ -108,19 +108,22 @@ $prefix-cls-group: #{$prefix}-checkboxgroup;
     &-radio {
         &>.#{$prefix-cls}-inner {
             border-radius: 50%;
+            &::after {
+                transition: all 0.1s ease-in-out;
+                content: '';
+                background-color: $primary;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+            }
         }
 
         &.#{$prefix-cls}-checked {
             &>.#{$prefix-cls}-inner {
                 background-color: transparent;
-
                 &::after {
-                    transition: all 0.2s ease-in-out;
-                    content: '';
-                    background-color: $primary;
                     width: calc(100% - 6px);
                     height: calc(100% - 6px);
-                    border-radius: 50%;
                 }
             }
         }

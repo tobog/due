@@ -39,18 +39,17 @@
 <script>
 import emitter from "../../../utils/emitter";
 import Icons from "../../icons/src/index";
-import Color from "../../../utils/color";
 import { findComponentUpward } from "../../../utils/findComponent";
-import { unit, validVal } from "../../../utils/tool";
+import { unit } from "../../../utils/tool";
 import globalMixin from "../../../mixins/global";
 export default {
-    name: "CheckBox",
-    componentName: "CheckBox",
+    name: "Checkbox",
+    componentName: "Checkbox",
     components: { Icons },
     mixins: [emitter, globalMixin],
     model: {
         prop: "value",
-        event: '"on-change',
+        event: "on-change",
     },
     props: {
         name: String,
@@ -85,12 +84,14 @@ export default {
         this._checkBoxGroup_ = findComponentUpward(this, "CheckBoxGroup");
     },
     data() {
+        // this.falseValue !== void 0  是单独的checkbox
         return {
             model: this.falseValue === void 0 ? this.value : Array.isArray(this.value) ? `${this.value}` : this.value,
         };
     },
     created() {
         this.handleDispatch("on-change", this.model);
+        this._checkBoxGroup_ && this.handleGroupModel(true);
     },
     watch: {
         value: {
@@ -124,10 +125,8 @@ export default {
                     "theme",
                     this.theme || (this._checkBoxGroup_ && this._checkBoxGroup_.theme)
                 );
-            if (this.border || ((this.indeterminate || this.isChecked) && Color.isColor(color))) {
-                const data = new Color(color);
-                const value = data.toCSS();
-                style.borderColor = value;
+            if (this.border || ((this.indeterminate || this.isChecked) && color)) {
+                style.borderColor = color;
             }
             return style;
         },
@@ -148,13 +147,11 @@ export default {
                 style.width = style.height = unit(size);
                 style.fontSize = unit(size, "px", 0.9);
             }
-            if ((this.indeterminate || this.isChecked) && Color.isColor(color)) {
-                const data = new Color(color);
-                const value = data.toCSS();
+            if ((this.indeterminate || this.isChecked) && color) {
                 if (this.ghost) {
-                    style.color = value;
+                    style.color = color;
                 } else {
-                    style.backgroundColor = style.borderColor = value;
+                    style.backgroundColor = style.borderColor = color;
                 }
             }
             return style;
@@ -214,11 +211,12 @@ export default {
             this._checkBoxGroup_ && this._checkBoxGroup_.handleChange(event);
         },
         handleGroupModel(isToModel) {
-            const groupModel = this._checkBoxGroup_ && this._checkBoxGroup_.model,
+            let groupModel = this._checkBoxGroup_ && this._checkBoxGroup_.model,
                 val = this.model,
                 trueValue = this.trueValue,
-                bool = Array.isArray(val);
-            let checkIndex, groupCheckIndex;
+                bool = Array.isArray(val),
+                checkIndex,
+                groupCheckIndex;
             if (!Array.isArray(groupModel)) return;
             if (this.strict) {
                 checkIndex = bool ? val.indexOf(trueValue) : val === trueValue ? 0 : -1;

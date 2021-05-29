@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import emitter from '../../../utils/emitter';
-import CheckBox from './index';
+import emitter from "../../../utils/emitter";
+import CheckBox from "./index";
 export default {
-    name: 'CheckBoxGroup',
-    componentName: 'CheckBoxGroup',
+    name: "CheckBoxGroup",
+    componentName: "CheckBoxGroup",
     model: {
         prop: "value",
         event: '"on-change',
@@ -28,16 +28,9 @@ export default {
             },
         },
         options: Array,
-        // disabled: Boolean,
-        // border: Boolean,
         readonly: Boolean,
-        // strict: Boolean,
         size: [String, Number],
-        // radio: Boolean,
-        // reverse: Boolean,
-        // ghost: Boolean,
         theme: String,
-        // color: String,
         min: [Number, String], // 仅是组合
         max: [Number, String],
     },
@@ -47,7 +40,7 @@ export default {
         };
     },
     created() {
-        this.handleDispatch('on-change', this.model);
+        this.handleDispatch("on-change", this.model);
     },
     watch: {
         value: {
@@ -61,9 +54,9 @@ export default {
             deep: true,
             handler(val) {
                 if (this.readonly) return;
-                this.$emit('on-change', val);
-                this.handleDispatch('on-change', val);
-                this.handleDispatch('on-validate', val,'change');
+                this.$emit("on-change", val);
+                this.handleDispatch("on-change", val);
+                this.handleDispatch("on-validate", val, "change");
             },
         },
     },
@@ -110,14 +103,14 @@ export default {
             }
         },
         handleChange(event) {
-            this.$emit('on-change', this.model, event);
-            this.handleDispatch('on-validate', this.model,'change');
+            this.$emit("on-change", this.model, event);
+            this.handleDispatch("on-validate", this.model, "change");
         },
         handleDispatch(...args) {
             if (this.__parentComponent__) {
                 this.__parentComponent__.$emit(...args);
             } else {
-                this.__parentComponent__ = this.dispatch('FormItem', ...args);
+                this.__parentComponent__ = this.dispatch("FormItem", ...args);
             }
         },
     },

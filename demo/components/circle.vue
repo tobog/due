@@ -3,20 +3,14 @@
 <template>
     <Demo :config="getConfig" :code="getCode">
         <template slot="header">
-            <h2>代码示例 (Circle/CircleCard 进度环)</h2>
+            <h2>代码示例 (CircleCard 进度环)</h2>
             <h4 class="padding-top-10">
-                图表类组件。一般有两种用途：1.显示某项任务进度的百分比；2.统计某些指标的占比。 3.
-                Circle已被html默认标签，请勿自己使用，你可以使用dueCircle等方法修改组件名称
+                图表类组件。一般有两种用途：1.显示某项任务进度的百分比；2.统计某些指标的占比。
             </h4>
         </template>
         <template v-slot="config">
-            <vCircleCard v-bind="config">{{ config.percent }}%</vCircleCard>
-            <vCircleCard v-bind="config">
-                <vIcon type="ios-checkmark" size="60" style="color:#5cb85c"></vIcon>
-            </vCircleCard>
-            <vCircleCard v-bind="config" stroke-color="#ff5500">
-                <vIcon type="ios-close" size="50" style="color:#ff5500"></vIcon>
-            </vCircleCard>
+            <vCircleCard class="margin-10" v-bind="config">{{ config.percent }}%</vCircleCard>
+            <vCircleCard class="margin-10" v-bind="config"></vCircleCard>
         </template>
     </Demo>
 </template>
@@ -28,12 +22,13 @@ export default {
             val: 0,
             val2: [],
             val1: "",
-        }
+        };
     },
     methods: {},
     computed: {
         getCode() {
-            return `<CircleCard v-bind=CODE></CircleCard>`
+            return `<vCircleCard class="margin-10" v bind="config">{{ config.percent }}%</vCircleCard>
+                    <vCircleCard class="margin-10" v-bind="config"></vCircleCard>`;
         },
         getConfig() {
             return [
@@ -70,6 +65,17 @@ export default {
                 },
                 {
                     showConfig: true,
+                    label: "主题状态",
+                    key: "status",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题状态",
+                    dataType: "String",
+                    default: "",
+                    options: ["success", "warning", "error"],
+                },
+                {
+                    showConfig: true,
                     label: "进度环线宽",
                     key: "strokeWidth",
                     demoDefault: 6,
@@ -82,7 +88,7 @@ export default {
                     showConfig: true,
                     label: "进度环颜色",
                     key: "strokeColor",
-                    demoDefault: "#2db7f5",
+                    demoDefault: "",
                     explain: "进度环颜色，当为数组是时[{percent:30,color:red}] 显示不同颜色",
                     dataType: "String | Array",
                     tag: "vColorPicker",
@@ -92,7 +98,7 @@ export default {
                     showConfig: true,
                     label: "轨道颜色",
                     key: "trackColor",
-                    demoDefault: "#eaeef2",
+                    demoDefault: "",
                     explain: "轨道颜色",
                     dataType: "String",
                     tag: "vColorPicker",
@@ -134,8 +140,8 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ]
+            ];
         },
     },
-}
+};
 </script>
