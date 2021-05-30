@@ -834,18 +834,18 @@ export class DragMove {
                       };
         }
         this._options = {
-            props: null,
+            props: null, // 元素属性
             style: ["translateX", "translateY"], // null 表示只计算鼠标运动状态
             boundaryElement: null, //添加边界元素,
-            timeOut: null,
-            boundaryPoint: null, // {left,right,top,bottom}
-            cursor: "move",
+            throttle: null, // 节流时间
+            boundaryPoint: null, // 距离边界元素间距{left,right,top,bottom}
+            cursor: "move", // 鼠标
             triggerTime: "all", // all,over，
-            boundaryCalc: true,
+            boundaryCalc: true, // 是否启用边界计算
         };
         this._cbFn = callback;
         this._setOptions(options);
-        this._handler = throttle(this._cbFn, this._options.timeOut);
+        this._handler = throttle(this._cbFn, this._options.throttle);
         this._element = getElement(element);
         this._boundaryElement = getElement(this._options.boundaryElement);
         // 点击element 触发实际计算的是relatedElement
@@ -904,13 +904,13 @@ export class DragMove {
             const eleData = element
                 ? Offset.boundingClientRect(element)
                 : {
-                      left: clientX,
-                      right: clientX,
-                      top: clientY,
-                      bottom: clientY,
-                      width: 0,
-                      height: 0,
-                  };
+                    left: clientX,
+                    right: clientX,
+                    top: clientY,
+                    bottom: clientY,
+                    width: 0,
+                    height: 0,
+                };
             const { left = 0, right = 0, top = 0, bottom = 0 } = this._options.boundaryPoint || {};
             return {
                 left: [
@@ -1122,7 +1122,7 @@ export class DragMove {
         element = getElement(element);
         if (this._element === element) return;
         this.destroy();
-        if (!this._handler) this._handler = throttle(this._cbFn, this._options.timeOut);
+        if (!this._handler) this._handler = throttle(this._cbFn, this._options.throttle);
         this._element = element;
         this._relatedElement = getElement(this._options.relatedElement);
         this._binding();

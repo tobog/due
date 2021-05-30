@@ -23,6 +23,9 @@ import Config from "./config/index"
 import DateBase from "./date/src/base/index"
 import Datepicker from "./date/src/datepicker"
 import DatePanel from "./date/src/index"
+import Dragmove from "./dragmove/src/index"
+import Fluid from "./fluid/src/index"
+import FluidPanel from "./fluid/src/fluidPanel"
 
 
 
@@ -40,8 +43,7 @@ import Notice from "./notice"
 import Message from "./message"
 // import NotificationBase from "./base/notification/notification";
 import Table, { Tablefix } from "./table"
-import Fluid from "./fluid"
-import FluidPanel from "./fluid/fluidPanel"
+
 
 
 import Radio from "./radio"
@@ -88,7 +90,7 @@ import GridLayout from "./grid/layout/index"
 import GridLayoutItem from "./grid/layout/item"
 import GridItem from "./grid/index/item"
 import Resize from "./resize"
-import Dragmove from "./dragmove"
+
 
 
 

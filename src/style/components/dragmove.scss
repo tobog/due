@@ -8,4 +8,5 @@ $prefix-cls: #{$prefix}-dragmove;
     z-index: 1000;
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }

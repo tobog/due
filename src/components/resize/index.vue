@@ -63,7 +63,7 @@ export default {
                             {
                                 style: ["left", "top", "width", "height"],
                                 relatedElement: this.$el,
-                                timeOut: 60,
+                                throttle: 60,
                                 boundaryElement,
                             },
                             (obj) => this.handlePos(key, obj)

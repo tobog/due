@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import {unit, throttle} from "../../utils/tool"
-import mediaSize from "../../mixins/mediaSize"
+import {unit, throttle} from "../../../utils/tool"
+import mediaSize from "../../../mixins/mediaSize"
 export default {
     name: "Fluid",
     componentName: "Fluid",

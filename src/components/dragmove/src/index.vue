@@ -1,11 +1,11 @@
 <template>
-    <div :class="[_tobogPrefix_]" :data-vue-module="$options.name" :style="size || {}">
+    <div :class="[_tobogPrefix_]" :data-vue-module="$options.name" :style="style">
         <slot></slot>
     </div>
 </template>
 
 <script>
-import {DragMove} from "../../utils/dom"
+import { DragMove } from "../../../utils/dom";
 export default {
     name: "Dragmove",
     componentName: "Dragmove",
@@ -18,38 +18,38 @@ export default {
     },
     data() {
         return {
-            size: null,
-        }
+            style: {},
+        };
     },
     mounted() {
-        this.dragMove()
+        this.dragMove();
     },
     methods: {
         dragMove() {
             if (this.disabled) {
-                this._DragMoveList && this._DragMoveList.destroy()
-                this._DragMoveList = null
-                return
+                this._DragMoveList && this._DragMoveList.destroy();
+                this._DragMoveList = null;
+                return;
             }
             this.$nextTick(() => {
-                if (!this.$el || this._DragMoveList) return
+                if (!this.$el || this._DragMoveList) return;
                 this._DragMoveList = new DragMove(
                     this.$el,
                     {
                         boundaryElement: this.boundaryElement === true ? this.$el.offsetParent : this.boundaryElement,
                         boundaryPoint: this.boundaryPoint,
-                        timeOut: null,
+                        throttle: null,
                         boundaryCalc: this.boundaryPoint && !!Object.keys(this.boundaryPoint).length,
                         ...this.options,
                     },
                     (obj) => {
-                        this.size =
+                        this.style =
                             this.setStyle === "function"
                                 ? this.setStyle(obj)
                                 : {
                                       transform: `translate(${obj.data.translateX + obj.distance[0]}px,${obj.data
                                           .translateY + obj.distance[1]}px)`,
-                                  }
+                                  };
                         this.$emit("on-move", {
                             boundaryPosition: obj.boundaryPosition,
                             distance: obj.distance,
@@ -60,21 +60,22 @@ export default {
                             cancel: obj.cancel,
                             style: obj.style,
                             props: obj.props,
-                            result: this.size,
-                        })
+                            tempDistance: obj.tempDistance,
+                            result: this.style,
+                        });
                     }
-                )
-            })
+                );
+            });
         },
     },
     watch: {
         disabled() {
-            this.dragMove()
+            this.dragMove();
         },
     },
     beforeDestroy() {
-        this._DragMoveList && this._DragMoveList.destroy()
-        this._DragMoveList = null
+        this._DragMoveList && this._DragMoveList.destroy();
+        this._DragMoveList = null;
     },
-}
+};
 </script>

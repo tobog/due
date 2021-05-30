@@ -1,15 +1,17 @@
 <style lang="scss" scoped>
 .demo-resize {
-    height: 260px;
-    width: 260px;
+    height: 300px;
+    width: 300px;
     background-color: #ccc;
     text-align: center;
     left: 100px;
-    padding: 10px;
     border: 1px solid #999;
     word-break: break-all;
-    white-space: normal;
     line-height: 1.5;
+    .demo-data {
+        height: 100%;
+        overflow: auto;
+    }
 }
 </style>
 <template>
@@ -18,9 +20,12 @@
             <h2>代码示例 (Dragmove 拖动)</h2>
         </template>
         <template v-slot="config">
+            <pre class="text-left">{{ dataJson(value) }}</pre>
             <vDragmove class="demo-resize" v-bind="config" @on-move="(data) => (value = data)">
-                请移动
-                <div>相关参数:{{ value }}</div>
+                <div class="demo-data">
+                    请移动-相关参数:
+                    <pre class="text-left">{{ dataJson(value) }}</pre>
+                </div>
             </vDragmove>
         </template>
     </Demo>
@@ -31,16 +36,22 @@ export default {
     data() {
         return {
             value: "",
-        }
+        };
     },
-    methods: {},
+    methods: {
+        dataJson(val) {
+            return JSON.stringify(val, null, 4);
+        },
+    },
     computed: {
         getCode() {
-            return `<Dragmove class="demo-resize"  v-bind=CODE @on-move="(data) => (value = data)">
-                        请移动
-                        <div>相关参数:{{ value }}</div>
+            return `<Dragmove class="demo-resize" v-bind="config" @on-move="(data) => (value = data)">
+                        <div class="demo-data">
+                            请移动-相关参数:
+                            <pre class="text-left">{{ dataJson(value) }}</pre>
+                        </div>
                     </Dragmove>
-                    `
+                    `;
         },
         getConfig() {
             return [
@@ -96,8 +107,8 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ]
+            ];
         },
     },
-}
+};
 </script>
