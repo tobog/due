@@ -130,62 +130,8 @@ $prefix-cls: #{$prefix}-popper;
         left: initial;
         right: 12px;
     }
+
+    &[data-placement^="fix"]>&-arrow {
+        display: none;
+    }
 }
-
-// .#{$prefix-cls}-arrow {
-//     &[data-placement^='top'] {
-//         bottom: -3px;
-//         transform: rotate(45deg);
-//         left: 6px;
-//     }
-
-//     &[data-placement='top-center'] {
-//         left: 50%;
-//         transform: translateX(-50%) rotate(45deg)
-//     }
-
-//     &[data-placement^='bottom'] {
-//         top: -3px;
-//         left: 6px;
-//         transform: rotate(-135deg);
-//     }
-
-//     &[data-placement='bottom-center'] {
-//         left: 50%;
-//         transform: translateX(-50%) rotate(-135deg);
-//     }
-
-//     &[data-placement^='left'] {
-//         top: 6px;
-//         transform: rotate(-45deg);
-//         right: -3px;
-//     }
-
-//     &[data-placement='left-center'] {
-//         top: 50%;
-//         transform: translateY(-50%) rotate(-45deg);
-//     }
-
-//     &[data-placement^='right'] {
-//         top: 6px;
-//         transform: rotate(135deg);
-//         left: -3px;
-//     }
-
-//     &[data-placement='right-center'] {
-//         top: 50%;
-//         transform: translateY(-50%) rotate(135deg);
-//     }
-
-//     &[data-placement='left-bottom'],
-//     &[data-placement='right-bottom'] {
-//         bottom: 6px;
-//         top: initial;
-//     }
-
-//     &[data-placement='top-right'],
-//     &[data-placement='bottom-right'] {
-//         left: initial;
-//         right: 6px;
-//     }
-// }

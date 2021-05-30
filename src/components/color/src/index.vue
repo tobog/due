@@ -72,6 +72,10 @@ export default {
     components: {
         Icons,
     },
+    model: {
+        prop: "value",
+        event: 'on-change'
+    },
     props: {
         value: String,
         type: String, //hex,rgb,hsl,hsv,
@@ -93,11 +97,6 @@ export default {
             copySuccessed: false,
         };
     },
-    created() {
-        window.Color = Color;
-        let d = Color.RGBtoHSL(255, 0, 80);
-        Color.HSLtoRGB(...d);
-    },
     mounted() {
         this.$nextTick(() => {
             this.dragMove();
@@ -107,6 +106,7 @@ export default {
                 copy: (value) => {
                     console.log(value, "copySuccessed---------");
                     this.copySuccessed = true;
+                    this.$emig('on-copy', value);
                 },
             });
         });
@@ -251,10 +251,14 @@ export default {
             this.$set(this.model, 2, colors[2]);
         },
         handleInput(event, data, index) {
-            console.log(event);
             let val = event.target.value;
+            let isAlpha = index === 3;
             if (this.demoType === "hex") {
-                if (event.inputType === "deleteContentBackward") {
+                if (event.inputType === "deleteContentBackward" || !val) {
+                    return;
+                }
+                if (val && /[^0-9abcdef]/i.test(val)) {
+                    event.target.value = this.getDemoData[1];
                     return;
                 }
                 if (Color.isColor(val)) {
@@ -262,8 +266,13 @@ export default {
                 }
                 return;
             }
-            val = parseInt(val);
+            if (val && /[^0-9\.\%]/i.test(val)) {
+                event.target.value = this.getDemoData[1][index] + this.getDemoData[2][index];
+                return;
+            }
+            val = isAlpha ? Color.limit(parseFloat(val).toFixed(2), 0, 1) : parseInt(val);
             if (!val && val !== 0) return;
+            if (isAlpha) return this.$set(this.model, index, val);
             data = [...data];
             data[index] = val;
             if (this.demoType === "hsl") {
@@ -275,28 +284,31 @@ export default {
                 return;
             }
             this.model = Color.RGBtoHSV(...data);
-            return;
         },
         handleScrollStep(e, data, index) {
+            const _data = data || 0;
             if (!this.alpha && index == 3) return;
-            let alpha = "";
             if (this.demoType === "hex") {
-                alpha = this.alpha ? `${data}`.slice(7, 9) : "";
-                data = parseInt(`${data}`.slice(1, 7) || 0, 16);
+                data = parseInt(`${data || "#0"}`.slice(1), 16);
                 if (data !== data) data = 0;
-                data = data + (e.wheelDelta > 0 ? 5 : -5);
+                data = data + (e.wheelDelta > 0 ? 1 : -1);
             } else {
                 data = parseFloat(data);
                 if (data !== data) data = 0;
                 if (index === 3) {
-                    data = data + (e.wheelDelta > 0 ? 1 : -1);
+                    data = data + (e.wheelDelta > 0 ? 0.1 : -0.1);
                 } else {
                     data = data + (e.wheelDelta > 0 ? 2 : -2);
                 }
             }
             if (data <= 0) data = 0;
             if (this.demoType === "hex") {
-                data = "#" + Number(data).toString(16) + alpha;
+                data = Number(data).toString(16);
+                let total = data.length < 4 ? 3 : 6;
+                for (let index = total - data.length; index > 0; index--) {
+                    data = "0" + data;
+                }
+                data = "#" + data;
             }
             if ((!this.demoType || this.demoType === "rgb") && data >= 255) {
                 data = 255;
@@ -309,8 +321,10 @@ export default {
                     data = 100;
                 }
             }
+            if (_data === data) return;
             this.handleInput(
                 {
+                    data: "0",
                     target: {
                         value: data + "" + this.getDemoData[2][index],
                     },
@@ -337,7 +351,6 @@ export default {
             handler(value) {
                 // 纠正Color 类转化不精确问题
                 if (this.__innerModel === value) return;
-                // console.log(value, "------------");
                 const val = Color.parse(value || "", "hsva");
                 if (val.join("") === this.model.join("") || val.length < 3) return;
                 this.model = val;
@@ -348,7 +361,6 @@ export default {
             handler() {
                 // 是否内部引起的变化
                 this.__innerModel = this.getModel;
-                this.$emit("input", this.getModel);
                 this.$emit("on-change", this.getModel);
             },
         },

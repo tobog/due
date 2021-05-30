@@ -7,11 +7,15 @@
             <h4 class="padding-top-10">将用于颜色选择，支持多种颜色格式</h4>
         </template>
         <template v-slot="config">
-            <vColor v-model="value" v-bind="config"></vColor>
-            <vColorPicker v-model="value" v-bind="config"></vColorPicker>
-            <div :style="{background: value, height: '30px'}">
+            <div class="flex align-cener" :style="{ background: value, height: '100px' }">
                 {{ value }}
             </div>
+            <vColor v-model="value" v-bind="config.Color"></vColor>
+            <vColorPicker
+                v-model="value"
+                v-bind="config.ColorPicker"
+                :popperConfig="config.PopperConfig"
+            ></vColorPicker>
         </template>
     </Demo>
 </template>
@@ -21,16 +25,33 @@ export default {
     data() {
         return {
             value: "0",
-        }
+        };
     },
     methods: {},
     computed: {
         getCode() {
-            return `<Color v-model="value" v-bind=CODE></Color>
-                    <ColorPicker v-model="value" v-bind=CODE></ColorPicker>
-                    `
+            return `<Color v-model="value" v-bind="config.Color"></Color>
+                    <ColorPicker
+                        v-model="value"
+                        v-bind="config.ColorPicker"
+                        :popperConfig="config.PopperConfig"
+                    ></ColorPicker>
+                    `;
         },
         getConfig() {
+            return {
+                Color: {
+                    data: this.getColorCofnig,
+                },
+                ColorPicker: {
+                    data: this.getColorPickerConfig,
+                },
+                PopperConfig: {
+                    data: this.getPopperConfig,
+                },
+            };
+        },
+        getColorCofnig() {
             return [
                 {
                     showConfig: true,
@@ -40,7 +61,7 @@ export default {
                     explain: "是否有alpha",
                     dataType: "Boolean",
                     tag: "vSwitch",
-                    default: true,
+                    default: false,
                 },
                 {
                     showConfig: true,
@@ -50,8 +71,64 @@ export default {
                     explain: "是否显示推荐的颜色预设	",
                     dataType: "Boolean",
                     tag: "vSwitch",
-                    default: true,
+                    default: false,
                 },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "格式",
+                    key: "type",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "颜色的格式，可选值为 hsl、hsv、hex、rgb",
+                    dataType: "String",
+                    default: "",
+                    options: ["rgb", "hex", "hsl", "hsv"],
+                },
+                {
+                    label: "当前值",
+                    key: "value",
+                    demoDefault: "",
+                    explain: "v-model(on-change) 双向绑定",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    label: "自定义颜色预设",
+                    key: "colors",
+                    demoDefault: "",
+                    explain: "自定义颜色预设,仅在predefined为true时",
+                    dataType: "Array",
+                    default: "",
+                },
+                {
+                    label: "事件",
+                    key: "on-copy",
+                    explain: "复制成功时触发",
+                    dataType: "Function",
+                    default: "value=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-change",
+                    explain: "v-model(on-change) 双向绑定",
+                    dataType: "Function：Event",
+                    default: "value=>{}",
+                },
+            ];
+        },
+        getColorPickerConfig() {
+            return [
                 {
                     showConfig: true,
                     label: "弹层位置",
@@ -94,40 +171,13 @@ export default {
                     default: "",
                     options: this.getSize,
                 },
-
+                ...this.getColorCofnig,
                 {
-                    showConfig: true,
-                    label: "格式",
-                    key: "type",
-                    tag: "vSelect",
-                    demoDefault: "",
-                    explain: "颜色的格式，可选值为 hsl、hsv、hex、rgb",
-                    dataType: "String",
-                    default: "",
-                    options: ["rgb", "hex", "hsl", "hsv"],
-                },
-                {
-                    label: "当前值",
-                    key: "value",
-                    demoDefault: "",
-                    explain: "v-model(on-change) 双向绑定",
-                    dataType: "String",
-                    default: "",
-                },
-                {
-                    label: "自定义颜色预设",
-                    key: "colors",
-                    demoDefault: "",
-                    explain: "自定义颜色预设,仅在predefined为true时",
-                    dataType: "Array",
-                    default: "",
-                },
-                {
-                    label: "事件",
-                    key: "on-change",
-                    explain: "v-model(on-change) 双向绑定",
-                    dataType: "Function：Event",
-                    default: "value=>{}",
+                    label: "下拉组件配置",
+                    key: "popperConfig",
+                    explain: "下拉组件配置，熟悉继承DropBase组件",
+                    dataType: "Object",
+                    default: "-",
                 },
                 {
                     label: "事件",
@@ -157,8 +207,148 @@ export default {
                     dataType: "Function：Event",
                     default: "(visible)=>{}",
                 },
-            ]
+            ];
+        },
+        // DropBase 属性
+        getPopperConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "开启css3",
+                    key: "gpu",
+                    demoDefault: false,
+                    explain: "开启css3样式加速",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "显示箭头",
+                    key: "showArrow",
+                    demoDefault: false,
+                    explain: "是否显示箭头",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "响应式定位",
+                    key: "responsive",
+                    demoDefault: void 0,
+                    explain: "是否响应式定位",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: void 0,
+                },
+                {
+                    showConfig: true,
+                    label: "一直显示",
+                    key: "always",
+                    demoDefault: false,
+                    explain: "是否一直显示",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "下拉框偏移",
+                    key: "offset",
+                    demoDefault: 5,
+                    explain: "下拉框偏移位置",
+                    dataType: "String, Number",
+                    tag: "vInputNumber",
+                    default: 5,
+                },
+                {
+                    showConfig: true,
+                    label: "动画名称",
+                    key: "transitionName",
+                    demoDefault: "",
+                    explain: "动画名称，type===drop时默认transition-drop，其他默认fade",
+                    dataType: "String",
+                    tag: "vInput",
+                    default: "transition-drop|fade",
+                },
+                {
+                    showConfig: true,
+                    label: "显示位置",
+                    key: "placement",
+                    demoDefault: "",
+                    explain:
+                        "显示位置,可选值：top,top-left,top-center,top-right,top-fix,bottom,bottom-left,bottom-center,bottom-right,bottom-fix,right,right-top,right-center,right-bottom,left,left-top,left-center,left-bottom,fix-left,fix-center,fix-right",
+                    dataType: "String",
+                    tag: "vSelect",
+                    default: "",
+                    options: [
+                        "top",
+                        "top-left",
+                        "top-center",
+                        "top-right",
+                        "top-fix",
+                        "bottom",
+                        "bottom-left",
+                        "bottom-center",
+                        "bottom-right",
+                        "bottom-fix",
+                        "right",
+                        "right-top",
+                        "right-center",
+                        "right-bottom",
+                        "left",
+                        "left-top",
+                        "left-center",
+                        "left-bottom",
+                        "fix-left",
+                        "fix-center",
+                        "fix-right",
+                    ],
+                },
+                {
+                    showConfig: true,
+                    label: "延迟更新",
+                    key: "delay",
+                    demoDefault: 0,
+                    explain: "延迟更新样式",
+                    dataType: "Number",
+                    tag: "vInputNumber",
+                    default: 0,
+                },
+                {
+                    showConfig: true,
+                    label: "触发方式",
+                    key: "trigger",
+                    demoDefault: "",
+                    explain: "触发方式，可选值：click,hover,other, type===drop时默认other，其他默认click",
+                    dataType: "String",
+                    tag: "vSelect",
+                    default: "",
+                    options: ["click", "hover", "other"],
+                },
+                // {
+                //     showConfig: true,
+                //     label: "下拉框样式",
+                //     key: "dropStyle",
+                //     demoDefault: "",
+                //     explain: "自定义下拉框样式",
+                //     dataType: "Object, String",
+                //     tag: "vTextarea",
+                //     default: "",
+                // },
+                {
+                    showConfig: true,
+                    label: "下拉框class 名称",
+                    key: "dropClass",
+                    demoDefault: "",
+                    explain: "自定义下拉class 名称",
+                    dataType: "Object, String，Array",
+                    tag: "vTextarea",
+                    default: "",
+                },
+            ];
         },
     },
-}
+};
 </script>

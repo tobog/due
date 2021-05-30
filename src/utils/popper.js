@@ -547,7 +547,7 @@ export default class Popper {
                     opacity: '',
                     position: "absolute",
                     zIndex: 1000,
-                    transformOrigin: placement[0] === "top" ? "center bottom" : "",
+                    transformOrigin: placement[0] === "top" ? "center bottom 0" : "",
                     width: this._popper.dataset.initPopperWidth || popper.width,
                 },
                 style
@@ -555,7 +555,6 @@ export default class Popper {
         if (placement[0] === "fix") {
             styles.position = "fixed";
         }
-        // alert(JSON.stringify({left, top, placement}))
         if (responsive) {
             if (gpu) {
                 styles.transform = "translate3d(" + left + "px, " + top + "px, 0)";
