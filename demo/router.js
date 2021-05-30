@@ -160,6 +160,13 @@ export default new Router({
                     },
                 },
                 {
+                    path: "config",
+                    component: () => import("./components/config"),
+                    meta: {
+                        label: "配置组件",
+                    },
+                },
+                {
                     path: "datepicker",
                     component: () => import("./components/datepicker"),
                     meta: {

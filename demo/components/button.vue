@@ -30,9 +30,9 @@ export default {
         getCode() {
             return `<Button v-bind=CODE.Button to="/button">Button</Button>
                     <ButtonGroup v-bind=CODE.ButtonGroup class="margin-top-20">
-                        <vButton>vButton</vButton>
-                        <vButton v-bind="CODE.Button">vButton</vButton>
-                        <vButton v-bind="CODE.Button" icon="ios-alert-outline"></vButton>
+                        <Button>Button</Button>
+                        <Button v-bind="CODE.Button">Button</Button>
+                        <Button v-bind="CODE.Button" icon="ios-alert-outline"></Button>
                     </ButtonGroup>`
         },
         getConfig() {

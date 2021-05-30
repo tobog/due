@@ -100,14 +100,17 @@ export default {
                 equals: false,
             }
         },
+        // 比较两个媒体差值
         compareMedia(bearkpoint, bearkpoint2) {
             return this.getBearkpoints.indexOf(bearkpoint) - this.getBearkpoints.indexOf(bearkpoint2)
         },
     },
     computed: {
+        // 所有媒体查询
         getBearkpoints() {
             return ["xs", "sm", "md", "lg", "xl", "xxl"]
         },
+        // 当前窗口媒体查询符号
         getMedia() {
             const size = this.getMediaWidth
             switch (true) {
@@ -126,6 +129,7 @@ export default {
             }
             return "md"
         },
+        // 当前窗口宽度
         getMediaWidth() {
             return (this.mediaSize && this.mediaSize.width) || 1201
         },

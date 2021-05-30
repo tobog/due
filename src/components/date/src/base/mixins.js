@@ -1,5 +1,5 @@
-import Dates, { compareEqual } from "../../../utils/dates";
-import langMinix from '../../../mixins/lang'
+import Dates, { compareEqual } from "../../../../utils/dates";
+import langMinix from '../../../../mixins/lang'
 export default {
     mixins: [langMinix],
     props: {

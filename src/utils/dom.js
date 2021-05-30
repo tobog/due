@@ -172,13 +172,13 @@ export function getElement(target, container) {
 // 动态样式
 export function loadStyle(data = "", selector) {
     if (!document) return;
-    const isUrl = /^(https?:\/\/|\.*\/)[\w|W]+\.css$/gi.test(data);
+    let isUrl = /^(https?:\/\/|\.*\/)[\w|W]+\.css(\?[^\.\?#]*)$/gi.test(data);
     let dom = selector && getElement(selector, document.head);
     let hasDom = !!dom;
     if (!hasDom) {
         dom = document.createElement(isUrl ? "link" : "style");
     }
-    const tag = dom.tagName.toUpperCase();
+    let tag = dom.tagName.toUpperCase();
     if (isUrl && tag === "LINK") {
         dom.rel = "stylesheet";
         dom.type = "text/css";
@@ -196,7 +196,7 @@ export function loadStyle(data = "", selector) {
 }
 export function loadScript(data = "", selector) {
     if (!document) return;
-    const isUrl = /^(https?:\/\/|\.*\/)[\w|W]+\.css$/gi.test(data);
+    const isUrl = /^(https?:\/\/|\.*\/)[\w|W]+\.js(\?[^\.\?#]*)$/gi.test(data);
     let dom = selector && getElement(selector);
     let hasDom = !!dom;
     if (!hasDom) {

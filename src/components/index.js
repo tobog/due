@@ -19,12 +19,16 @@ import Collapse from "./collapse/src/index"
 import CollapseItem from "./collapse/src/item"
 import Color from "./color/src/index"
 import ColorPicker from "./color/src/picker"
+import Config from "./config/index"
+import DateBase from "./date/src/base/index"
+import Datepicker from "./date/src/datepicker"
+import DatePanel from "./date/src/index"
 
 
 
 import Icon from "./icons/src/index"
 
-import Config from "./config/index"
+
 import Layout from "./layout/index"
 import Content from "./layout/content"
 import Aside from "./layout/aside"
@@ -87,9 +91,6 @@ import Resize from "./resize"
 import Dragmove from "./dragmove"
 
 
-import DateBase from "./date/base/index"
-import Datepicker from "./date/datepicker"
-import DatePanel from "./date/index"
 
 
 import Split from "./split/index"

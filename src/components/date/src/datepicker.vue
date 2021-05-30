@@ -82,26 +82,22 @@
 
 <script>
 import DatePanel from "./index"
-import DropBase from "../base/dropBase"
-import InputBase from "../input/base"
-import mixin from "../input/base/mixin"
-import Button from "../button/src/index"
-import langMinix from "../../mixins/lang"
+import DropBase from "../../base/dropBase"
+import InputBase from "../../input/base"
+import mixin from "../../input/base/mixin"
+import langMinix from "../../../mixins/lang"
 export default {
     name: "DatePicter",
     componentName: "DatePicter",
     inheritAttrs: false,
     mixins: [langMinix, mixin],
-    props: {
-        popperConfig: Object,
-    },
     components: {
         DatePanel,
         DropBase,
         InputBase,
-        Button,
     },
     props: {
+        popperConfig: Object,
         doublePanel: {
             type: Boolean,
             default: true,

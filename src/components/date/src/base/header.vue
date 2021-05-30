@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Icons from "../../icons/src/index"
+import Icons from "../../../icons/src/index"
 import mixins from "./mixins"
 export default {
     name: "DateHeader",

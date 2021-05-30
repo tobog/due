@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import Dates, {compareEqual} from "../../../utils/dates"
-import {getScrollBarSize} from "../../../utils/dom"
-import langMinix from "../../../mixins/lang"
+import Dates, {compareEqual} from "../../../../utils/dates"
+import {getScrollBarSize} from "../../../../utils/dom"
+import langMinix from "../../../../mixins/lang"
 export default {
     name: "DateTimes",
     componentName: "DateTimes",

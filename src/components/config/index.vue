@@ -1,5 +1,6 @@
 <template>
     <div :class="[_tobogPrefix_]" :data-vue-module="$options.name">
+        <component v-if="styleCode" :is="'style'">{{ styleCode }}</component>
         <slot></slot>
     </div>
 </template>
@@ -26,6 +27,7 @@ export default {
         theme: String,
         size: [Number, String], // large normal  mediu  small
         media: Boolean, // xxs xs sm  md lg xl xxl
+        styleCode: String
     },
     data() {
         return {
@@ -45,9 +47,7 @@ export default {
         this.ConfigProvide.mediaSize = this.mediaSize;
     },
     methods: {
-        setStyleTag() {
-            loadStyle();
-        },
+        loadStyle,
         filerStyleVar() {},
     },
     watch: {

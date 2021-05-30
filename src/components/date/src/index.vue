@@ -77,7 +77,6 @@
                 v-if="confirm"
                 size="small"
                 :class="[_tobogPrefix_ + '-clear']"
-                :theme="theme || 'primary'"
                 @click="handleClear"
                 >{{ langs("datepicker.clear", "清空") }}</Button
             >
@@ -87,9 +86,9 @@
 
 <script>
 import DateBase from "./base"
-import Button from "../button/src/index"
-import Dates from "../../utils/dates"
-import langMinix from "../../mixins/lang"
+import Button from "../../button/src/index"
+import Dates from "../../../utils/dates"
+import langMinix from "../../../mixins/lang"
 export default {
     name: "DatePanel",
     componentName: "DatePanel",
@@ -160,7 +159,7 @@ export default {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
-                _tobogPrefix_,
+                _tobogPrefix_ + '-wrapper',
                 {
                     [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
                 },
@@ -170,6 +169,7 @@ export default {
             return /d.*(H|M|S)+/g.test(this.formats)
         },
         shortcuts() {
+            // return []
             return (this.options || {}).shortcuts || []
         },
         range() {
