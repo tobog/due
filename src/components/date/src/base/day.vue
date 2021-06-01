@@ -1,5 +1,5 @@
 <template>
-    <section :class="wrapClasses" :data-week="showWeek" @mouseleave="handleMouseMove(null)">
+    <section :class="[_tobogPrefix_ + '-' + prefix]" :data-week="showWeek" @mouseleave="handleMouseMove(null)">
         <span v-for="cell in handleWeeks" :class="getCellCls({type: 'week'})">
             <em>{{ handleFormatter(cell, handleWeeks, "week") }}</em>
         </span>
@@ -43,8 +43,6 @@ export default {
                     ...this.handleCell({...this.calendar, day: index}, "day"),
                 })
             }
-            // if (week != this.firstDayOfWeek) {
-            // }
             let preMonth = month - 1,
                 preYear = year,
                 preWeek = (week - this.firstDayOfWeek + 7) % 7
@@ -75,9 +73,6 @@ export default {
         },
     },
     methods: {
-        // showWeeks(index) {
-        //     return this.showWeek && index % 7 == 0
-        // },
         getWeekIndex(date) {
             const {year, month, day} = date,
                 start = new Date(year, 0, 1, 0, 0, 0),

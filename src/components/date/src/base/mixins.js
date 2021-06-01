@@ -17,18 +17,15 @@ export default {
         showWeek: Boolean,
         firstDayOfWeek: Number,
         cellFormatter: Function,
-        // minDate: [String, Date],
-        // maxDate: [String, Date],
+        maxDate: [String, Date, Object, Number],
+        minDate: [String, Date, Object, Number],
     },
     data() {
         return {
-
+            
         };
     },
     computed: {
-        wrapClasses() {
-            return this._tobogPrefix_ + this.prefix;
-        },
         hasDisableMethod() {
             return typeof this.disableMethod === "function";
         },
@@ -42,18 +39,61 @@ export default {
                 dates = this.dates;
             }
             return dates;
+        },
+        getMaxDate() {
+            if(!this.maxDate) return null;
+            return Dates.parseObj(this.maxDate, true);
+        },
+        getMinDate() {
+            if(!this.maxDate) return null;
+            return Dates.parseObj(this.minDate);
         }
     },
     methods: {
+        handleDisable(date, type) {
+            if (this.hasDisableMethod && this.disableMethod(date, type)) return true;
+            if (this.getMinDate) {
+                if (type === 'day' && (
+                        date.year < this.getMinDate.year ||
+                        date.month < this.getMinDate.month ||
+                        date.day < this.getMinDate.day )) {
+                    return true
+                }
+                if (type === 'month' && (
+                    date.year < this.getMinDate.year ||
+                    date.month < this.getMinDate.month )) {
+                    return true
+                }
+                if (type === 'year' && date.year < this.getMinDate.year) {
+                    return true
+                }
+            }
+            if (this.getMaxDate) {
+                if (type === 'day' && (
+                        date.year > this.getMaxDate.year ||
+                        date.month > this.getMaxDate.month ||
+                        date.day > this.getMaxDate.day )) {
+                    return true
+                }
+                if (type === 'month' && (
+                    date.year > this.getMaxDate.year ||
+                    date.month > this.getMaxDate.month )) {
+                    return true
+                }
+                if (type === 'year' && date.year > this.getMaxDate.year) {
+                    return true
+                }
+            }
+            return false
+        },
         handleFormatter(val, cell, type) {
             return typeof this.cellFormatter === 'function' ? this.cellFormatter(val, cell, type) : val
         },
-        // handleEqual: compareEqual,
         handleCell(date, type) {
             return {
                 date,
-                selected: this.linkedDates.some(item =>  compareEqual(item, type, date)),
-                disabled: this.hasDisableMethod && this.disableMethod({ ...date }, type),
+                selected: this.linkedDates.some(item => compareEqual(item, type, date)),
+                disabled: this.handleDisable({ ...date }, type),
                 inRange: this.handleSection(date, this.rangeDate),
                 now: compareEqual(date, type, this.today),
                 focus: compareEqual(date, type, this.foucsDate)
@@ -105,9 +145,9 @@ export default {
                 prefix = this.prefix;
             return [
                 `${_tobogPrefix_}-cell`,
-                `${_tobogPrefix_}${prefix}-cell`,
+                `${_tobogPrefix_}-${prefix}-cell`,
                 {
-                    [`${_tobogPrefix_}${prefix}-cell-${cell.type}`]: cell.type,
+                    [`${_tobogPrefix_}-${prefix}-cell-${cell.type}`]: cell.type,
                     [`${_tobogPrefix_}-cell-selected`]: cell.selected,
                     [`${_tobogPrefix_}-cell-focus`]: cell.focus,
                     [`${_tobogPrefix_}-cell-disabled`]: cell.disabled,

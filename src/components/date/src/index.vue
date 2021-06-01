@@ -51,36 +51,34 @@
                 @on-sync-update="handleCalendar"
             />
         </div>
-        <aside v-if="confirm || hasDateTimes" :class="[_tobogPrefix_ + '-footer']">
-            <Button
-                v-if="hasDateTimes"
-                @click="syncStatus(status === 'times' ? 'day' : 'times')"
-                borderType="text"
-                size="small"
-                :theme="theme || 'primary'"
-                :class="[_tobogPrefix_ + '-switch']"
-                >{{
-                    status === "times"
-                        ? langs("datepicker.selectDate", "选择日期")
-                        : langs("datepicker.selectTime", "选择时间")
-                }}</Button
-            >
-            <Button
-                v-if="confirm"
-                size="small"
-                :class="[_tobogPrefix_ + '-confirm']"
-                :theme="theme || 'primary'"
-                @click="handleConfirm"
-                >{{ langs("datepicker.confirm", "确定") }}</Button
-            >
-            <Button
-                v-if="confirm"
-                size="small"
-                :class="[_tobogPrefix_ + '-clear']"
-                @click="handleClear"
-                >{{ langs("datepicker.clear", "清空") }}</Button
-            >
-        </aside>
+        <slot name="footer">
+            <aside v-if="confirm || hasDateTimes" :class="[_tobogPrefix_ + '-footer']">
+                <Button
+                    v-if="hasDateTimes"
+                    @click="syncStatus(status === 'times' ? 'day' : 'times')"
+                    borderType="text"
+                    size="small"
+                    :theme="theme || 'primary'"
+                    :class="[_tobogPrefix_ + '-switch']"
+                    >{{
+                        status === "times"
+                            ? langs("datepicker.selectDate", "选择日期")
+                            : langs("datepicker.selectTime", "选择时间")
+                    }}</Button
+                >
+                <Button
+                    v-if="confirm"
+                    size="small"
+                    :class="[_tobogPrefix_ + '-confirm']"
+                    :theme="theme || 'primary'"
+                    @click="handleConfirm"
+                    >{{ langs("datepicker.confirm", "确定") }}</Button
+                >
+                <Button v-if="confirm" size="small" :class="[_tobogPrefix_ + '-clear']" @click="handleClear">{{
+                    langs("datepicker.clear", "清空")
+                }}</Button>
+            </aside>
+        </slot>
     </div>
 </template>
 
@@ -142,6 +140,8 @@ export default {
         visible: Boolean, // 仅仅针对drop 的属性
         cellFormatter: Function,
         theme: String,
+        maxDate: [String, Date, Object, Number],
+        minDate: [String, Date, Object, Number],
     },
 
     data() {
@@ -159,17 +159,16 @@ export default {
         classes() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
-                _tobogPrefix_ + '-wrapper',
+                `${_tobogPrefix_}-wrapper`,
                 {
                     [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
                 },
             ]
         },
         hasDateTimes() {
-            return /d.*(H|M|S)+/g.test(this.formats)
+            return /[dD][^HmsdD]*[Hms]+/g.test(this.formats)
         },
         shortcuts() {
-            // return []
             return (this.options || {}).shortcuts || []
         },
         range() {
@@ -178,9 +177,10 @@ export default {
             if (format) {
                 let objIndex = {y: 0, M: 0, d: 0, H: 0, m: 0, s: 0},
                     range = false
-                format.replace(/(y|M|d|H|m|s)+/g, function(match, reg) {
-                    if (objIndex[reg] >= 1) range = true
+                format.replace(/(y|M|d|H|m|s)+/gi, function(match, reg) {
+                    if (match === "Mm") reg = "M"
                     objIndex[reg] += 1
+                    if (objIndex[reg] > 1) range = true
                     return match
                 })
                 return range

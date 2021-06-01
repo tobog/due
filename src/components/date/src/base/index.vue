@@ -11,7 +11,7 @@
             :is="componentId"
             :calendar="initCalendar"
             :disableMethod="disableMethod"
-            :today="getToday"
+            :today="todayObj"
             :range="range"
             :rangeDate="rangeDate"
             :endState="endState"
@@ -80,8 +80,8 @@ export default {
         },
         visible: Boolean,
         cellFormatter: Function,
-        // minDate: [String, Date],
-        // maxDate: [String, Date],
+        maxDate: [String, Date, Object, Number],
+        minDate: [String, Date, Object, Number],
     },
     data() {
         return {
@@ -90,7 +90,8 @@ export default {
             dates: [],
             foucsDate: {},
             rangeDate: {},
-            updateValueParse: false, // 通过计算属性更新数值
+            updateValueParse: false, // 通过计算属性更新数值,
+            todayObj: Dates.parseObj(new Date()),
         }
     },
     created() {
@@ -106,10 +107,8 @@ export default {
             },
         },
         value: {
-            // immediate: true,
             deep: true,
             handler(val) {
-                // console.log(val, val.length, this.__dates, this.__datesInstance, "===========")
                 if (!val || (Array.isArray(val) && !val.length)) {
                     this.dates = []
                     return
@@ -130,7 +129,6 @@ export default {
             if (!val) {
                 this.updateValueParse = !this.updateValueParse
                 this.dates = this.valueParse
-                // console.log(this.valueParse, this.value, this.linkedDates, "===============")
             }
         },
     },
@@ -157,47 +155,26 @@ export default {
             return this.foucsDate
         },
         getValidStatus() {
-            const format = this.format
             return {
-                day: /dd/.test(format),
-                month: /MM/.test(format),
-                year: /yy/.test(format),
-                times: /ss|mm|HH/.test(format),
+                day: /dd/i.test(this.format),
+                month: /MM/.test(this.format),
+                year: /yy/i.test(this.format),
+                times: /ss|hh/i.test(this.format) || /mm/.test(this.format),
             }
         },
         endState() {
-            const format = this.format
-            switch (true) {
-                case format.indexOf("dd") > -1:
-                    return "day"
-                case format.indexOf("MM") > -1:
-                    return "month"
-                case format.indexOf("yy") > -1:
-                    return "year"
-                case format.indexOf("ss") > -1:
-                case format.indexOf("mm") > -1:
-                case format.indexOf("HH") > -1:
-                    return "times"
-                default:
-                    return "day"
-            }
-        },
-        getToday() {
-            return Dates.parseObj(new Date())
+            if (/dd/i.test(this.format)) return "day"
+            if (/MM/.test(this.format)) return "month"
+            if (/yy/i.test(this.format)) return "year"
+            if (/ss|mm|hh/i.test(this.format)) return "times"
+            return "day"
         },
         getTimeRefs() {
-            const refs = [],
-                format = this.format
-            ;["HH", "mm", "ss"].forEach((val) => {
-                if (format.indexOf(val) > -1) {
-                    refs.push(val)
-                }
-            })
-            return refs.map((val) => {
-                if (val === "HH") return "hours"
-                if (val === "mm") return "minutes"
-                if (val === "ss") return "seconds"
-            })
+            const refs = []
+            if (/hh/i.test(this.format)) refs.push("hours")
+            if (/mm/.test(this.format)) refs.push("minutes")
+            if (/ss/i.test(this.format)) refs.push("seconds")
+            return refs
         },
         linkedDates() {
             let dates = []
@@ -212,10 +189,9 @@ export default {
         },
         valueParse() {
             let value = (this.updateValueParse || !this.updateValueParse) && this.value,
-                type = typeOf(value),
-                format = this.format
+                type = typeOf(value)
             if (!value || !value.length) {
-                this.$set(this.$data, "foucsDate", this.getToday)
+                this.$set(this.$data, "foucsDate", this.todayObj)
                 return []
             }
             console.log(type, "++++++")
@@ -238,7 +214,7 @@ export default {
                             return date
                         }
                     }
-                    const vals = Dates.formatParse(date, format)
+                    const vals = Dates.formatParse(date, this.format)
                     return vals.length <= 1 ? vals[0] : vals
                 })
             }
@@ -253,9 +229,9 @@ export default {
     },
     methods: {
         handleKeydown(e) {
-            const keyCode = e.keyCode,
-                status = this.status
-            let date = Dates.getTimes(this.foucsDate)
+            let keyCode = e.keyCode,
+                status = this.status,
+                date = Dates.getTimes(this.foucsDate)
             if (keyCode === 37 || keyCode === 39) {
                 const back = keyCode === 37
                 switch (status) {
@@ -340,7 +316,6 @@ export default {
             }
         },
         handleRangeChange(cell) {
-            // if (cell && cell.date && this.status == this.endState) {
             if (cell && this.status == this.endState) {
                 this.rangeDate = cell.date
                 this.$emit(
@@ -356,7 +331,6 @@ export default {
         confirm(isEnd, isKeyEnter) {
             const length = this.linkedDates.length
             if (this.range && (length % 2 == 1 || (!length && isKeyEnter))) return
-            // if (this.range && !length && isKeyEnter) return;
             let format = this.format,
                 datestrList = [],
                 datesInstance = []
@@ -377,12 +351,9 @@ export default {
                 datesInstance = datesInstance[0] || null
             }
             const datestring = datestrList.toString(),
-                // singleDate = this.range && length % 2 == 1,
                 preDates = this.__dates
             this.__dates = datestring
             this.__datesInstance = datesInstance && datesInstance.toString()
-            // console.log(preDates, datestring);
-            // if (preDates && preDates === datestring && !singleDate) {
             if (preDates && preDates === datestring) {
                 return
             }

@@ -5,8 +5,8 @@
 </template>
 <script>
 export default {
-    name: "Carousel-item",
-    componentName: "Carousel-item",
+    name: "CarouselItem",
+    componentName: "CarouselItem",
     mounted() {
         this.update()
     },

@@ -12,7 +12,7 @@ export default class Carousel {
         this.el = getElement(el);
         this._prefix = _prefix;
         this._listClass = `${_prefix}-list`;
-        this._itemClass = `${_prefix}-item`;
+        this._itemClass = `${_prefix}item`;
         this._activeClass = `${_prefix}-active`;
         this._leftClass = `${_prefix}-left`;
         this._nextClass = `${_prefix}-next`;

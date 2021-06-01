@@ -27,7 +27,7 @@ $timeTest: 0.4s;
         transition: all $timeTest ease;
     }
 
-    &-item {
+    &item {
         display: none;
         overflow: hidden;
         position: absolute;
@@ -298,7 +298,7 @@ $timeTest: 0.4s;
     &-fade {
         .#{$prefix-cls}-list {
             .#{$prefix-cls} {
-                &-item {
+                &item {
                     transition: none;
                     opacity: 0;
                     transform: translate3d(0, 0, 0) !important;
@@ -335,7 +335,7 @@ $timeTest: 0.4s;
             margin: auto;
 
             .#{$prefix-cls} {
-                &-item {
+                &item {
                     transform: none;
                     pointer-events: none;
                     backface-visibility: hidden;
@@ -429,7 +429,7 @@ $timeTest: 0.4s;
     //         }
 
     //         .#{$prefix-cls} {
-    //             &-item {
+    //             &item {
     //                 transform: none;
     //                 pointer-events: none;
     //                 backface-visibility: hidden;
@@ -479,7 +479,7 @@ $timeTest: 0.4s;
                 box-sizing: content-box;
             }
 
-            &-item,
+            &item,
             &-active {
                 display: block;
                 position: static;
@@ -501,7 +501,7 @@ $timeTest: 0.4s;
                     width: 100%;
                 }
 
-                &-item {
+                &item {
                     width: 100%;
                     height: auto;
                 }

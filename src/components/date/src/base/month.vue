@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses">
+    <div :class="[_tobogPrefix_ + '-' + prefix]">
         <span :class="getCellCls(cell)" v-for="cell in cells" @click="handleClick(cell, 'day')" :key="cell.date.month">
             <em>{{
                 handleFormatter(

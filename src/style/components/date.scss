@@ -1,7 +1,7 @@
 $prefix-cls: #{$prefix}-date;
 $prefix-cls-picter: #{$prefix}-datepicter;
 $prefix-cls-panel: #{$prefix}-datepanel;
-$prefix-cls-day: #{$prefix}-dateday;
+$prefix-cls-day: #{$prefix}-date-day;
 $prefix-cls-time: #{$prefix}-datetimes;
 
 .#{$prefix-cls} {
@@ -12,10 +12,10 @@ $prefix-cls-time: #{$prefix}-datetimes;
     display: inline-flex;
     flex-direction: column;
     user-select: none;
-    &-showweek{
+    &-showweek {
         width: 270px;
     }
-    &[data-index='1'] {
+    &[data-index="1"] {
         border-left-color: transparent;
     }
 
@@ -24,7 +24,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
         flex: auto;
     }
 
-    &header {
+    &-header {
         flex: none;
         width: 100%;
         padding: 0 6px;
@@ -45,7 +45,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
         &-base {
             color: $sub-content;
 
-            &>span {
+            & > span {
                 padding: 0 3px;
 
                 &:hover {
@@ -65,7 +65,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
         margin-bottom: 2px;
         cursor: pointer;
 
-        &>em {
+        & > em {
             display: block;
             border-radius: 3px;
             box-sizing: border-box;
@@ -80,7 +80,6 @@ $prefix-cls-time: #{$prefix}-datetimes;
         }
 
         &-range {
-
             &,
             em {
                 background-color: $hover;
@@ -88,13 +87,13 @@ $prefix-cls-time: #{$prefix}-datetimes;
         }
 
         &#{&}-selected {
-            &>em {
+            & > em {
                 background-color: $primary;
                 color: $white;
             }
         }
 
-        &#{&}-focus>em {
+        &#{&}-focus > em {
             border: 1px solid $primary;
             animation: #{$prefix-cls}-cell 1.2s infinite ease-in-out;
         }
@@ -103,16 +102,16 @@ $prefix-cls-time: #{$prefix}-datetimes;
             cursor: not-allowed;
             color: $white;
 
-            &>em {
+            & > em {
                 background-color: $disabled;
             }
         }
 
-        &-now>em {
+        &-now > em {
             position: relative;
 
             &::before {
-                content: '';
+                content: "";
                 position: absolute;
                 border: 3px solid $primary;
                 border-radius: 100%;
@@ -121,7 +120,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
             }
         }
 
-        &-now#{&}-selected>em::before {
+        &-now#{&}-selected > em::before {
             border-color: $white;
         }
     }
@@ -130,6 +129,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
 .#{$prefix-cls-panel} {
     &-wrapper {
         display: inline-block;
+        outline: none;
     }
     overflow: hidden;
     display: inline-flex;
@@ -138,12 +138,6 @@ $prefix-cls-time: #{$prefix}-datetimes;
     .#{$prefix-cls-picter}-date:nth-of-type(2) {
         border-left: 0;
     }
-
-    &-wrapper {
-        display: inline-block;
-        outline: none;
-    }
-
     &-aside {
         background-color: $back;
         min-width: 90px;
@@ -199,7 +193,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
 }
 
 .#{$prefix-cls-day} {
-    &[data-week='true'] {
+    &[data-week="true"] {
         .#{$prefix-cls-day}-cell {
             width: 12.5%;
         }
@@ -213,7 +207,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
         &-week {
             color: $sub-content;
 
-            &>em:hover {
+            & > em:hover {
                 background-color: transparent;
             }
         }
@@ -224,7 +218,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
             color: $sub-content;
             opacity: 0.5;
 
-            &>em:hover {
+            & > em:hover {
                 background-color: transparent;
             }
         }
@@ -244,7 +238,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
     padding-top: 0;
     cursor: pointer;
 
-    &>header {
+    & > header {
         line-height: 35px;
         border-bottom: 1px solid $divider;
     }
@@ -282,7 +276,6 @@ $prefix-cls-time: #{$prefix}-datetimes;
 }
 
 .#{$prefix-cls-picter} {
-
     &-wrapper &-panel,
     &-drop-wrapper {
         overflow: hidden;

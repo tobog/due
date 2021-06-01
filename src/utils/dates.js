@@ -9,41 +9,47 @@ export const compareEqual = function (date, type, compare = {}) {
 };
 
 export default class Dates extends Date {
-    constructor(...arg) {
+    constructor (...arg) {
         super(...arg);
     }
     static New(date) {
         const type = typeOf(date);
-        if (type === 'object') return new Date(`${date.year || 1917}-${date.month || 1}-${date.day || 1} ${date.hours || 0}:${date.minutes || 0}:${date.seconds || 0}`);
-        return new Date(date || null);
+        if (type === 'object') {
+            date = new Date(`${date.year || 1917}/${date.month || 1}/${date.day || 1} ${date.hours || 0}:${date.minutes || 0}:${date.seconds || 0}`)
+        } else if (type === 'string') {
+            date = date.replace(/\-/ig, '/');
+            date = new Date(date || null);
+        } else {
+            date = new Date(date || null);
+        }
+        return date instanceof Date ? date : null;
     }
     static getTimes(date, clearhours) {
         if (!date) return 0;
         const type = typeOf(date);
         switch (type) {
             case 'string': {
-                const times = Date.parse(date);
-                return clearhours ? Math.floor(times / 3600 / 1000 / 24) * 3600 * 1000 * 24 : times;
+                const instance = Dates.New(date) || 0;
+                return instance && (clearhours ? +instance.setHours(0, 0, 0, 0) : instance.getTime()) || 0;
             }
             case 'date': {
-                const times = date.getTime();
-                return clearhours ? Math.floor(times / 3600 / 1000 / 24) * 3600 * 1000 * 24 : times;
+                return clearhours ? +date.setHours(0, 0, 0, 0) : date.getTime();
             }
             case 'object': {
-                const hours = clearhours ? `00:00:00` : `${date.hours || 0}:${date.minutes || 0}:${date.seconds || 0}`;
-                return Date.parse(`${date.year || 1917}-${date.month || 1}-${date.day || 1} ` + hours);
+                const hours = clearhours ? ` 00:00:00` : ` ${date.hours || 0}:${date.minutes || 0}:${date.seconds || 0}`;
+                return +Date.parse(`${date.year || 1917}/${date.month || 1}/${date.day || 1}` + hours);
             }
             default: return date;
         }
     }
     static clearHours(time) {
-        const cloneDate = new Date(time);
-        cloneDate.setHours(0, 0, 0, 0);
-        return cloneDate.getTime();
+        const cloneDate = Dates.New(time);
+        if (!cloneDate) return 0;
+        return +cloneDate.setHours(0, 0, 0, 0);
     }
-    static formatTime(val) {
+    static formatTime(val, isPad = true) {
         val = parseInt(val);
-        return val < 10 ? '0' + val : val;
+        return (isPad && val < 10) ? ('0' + val) : val;
     }
     static formatParse(date, format = "yy-MM-dd HH:mm:ss") {
         if (date && format) {
@@ -56,9 +62,9 @@ export default class Dates extends Date {
                 H: 'hours',
                 m: 'minutes',
                 s: 'seconds',
-            }, arr = [], objIndex = { y: 0, M: 0, d: 0, H: 0, m: 0, s: 0 };
+            }, arr = [], objIndex = { y: 0, M: 0, d: 0, H: 0, m: 0, s: 0 },
+                cells = format.split(/[^yMdHms0-9]+/i);
             date = date.split(/\D+/i);
-            const cells = format.split(/[^yMdHms0-9]+/i);
             cells.forEach((item, index) => {
                 const key = item[0], count = objIndex[key], obj = arr[count] || {};
                 if (count === void 0) return;
@@ -80,33 +86,30 @@ export default class Dates extends Date {
                 data.push(item);
             }
         })
-        const objIndex = { y: 0, m: 0, d: 0, H: 0, M: 0, s: 0 };
-        return format.replace(/(y|M|d|H|m|s)+/g, function (match, reg, offset, str) {
+        const objIndex = { y: 0, M: 0, d: 0, H: 0, m: 0, s: 0 };
+        return format.replace(/(y|M|d|H|m|s)+/gi, function (match, reg, offset, str) {
             let key = '';
-            // console.log(...arguments)
             switch (reg) {
                 case 'y': key = 'year'; break;
+                case 'Y': key = 'year'; break;
                 case 'M': key = 'month'; break;
                 case 'd': key = 'day'; break;
+                case 'D': key = 'day'; break;
                 case 'H': key = 'hours'; break;
+                case 'h': key = 'hours'; break;
                 case 'm': key = 'minutes'; break;
                 case 's': key = 'seconds'; break;
+            }
+            if (reg === 'm' && match.indexOf('Mm') > -1) {
+                key = 'month';
             }
             const index = objIndex[reg]++, value = data[index];
             return value ? (match.length > 1 ? Dates.formatTime(value[key]) : value[key]) : match;
         })
     }
     static parseObj(date) {
-        if (!date) return date;
-        const type = typeOf(date);
-        if (type === 'object') return date;
-        if (type === 'string' || type === 'number') {
-            try {
-                date = new Date(date);
-            } catch (error) {
-                return;
-            }
-        }
+        date = date && Dates.New(date);
+        if (!date) return;
         const year = date.getFullYear();
         if (year !== year) return;
         return {
@@ -121,13 +124,14 @@ export default class Dates extends Date {
         }
     }
     static siblingMonth(src, diff) {
-        const temp = new Date(src || null); // lets copy it so we don't change the original
-        const newMonth = temp.getMonth() + diff + 1;
-        return new Date(temp.getFullYear(), newMonth, 0);
+        const temp = Dates.New(src); // lets copy it so we don't change the original
+        if (!temp) return;
+        return new Date(temp.getFullYear(), temp.getMonth() + diff + 1, 0);
     }
     static siblingDate(src, diff) {
-        const time = new Date(src || null).getTime(); // lets copy it so we don't change the original;
-        return new Date(time + diff * 3600 * 24 * 1000);
+        const temp = Dates.New(src); // lets copy it so we don't change the original
+        if (!temp) return;
+        return new Date(temp.getTime() + diff * 3600 * 24 * 1000);
     }
     static formats(type) {
         switch (type) {
@@ -144,5 +148,4 @@ export default class Dates extends Date {
             default: return 'yy-MM-dd HH:mm:ss';
         }
     }
-
 }

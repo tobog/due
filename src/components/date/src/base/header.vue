@@ -1,14 +1,14 @@
 <template>
-    <header :class="[_tobogPrefix_]" v-if="status !== 'times'">
+    <header :class="[_tobogPrefix_ + '-header']" v-if="status !== 'times'">
         <span
             v-if="status === 'year' || status === 'month'"
-            :class="[_tobogPrefix_ + '-base']"
+            :class="[_tobogPrefix_ + '-header-base']"
             @click="handlePreNext({year: calendar.year - (status === 'month' ? 1 : 10)}, 'pre')"
         >
             <Icons type="ios-arrow-back"></Icons>
             <Icons type="ios-arrow-back"></Icons>
         </span>
-        <aside v-if="status === 'day'" :class="[_tobogPrefix_ + '-base']">
+        <aside v-if="status === 'day'" :class="[_tobogPrefix_ + '-header-base']">
             <span @click="handlePreNext({year: calendar.year - 1}, 'pre')">
                 <Icons type="ios-arrow-back"></Icons>
                 <Icons type="ios-arrow-back"></Icons>
@@ -17,7 +17,7 @@
                 <Icons type="ios-arrow-back"></Icons>
             </span>
         </aside>
-        <aside :class="[_tobogPrefix_ + '-title']">
+        <aside :class="[_tobogPrefix_ + '-header-title']">
             <span @click="handleClick('', 'year')">{{ calendar.year }}{{ langs("datepicker.year", "年") }}</span>
             <span v-if="status === 'day'" @click="handleClick('', 'month')">{{
                 langs("datepicker.month", calendar.month + "月", {month: calendar.month})
@@ -25,13 +25,13 @@
         </aside>
         <span
             v-if="status === 'year' || status === 'month'"
-            :class="[_tobogPrefix_ + '-base']"
+            :class="[_tobogPrefix_ + '-header-base']"
             @click="handlePreNext({year: calendar.year + (status === 'month' ? 1 : 10)}, 'next')"
         >
             <Icons type="ios-arrow-forward"></Icons>
             <Icons type="ios-arrow-forward"></Icons>
         </span>
-        <aside v-if="status === 'day'" :class="[_tobogPrefix_ + '-base']">
+        <aside v-if="status === 'day'" :class="[_tobogPrefix_ + '-header-base']">
             <span style="margin-right:12px;" @click="handleMonth(calendar.month + 1, 'next')">
                 <Icons type="ios-arrow-forward"></Icons>
             </span>
@@ -47,7 +47,7 @@
 import Icons from "../../../icons/src/index"
 import mixins from "./mixins"
 export default {
-    name: "DateHeader",
+    name: "Date",
     componentName: "DateHeader",
     mixins: [mixins],
     components: {
