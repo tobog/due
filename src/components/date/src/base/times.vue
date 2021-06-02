@@ -68,7 +68,7 @@ export default {
         if (this.hasTimesChild("ss")) this.initPosition("seconds", 60)
     },
     watch: {
-        visible(val) {
+        visible() {
             this.setScroll()
         },
     },
@@ -92,42 +92,32 @@ export default {
     methods: {
         formatTime: Dates.formatTime,
         getScroll() {
-            const scrollStatic = {}
-            ;["hours", "minutes", "seconds"].forEach((key) => {
-                const ref = this.$refs[key]
-                if (ref) {
-                    scrollStatic[key] = ref.scrollTop
-                }
+            Object.keys(this.$refs).forEach(key => {
+                this._scrollStatic[key] = this.$refs[key].scrollTop
             })
-            this._scrollStatic = scrollStatic
         },
         setScroll() {
             this.$nextTick(() => {
                 this.$nextTick(() => {
                     const _scrollStatic = this._scrollStatic
-                    if (!_scrollStatic) return
-                    ;["hours", "minutes", "seconds"].forEach((key) => {
-                        const ref = this.$refs[key],
-                            scrollTop = _scrollStatic[key]
-                        if (ref && scrollTop !== void 0) {
-                            ref.scrollTop = scrollTop
-                        }
+                    if (!this._scrollStatic) return
+                    Object.keys(this.$refs).forEach(key => {
+                        this.$refs[key].scrollTop = this._scrollStatic[key];
                     })
                 })
             })
         },
         hasTimesChild(type = "HH") {
-            return this.format.indexOf(type) > -1
+            return new RegExp(type, type !== 'mm' ? 'i' : '').test(this.format)
         },
         handleScroll(type) {
             this.calendarType = type
         },
         initRefsStyle() {
-            const refs = this.$refs,
-                keys = Object.keys(refs),
+            const keys = Object.keys(this.$refs),
                 size = 100 / (keys.length || 1) + "%"
             keys.forEach((item) => {
-                refs[item].style.width = size
+                this.$refs[item].style.width = size
             })
         },
         initPosition(type, size = 24) {
@@ -139,8 +129,7 @@ export default {
                     height = scrollHeight / size,
                     scrollTop = height * this.value[type] - clientHeight / 2 + height / 2
                 if (scrollTop > 0) {
-                    ref.scrollTop = scrollTop
-                    this._scrollStatic[type] = scrollTop
+                    this._scrollStatic[type] = ref.scrollTop = scrollTop
                 }
             })
         },

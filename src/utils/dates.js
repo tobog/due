@@ -91,12 +91,12 @@ export default class Dates extends Date {
             let key = '';
             switch (reg) {
                 case 'y': key = 'year'; break;
-                case 'Y': key = 'year'; break;
+                case 'Y': key = 'year'; reg = 'y'; break;
                 case 'M': key = 'month'; break;
                 case 'd': key = 'day'; break;
-                case 'D': key = 'day'; break;
+                case 'D': key = 'day'; reg = 'd'; break;
                 case 'H': key = 'hours'; break;
-                case 'h': key = 'hours'; break;
+                case 'h': key = 'hours'; reg = 'H'; break;
                 case 'm': key = 'minutes'; break;
                 case 's': key = 'seconds'; break;
             }
