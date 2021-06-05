@@ -26,6 +26,8 @@
                 :visible="visible"
                 :theme="theme"
                 :cellFormatter="cellFormatter"
+                :maxDate="maxDate"
+                :minDate="minDate"
                 @on-selected="selected"
                 @on-sync-update="handleCalendar"
             />
@@ -47,6 +49,8 @@
                 :visible="visible"
                 :theme="theme"
                 :cellFormatter="cellFormatter"
+                :maxDate="maxDate"
+                :minDate="minDate"
                 @on-selected="selected"
                 @on-sync-update="handleCalendar"
             />

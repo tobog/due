@@ -1,15 +1,16 @@
 <style lang="scss"></style>
 
 <template>
-    <Demo :config="getConfig" :code="getCode" isAll>
+    <Demo :config="getConfig" :code="getCode" isBig>
         <template slot="header">
-            <h2>代码示例 (DatePicker 日期选择器,DatePanel面板)</h2>
+            <h2>代码示例 (Datepicker 日期选择器,DatePanel面板)</h2>
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
         </template>
         <template v-slot="config">
-            <vDatePanel v-model="value1" v-bind="config"></vDatePanel>
-            <!-- <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker> -->
-            <div>{{ value1 }}-{{ value }}</div>
+            <vDatepicker v-model="value" v-bind="config.Datepicker"></vDatepicker>
+            <vDatePanel v-model="value1" v-bind="config.DatePanel"></vDatePanel>
+            <div>Datepicker: {{ value }}</div>
+            <div>DatePanel: {{ value1 }}</div>
         </template>
     </Demo>
 </template>
@@ -24,28 +25,42 @@ export default {
                 {
                     text: "Today",
                     value() {
-                        return new Date()
+                        return new Date();
                     },
                 },
                 {
                     text: "One week",
                     value() {
-                        const date = new Date()
-                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-                        return date
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        return date;
                     },
                 },
             ],
-        }
+        };
     },
     methods: {},
     computed: {
         getCode() {
-            return `<Datepicker v-model="value" v-bind=CODE></Datepicker>
-                    <DatePanel v-model="value" v-bind=CODE></DatePanel>
-            `
+            return `<Datepicker :options="{shortcuts}" v-model="value" v-bind="config.Datepicker"></Datepicker>
+                    <DatePanel v-model="value1" v-bind="config.DatePanel"></DatePanel>
+                    
+            `;
         },
         getConfig() {
+            return {
+                Datepicker: {
+                    data: this.getDatepickerConfig,
+                },
+                PopperConfig: {
+                    data: this.getPopperConfig,
+                },
+                DatePannel: {
+                    data: this.getDatePannelConfig,
+                },
+            };
+        },
+        getDatepickerConfig() {
             return [
                 {
                     showConfig: true,
@@ -67,36 +82,6 @@ export default {
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
-                },
-                {
-                    showConfig: true,
-                    label: "多个日期",
-                    key: "multiple",
-                    demoDefault: false,
-                    explain: "开启后，可以选择多个日期,DateBase|DatePanel|DatePicter属性",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: false,
-                },
-                {
-                    showConfig: true,
-                    label: "双面板",
-                    key: "doublePanel",
-                    demoDefault: true,
-                    explain: "是否双面板,DatePanel|DatePicter属性",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: true,
-                },
-                {
-                    showConfig: true,
-                    label: "确认关闭",
-                    key: "confirm",
-                    demoDefault: true,
-                    explain: "是否确认关闭，DatePanel|DatePicter属性",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: true,
                 },
                 {
                     showConfig: true,
@@ -130,10 +115,226 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "显示星期数",
-                    key: "showWeek",
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "折叠日期",
+                    key: "collapse",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    explain: "折叠日期个数",
+                    dataType: "Number",
+                    default: 0,
+                },
+                {
+                    label: "下拉组件配置",
+                    key: "popperConfig",
+                    explain: "下拉组件配置，熟悉继承DropBase组件",
+                    dataType: "Object",
+                    default: "-",
+                },
+                {
+                    label: "继承属性",
+                    key: "$attrs",
+                    demoDefault: "",
+                    explain: "继承Input 属性，参考Input组件",
+                    dataType: "Object",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "自动关闭",
+                    key: "autoClose",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否自动关闭",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "主题颜色",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题颜色",
+                    dataType: "String",
+                    default: "",
+                    options: this.getThemes,
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large,或者设置具体数值",
+                    dataType: "String | Number",
+                    default: "",
+                    options: this.getSize,
+                },
+                {
+                    showConfig: true,
+                    label: "多选",
+                    key: "multiple",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否多选",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    label: "form 表单名称",
+                    key: "name",
+                    explain: "form 表单名称",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "头部图标",
+                    key: "prefix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "",
+                    explain: "继承input: prefix|slot:prefix 输入框头部图标",
+                    dataType: "Number|VNode",
+                    options: this.iconslist,
+                },
+                {
+                    showConfig: true,
+                    label: "尾部图标",
+                    key: "suffix",
+                    tag: "vSelect",
+                    default: void 0,
+                    demoDefault: "",
+                    explain: "继承input:  suffix|slot:suffix输入框尾部图标",
+                    dataType: "Number|VNode",
+                    options: this.iconslist,
+                },
+                {
+                    label: "输入框外头部",
+                    key: "scoped:prepend",
+                    explain: "输入框外头部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "自定义输入框外尾部",
+                    key: "slots:append",
+                    explain: "输入框外尾部组件",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "自定义多选tag",
+                    key: "scoped:tag",
+                    explain: "继承input: 自定义 tag渲染",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "下拉组件配置",
+                    key: "popperConfig",
+                    explain: "下拉组件配置，熟悉继承DropBase组件",
+                    dataType: "Object",
+                    default: "-",
+                },
+                ...this.getDatePannelConfig,
+                {
+                    label: "事件",
+                    key: "on-change",
+                    explain: "日期发生变化触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-blur",
+                    explain: "失去焦点触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-foucs",
+                    explain: "获取焦点触发",
+                    dataType: "Function：Event",
+                    default: "(value,news, event)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-visible-change",
+                    explain: "下拉框展开或收起时触发",
+                    dataType: "Function：Event",
+                    default: "(visible)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "input",
+                    explain: "值变化触发",
+                    dataType: "Function:Event",
+                    default: "(value)=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-clear",
+                    explain: "清除时触发",
+                    dataType: "Function:Event",
+                    default: "()=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-remove-item",
+                    explain: "移除一个时触发",
+                    dataType: "Function:Event",
+                    default: "()=>{}",
+                },
+                {
+                    label: "事件",
+                    key: "on-confirm",
+                    explain: "点击确认时触发",
+                    dataType: "Function:Event",
+                    default: "()=>{}",
+                },
+            ];
+        },
+        getDatePannelConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "多个日期",
+                    key: "multiple",
+                    demoDefault: false,
+                    explain: "开启后，可以选择多个日期,DateBase|DatePanel|DatePicter属性",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "双面板",
+                    key: "doublePanel",
                     demoDefault: true,
-                    explain: "是否显示星期数,DateBase|DatePanel|DatePicter属性",
+                    explain: "是否双面板,DatePanel|DatePicter属性",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: true,
+                },
+                {
+                    showConfig: true,
+                    label: "确认关闭",
+                    key: "confirm",
+                    demoDefault: true,
+                    explain: "是否确认关闭，DatePanel|DatePicter属性",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
@@ -151,21 +352,20 @@ export default {
                 {
                     label: "自定义星期",
                     key: "weeks",
-                    demoDefault: '',
+                    demoDefault: "",
                     explain: "自定义星期名称,DateBase|DatePanel|DatePicter属性",
                     dataType: "Boolean",
                     default: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
                 },
                 {
                     showConfig: true,
-                    label: "尺寸大小",
-                    key: "size",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),medium,large",
-                    dataType: "String",
-                    default: "",
-                    options: this.getSize,
+                    label: "显示星期数",
+                    key: "showWeek",
+                    demoDefault: true,
+                    explain: "是否显示星期数,DateBase|DatePanel|DatePicter属性",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: true,
                 },
                 {
                     showConfig: true,
@@ -183,7 +383,8 @@ export default {
                     key: "type",
                     tag: "vSelect",
                     demoDefault: "datetimerange",
-                    explain: "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month，DatePanel|DatePicter属性",
+                    explain:
+                        "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month，DatePanel|DatePicter属性",
                     dataType: "String",
                     default: "",
                     options: [
@@ -198,16 +399,6 @@ export default {
                         "hours",
                         "hoursrange",
                     ],
-                },
-                {
-                    showConfig: true,
-                    label: "折叠日期",
-                    key: "collapse",
-                    tag: "vInputNumber",
-                    demoDefault: "",
-                    explain: "折叠日期个数",
-                    dataType: "Number",
-                    default: 0,
                 },
                 {
                     label: "当前值",
@@ -242,41 +433,11 @@ export default {
                     default: "Boolean:(dateObje,type)=>{}",
                 },
                 {
-                    label: "是否可用",
-                    key: "invalid",
-                    demoDefault: "",
-                    explain: "当前日期不可用",
-                    dataType: "Function",
-                    default: "Boolean:(dateObje,type)=>{}",
-                },
-                {
-                    label: "继承属性",
-                    key: "$attrs",
-                    demoDefault: "",
-                    explain: "继承Input 属性，参考Input组件",
-                    dataType: "Object",
-                    default: "",
-                },
-                {
                     label: "事件",
-                    key: "on-change",
-                    explain: "日期发生变化触发",
-                    dataType: "Function：Event",
-                    default: "(value,news, event)=>{}",
-                },
-                {
-                    label: "事件",
-                    key: "on-blur",
-                    explain: "失去焦点触发",
-                    dataType: "Function：Event",
-                    default: "(value,news, event)=>{}",
-                },
-                {
-                    label: "事件",
-                    key: "on-foucs",
-                    explain: "获取焦点触发",
-                    dataType: "Function：Event",
-                    default: "(value,news, event)=>{}",
+                    key: "on-clear",
+                    explain: "清除时触发",
+                    dataType: "Function:Event",
+                    default: "()=>{}",
                 },
                 {
                     label: "事件",
@@ -286,36 +447,151 @@ export default {
                     default: "()=>{}",
                 },
                 {
-                    label: "区间",
-                    key: "DateBase:range",
-                    explain: "是否区间",
-                    dataType: "Boolean",
-                    default: "",
-                },
-                 {
-                    label: "区间",
-                    key: "DateBase:range",
-                    explain: "是否区间",
-                    dataType: "Boolean",
-                    default: "",
+                    label: "事件",
+                    key: "input",
+                    explain: "变化时触发",
+                    dataType: "Function:Event",
+                    default: "()=>{}",
                 },
                 {
                     label: "事件",
-                    key: "DateBase:on-sync-update",
-                    explain: "只要变化触发，同步数据事件",
+                    key: "on-confirm",
+                    explain: "点击确认时触发",
                     dataType: "Function:Event",
-                    default: "({date,index},type)=>{}",
+                    default: "()=>{}",
+                },
+            ];
+        },
+        // DropBase 属性
+        getPopperConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "开启css3",
+                    key: "gpu",
+                    demoDefault: false,
+                    explain: "开启css3样式加速",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
                 },
                 {
-                    label: "事件",
-                    key: "DateBase:on-selected",
-                    explain: "选中变化时触发",
-                    dataType: "Function:Event",
-                    default: "({datesInstance,dates,index,endState},isOver)=>{}",
+                    showConfig: true,
+                    label: "显示箭头",
+                    key: "showArrow",
+                    demoDefault: false,
+                    explain: "是否显示箭头",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
                 },
-                
-            ]
+                {
+                    showConfig: true,
+                    label: "响应式定位",
+                    key: "responsive",
+                    demoDefault: void 0,
+                    explain: "是否响应式定位",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: void 0,
+                },
+                {
+                    showConfig: true,
+                    label: "一直显示",
+                    key: "always",
+                    demoDefault: false,
+                    explain: "是否一直显示",
+                    dataType: "Boolean",
+                    tag: "vSwitch",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "下拉框偏移",
+                    key: "offset",
+                    demoDefault: 5,
+                    explain: "下拉框偏移位置",
+                    dataType: "String, Number",
+                    tag: "vInputNumber",
+                    default: 5,
+                },
+                {
+                    showConfig: true,
+                    label: "动画名称",
+                    key: "transitionName",
+                    demoDefault: "",
+                    explain: "动画名称，type===drop时默认transition-drop，其他默认fade",
+                    dataType: "String",
+                    tag: "vInput",
+                    default: "transition-drop|fade",
+                },
+                {
+                    showConfig: true,
+                    label: "显示位置",
+                    key: "placement",
+                    demoDefault: "",
+                    explain:
+                        "显示位置,可选值：top,top-left,top-center,top-right,top-fix,bottom,bottom-left,bottom-center,bottom-right,bottom-fix,right,right-top,right-center,right-bottom,left,left-top,left-center,left-bottom,fix-left,fix-center,fix-right",
+                    dataType: "String",
+                    tag: "vSelect",
+                    default: "",
+                    options: [
+                        "top",
+                        "top-left",
+                        "top-center",
+                        "top-right",
+                        "top-fix",
+                        "bottom",
+                        "bottom-left",
+                        "bottom-center",
+                        "bottom-right",
+                        "bottom-fix",
+                        "right",
+                        "right-top",
+                        "right-center",
+                        "right-bottom",
+                        "left",
+                        "left-top",
+                        "left-center",
+                        "left-bottom",
+                        "fix-left",
+                        "fix-center",
+                        "fix-right",
+                    ],
+                },
+                {
+                    showConfig: true,
+                    label: "延迟更新",
+                    key: "delay",
+                    demoDefault: 0,
+                    explain: "延迟更新样式",
+                    dataType: "Number",
+                    tag: "vInputNumber",
+                    default: 0,
+                },
+                {
+                    showConfig: true,
+                    label: "触发方式",
+                    key: "trigger",
+                    demoDefault: "",
+                    explain: "触发方式，可选值：click,hover,other, type===drop时默认other，其他默认click",
+                    dataType: "String",
+                    tag: "vSelect",
+                    default: "",
+                    options: ["click", "hover", "other"],
+                },
+                {
+                    showConfig: true,
+                    label: "下拉框class 名称",
+                    key: "dropClass",
+                    demoDefault: "",
+                    explain: "自定义下拉class 名称",
+                    dataType: "Object, String，Array",
+                    tag: "vTextarea",
+                    default: "",
+                },
+            ];
         },
     },
-}
+};
 </script>

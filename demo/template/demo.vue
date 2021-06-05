@@ -68,7 +68,7 @@
             <slot name="desc"> </slot>
         </div>
         <vRow class="demo-layout" flex>
-            <vCol :lg="isAll ? 24 : 14" span="24" class="demo-form">
+            <vCol :lg="isAll ? 24 : (isBig ? 12 : 14)" span="24" class="demo-form">
                 <template v-for="(item, key) in getConfig">
                     <div v-if="!item.hide" :key="key">
                         <h2 class="demo-form-header">{{ key }}属性配置</h2>
@@ -77,7 +77,7 @@
                     </div>
                 </template>
             </vCol>
-            <vCol :lg="isAll ? 24 : 10" span="24" class="demo-view" :data-dark="isDark">
+            <vCol :lg="isAll ? 24 : (isBig ? 12 : 10)" span="24" class="demo-view" :data-dark="isDark">
                 <vSwitch v-model="show" class="margin-bottom-10">
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -137,6 +137,7 @@ export default {
     props: {
         title: String,
         isAll: Boolean,
+        isBig: Boolean,
         config: {
             type: [Array, Object],
             default() {

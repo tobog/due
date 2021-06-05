@@ -5,7 +5,7 @@
         isOutRef
         isToggle
         :class="[_tobogPrefix_ + '-wrapper']"
-        :dropClass="[_tobogPrefix_ + '-drop-wrapper']"
+        :dropClass="[_tobogPrefix_ + '-drop-wrapper', popperConfig && popperConfig.dropClass]"
         :data-vue-module="$options.name"
         :transfer="transfer"
         :disabled="isReadonly"
@@ -50,6 +50,9 @@
             </template>
             <template v-if="showSuffix" slot="suffix">
                 <slot name="suffix"></slot>
+            </template>
+            <template v-if="$scopedSlots.tag" slot="tag" slot-scope="data">
+                <slot name="tag" v-bind="data"></slot>
             </template>
         </InputBase>
         <DatePanel
@@ -195,7 +198,7 @@ export default {
             this.$nextTick(() => {
                 this.$emit("on-change", this.model, this.__dates)
                 this.$emit("on-blur", this.model, this.__dates)
-                this.handleDispatch("on-validate", this.model)
+                this.handleDispatch("on-validate", this.model, 'blur')
             })
         },
         handleInput(val, dates) {
