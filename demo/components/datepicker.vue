@@ -1,7 +1,7 @@
 <style lang="scss"></style>
 
 <template>
-    <Demo :config="getConfig" :code="getCode" isBig>
+    <Demo :config="getConfig" :code="getCode" isAll>
         <template slot="header">
             <h2>代码示例 (Datepicker 日期选择器,DatePanel面板)</h2>
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
@@ -55,8 +55,8 @@ export default {
                 PopperConfig: {
                     data: this.getPopperConfig,
                 },
-                DatePannel: {
-                    data: this.getDatePannelConfig,
+                DatePanel: {
+                    data: this.getDatePanelConfig,
                 },
             };
         },
@@ -248,7 +248,7 @@ export default {
                     dataType: "Object",
                     default: "-",
                 },
-                ...this.getDatePannelConfig,
+                ...this.getDatePanelConfig,
                 {
                     label: "事件",
                     key: "on-change",
@@ -307,7 +307,7 @@ export default {
                 },
             ];
         },
-        getDatePannelConfig() {
+        getDatePanelConfig() {
             return [
                 {
                     showConfig: true,
