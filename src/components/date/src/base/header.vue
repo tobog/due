@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         handlePreNext(data = {}, direction) {
-            this.handleClick({date: {...this.calendar, ...data}, direction})
+            this.handleClick({date: {...this.calendar, ...data}, type: direction})
         },
         handleMonth(month, direction) {
             if (month < 1) {

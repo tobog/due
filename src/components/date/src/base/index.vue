@@ -103,7 +103,7 @@ export default {
         startDate: {
             immediate: true,
             handler(val) {
-                this.calendar = val || Date.now()
+                this.calendar = val || Date.now();
             },
         },
         value: {
@@ -316,7 +316,7 @@ export default {
             }
         },
         handleRangeChange(cell) {
-            if (cell && this.status == this.endState) {
+            if (cell && this.status === this.endState) {
                 this.rangeDate = cell.date
                 this.$emit(
                     "on-sync-update",
@@ -483,7 +483,7 @@ export default {
                     "on-sync-update",
                     {
                         date,
-                        direction: cell.direction,
+                        direction: cell.type,
                         dates: this.dates,
                         index: this.index,
                         status: invalidStatus ? this.status : next,

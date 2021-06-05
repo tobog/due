@@ -250,12 +250,12 @@ export default {
             const {status, index = 0, date, dates, direction} = data
             const ref0 = this.$refs.ref0,
                 ref1 = this.$refs.ref1
-            this.curIndex = index
+            this.curIndex = index;
             if (type === "range") {
                 if (ref0) ref0.rangeDate = date
                 if (ref1) ref1.rangeDate = date
             }
-            if (type === "calendar" || type === "keyCalendar") {
+            if ((type === "calendar" || type === "keyCalendar")) {
                 this.syncStatus(status)
                 if (ref0) {
                     if (index == 0) {
@@ -280,7 +280,6 @@ export default {
                         if (isPre) interval = -10
                         if (isNext) interval = 10
                     }
-
                     if (this.status === "month" && validYear < 1) {
                         if (isPre) interval = -1
                         if (isNext) interval = 1
@@ -318,8 +317,11 @@ export default {
             }
             const method = dateMap[status]
             if (method) {
-                const dates = [instance, cloneDate["set" + method](cloneDate["get" + method]() + interval)]
-                this.startDates = interval > 0 ? dates : dates.reverse()
+                if (interval < 0 && status === 'day') {
+                    cloneDate.setDate(1);
+                }
+                const endDate = cloneDate["set" + method](instance["get" + method]() + interval);
+                this.startDates = interval > 0 ? [instance, endDate] : [endDate, instance];
             }
         },
         handleShortcuts(data) {

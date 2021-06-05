@@ -7,7 +7,7 @@
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
         </template>
         <template v-slot="config">
-            <vDatePanel :options="{shortcuts}" v-model="value1" v-bind="config"></vDatePanel>
+            <vDatePanel v-model="value1" v-bind="config"></vDatePanel>
             <!-- <vDatepicker :options="{shortcuts}" v-model="value" v-bind="config"></vDatepicker> -->
             <div>{{ value1 }}-{{ value }}</div>
         </template>
