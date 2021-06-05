@@ -42,7 +42,7 @@ export default {
     methods: {},
     computed: {
         getCode() {
-            return `<Datepicker :options="{shortcuts}" v-model="value" v-bind="config.Datepicker"></Datepicker>
+            return `<Datepicker v-model="value" v-bind="config.Datepicker"></Datepicker>
                     <DatePanel v-model="value1" v-bind="config.DatePanel"></DatePanel>
                     
             `;
