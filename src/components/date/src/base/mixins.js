@@ -20,6 +20,12 @@ export default {
         maxDate: [String, Date, Object, Number],
         minDate: [String, Date, Object, Number],
         theme: String,
+        // index: {
+        //     type: [String, Number],
+        //     default: 0,
+        // },
+        // startDate: [Number, Date, String],
+        // doublePanel: Boolean
     },
     data() {
         return {
@@ -48,10 +54,17 @@ export default {
         getMinDate() {
             if(!this.maxDate) return null;
             return Dates.parseObj(this.minDate);
-        }
+        },
+        // getStartDate() {
+        //     if(!this.startDate) return null;
+        //     return Dates.parseObj(this.startDate);
+        // }
     },
     methods: {
         handleDisable(date, type) {
+            // if (this.index == 1 && this.doublePanel && this.range && this.getStartDate) {
+
+            // }
             if (this.hasDisableMethod && this.disableMethod(date, type)) return true;
             if (this.getMinDate) {
                 if (type === 'day' && (
@@ -87,13 +100,16 @@ export default {
             }
             return false
         },
-        handleFormatter(val, cell, type) {
-            return typeof this.cellFormatter === 'function' ? this.cellFormatter(val, cell, type) : val
+        handleSelect(type, date) {
+            if (this.endState === this.prefix) {
+                return  this.linkedDates.some(item => compareEqual(item, type, date))
+            }
+            return compareEqual(this.foucsDate, type, date);
         },
         handleCell(date, type) {
             return {
                 date,
-                selected: this.linkedDates.some(item => compareEqual(item, type, date)),
+                selected: this.handleSelect(type, date),
                 disabled: this.handleDisable({ ...date }, type),
                 inRange: this.handleSection(date, this.rangeDate),
                 now: compareEqual(date, type, this.today),
@@ -156,6 +172,9 @@ export default {
                     [`${_tobogPrefix_}-cell-range`]: cell.inRange,
                 }
             ];
-        }
+        },
+        handleFormatter(val, cell, type) {
+            return typeof this.cellFormatter === 'function' ? this.cellFormatter(val, cell, type) : val
+        },
     }
 };

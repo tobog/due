@@ -79,6 +79,9 @@
             @on-confirm="handleConfirm"
             @on-status-change="handleStatusChange"
         >
+            <template v-if="$slots.footer" slot="footer">
+                <slot name="footer"></slot>
+            </template>
         </DatePanel>
     </DropBase>
 </template>

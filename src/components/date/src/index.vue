@@ -259,6 +259,7 @@ export default {
                 if (ref0) ref0.rangeDate = date
                 if (ref1) ref1.rangeDate = date
             }
+            console.log(data, type, 'handleCalendar')
             if ((type === "calendar" || type === "keyCalendar")) {
                 this.syncStatus(status)
                 if (ref0) {

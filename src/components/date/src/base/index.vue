@@ -82,7 +82,7 @@ export default {
         cellFormatter: Function,
         maxDate: [String, Date, Object, Number],
         minDate: [String, Date, Object, Number],
-        theme: String,
+        theme: String
     },
     data() {
         return {
@@ -397,7 +397,7 @@ export default {
                 isTimes = status === "times",
                 multiple = this.multiple,
                 dates = this.dates,
-                invalidStatus = !this.getValidStatus[next]
+                invalidStatus = !this.getValidStatus[next];
             if (cell && cell.date) {
                 // 有日期数据
                 let date = {
@@ -494,7 +494,7 @@ export default {
                 )
             }
             if (invalidStatus) return
-            if ((next && !isEnd) || (next && next !== this.endState)) this.status = next
+            if ((next && !isEnd) || (next && next !== this.endState)) this.status = next;
         },
     },
 }
