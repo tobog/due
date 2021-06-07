@@ -130,6 +130,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
     &-wrapper {
         display: inline-block;
         outline: none;
+        @include baseStyle;
     }
     overflow: hidden;
     display: inline-flex;
@@ -284,5 +285,65 @@ $prefix-cls-time: #{$prefix}-datetimes;
     &-panel {
         display: inline-flex;
         flex-direction: column;
+    }
+}
+
+
+@each $key, $value in $colors-map {
+    .#{$prefix-cls}-theme-#{$key} {
+        .#{$prefix-cls} {
+            &-header {
+                &-title:hover {
+                    color: $value;
+                }
+                &-base {
+                    & > span {
+                        &:hover {
+                            color: $value;
+                        }
+                    }
+                }
+            }
+            &-cell {
+                & > em {
+                    display: block;
+                    border-radius: 3px;
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                    font-weight: normal;
+                    border: 1px solid transparent;
+        
+                    &:hover {
+                        background-color: rgba($value, 0.15);
+                    }
+                }
+        
+                &-range {
+                    background-color: rgba($value, 0.15);
+                    em {
+                        background-color: initial;
+                    }
+                }
+        
+                &.#{$prefix-cls}-cell-selected {
+                    & > em {
+                        background-color: $value;
+                    }
+                }
+        
+                &.#{$prefix-cls}-cell-focus > em {
+                    border: 1px solid $value;
+                    animation: initial;
+                }
+           }
+        }
+        .#{$prefix-cls-time} {
+            &-cell {
+                &-selected {
+                    color: $value;
+                }
+            }
+        }
     }
 }

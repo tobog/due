@@ -8,7 +8,7 @@
 </style>
 <template>
     <vRow class="demo-form-edit">
-        <template v-for="(item, index) in formdata">
+        <template v-for="(item, index) in getFormdata">
             <vCol v-if="handleVisible(item)" :key="index" v-bind="getColProps(item)">
                 <!-- <vTooltip v-bind="getPopperProps(item)"> -->
                 <vFormItem v-bind="getFormItemProps(item)">
@@ -61,6 +61,16 @@ export default {
     created() {
         this.getFormData()
     },
+    computed: {
+        getFormdata() {
+            let keys = [];
+            return (this.formdata || []).filter(item => {
+                if (keys.indexOf(item.key) > -1) return false;
+                keys.push(item.key);
+                return true;
+            });
+        },
+    },
     methods: {
         getPopperProps(item) {
             return {
@@ -94,9 +104,9 @@ export default {
             }
         },
         getFormData() {
-            if (!Array.isArray(this.formdata)) return
+            if (!Array.isArray(this.getFormdata)) return
             const formData = {}
-            this.formdata.forEach((item) => {
+            this.getFormdata.forEach((item) => {
                 if (!this.handleVisible(item)) return
                 const {key, demoDefault: value} = item
                 if (key && value !== void 0) {

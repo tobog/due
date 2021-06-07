@@ -82,6 +82,7 @@ export default {
         cellFormatter: Function,
         maxDate: [String, Date, Object, Number],
         minDate: [String, Date, Object, Number],
+        theme: String,
     },
     data() {
         return {
@@ -139,6 +140,7 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-showweek`]: this.showWeek,
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
                 },
             ]
         },

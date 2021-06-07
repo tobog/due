@@ -27,7 +27,7 @@
             :collapse="collapse"
             :active="visible"
             :isInput="true"
-            :multiple="isTag && multiple"
+            :multiple="showTag && multiple"
             :size="size"
             v-bind="$attrs"
             @hook:created="ready = true"
@@ -148,7 +148,7 @@ export default {
             type: Number,
             default: 0,
         },
-        isTag: Boolean,
+        showTag: Boolean,
         size: [String, Number],
         cellFormatter: Function,
         theme:String,
@@ -162,7 +162,7 @@ export default {
     },
     computed: {
         getValueText() {
-            return !this.isTag && Array.isArray(this.model) ? this.model.join(",") : this.model
+            return !this.showTag && Array.isArray(this.model) ? this.model.join(",") : this.model
         },
     },
     methods: {

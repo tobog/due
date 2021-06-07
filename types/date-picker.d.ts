@@ -246,7 +246,7 @@ export declare class DatePicker extends UIComponent {
      * 显示tag 样式
      * @default false
      */
-    isTag?: boolean
+    showTag?: boolean
     /**
      * 完全只读，开启后不会弹出选择器，只在没有设置 open 属性下生效
      * @default false

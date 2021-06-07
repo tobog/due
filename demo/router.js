@@ -173,13 +173,13 @@ export default new Router({
                         label: "日期选择器",
                     },
                 },
-                {
-                    path: "popper",
-                    component: () => import("./components/popper"),
-                    meta: {
-                        label: "下拉组件",
-                    },
-                },
+                // {
+                //     path: "popper",
+                //     component: () => import("./components/popper"),
+                //     meta: {
+                //         label: "下拉组件",
+                //     },
+                // },
                 {
                     path: "dragmove",
                     component: () => import("./components/dragmove"),

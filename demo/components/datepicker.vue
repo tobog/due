@@ -1,14 +1,14 @@
 <style lang="scss"></style>
 
 <template>
-    <Demo :config="getConfig" :code="getCode" isAll>
+    <Demo :config="getConfig" :code="getCode" isSalf>
         <template slot="header">
             <h2>代码示例 (Datepicker 日期选择器,DatePanel面板)</h2>
             <h4 class="padding-top-10">选择或输入日期，支持年、月、日期等类型，支持选择范围。</h4>
         </template>
         <template v-slot="config">
-            <vDatepicker v-model="value" v-bind="config.Datepicker"></vDatepicker>
-            <vDatePanel v-model="value1" v-bind="config.DatePanel"></vDatePanel>
+            <vDatepicker v-model="value" v-bind="config.Datepicker" :popperConfig="config.PopperConfig"></vDatepicker>
+            <vDatePanel class="mt-20" v-model="value1" v-bind="config.DatePanel"></vDatePanel>
             <div>Datepicker: {{ value }}</div>
             <div>DatePanel: {{ value1 }}</div>
         </template>
@@ -42,7 +42,7 @@ export default {
     methods: {},
     computed: {
         getCode() {
-            return `<Datepicker v-model="value" v-bind="config.Datepicker"></Datepicker>
+            return `<Datepicker v-model="value" v-bind="config.Datepicker" :popperConfig="config.PopperConfig"></Datepicker>
                     <DatePanel v-model="value1" v-bind="config.DatePanel"></DatePanel>
                     
             `;
@@ -96,12 +96,12 @@ export default {
                 {
                     showConfig: true,
                     label: "标签显示",
-                    key: "isTag",
-                    demoDefault: true,
-                    explain: "是否标签显示",
+                    key: "showTag",
+                    demoDefault: false,
+                    explain: "是否标签显示, 仅在multiple=true有效",
                     dataType: "Boolean",
                     tag: "vSwitch",
-                    default: true,
+                    default: false,
                 },
                 {
                     showConfig: true,
@@ -156,38 +156,6 @@ export default {
                     tag: "vSwitch",
                     demoDefault: false,
                     explain: "是否自动关闭",
-                    dataType: "Boolean",
-                    default: false,
-                },
-                {
-                    showConfig: true,
-                    label: "主题颜色",
-                    key: "theme",
-                    tag: "vSelect",
-                    demoDefault: "",
-                    explain: "主题颜色",
-                    dataType: "String",
-                    default: "",
-                    options: this.getThemes,
-                },
-                {
-                    showConfig: true,
-                    label: "尺寸大小",
-                    key: "size",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),medium,large,或者设置具体数值",
-                    dataType: "String | Number",
-                    default: "",
-                    options: this.getSize,
-                },
-                {
-                    showConfig: true,
-                    label: "多选",
-                    key: "multiple",
-                    tag: "vSwitch",
-                    demoDefault: false,
-                    explain: "是否多选",
                     dataType: "Boolean",
                     default: false,
                 },
@@ -277,20 +245,20 @@ export default {
                     dataType: "Function：Event",
                     default: "(visible)=>{}",
                 },
-                {
-                    label: "事件",
-                    key: "input",
-                    explain: "值变化触发",
-                    dataType: "Function:Event",
-                    default: "(value)=>{}",
-                },
-                {
-                    label: "事件",
-                    key: "on-clear",
-                    explain: "清除时触发",
-                    dataType: "Function:Event",
-                    default: "()=>{}",
-                },
+                // {
+                //     label: "事件",
+                //     key: "input",
+                //     explain: "值变化触发",
+                //     dataType: "Function:Event",
+                //     default: "(value)=>{}",
+                // },
+                // {
+                //     label: "事件",
+                //     key: "on-clear",
+                //     explain: "清除时触发",
+                //     dataType: "Function:Event",
+                //     default: "()=>{}",
+                // },
                 {
                     label: "事件",
                     key: "on-remove-item",
@@ -298,13 +266,13 @@ export default {
                     dataType: "Function:Event",
                     default: "()=>{}",
                 },
-                {
-                    label: "事件",
-                    key: "on-confirm",
-                    explain: "点击确认时触发",
-                    dataType: "Function:Event",
-                    default: "()=>{}",
-                },
+                // {
+                //     label: "事件",
+                //     key: "on-confirm",
+                //     explain: "点击确认时触发",
+                //     dataType: "Function:Event",
+                //     default: "()=>{}",
+                // },
             ];
         },
         getDatePanelConfig() {
@@ -314,7 +282,7 @@ export default {
                     label: "多个日期",
                     key: "multiple",
                     demoDefault: false,
-                    explain: "开启后，可以选择多个日期,DateBase|DatePanel|DatePicter属性",
+                    explain: "开启后，可以选择多个日期属性",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
@@ -324,17 +292,17 @@ export default {
                     label: "双面板",
                     key: "doublePanel",
                     demoDefault: true,
-                    explain: "是否双面板,DatePanel|DatePicter属性",
+                    explain: "是否双面板,仅在时间范围内有效",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
                 },
                 {
                     showConfig: true,
-                    label: "确认关闭",
+                    label: "确认按钮",
                     key: "confirm",
                     demoDefault: true,
-                    explain: "是否确认关闭，DatePanel|DatePicter属性",
+                    explain: "是否有确认按钮属性",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
@@ -344,7 +312,7 @@ export default {
                     label: "首次星期排序",
                     key: "firstDayOfWeek",
                     demoDefault: 0,
-                    explain: "首次星期,如星期一或者星期日开始顺序,DateBase|DatePanel|DatePicter属性",
+                    explain: "首次星期,如星期一或者星期日开始顺序属性",
                     dataType: "Boolean",
                     tag: "vInputNumber",
                     default: 0,
@@ -353,7 +321,7 @@ export default {
                     label: "自定义星期",
                     key: "weeks",
                     demoDefault: "",
-                    explain: "自定义星期名称,DateBase|DatePanel|DatePicter属性",
+                    explain: "自定义星期名称属性",
                     dataType: "Boolean",
                     default: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
                 },
@@ -362,7 +330,7 @@ export default {
                     label: "显示星期数",
                     key: "showWeek",
                     demoDefault: true,
-                    explain: "是否显示星期数,DateBase|DatePanel|DatePicter属性",
+                    explain: "是否显示星期数属性",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: true,
@@ -373,7 +341,7 @@ export default {
                     key: "format",
                     tag: "vInput",
                     demoDefault: "",
-                    explain: "展示的日期格式,(Y,M,D,H,m,s),DateBase|DatePanel|DatePicter属性",
+                    explain: "展示的日期格式,(Y,M,D,H,m,s)属性",
                     dataType: "String",
                     default: "",
                 },
@@ -384,7 +352,7 @@ export default {
                     tag: "vSelect",
                     demoDefault: "datetimerange",
                     explain:
-                        "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month，DatePanel|DatePicter属性",
+                        "显示类型，可选值为 date、daterange、datetime、datetimerange、year、month属性",
                     dataType: "String",
                     default: "",
                     options: [
@@ -401,10 +369,21 @@ export default {
                     ],
                 },
                 {
+                    showConfig: true,
+                    label: "主题颜色",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题颜色",
+                    dataType: "String",
+                    default: "",
+                    options: this.getThemes,
+                },
+                {
                     label: "当前值",
                     key: "value",
                     demoDefault: "",
-                    explain: "v-model(input) 双向绑定，DateBase|DatePanel|DatePicter属性",
+                    explain: "v-model(input) 双向绑定属性",
                     dataType: "Array, String, Date",
                     default: "",
                 },
@@ -412,15 +391,39 @@ export default {
                     label: "默认开始日期",
                     key: "startDate",
                     demoDefault: "",
-                    explain: "默认开始日期,DateBase|DatePanel|DatePicter属性",
+                    explain: "默认开始日期属性",
                     dataType: "String, Date, Object, Number",
                     default: "Date.now()",
+                },
+                {
+                    label: "最小可选时间",
+                    key: "minDate",
+                    demoDefault: "",
+                    explain: "最小可选时间范围",
+                    dataType: "String, Date, Object, Number",
+                    default: "",
+                },
+                {
+                    label: "最大可选时间",
+                    key: "maxDate",
+                    demoDefault: "",
+                    explain: "最大可选时间范围",
+                    dataType: "String, Date, Object, Number",
+                    default: "",
+                },
+                {
+                    label: "自定义单元格",
+                    key: "cellFormatter",
+                    demoDefault: "",
+                    explain: "自定义单元格处理函数",
+                    dataType: "Function",
+                    default: "",
                 },
                 {
                     label: "额外配置",
                     key: "options",
                     demoDefault: "",
-                    explain: "选择器额外配置，比如不可选日期与快捷选项，DatePanel|DatePicter属性",
+                    explain: "选择器额外配置，比如不可选日期与快捷选项属性",
                     dataType: "{shortcuts,...others}",
                     default: "",
                 },
@@ -431,13 +434,6 @@ export default {
                     explain: "当前日期不可用",
                     dataType: "Function",
                     default: "Boolean:(dateObje,type)=>{}",
-                },
-                {
-                    label: "事件",
-                    key: "on-clear",
-                    explain: "清除时触发",
-                    dataType: "Function:Event",
-                    default: "()=>{}",
                 },
                 {
                     label: "事件",

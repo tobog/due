@@ -19,6 +19,7 @@ export default {
         cellFormatter: Function,
         maxDate: [String, Date, Object, Number],
         minDate: [String, Date, Object, Number],
+        theme: String,
     },
     data() {
         return {
