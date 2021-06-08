@@ -16,13 +16,13 @@ export default {
         }
     },
     created() {
-        this.$parent.refresh && this.$parent.refresh()
+        this.refresh();
     },
     beforeUpdate() {
         // 当组件size 变换时 无法触发refresh
         if (!this.__running) {
             this.__running = true
-            this.$parent.refresh && this.$parent.refresh(false)
+            this.refresh(false);
         }
         clearTimeout(this._forceFresh)
         this._forceFresh = setTimeout(() => {
@@ -45,8 +45,15 @@ export default {
             }
         },
     },
+    methods: {
+        refresh(bool) {
+            if (this.$parent && this.$parent.$options.name === 'Fluid' && this.$parent.refresh) {
+                this.$parent.refresh(bool)
+            }
+        }
+    },
     beforeDestroy() {
-        this.$parent.refresh && this.$parent.refresh()
+        this.refresh();
         clearTimeout(this._forceFresh)
     },
 }

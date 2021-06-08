@@ -100,17 +100,20 @@
             </vCollapse>
         </div>
         <div v-for="(item, key) in getConfig" :key="key" class="demo-props-table">
-            <h2 class="demo-header border-none">{{ key }} 参数说明- {{ item.title || "Props & Events" }}</h2>
-            <vCollapse>
-                <vCollapseItem>
-                    <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
-                    <template slot="footer" slot-scope="data">
-                        <div class="p-10 text-center" @click="data.toggle">
-                            {{ data.active ? "隐藏" : "显示" }}参数说明
-                        </div>
-                    </template>
-                </vCollapseItem>
-            </vCollapse>
+            <template v-if="!item.hide">
+                <h2 v-if="'PopperConfig' === key" class="demo-header border-none">{{ key }} 参数说明- {{ (item.title || '内置下拉组件') + " Props & Events" }}</h2>
+                <h2 v-else class="demo-header border-none">{{ key }} 参数说明- {{ (item.title || '') + " Props & Events" }}</h2>
+                <vCollapse>
+                    <vCollapseItem>
+                        <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
+                        <template slot="footer" slot-scope="data">
+                            <div class="p-10 text-center" @click="data.toggle">
+                                {{ data.active ? "隐藏" : "显示" }}参数说明
+                            </div>
+                        </template>
+                    </vCollapseItem>
+                </vCollapse>
+            </template>
         </div>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>

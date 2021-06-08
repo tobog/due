@@ -2,7 +2,7 @@
     <transition
         appear
         :data-vue-module="$options.name"
-        :name="transitionName || (type === 'drop' ? 'transition-drop' : 'fade')"
+        :name="transitionName || ((type === 'drop' && !gpu) ? 'transition-drop' : 'fade')"
         v-on="$listeners"
     >
         <div ref="popper" :class="classes" tabindex="-1">

@@ -7,20 +7,17 @@
             <h4 class="padding-top-10">展示一组折叠的下拉菜单。</h4>
         </template>
         <template v-slot="config">
-            <vDropdown v-bind="config">
-                <vButton>vButton</vButton>
+            <div class="mb-10">{{ value }}</div>
+            <vDropdown
+                :value.sync="value"
+                v-bind="config.Dropdown"
+                :popperConfig="config.PopperConfig"
+                label="下拉菜单"
+            >
                 <template slot="list">
-                    <vDropdownItem disabled>驴打滚</vDropdownItem>
-                    <vDropdownItem divided>炸酱面</vDropdownItem>
-                    <vDropdownItem>炸酱面</vDropdownItem>
-                    <vDropdownItem selected>豆汁儿</vDropdownItem>
-                </template>
-            </vDropdown>
-            <vDropdown v-bind="config" label="label" :autoLabel="true">
-                <template slot="list">
-                    <vDropdownItem disabled>驴打滚</vDropdownItem>
-                    <vDropdownItem divided>酱面</vDropdownItem>
-                    <vDropdownItem selected>豆汁儿炸酱面</vDropdownItem>
+                    <vDropdownItem name="1" v-bind="config.DropdownItem" disabled>驴打滚</vDropdownItem>
+                    <vDropdownItem name="2" v-bind="config.DropdownItem" divided>酱面</vDropdownItem>
+                    <vDropdownItem name="3" v-bind="config.DropdownItem" selected>豆汁儿炸酱面</vDropdownItem>
                 </template>
             </vDropdown>
         </template>
@@ -31,35 +28,41 @@
 export default {
     data() {
         return {
-            value: "0",
+            value: "3",
         }
     },
     methods: {},
     computed: {
         getCode() {
-            return `<Dropdown v-bind=CODE>
-                        <Button>Button</Button>
+            return `<Dropdown
+                        :value.sync="value"
+                        v-bind="config.Dropdown"
+                        :popperConfig="config.PopperConfig"
+                        label="下拉菜单"
+                    >
                         <template slot="list">
-                            <DropdownItem disabled>驴打滚</DropdownItem>
-                            <DropdownItem selected divided>炸酱面</DropdownItem>
-                            <DropdownItem>炸酱面</DropdownItem>
-                            <DropdownItem>豆汁儿</DropdownItem>
+                            <DropdownItem name="1" v-bind="config.DropdownItem" disabled>驴打滚</DropdownItem>
+                            <DropdownItem name="2" v-bind="config.DropdownItem" divided>酱面</DropdownItem>
+                            <DropdownItem name="3" v-bind="config.DropdownItem" selected>豆汁儿炸酱面</DropdownItem>
                         </template>
                     </Dropdown>
-                        `
+            `
         },
         getConfig() {
-            return [
-                {
-                    showConfig: true,
-                    label: "更新显示",
-                    key: "autoLabel",
-                    demoDefault: false,
-                    explain: "自动更新显示文字",
-                    dataType: "Boolean",
-                    tag: "vSwitch",
-                    default: false,
+            return {
+                Dropdown: {
+                    data: this.getDropdownConfig,
                 },
+                DropdownItem: {
+                    data: this.getDropdownItemConfig,
+                },
+                PopperConfig: {
+                    data: this.getPopperConfig,
+                },
+            }
+        },
+        getDropdownConfig() {
+            return [
                 {
                     showConfig: true,
                     label: "手动控制显示",
@@ -75,7 +78,7 @@ export default {
                     label: "自动关闭",
                     key: "autoClose",
                     demoDefault: false,
-                    explain: "点击子节点关闭",
+                    explain: "点击子节点自动关闭",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
@@ -104,17 +107,6 @@ export default {
                 },
                 {
                     showConfig: true,
-                    label: "尺寸大小",
-                    key: "size",
-                    tag: "vInput",
-                    demoDefault: "",
-                    explain: "设置大小，可选值为：small,normal(default),medium,large",
-                    dataType: "String",
-                    default: "",
-                    options: this.getSize,
-                },
-                {
-                    showConfig: true,
                     label: "显示位置",
                     key: "placement",
                     demoDefault: "bottom",
@@ -124,6 +116,17 @@ export default {
                     tag: "vSelect",
                     default: "",
                     options: this.getPlacements,
+                },
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
                     showConfig: true,
@@ -137,38 +140,10 @@ export default {
                     options: this.getThemes,
                 },
                 {
-                    label: "名称",
-                    key: "name",
-                    explain: "DropdownItem:name，名称",
-                    dataType: "Boolean",
-                    default: "-",
-                },
-                {
-                    label: "禁用",
-                    key: "disabled",
-                    explain: "DropdownItem:disabled，禁用",
-                    dataType: "Boolean",
-                    default: "-",
-                },
-                {
-                    label: "选中状态",
-                    key: "selected",
-                    explain: "DropdownItem:selected，选中状态",
-                    dataType: "Boolean",
-                    default: "-",
-                },
-                {
-                    label: "分割线",
-                    key: "divided",
-                    explain: "DropdownItem:divided，分割线",
-                    dataType: "Boolean",
-                    default: "-",
-                },
-                {
                     label: "显示的内容",
-                    key: "slot:default",
+                    key: "label",
                     explain: "显示的内容",
-                    dataType: "VNode",
+                    dataType: "String",
                     default: "-",
                 },
                 {
@@ -205,6 +180,56 @@ export default {
                     explain: "下拉框展开或收起时触发",
                     dataType: "Function：Event",
                     default: "(visible)=>{}",
+                },
+            ]
+        },
+        getDropdownItemConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "图标",
+                    key: "icon",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "选项图标",
+                    dataType: "String",
+                    options: this.iconslist,
+                    default: "",
+                },
+                {
+                    label: "名称",
+                    key: "name",
+                    explain: "name名称唯一标识符",
+                    dataType: "String, Number",
+                    default: "-",
+                },
+                {
+                    label: "禁用",
+                    key: "disabled",
+                    explain: "是否禁用",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "选中状态",
+                    key: "selected",
+                    explain: "是否选中状态",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "分割线",
+                    key: "divided",
+                    explain: "分割线",
+                    dataType: "Boolean",
+                    default: "-",
+                },
+                {
+                    label: "自定义内容",
+                    key: "slot:default",
+                    explain: "自定义内容",
+                    dataType: "VNode",
+                    default: "-",
                 },
             ]
         },

@@ -19,8 +19,8 @@
 
 <script>
 import AsyncValidator from "async-validator"
-import {findComponentUpward} from "../../utils/findComponent"
-import {debounce, unit, validVal} from "../../utils/tool"
+import {findComponentUpward} from "../../../utils/findComponent"
+import {debounce, unit, validVal} from "../../../utils/tool"
 export default {
     name: "FormItem",
     componentName: "FormItem",
@@ -136,7 +136,6 @@ export default {
             return this.showMessage || this.__Form.showMessage
         },
     },
-
     methods: {
         handleChange(val) {
             this.__validate = true
@@ -183,6 +182,8 @@ export default {
     },
     beforeDestroy() {
         this.__Form.$emit && this.__Form.$emit("on-form-item-remove", this)
+        this.__debounceValidator && this.__debounceValidator.cancel()
+        this.__debounceValidator = null
     },
 }
 </script>

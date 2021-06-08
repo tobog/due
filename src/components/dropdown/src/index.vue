@@ -14,41 +14,47 @@
         @hook:created="ready = true"
         @on-clickout="handleClick"
         v-model="show"
-        v-bind="$attrs"
+        v-bind="popperConfig"
     >
         <div ref="ref" :class="classes">
             <slot>
                 <Button
-                    v-if="innerLabel"
+                    v-if="label"
                     :size="size"
                     :class="[_tobogPrefix_ + '-button']"
                     :theme="theme"
                     icon="arrow-dropdown"
-                    >{{ innerLabel }}</Button
+                    >{{ label }}</Button
                 >
             </slot>
         </div>
-        <slot slot="drop" name="list"></slot>
+        <slot slot="drop" name="list">
+            <DropdownItem v-for="item in getOpts" :key="item.name" v-bind="item">
+                {{ item.label }}
+            </DropdownItem>
+        </slot>
     </DropBase>
 </template>
 
 <script>
-import DropBase from "../base/dropBase"
-import Button from "../button/src/index"
+import DropBase from "../../base/dropBase"
+import Button from "../../button/src/index"
+import DropdownItem from "./dropdownItem"
 export default {
     name: "Dropdown",
     componentName: "Dropdown",
     components: {
         Button,
         DropBase,
+        DropdownItem,
     },
     model: {
-        prop: "label",
+        prop: "value",
         event: "on-change",
     },
     props: {
-        label: [String, Number],
-        autoLabel: Boolean,
+        value: [String, Number],
+        label: String,
         trigger: {
             type: String,
             // validator(value) {
@@ -64,24 +70,21 @@ export default {
         transfer: Boolean,
         autoClose: Boolean,
         size: [String, Number],
-        theme: {
-            type: String,
-            default: "primary",
-        },
-        dropClass: [String, Array, Object],
+        theme: String,
+        options: Array,
+        popperConfig: Object,
     },
     data() {
         return {
             show: this.visible || false,
-            innerLabel: this.label,
             ready: false,
         }
     },
     created() {
         this.$on("on-select", (name) => {
             if (this.autoClose) this.show = false
-            if (this.autoLabel) this.innerLabel = name
             this.$emit("on-change", name)
+            this.$emit("update:value", name)
         })
     },
     computed: {
@@ -91,18 +94,24 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-visible`]: this.show,
+                    [`${_tobogPrefix_}-size-${this.size}`]: this.size,
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
                 },
             ]
         },
         dropClasses() {
             const _tobogPrefix_ = this._tobogPrefix_
             return [
-                `${_tobogPrefix_}-list`,
-                this.dropClass,
+                `${_tobogPrefix_}-drop`,
+                this.popperConfig ? this.popperConfig.dropClass : "",
                 {
-                    [`${_tobogPrefix_}-list-theme-${this.theme}`]: this.theme,
+                    [`${_tobogPrefix_}-theme-${this.theme}`]: this.theme,
+                    [`${_tobogPrefix_}-size-${this.size}`]: this.size,
                 },
             ]
+        },
+        getOpts() {
+            return Array.isArray(this.options) ? this.options : []
         },
     },
     watch: {

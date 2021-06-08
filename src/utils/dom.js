@@ -1096,7 +1096,7 @@ export class DragMove {
                 isTransform: this._isTransform,
                 cancel: true,
                 tempSpeed: nowTime - this._tempNowTime < 30 && this._tempSpeed, // 临时速度，
-                tempDistance: nowTime - this._tempNowTime < 30 && this._tempDistance,
+                tempDistance: nowTime - this._tempNowTime < 30 && this._tempDistance || null,
                 speed,
             });
             this._tempSpeed = this._tempSpeed = this._tempNowTime = null;

@@ -9,31 +9,41 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vForm>
-                <vFormItem v-bind="config" label="测试">
-                    <vCheckbox></vCheckbox>
-                    <vRadio></vRadio>
-                    <vSwitch></vSwitch>
-                </vFormItem>
-                <vFormItem v-bind="config" label="测试">
-                    <vInputNumber></vInputNumber>
-                </vFormItem>
-                <vFormItem v-bind="config" label="测试">
-                    <vSelect></vSelect>
-                </vFormItem>
-                <vFormItem v-bind="config" label="测试测试">
-                    <vInput></vInput>
-                </vFormItem>
-                <vFormItem v-bind="config" label="测试">
-                    <vTextarea v-model="value" />
-                </vFormItem>
-                <vFormItem v-bind="config" label="labelWidth" required prop="labelWidth">
-                    <vInput v-model="value" />
-                </vFormItem>
-                <vFormItem>
-                    <vButton theme="primary">Button</vButton>
-                </vFormItem>
-            </vForm>
+            <vConfig v-bind="config.Demo">
+                <vForm v-bind="config.Form">
+                    <vFormItem v-bind="config.FormItem" label="多选框">
+                        <vCheckbox v-model="form.Checkbox" true-value="1" class="mr-10">多选框1</vCheckbox>
+                        <vCheckbox v-model="form.Checkbox" true-value="2">多选框2</vCheckbox>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="单选">
+                        <vRadio v-model="form.Radio" trueValue="1">单选1</vRadio>
+                        <vRadio v-model="form.Radio" trueValue="2">单选2</vRadio>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="开关">
+                        <vSwitch v-model="form.Switch"></vSwitch>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="数据输入框">
+                        <vInputNumber v-model="form.InputNumber"></vInputNumber>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="下拉多选框">
+                        <vSelect v-model="form.Select" :options="options"></vSelect>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="输入框">
+                        <vInput v-model="form.Input"></vInput>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="文本框">
+                        <vTextarea v-model="form.Textarea" />
+                    </vFormItem>
+                    <vFormItem>
+                        <vButton theme="primary">Button</vButton>
+                    </vFormItem>
+                </vForm>
+            </vConfig>
+            <div class="mt-10">
+                <pre>
+                    {{ JSON.stringify(form, null, 4) }}
+                </pre>
+            </div>
         </template>
     </Demo>
 </template>
@@ -42,8 +52,19 @@
 export default {
     data() {
         return {
+            form: {
+                Checkbox: [],
+            },
             value: "",
             formItem: {},
+            options: [
+                {
+                    value: "下拉多选框1",
+                },
+                {
+                    value: "下拉多选框2",
+                },
+            ],
         }
     },
     methods: {},
@@ -63,6 +84,20 @@ export default {
                         `
         },
         getConfig() {
+            return {
+                Form: {
+                    data: this.getFormConfig,
+                },
+                FormItem: {
+                    data: this.getFormItemConfig,
+                },
+                Demo: {
+                    hide: false,
+                    data: this.getDemoProp,
+                },
+            }
+        },
+        getFormItemConfig() {
             return [
                 {
                     showConfig: true,
@@ -70,7 +105,7 @@ export default {
                     key: "inline",
                     tag: "vSwitch",
                     demoDefault: false,
-                    explain: "FormItem|Form：是否开启行内表单模式",
+                    explain: "是否开启行内表单模式",
                     dataType: "Boolean",
                     default: false,
                 },
@@ -80,7 +115,7 @@ export default {
                     key: "reverse",
                     tag: "vSwitch",
                     demoDefault: false,
-                    explain: "FormItem|Form：便签在右边显示",
+                    explain: "便签在右边显示",
                     dataType: "Boolean",
                     default: false,
                 },
@@ -90,16 +125,7 @@ export default {
                     key: "showMessage",
                     tag: "vSwitch",
                     demoDefault: true,
-                    explain: "FormItem|Form：是否显示校验错误信息",
-                    dataType: "Boolean",
-                    default: true,
-                },
-                {
-                    label: "错误定位",
-                    key: "errorInview",
-                    tag: "vSwitch",
-                    demoDefault: true,
-                    explain: "Form：错误定位",
+                    explain: "是否显示校验错误信息",
                     dataType: "Boolean",
                     default: true,
                 },
@@ -120,7 +146,7 @@ export default {
                     key: "align",
                     tag: "vSelect",
                     demoDefault: "",
-                    explain: "标签文本位置,可选值：center, left, right, justify  ",
+                    explain: "标签文本位置,可选值：center, left, right, justify ",
                     dataType: "String",
                     default: "",
                     options: ["center", "left", "right", "justify"],
@@ -131,51 +157,182 @@ export default {
                     key: "labelWidth",
                     tag: "vInput",
                     demoDefault: "",
-                    explain: "FormItem|Form：标签的宽度",
+                    explain: "标签的宽度",
                     dataType: "String | Number",
                     default: "",
                 },
                 {
                     label: "提示",
                     key: "message",
-                    explain: "FormItem:提示",
+                    explain: "提示文本",
                     dataType: "String",
                     default: "",
                 },
                 {
                     label: "验证规则",
                     key: "rules",
-                    explain: "FormItem|Form: 表单的验证规则",
+                    explain: "表单的验证规则",
                     dataType: "Array",
                     default: "-",
                 },
                 {
                     label: "表单name",
                     key: "prop",
-                    explain: "FormItem:表单name，提供验证",
-                    dataType: "Array",
+                    explain: "表单name，提供验证",
+                    dataType: "String",
                     default: "-",
                 },
                 {
                     label: "是否必填",
                     key: "required",
-                    explain: "FormItem:是否必填，如不设置，则会根据校验规则自动生成",
+                    explain: "是否必填，如不设置，则会根据校验规则自动生成",
                     dataType: "Boolean",
                     default: "false",
                 },
                 {
                     label: "验证数据",
                     key: "value",
-                    explain: "FormItem:自定义传入验证数据",
+                    explain: "自定义传入验证数据",
                     dataType: "Any",
                     default: "-",
                 },
                 {
+                    label: "单个表单宽度",
+                    key: "width",
+                    explain: "单个表单宽度",
+                    dataType: "Number, String",
+                    default: "",
+                },
+                {
                     label: "清除验证消息",
                     key: "resetValidate",
-                    explain: "FormItem|Form:清除表单验证消息",
+                    explain: "清除表单验证消息",
                     dataType: "Function",
                     default: "()=>{}",
+                },
+                {
+                    label: "验证函数",
+                    key: "validate",
+                    explain: "验证表单验证",
+                    dataType: "Function:Promise",
+                    default: "(val,cb)=>{}",
+                },
+                {
+                    label: "标签",
+                    key: "label",
+                    explain: "标签属性",
+                    dataType: "String",
+                    default: "",
+                },
+                {
+                    label: "自定义标签",
+                    key: "slot:label",
+                    explain: "自定义label",
+                    dataType: "VNode",
+                    default: "prop:label",
+                },
+                {
+                    label: "子表单项目",
+                    key: "slot:default",
+                    explain: "提供子表单项目",
+                    dataType: "VNode",
+                    default: "-",
+                },
+                {
+                    label: "提示内容",
+                    key: "slot:message",
+                    explain: "提供提示内容",
+                    dataType: "VNode",
+                    default: "-",
+                },
+            ]
+        },
+        getFormConfig() {
+            return [
+                {
+                    showConfig: true,
+                    label: "行内表单",
+                    key: "inline",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "是否开启行内表单模式",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "反向布局",
+                    key: "reverse",
+                    tag: "vSwitch",
+                    demoDefault: false,
+                    explain: "便签在右边显示",
+                    dataType: "Boolean",
+                    default: false,
+                },
+                {
+                    showConfig: true,
+                    label: "校验信息",
+                    key: "showMessage",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "是否显示校验错误信息",
+                    dataType: "Boolean",
+                    default: true,
+                },
+                {
+                    label: "错误定位",
+                    key: "errorInview",
+                    tag: "vSwitch",
+                    demoDefault: true,
+                    explain: "Form：错误定位",
+                    dataType: "Boolean",
+                    default: true,
+                },
+                {
+                    showConfig: true,
+                    label: "标签的宽度",
+                    key: "labelWidth",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "标签的宽度",
+                    dataType: "String | Number",
+                    default: "",
+                },
+                {
+                    showConfig: true,
+                    label: "label垂直对齐位",
+                    key: "labelVertical",
+                    tag: "vSelect",
+                    demoDefault: "center",
+                    explain: "标签文本垂直对齐位置 可选值:center,start,end,baseline,stretch",
+                    dataType: "String",
+                    default: "center",
+                    options: ["center", "start", "end", "baseline", "stretch"],
+                },
+                {
+                    showConfig: true,
+                    label: "label对齐",
+                    key: "labelAlign",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "标签文本位置,可选值：center, left, right, justify ",
+                    dataType: "String",
+                    default: "",
+                    options: ["center", "left", "right", "justify"],
+                },
+                {
+                    label: "单个表单宽度",
+                    key: "width",
+                    explain: "单个表单宽度",
+                    dataType: "Number, String",
+                    default: "",
+                },
+                {
+                    label: "校验规则",
+                    key: "rules",
+                    explain: "校验规则",
+                    dataType: "Number, String",
+                    default: "",
                 },
                 {
                     label: "验证函数",
@@ -185,46 +342,44 @@ export default {
                     default: "(val,cb)=>{}",
                 },
                 {
-                    label: "项目宽度",
-                    key: "width",
-                    explain: "FormItem|Form:项目宽度",
-                    dataType: "Number | String",
-                    default: "(val,cb)=>{}",
+                    label: "清除验证消息",
+                    key: "resetValidate",
+                    explain: "清除表单验证消息",
+                    dataType: "Function:Promise",
+                    default: "(prop, cb)=>{}",
                 },
                 {
-                    label: "标签的位置",
-                    key: "labelAlign",
-                    explain: "Form:表单域标签的位置，可选值为 left、right、justify,center",
-                    dataType: "Number | String",
-                    default: "left",
+                    label: "事件",
+                    key: "on-submit",
+                    explain: "form 表单提交时触发",
+                    dataType: "Function",
+                    default: "()=>{}",
+                },
+            ]
+        },
+        getDemoProp() {
+            return [
+                {
+                    showConfig: true,
+                    label: "尺寸大小",
+                    key: "size",
+                    tag: "vInput",
+                    demoDefault: "",
+                    explain: "设置大小，可选值为：small,normal(default),medium,large",
+                    dataType: "String",
+                    default: "",
+                    options: this.getSize,
                 },
                 {
-                    label: "label垂直对齐位",
-                    key: "labelVertical",
-                    explain: "Form:label垂直对齐位，可选值为 center , start , end , baseline , stretch",
-                    dataType: "Number | String",
-                    default: "center",
-                },
-                {
-                    label: "自定义标签",
-                    key: "slot:label",
-                    explain: "FormItem|Form:自定义label",
-                    dataType: "VNode",
-                    default: "prop:label",
-                },
-                {
-                    label: "子表单项目",
-                    key: "slot:default",
-                    explain: "FormItem|Form:提供子表单项目",
-                    dataType: "VNode",
-                    default: "-",
-                },
-                {
-                    label: "提示内容",
-                    key: "slot:message",
-                    explain: "FormItem:提供提示内容",
-                    dataType: "VNode",
-                    default: "-",
+                    showConfig: true,
+                    label: "主题颜色",
+                    key: "theme",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "主题颜色",
+                    dataType: "String",
+                    default: "",
+                    options: this.getThemes,
                 },
             ]
         },

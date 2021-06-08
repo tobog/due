@@ -41,7 +41,9 @@ export default {
         placement: String,
         dropStyle: [Object, String],
         transfer: Boolean,
-        reference: [String, HTMLElement],
+        reference: {
+            default: null
+        },
         visible: Boolean,
         disabled: Boolean,
         isOutRef: Boolean,

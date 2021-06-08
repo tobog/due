@@ -171,6 +171,7 @@ export default {
     methods: {
         handleFocus(event) {
             this.$emit("on-focus", this.model, event)
+            this.handleDispatch("on-validate", this.model, 'focus')
         },
         handleInputText(event) {
             let val = event.target.value
@@ -184,8 +185,9 @@ export default {
             this.__dates = null
             this.$refs.dropBase.cancelChange()
             this.$emit("input", this.model, null)
-            this.$emit("on-clear")
+            this.$emit("on-clear");
             if (type === "autoClose") this.visible = false
+            this.handleDispatch("on-change", this.model);
         },
         handleClearTag(index) {
             const data = [...this.model]
@@ -195,8 +197,8 @@ export default {
             this.$refs.dropBase.cancelChange()
             this.$emit("input", this.model, this.__dates)
             this.$emit("on-remove-item", item, index)
+            this.handleDispatch("on-change", this.model);
         },
-
         handleBlur() {
             this.$nextTick(() => {
                 this.$emit("on-change", this.model, this.__dates)
@@ -208,7 +210,8 @@ export default {
             // console.log(this.model);
             this.model = val
             this.__dates = dates
-            this.$emit("input", this.model, dates)
+            this.$emit("input", this.model, dates);
+            this.handleDispatch("on-change", this.model);
         },
         handleConfirm(val, dates) {
             this.model = val
@@ -218,6 +221,7 @@ export default {
             this.$refs.inputBase.setInputFocus() //有问题无法失去焦点
             this.$refs.dropBase.cancelChange()
             this.visible = false
+            this.handleDispatch("on-validate", this.model);
         },
         handleStatusChange(obj) {
             this.$emit("on-status-change", obj)
@@ -229,6 +233,7 @@ export default {
     watch: {
         value(val) {
             this.model = val
+            this.handleDispatch("on-change", val);
         },
     },
 }

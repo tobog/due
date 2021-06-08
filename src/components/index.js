@@ -24,9 +24,12 @@ import DateBase from "./date/src/base/index"
 import Datepicker from "./date/src/datepicker"
 import DatePanel from "./date/src/index"
 import Dragmove from "./dragmove/src/index"
+import Dropdown from "./dropdown/src/index"
+import DropdownItem from "./dropdown/src/dropdownItem"
 import Fluid from "./fluid/src/index"
 import FluidPanel from "./fluid/src/fluidPanel"
-
+import Form from "./form/src/form"
+import FormItem from "./form/src/formItem"
 
 
 import Icon from "./icons/src/index"
@@ -49,8 +52,7 @@ import Table, { Tablefix } from "./table"
 import Radio from "./radio"
 import RadioGroup from "./radio/group"
 import Switch from "./switchs"
-import Form from "./form/form"
-import FormItem from "./form/form-item"
+
 import Input from "./input"
 import Textarea from "./input/textarea"
 import Select from "./input/select"
@@ -97,8 +99,7 @@ import Resize from "./resize"
 
 import Split from "./split/index"
 import Popper from './base/popper'
-import Dropdown from "./dropdown/index"
-import DropdownItem from "./dropdown/dropdownItem"
+
 
 
 import Transitions from "./base/transition"

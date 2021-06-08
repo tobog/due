@@ -66,7 +66,7 @@
 import Cell from "./render.js";
 import Sort from "../sort/index";
 import Dropdown from "../dropdown/index";
-import DropdownItem from "../dropdown/dropdownItem";
+import DropdownItem from "../dropdown/src/dropdownItem";
 import Icons from "../icons/src/index";
 import Checkbox from "../checkbox/src/index";
 import { DragMove } from "../../utils/dom";

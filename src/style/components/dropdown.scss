@@ -1,5 +1,6 @@
 $prefix-cls-drop: #{$prefix}-drop;
 $prefix-cls-dropdown: #{$prefix}-dropdown;
+$prefix-cls-dropdownitem: #{$prefix}-dropdownitem;
 
 .#{$prefix-cls-dropdown} {
     &-wrapper {
@@ -7,13 +8,11 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
         outline: none;
     }
 
-    &-list {
-        &.#{$prefix}-popper {
-            @include baseStyle;
-        }
-        .#{$prefix}-dropdownitem {
-            line-height: normal;
-            padding: 7px 16px;
+    &-drop {
+        @include baseStyle;
+        .#{$prefix-cls-dropdownitem} {
+            padding: 0 16px;
+            line-height: 32px;
             color: $content;
             white-space: nowrap;
             cursor: pointer;
@@ -24,7 +23,7 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
         }
     }
 
-    &-button {
+    & &-button {
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
@@ -42,7 +41,7 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
     }
 }
 
-.#{$prefix}-dropdownitem {
+.#{$prefix-cls-dropdownitem} {
     &#{&}-disabled {
         cursor: not-allowed;
         color: $disable-content;
@@ -52,13 +51,30 @@ $prefix-cls-dropdown: #{$prefix}-dropdown;
         color: $primary;
     }
 
-    &#{&}-divided {
+    &-divided {
         border-bottom: 1px solid $border;
+    }
+    &-icon {
+        margin-right: 5px;
+    }
+}
+.#{$prefix-cls-dropdown} {
+    &-size-small {
+        font-size: $subFont;
+        .#{$prefix-cls-dropdownitem} {
+            font-size: $subFont;
+            line-height: 28px;
+        }
+    }
+    &-size-large {
+        .#{$prefix-cls-dropdownitem} {
+            line-height: 36px;
+        }
     }
 }
 @each $key, $value in $colors-map {
-    .#{$prefix-cls-dropdown}-list-theme-#{$key} {
-        .#{$prefix}-dropdownitem.#{$prefix}-dropdownitem-selected {
+    .#{$prefix-cls-dropdown}-theme-#{$key} {
+        .#{$prefix-cls-dropdownitem}-selected {
             color: $value;
         }
     }

@@ -27,6 +27,9 @@ export default class Popper {
             always: false,
             throttle: 140,
             delay: 0,
+            // onchange
+            // style
+            // callback
         }
         this._scrollNodes = [];
         this._showHide = this._handleShowHide.bind(this)
@@ -134,7 +137,7 @@ export default class Popper {
     _performance(event) {//防止抖动
         this._offsetParent = this._options.positionElement || this._popper.offsetParent || this._offsetParent;
         const { height = '', width = '', top = 0 } = Offset.boundingClientRect(this._popper);
-        if (height + top < -120) return true;
+        if (height + top  < -120) return true;
         if ((!event || !event.target) && this._offsetParent) {
             const { top, left, right, bottom, offsetTop, offsetLeft } = this._preRefOffset || {}, reference = Offset.boundingClientRect(this._reference);
             const prePopper = height + '&' + width;
@@ -540,7 +543,7 @@ export default class Popper {
     }
     async applyStyle(data) {
         const { left, top, placement, arrow, popper } = data,
-            { style = {}, callback, responsive = true, gpu } = this._options,
+            { style = {}, callback, gpu } = this._options,
             styles = Object.assign(
                 {
                     display: "inline-block",
@@ -555,11 +558,11 @@ export default class Popper {
         if (placement[0] === "fix") {
             styles.position = "fixed";
         }
-        if (responsive) {
+        // if (responsive) {
             if (gpu) {
-                styles.transform = "translate3d(" + left + "px, " + top + "px, 0)";
                 styles.top = 0;
                 styles.left = 0;
+                styles.transform = "translate3d(" + left + "px, " + top + "px, 0)";
             } else {
                 styles.left = left;
                 styles.top = top;
@@ -576,7 +579,7 @@ export default class Popper {
                 childArrow.dataset.placement = arrow > 0 ? placementString : ''
                 childArrow.style.left = arrow > 0 ? (arrow + 'px') : ''
             }
-        }
+        // }
         this._getOnchange('on-change-after', styles, data)
         if (typeof callback === "function") {
             return await callback(data, this._popper, this._reference);

@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import {scrollIntoView} from "../../utils/dom"
+import {scrollIntoView} from "../../../utils/dom"
 export default {
     name: "Form",
     componentName: "Form",
     props: {
         width: [Number, String],
         rules: Object,
-        labelWidth: [Number, String],
+        labelWidth: [Number, String], // autoALign, 自动宽度对齐
         inline: Boolean,
         labelAlign: String,
         labelVertical: String,
@@ -29,7 +29,9 @@ export default {
         },
     },
     data() {
-        return {}
+        return {
+            autoAlignWidth: null
+        }
     },
     created() {
         this.__FormItems = []

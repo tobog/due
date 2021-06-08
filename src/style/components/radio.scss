@@ -31,6 +31,7 @@ $prefix-cls-group: #{$prefix}-radiogroup;
 
     &-label {
         margin: 0;
+        vertical-align: middle;
     }
 
     &-disabled,
@@ -59,14 +60,14 @@ $prefix-cls-group: #{$prefix}-radiogroup;
         justify-content: center;
         align-items: center;
         background-color: $white;
-
+        vertical-align: middle;
         &::after {
             content: "";
-            transition: all 0.3s ease-in-out;
+            transition: all 0.1s ease-in-out;
             line-height: 0;
             border-radius: 9999em;
-            width: 76%;
-            height: 76%;
+            width: 0;
+            height: 0;
         }
     }
 
@@ -75,6 +76,8 @@ $prefix-cls-group: #{$prefix}-radiogroup;
 
         &::after {
             background-color: $primary;
+            width: calc(100% - 6px);
+            height: calc(100% - 6px);
         }
     }
     &-checked#{&}-border {

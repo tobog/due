@@ -72,7 +72,7 @@ export default {
     },
     computed: {
         getCode() {
-            return `<Fluid v-bind=CODE class="fluid-demo">
+            return `<Fluid v-bind="config" class="fluid-demo">
                         <FluidPanel v-for="(i, index) in len" :style="setH()">{{ index }}</FluidPanel>
                     </Fluid>
 					`
