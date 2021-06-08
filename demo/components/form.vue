@@ -22,6 +22,12 @@
                     <vFormItem v-bind="config.FormItem" label="开关">
                         <vSwitch v-model="form.Switch"></vSwitch>
                     </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="颜色">
+                        <vColorPicker v-model="form.ColorPicker"></vColorPicker>
+                    </vFormItem>
+                    <vFormItem v-bind="config.FormItem" label="日期">
+                        <vDatepicker v-model="form.Datepicker"></vDatepicker>
+                    </vFormItem>
                     <vFormItem v-bind="config.FormItem" label="数据输入框">
                         <vInputNumber v-model="form.InputNumber"></vInputNumber>
                     </vFormItem>

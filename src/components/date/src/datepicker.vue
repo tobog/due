@@ -23,12 +23,12 @@
             :name="name"
             :clearable="clearable"
             :disabled="disabled"
-            :theme="theme"
+            :theme="getTheme"
+            :size="getSize"
             :collapse="collapse"
             :active="visible"
             :isInput="true"
             :multiple="showTag && multiple"
-            :size="size"
             v-bind="$attrs"
             @hook:created="ready = true"
             @on-focus="handleFocus"
@@ -73,7 +73,7 @@
             :visible="visible"
             :cellFormatter="cellFormatter"
             :doublePanel="doublePanel"
-            :theme="theme"
+            :theme="getTheme"
             @input="handleInput"
             @on-clear="handleClear('autoClose')"
             @on-confirm="handleConfirm"
@@ -92,11 +92,12 @@ import DropBase from "../../base/dropBase"
 import InputBase from "../../input/base"
 import mixin from "../../input/base/mixin"
 import langMinix from "../../../mixins/lang"
+import globalMixin from "../../../mixins/global";
 export default {
     name: "DatePicter",
     componentName: "DatePicter",
     inheritAttrs: false,
-    mixins: [langMinix, mixin],
+    mixins: [langMinix, mixin, globalMixin],
     components: {
         DatePanel,
         DropBase,
@@ -166,6 +167,12 @@ export default {
     computed: {
         getValueText() {
             return !this.showTag && Array.isArray(this.model) ? this.model.join(",") : this.model
+        },
+        getSize() {
+            return this.getGlobalData("size")
+        },
+        getTheme() {
+            return this.getGlobalData("theme")
         },
     },
     methods: {

@@ -78,9 +78,15 @@
                     @click="handleConfirm"
                     >{{ langs("datepicker.confirm", "确定") }}</Button
                 >
-                <Button v-if="confirm" size="small" :class="[_tobogPrefix_ + '-clear']" @click="handleClear">{{
-                    langs("datepicker.clear", "清空")
-                }}</Button>
+                <Button
+                    v-if="confirm"
+                    size="small"
+                    theme="default"
+                    :class="[_tobogPrefix_ + '-clear']"
+                    style="margin-right: 6px"
+                    @click="handleClear"
+                    >{{ langs("datepicker.clear", "清空") }}</Button
+                >
             </aside>
         </slot>
     </div>
@@ -254,13 +260,13 @@ export default {
             const {status, index = 0, date, dates, direction} = data
             const ref0 = this.$refs.ref0,
                 ref1 = this.$refs.ref1
-            this.curIndex = index;
+            this.curIndex = index
             if (type === "range") {
                 if (ref0) ref0.rangeDate = date
                 if (ref1) ref1.rangeDate = date
             }
-            console.log(data, type, 'handleCalendar')
-            if ((type === "calendar" || type === "keyCalendar")) {
+            console.log(data, type, "handleCalendar")
+            if (type === "calendar" || type === "keyCalendar") {
                 this.syncStatus(status)
                 if (ref0) {
                     if (index == 0) {
@@ -322,11 +328,11 @@ export default {
             }
             const method = dateMap[status]
             if (method) {
-                if (interval < 0 && status === 'day') {
-                    cloneDate.setDate(1);
+                if (interval < 0 && status === "day") {
+                    cloneDate.setDate(1)
                 }
-                const endDate = cloneDate["set" + method](instance["get" + method]() + interval);
-                this.startDates = interval > 0 ? [instance, endDate] : [endDate, instance];
+                const endDate = cloneDate["set" + method](instance["get" + method]() + interval)
+                this.startDates = interval > 0 ? [instance, endDate] : [endDate, instance]
             }
         },
         handleShortcuts(data) {
