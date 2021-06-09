@@ -45,8 +45,8 @@
     .demo-form-header {
         padding: 10px;
     }
-    .border-none{
-        border: 0 !important
+    .border-none {
+        border: 0 !important;
     }
 }
 </style>
@@ -68,7 +68,7 @@
             <slot name="desc"> </slot>
         </div>
         <vRow class="demo-layout" flex>
-            <vCol :lg="isAll ? 24 : (isSalf ? 12 : 14)" span="24" class="demo-form">
+            <vCol :lg="isAll ? 24 : isSalf ? 12 : 14" span="24" class="demo-form">
                 <template v-for="(item, key) in getConfig">
                     <div v-if="!item.hide" :key="key">
                         <h2 class="demo-form-header">{{ key }}属性配置</h2>
@@ -77,7 +77,7 @@
                     </div>
                 </template>
             </vCol>
-            <vCol :lg="isAll ? 24 : (isSalf ? 12 : 10)" span="24" class="demo-view" :data-dark="isDark">
+            <vCol :lg="isAll ? 24 : isSalf ? 12 : 10" span="24" class="demo-view" :data-dark="isDark">
                 <vSwitch v-model="show" class="margin-bottom-10">
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -99,10 +99,14 @@
                 </vCollapseItem>
             </vCollapse>
         </div>
-        <div v-for="(item, key) in getConfig" :key="key" class="demo-props-table">
-            <template v-if="!item.hide">
-                <h2 v-if="'PopperConfig' === key" class="demo-header border-none">{{ key }} 参数说明- {{ (item.title || '内置下拉组件') + " Props & Events" }}</h2>
-                <h2 v-else class="demo-header border-none">{{ key }} 参数说明- {{ (item.title || '') + " Props & Events" }}</h2>
+        <template v-for="(item, key) in getConfig">
+            <div v-if="!item.hideTable" :key="key" class="demo-props-table">
+                <h2 v-if="'PopperConfig' === key" class="demo-header border-none">
+                    {{ key }} 参数说明- {{ (item.title || "内置下拉组件") + " Props & Events" }}
+                </h2>
+                <h2 v-else class="demo-header border-none">
+                    {{ key }} 参数说明- {{ (item.title || "") + " Props & Events" }}
+                </h2>
                 <vCollapse>
                     <vCollapseItem>
                         <vTable :columns="getColumns" :data="item.data" class="demo-table" border stripe></vTable>
@@ -113,8 +117,8 @@
                         </template>
                     </vCollapseItem>
                 </vCollapse>
-            </template>
-        </div>
+            </div>
+        </template>
         <div class="demo-props-table">
             <slot name="other" v-bind="formData"></slot>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <form :data-vue-module="$options.name" :class="classes" @submit.prevent="submit">
+    <form :data-vue-module="$options.name" :class="classes" @submit.prevent="submit" v-bind="$attrs">
         <slot></slot>
         <!-- 防止单个表单出现 enter 提交 -->
         <input type="hidden" />
@@ -59,7 +59,7 @@ export default {
                     dom.style.width = size + "px"
                 }
             })
-        }, 60)
+        }, 30)
         this.__FormItems = []
         this.$on("on-form-item-add", (item) => {
             this.__FormItems.push(item)

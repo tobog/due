@@ -71,7 +71,7 @@ export default {
                     value: "下拉多选框2",
                 },
             ],
-        }
+        };
     },
     methods: {},
     computed: {
@@ -87,7 +87,7 @@ export default {
                             <Input v-model="value" />
                         </FormItem>
                     </Form>
-                        `
+                        `;
         },
         getConfig() {
             return {
@@ -98,10 +98,10 @@ export default {
                     data: this.getFormItemConfig,
                 },
                 Demo: {
-                    hide: false,
+                    hideTable: true,
                     data: this.getDemoProp,
                 },
-            }
+            };
         },
         getFormItemConfig() {
             return [
@@ -251,7 +251,7 @@ export default {
                     dataType: "VNode",
                     default: "-",
                 },
-            ]
+            ];
         },
         getFormConfig() {
             return [
@@ -299,8 +299,8 @@ export default {
                     label: "标签的宽度",
                     key: "labelWidth",
                     tag: "vInput",
-                    demoDefault: "justify",
-                    explain: "标签的宽度",
+                    demoDefault: "",
+                    explain: "标签的宽度, 数字，auto， autoAlign",
                     dataType: "String | Number",
                     default: "",
                 },
@@ -343,7 +343,7 @@ export default {
                 {
                     label: "验证函数",
                     key: "validate",
-                    explain: "FormItem|Form:验证表单验证",
+                    explain: "验证表单验证",
                     dataType: "Function:Promise",
                     default: "(val,cb)=>{}",
                 },
@@ -361,7 +361,7 @@ export default {
                     dataType: "Function",
                     default: "()=>{}",
                 },
-            ]
+            ];
         },
         getDemoProp() {
             return [
@@ -387,8 +387,8 @@ export default {
                     default: "",
                     options: this.getThemes,
                 },
-            ]
+            ];
         },
     },
-}
+};
 </script>
