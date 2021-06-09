@@ -74,6 +74,7 @@
             :cellFormatter="cellFormatter"
             :doublePanel="doublePanel"
             :theme="getTheme"
+            :size="getSize"
             @input="handleInput"
             @on-clear="handleClear('autoClose')"
             @on-confirm="handleConfirm"

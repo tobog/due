@@ -72,7 +72,7 @@
             :render="render"
             :noDataText="noDataText"
             :propsMap="propsMap"
-            @input="handleChange"
+            @on-change="handleChange"
             @hook:created="updateValueText += 1"
             @on-updateDrop="updatedDrop"
         >
@@ -123,6 +123,8 @@ export default {
         noDataText: String,
         popperConfig: Object,
         propsMap: Object,
+        disabledKeys: Array,
+        valueType: String, //single, link, linkMap,singleMap
     },
     data() {
         return {
@@ -142,18 +144,24 @@ export default {
                 valueKey = this.getFieldMap("value"),
                 labelKey = this.getFieldMap("label"),
                 levelFn = (item) => {
-                    let result = []
+                    let result = [],
+                        lastItem = item[item.length - 1]
                     if (this.showAllLevels) {
                         result = item.map((node) =>
                             node.data[labelKey] == void 0 ? node.data[valueKey] : node.data[labelKey]
                         )
-                    } else {
-                        item = item[item.length - 1]
-                        if (item) {
-                            result = [item.data[labelKey] == void 0 ? item.data[valueKey] : item.data[labelKey]]
-                        }
+                    } else if (lastItem) {
+                        result = [lastItem.data[labelKey] == void 0 ? lastItem.data[valueKey] : lastItem.data[labelKey]]
                     }
-                    return result.join(" / ")
+                    if (!lastItem) return
+                    return {
+                        label: result.join(" / "),
+                        value: lastItem.data[valueKey],
+                        disabled:
+                            lastItem.disabled ||
+                            (Array.isArray(this.disabledKeys) &&
+                                this.disabledKeys.indexOf(lastItem.data[valueKey]) > -1),
+                    }
                 }
             if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 return data.map(levelFn)
@@ -197,7 +205,7 @@ export default {
         handleInput(event) {
             const value = event.target.value || ""
             this.visible = true
-            if (!value && (this.selection !== "multiple" && this.selection !== "lastMultiple")) this.updateModel([])
+            if (!value && this.selection !== "multiple" && this.selection !== "lastMultiple") this.updateModel([])
             this.$refs.caspanel && this.$refs.caspanel.handleSearch(value)
         },
         handleBlur(event) {
@@ -219,26 +227,75 @@ export default {
             this.$emit("on-remove-item", item, index)
         },
         handleClear() {
-            this.updateModel([])
+            this.updateModel(null)
             this.$refs.dropBase.cancelChange()
             this.$emit("on-clear")
         },
-        updateModel(val) {
+        updateModel(val, sync) {
+            console.log(val, this.model)
+            const labelKey = this.getFieldMap("label")
+            const valueKey = this.getFieldMap("value")
             if (val === this.model) return
             if (!val) val = []
             if (!Array.isArray(val)) val = [val]
-            if ((this.selection === "multiple" || this.selection === "lastMultiple") && val[0] != null && !Array.isArray(val[0])) val = [val]
+            if (this.selection === "multiple" || this.selection === "lastMultiple") {
+                if (this.valueType === "single") {
+                    val = val.map((item) => {
+                        return Array.isArray(item) ? item[item.length - 1] : item
+                    })
+                } else if (this.valueType === "singleMap") {
+                    val = val.map((item) => {
+                        const value = Array.isArray(item) ? item[item.length - 1] : item
+                        const child = value != null && this.$refs.caspanel.getChildByValue(value)
+                        return {
+                            value: child.data[valueKey],
+                            label: child.data[labelKey],
+                        }
+                    })
+                } else if (this.valueType === "linkMap") {
+                    val = this.getDataByValue(val).map((item) => {
+                        return item.map((item) => {
+                            return {
+                                value: item.data[valueKey],
+                                label: item.data[labelKey],
+                            }
+                        })
+                    })
+                }
+            } else {
+                if (this.valueType === "single") {
+                    val = val[val.length - 1]
+                } else if (this.valueType === "singleMap") {
+                    const value = val[val.length - 1]
+                    const child = value != null && this.$refs.caspanel.getChildByValue(value)
+                    val =
+                        value != null
+                            ? {
+                                  value,
+                                  label: child ? child.data[labelKey] : null,
+                              }
+                            : null
+                } else if (this.valueType === "linkMap") {
+                    val = this.getDataByValue(val).map((item) => {
+                        return {
+                            value: item.data[valueKey],
+                            label: item.data[labelKey],
+                        }
+                    })
+                }
+            }
             this.model = val
+            if (sync === true) return
             this.$emit("input", this.model)
             this.handleDispatch("on-change", this.model)
         },
         handleVisible(val) {
-            console.log(val, "handleVisible")
             this.updateValueText += 1
             this.$emit("on-visible-change", val)
             clearTimeout(this.__caspanelTime)
             this.$nextTick(() => {
-                if (this.selection === "multiple" || this.selection === "lastMultiple") this.$refs.inputBase.getInputDom().value = ""
+                if (this.selection === "multiple" || this.selection === "lastMultiple")
+                    this.$refs.inputBase.getInputDom().value = ""
                 this.__caspanelTime = setTimeout(() => {
                     this.$refs.caspanel && (this.$refs.caspanel.flatFilterData = null)
                 }, 200)
@@ -254,7 +311,7 @@ export default {
         value: {
             deep: true,
             handler(val) {
-                this.updateModel(val)
+                this.updateModel(val, true)
             },
         },
     },

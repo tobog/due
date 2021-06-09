@@ -19,7 +19,7 @@
             </span>
             <div v-if="multiple" :class="[_tobogPrefix_ + '-tags']" @click.self="handleFileClick">
                 <template v-for="(item, index) in getMultiTags">
-                    <slot name="tag" v-bind="item" :index="index" :clearTag="clearTag">
+                    <slot name="tag" :data="item" :index="index" :clearTag="clearTag">
                         <span
                             v-if="(collapse && index < collapse) || !collapse"
                             :class="[_tobogPrefix_ + '-tag']"

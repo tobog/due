@@ -2,6 +2,9 @@
     <div :class="classes" :data-vue-module="$options.name" :style="getStyle">
         <div v-if="showLabel" ref="label" :style="labelStyles" :class="[_tobogPrefix_ + '-label']">
             <slot name="label">{{ label }}</slot>
+            <span :class="[_tobogPrefix_ +'-label-placeholder']">
+                <slot name="label">{{ label }}</slot>
+            </span>
         </div>
         <div :class="[_tobogPrefix_ + '-content']">
             <slot></slot>
@@ -72,6 +75,9 @@ export default {
                 },
             ]
         },
+        isFormJustifyLabel() {
+            return !validVal(this.labelWidth)  && this.__Form.labelWidth === 'autoAlign';
+        },
         getStyle() {
             if (!this.inline && !this.__Form.inline) return {}
             const width = validVal(this.width) ? this.width : this.__Form.width
@@ -97,8 +103,7 @@ export default {
                               textAlignLast: "justify",
                           }
                         : {}
-
-            if (width === "auto") {
+            if (width === "auto" || width === "autoAlign") {
                 return {
                     textAlign: align || "right",
                     ...style,

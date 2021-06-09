@@ -311,6 +311,13 @@ export default {
         getDataByValue(value) {
             const valueKey = this.getFieldMap("value"),
                 findLinkData = (val) => {
+                    if (typeOf(val) === 'object') {
+                        if (val[valueKey] != null) {
+                            val = val[valueKey];
+                        } else if (val.value != null) {
+                            val = val.value;
+                        }
+                    }
                     const node = this.nodeList.find((node) => node.data[valueKey] === val);
                     if (node) {
                         const linkParentIndexs = node.linkParentIndex
@@ -329,6 +336,14 @@ export default {
                 });
             }
             return findLinkData(value[value.length - 1]);
+        },
+        /**
+         *通过value 获取子数据
+         * @param {Array} value
+         */
+        getChildByValue(value) {
+            const valueKey = this.getFieldMap("value");
+            return this.nodeList.find((node) => node.data[valueKey] === value);
         },
         /**
          *通过label 获取结构数据

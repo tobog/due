@@ -121,7 +121,7 @@ $prefix-cls-time: #{$prefix}-datetimes;
         }
 
         &-now#{&}-selected > em::before {
-            border-color: $white;
+            border-color: $white !important;
         }
     }
 }
@@ -317,6 +317,10 @@ $prefix-cls-time: #{$prefix}-datetimes;
                     &:hover {
                         background-color: rgba($value, 0.15);
                     }
+                    
+                }
+                &-now > em::before {
+                    border-color: $value;
                 }
         
                 &-range {

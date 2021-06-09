@@ -299,7 +299,7 @@ export default {
                     label: "标签的宽度",
                     key: "labelWidth",
                     tag: "vInput",
-                    demoDefault: "",
+                    demoDefault: "justify",
                     explain: "标签的宽度",
                     dataType: "String | Number",
                     default: "",

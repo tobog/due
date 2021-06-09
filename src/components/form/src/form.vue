@@ -8,6 +8,7 @@
 
 <script>
 import {scrollIntoView} from "../../../utils/dom"
+import {debounce, validVal} from "../../../utils/tool"
 export default {
     name: "Form",
     componentName: "Form",
@@ -30,16 +31,49 @@ export default {
     },
     data() {
         return {
-            autoAlignWidth: null
+
         }
     },
     created() {
+        // 动态计算
+        this._calcJustifyLabel = debounce(() => {
+            let size = 0,
+                isJustify = this.labelWidth === "autoAlign"
+            if (!this._mounted || !isJustify) return
+
+            this.__FormItems.forEach((item) => {
+                const dom =
+                    isJustify &&
+                    !validVal(item.labelWidth) &&
+                    item.$el.querySelector(`.${this._tobogPrefix_}item-label-placeholder`)
+                if (dom) {
+                    size = Math.max(size, dom.offsetWidth)
+                }
+            })
+            this.__FormItems.forEach((item) => {
+                const dom =
+                    isJustify &&
+                    !validVal(item.labelWidth) &&
+                    item.$el.querySelector(`.${this._tobogPrefix_}item-label`)
+                if (dom) {
+                    dom.style.width = size + "px"
+                }
+            })
+        }, 60)
         this.__FormItems = []
-        this.$on("on-form-item-add", (item) => this.__FormItems.push(item))
+        this.$on("on-form-item-add", (item) => {
+            this.__FormItems.push(item)
+            this._calcJustifyLabel && this._calcJustifyLabel()
+        })
         this.$on("on-form-item-remove", (item) => {
             const index = this.__FormItems.indexOf(item)
             if (index > -1) this.__FormItems.splice(index, 1)
+            this._calcJustifyLabel && this._calcJustifyLabel()
         })
+    },
+    mounted() {
+        this._mounted = true
+        this._calcJustifyLabel()
     },
     computed: {
         classes() {
@@ -91,6 +125,15 @@ export default {
                 item.resetValidate()
             })
         },
+    },
+    watch: {
+        labelWidth() {
+            this._calcJustifyLabel()
+        },
+    },
+    beforeDestroy() {
+        this._calcJustifyLabel && this._calcJustifyLabel.cancel()
+        this._calcJustifyLabel = null
     },
 }
 </script>

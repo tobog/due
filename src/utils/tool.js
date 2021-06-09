@@ -7,14 +7,18 @@ export function oneOf(value, validList = []) {
 }
 
 export function unit(val, unit = "px", radix = 1) {
-    if (val === "" || val == null) return
+    if (val === "" || val == null) return "";
     if (typeof unit === "number") {
         radix = unit
         unit = "px"
     }
     const size = parseFloat(val)
     if (val == size) return `${size * radix}${unit}`
-    if (radix == 1 || size !== size) return val
+    if (size !== size) {
+        if (val === 'auto' || val === 'unset' || val === 'initial' || val === 'inherit') return val;
+        return '';
+    }
+    if (radix == 1) return val
     return size * radix + `${val}`.substr(`${size}`.length)
 }
 export function isNumber(val) {
@@ -185,7 +189,7 @@ export function handleStyle(style) {
 }
 
 
-export function installConfig(Vue, options={}) {
+export function installConfig(Vue, options = {}) {
     const cssPrefix = options.cssPrefix || "due";
     const langPrefix = options.langPrefix || cssPrefix;
     const compPrefix = options.compPrefix || "";
@@ -223,10 +227,10 @@ export function installConfig(Vue, options={}) {
         compPrefix,
         directPrefix,
     }
-} 
+}
 
 
-export function componentInstall (Component, name) {
+export function componentInstall(Component, name) {
     Component.install = function (Vue, options) {
         if (Component.install.installed && !options.reset) return;
         Component.install.installed = true;

@@ -88,6 +88,10 @@ export default {
             default: "无匹配数据",
         },
     },
+    model: {
+        prop: 'value',
+        event: 'on-change'
+    },
     data() {
         return {
             modelList: [],
@@ -188,8 +192,7 @@ export default {
                 resultData = this.modelList;
                 result = resultData.map((node) => node.data[valueKey])
             }
-            this.$emit("input", result, resultData);
-            this.$emit("on-change", resultData);
+            this.$emit("on-change", result, resultData);
         },
         handleCheck(node) {
             const data = node.data,
