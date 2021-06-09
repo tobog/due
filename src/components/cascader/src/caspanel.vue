@@ -70,7 +70,6 @@ export default {
     components: {CaspanelItem, CaspanelSearch},
     props: {
         value: {
-            type: Array,
             default() {
                 return []
             },

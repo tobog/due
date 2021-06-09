@@ -279,6 +279,17 @@ export default {
                 },
                 {
                     showConfig: true,
+                    label: "输出数据类型",
+                    key: "valueType",
+                    tag: "vSelect",
+                    demoDefault: "",
+                    explain: "输出数据类型",
+                    dataType: "String",
+                    default: "",
+                    options: ['single', 'link', 'singleMap', 'linkMap'],
+                },
+                {
+                    showConfig: true,
                     label: "主题颜色",
                     key: "theme",
                     tag: "vSelect",

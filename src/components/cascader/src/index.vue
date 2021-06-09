@@ -98,7 +98,6 @@ export default {
         autoClose: Boolean,
         transfer: Boolean,
         value: {
-            type: Array,
             default() {
                 return []
             },
@@ -134,7 +133,6 @@ export default {
         }
     },
     created() {
-        this.updateModel(this.value)
         this.handleDispatch("on-change", this.model)
     },
     computed: {
@@ -309,9 +307,16 @@ export default {
     },
     watch: {
         value: {
+            immediate: true,
             deep: true,
             handler(val) {
-                this.updateModel(val, true)
+                if (val === null) {
+                    this.model = [];
+                } else if (!Array.isArray(val)) {
+                    this.model = [val];
+                } else {
+                    this.model = val;
+                }
             },
         },
     },
