@@ -179,7 +179,7 @@ export default {
             return (this.propsMap || {})[key] || defaultMap[key] || this[key] || key
         },
         getDataByValue(data = this.model) {
-            if (!this.$refs.caspanel) return
+            if (!this.$refs.caspanel || data  == null || data === '') return
             return this.$refs.caspanel.getDataByValue(data)
         },
         handleKeydown(event) {
@@ -229,12 +229,12 @@ export default {
             this.$refs.dropBase.cancelChange()
             this.$emit("on-clear")
         },
-        updateModel(val, sync) {
+        updateModel(val) {
             console.log(val, this.model)
             const labelKey = this.getFieldMap("label")
             const valueKey = this.getFieldMap("value")
             if (val === this.model) return
-            if (!val) val = []
+            if (val == null || val === '') val = []
             if (!Array.isArray(val)) val = [val]
             if (this.selection === "multiple" || this.selection === "lastMultiple") {
                 if (this.valueType === "single") {
@@ -283,7 +283,6 @@ export default {
                 }
             }
             this.model = val
-            if (sync === true) return
             this.$emit("input", this.model)
             this.handleDispatch("on-change", this.model)
         },
@@ -310,7 +309,7 @@ export default {
             immediate: true,
             deep: true,
             handler(val) {
-                if (val === null) {
+                if (val == null || val === '') {
                     this.model = [];
                 } else if (!Array.isArray(val)) {
                     this.model = [val];

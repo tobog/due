@@ -31,6 +31,13 @@ import FluidPanel from "./fluid/src/fluidPanel"
 import Form from "./form/src/form"
 import FormItem from "./form/src/formItem"
 
+import Row from "./gridRow/src/index"
+import Col from "./gridRow/src/col"
+import Grid from "./grid/src/index"
+import GridItem from "./grid/src/item"
+import GridLayout from "./gridLayout/src/index"
+import GridLayoutItem from "./gridLayout/src/item"
+
 
 import Icon from "./icons/src/index"
 
@@ -85,12 +92,8 @@ import Menu from "./menu/menu"
 import MenuItem from "./menu/menuitem"
 import MenuTree from "./menu/menutree"
 import Tree from "./tree/index"
-import Col from "./grid/row/col"
-import Row from "./grid/row/index"
-import Grid from "./grid/index/index"
-import GridLayout from "./grid/layout/index"
-import GridLayoutItem from "./grid/layout/item"
-import GridItem from "./grid/index/item"
+
+
 import Resize from "./resize"
 
 

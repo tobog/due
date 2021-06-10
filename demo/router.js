@@ -223,6 +223,13 @@ export default new Router({
                     },
                 },
                 {
+                    path: "gridLayout",
+                    component: () => import("./components/grid-layout"),
+                    meta: {
+                        label: "栅格/Grid-Layout",
+                    },
+                },
+                {
                     path: "icons",
                     component: () => import("./components/icons"),
                     meta: {

@@ -12,6 +12,7 @@ export default {
     componentName: "Row",
     mixins: [mediaSize],
     props: {
+        flex: Boolean,
         grid: {
             type: [Number, String],
             default: 24,
@@ -20,7 +21,6 @@ export default {
             type: [Number, String, Array, Object],
             default: 0,
         },
-        flex: Boolean,
         align: {
             type: String,
             // default:'top'，top，middle，bottom，stretch

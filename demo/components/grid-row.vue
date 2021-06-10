@@ -4,6 +4,15 @@
     background-image: linear-gradient(90deg, #f5f5f5 50%, transparent 0, transparent 100%);
     background-size: 8.33334% 100%;
 }
+.demo-row-ratio {
+    .demo-col {
+        padding: 0;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
 .demo-col {
     color: #fff;
     padding: 30px 0;
@@ -40,33 +49,17 @@
         <template v-slot="config">
             <vRow
                 class="demo-row"
-                v-bind="config"
-                :style="{'background-size': 100 / (config.grid || 1) + '%' + ' 100%'}"
+                v-bind="config.Row"
+                :style="{'background-size': 100 / ((config.Row && config.Row.grid) || 1) + '%' + ' 100%'}"
             >
                 <vCol class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</vCol>
                 <vCol class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</vCol>
                 <vCol class="demo-col" span="6" offset="8">col-6 | offset-8</vCol>
                 <vCol class="demo-col" span="6" offset="4">col-6 | offset-4</vCol>
             </vRow>
-            <vRow class="demo-row" v-bind="config">
-                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="5">
-                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                </vCol>
-                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                </vCol>
-                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="7">
-                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                </vCol>
-                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                </vCol>
-                <vCol span="6" :xs="2" :sm="4" :md="6" :lg="8">
-                    <div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-                </vCol>
-            </vRow>
-            <vRow class="demo-row" v-bind="config">
-                <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="5" :ratio="0.5">
+            <div class="m-10">比率</div>
+            <vRow class="demo-row demo-row-ratio" v-bind="config.Row">
+                <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8" :ratio="0.5">
                     span=6 xs=2 sm=4 md=6 lg=8 ratio=0.5
                 </vCol>
                 <vCol class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8">
@@ -84,36 +77,50 @@
 export default {
     computed: {
         getCode() {
-            return `<Row class="demo-row" v-bind=CODE>
-						<Col class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</Col>
-						<Col class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</Col>
-						<Col class="demo-col" span="6" offset="8">col-6 | offset-8</Col>
-						<Col class="demo-col" span="6" offset="4">col-6 | offset-4</Col>
-					</Row>
-					<Row class="demo-row" v-bind=CODE">
-						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
-							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</Col>
-						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
-							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</Col>
-						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
-							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</Col>
-						<Col span="6" :xs="2" :sm="4" :md="6" :lg="8">
-							<div class="demo-col">span=6 xs=2 sm=4 md=6 lg=8</div>
-						</Col>
-					</Row>
+            return `<Row
+                        class="demo-row"
+                        v-bind="config.Row"
+                        :style="{'background-size': 100 / ((config.Row && config.Row.grid) || 1) + '%' + ' 100%'}"
+                    >
+                        <Col class="demo-col" :xs="8" :sm="6" :md="6" :lg="4">xs=8 sm=6 md=6 lg=4</Col>
+                        <Col class="demo-col" :xs="4" :sm="6" :md="3" :lg="8">xs=4 sm=6 md=3 lg=8</Col>
+                        <Col class="demo-col" span="6" offset="8">col-6 | offset-8</Col>
+                        <Col class="demo-col" span="6" offset="4">col-6 | offset-4</Col>
+                    </Row>
+                    <div class="m-10">比率</div>
+                    <Row class="demo-row demo-row-ratio" v-bind="config.Row">
+                        <Col class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8" :ratio="0.5">
+                            span=6 xs=2 sm=4 md=6 lg=8 ratio=0.5
+                        </Col>
+                        <Col class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8">
+                            span=6 xs=2 sm=4 md=6 lg=8 ratio=0
+                        </Col>
+                        <Col class="demo-col" span="6" :xs="2" :sm="4" :md="6" :lg="8" :ratio="0.2">
+                            span=6 xs=2 sm=4 md=6 lg=8 ratio=0.2
+                        </Col>
+                    </Row>
 					`
         },
         getConfig() {
+            return {
+                Row: {
+                    data: this.getRowConfig,
+                },
+                Col: {
+                    hide: true,
+                    data: this.getColConfig,
+                },
+            }
+        },
+
+        getRowConfig() {
             return [
                 {
                     showConfig: true,
                     label: "是否flex布局",
                     key: "flex",
                     demoDefault: false,
-                    explain: "Row:是否flex布局",
+                    explain: "是否flex布局",
                     dataType: "Boolean",
                     tag: "vSwitch",
                     default: false,
@@ -123,7 +130,7 @@ export default {
                     label: "栅格基数",
                     key: "grid",
                     demoDefault: 24,
-                    explain: "Row:总栅格数",
+                    explain: "总栅格数",
                     dataType: "Number",
                     tag: "vInputNumber",
                     default: 24,
@@ -133,7 +140,7 @@ export default {
                     label: "栅格间距",
                     key: "gutter",
                     demoDefault: 0,
-                    explain: "Row:栅格间距，单位 px，左右平分 上下,例如 10 | 100px | [10px,100px]|{xs:1,md:10}",
+                    explain: "栅格间距，单位 px，左右平分 上下,例如 10 | 100px | [10px,100px]|{xs:1,md:10}",
                     dataType: "Number|String|Array|Object",
                     tag: "vInputNumber",
                     default: 0,
@@ -143,7 +150,7 @@ export default {
                     label: "栅格比率",
                     key: "ratio",
                     demoDefault: 0,
-                    explain: "Row:栅格高宽比，例如：1 | 100px | {xs:1,md:100}",
+                    explain: "栅格高宽比，例如：1 | 100px | {xs:1,md:100}",
                     dataType: "Number|String|Object",
                     tag: "vInputNumber",
                     default: 0,
@@ -170,69 +177,73 @@ export default {
                     default: "",
                     options: ["start", "center", "end", "space-around", "space-between"],
                 },
+            ]
+        },
+        getColConfig() {
+            return [
                 {
-                    key: "Col:span",
-                    explain: " Col:格的占位格数，可选值为0~grid的整数，为 0 时，相当于display:none",
+                    key: "span",
+                    explain: " 格的占位格数，可选值为0~grid的整数，为 0 时，相当于display:none",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:offset",
-                    explain: " Col:格左侧的间隔格数，间隔内不可以有栅格",
+                    key: "offset",
+                    explain: " 格左侧的间隔格数，间隔内不可以有栅格",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:push",
-                    explain: " Col:格向右移动格数",
+                    key: "push",
+                    explain: " 格向右移动格数",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:gutter",
-                    explain: " Col:格间距，单位 px，左右平分",
+                    key: "gutter",
+                    explain: " 格间距，单位 px，左右平分",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:pull",
-                    explain: " Col:格向左移动格数",
+                    key: "pull",
+                    explain: " 格向左移动格数",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:order",
-                    explain: " Col:格的顺序，在flex布局模式下有效",
+                    key: "order",
+                    explain: " 格的顺序，在flex布局模式下有效",
                     dataType: "Number",
                     default: "-",
                 },
                 {
-                    key: "Col:xs",
-                    explain: " Col:<768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    key: "xs",
+                    explain: " <768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
                     dataType: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    key: "Col:sm",
-                    explain: " Col:≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    key: "sm",
+                    explain: " ≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象",
                     dataType: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    key: "Col:md",
-                    explain: " Col:≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    key: "md",
+                    explain: " ≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象",
                     dataType: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    key: "Col:lg",
-                    explain: " Col:≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    key: "lg",
+                    explain: " ≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象",
                     dataType: " [Number, String, Object]",
                     default: "-",
                 },
                 {
-                    key: "Col:xxl",
-                    explain: " Col:≥1600px 响应式栅格，可为栅格数或一个包含其他属性的对象",
+                    key: "xxl",
+                    explain: " ≥1600px 响应式栅格，可为栅格数或一个包含其他属性的对象",
                     dataType: " [Number, String, Object]",
                     default: "-",
                 },

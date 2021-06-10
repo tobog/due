@@ -28,11 +28,14 @@
             </h4>
         </template>
         <template v-slot="config">
-            <vGridLayout class="demo-row demo-grid" v-bind="config">
-                <vGridLayoutItem class="demo-col">grid:1</vGridLayoutItem>
-                <vGridLayoutItem class="demo-col">grid:2</vGridLayoutItem>
-                <vGridLayoutItem class="demo-col"> grid:3 </vGridLayoutItem>
-            </vGridLayout>
+            <vGrid class="demo-row demo-grid" v-bind="config">
+                <vGridItem class="demo-col">grid:1</vGridItem>
+                <vGridItem class="demo-col">grid:2</vGridItem>
+                <vGridItem class="demo-col"> grid:3 </vGridItem>
+                <vGridItem class="demo-col">grid:4</vGridItem>
+                <vGridItem class="demo-col">grid:5</vGridItem>
+                <vGridItem class="demo-col" ratio="0.5">grid:6</vGridItem>
+            </vGrid>
         </template>
     </Demo>
 </template>
@@ -41,7 +44,14 @@
 export default {
     computed: {
         getCode() {
-            return `
+            return `<Grid class="demo-row demo-grid" v-bind="config">
+                        <GridItem class="demo-col">grid:1</GridItem>
+                        <GridItem class="demo-col">grid:2</GridItem>
+                        <GridItem class="demo-col"> grid:3 </GridItem>
+                        <GridItem class="demo-col">grid:4</GridItem>
+                        <GridItem class="demo-col">grid:5</GridItem>
+                        <GridItem class="demo-col" ratio="0.5">grid:6</GridItem>
+                    </Grid>
 					`
         },
         getConfig() {
