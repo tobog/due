@@ -22,9 +22,9 @@
 <template>
     <Demo :config="getConfig" :code="getCode" isAll>
         <template slot="header">
-            <h2>代码示例 (Grid-Grid/GridItem 栅格)</h2>
+            <h2>代码示例 (GridLayout-GridLayout/GridLayoutItem 栅格)</h2>
             <h4 class="padding-top-10">
-                我们采用了5栅格系统，将区域进行5等分。 形成正方形
+                <!-- 我们采用了5栅格系统，将区域进行5等分。 形成正方形 -->
             </h4>
         </template>
         <template v-slot="config">

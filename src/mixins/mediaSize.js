@@ -15,16 +15,16 @@ export default {
             this.mediaSize = this.$ConfigProvide.mediaSize
             return
         }
-        this.__getClientSize = debounce(
-            this.__mediaCallback ||
-            (() => {
+        this.__getClientSize = debounce((...args) => {
+            if (this.__mediaCallback) {
+                typeof this.__mediaCallback === 'function' && this.__mediaCallback(...args);
+            } else {
                 this.mediaSize = getClientSize("viewport");
-                this.$nextTick(() => {
-                    this.$emit('on-resize', this.mediaSize)
-                })
-            }),
-            120
-        )
+            }
+            this.$nextTick(() => {
+                this.$emit('on-resize', this.mediaSize)
+            });
+        }, 120)
     },
     mounted() {
         this.bindResize()
