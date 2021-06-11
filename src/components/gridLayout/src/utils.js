@@ -125,7 +125,8 @@ export function moveElement(
     isUserAction: ?boolean,
     preventCollision: ?boolean,
     compactType: CompactType,
-    cols: number
+    cols: number,
+    allowOverlap: ?boolean
 ): Layout {
     // If this is static and not explicitly enabled as draggable,
     // no move is possible, so we can short-circuit this immediately.
@@ -133,10 +134,6 @@ export function moveElement(
 
     // Short-circuit if nothing to do.
     if (l.y === y && l.x === x) return layout;
-
-    console.log(
-        `Moving element ${l.i} to [${String(x)},${String(y)}] from [${l.x},${l.y}]`
-    );
     const oldX = l.x;
     const oldY = l.y;
 
@@ -149,6 +146,7 @@ export function moveElement(
     // When doing this comparison, we have to sort the items we compare with
     // to ensure, in the case of multiple collisions, that we're getting the
     // nearest collision.
+    // compactType="horizontal"
     let sorted = sortLayoutItems(layout, compactType);
     const movingUp =
         compactType === "vertical" && typeof y === "number"
@@ -156,16 +154,20 @@ export function moveElement(
             : compactType === "horizontal" && typeof x === "number"
                 ? oldX >= x
                 : false;
+
     // $FlowIgnore acceptable modification of read-only array as it was recently cloned
     if (movingUp) sorted = sorted.reverse();
-    const collisions = getAllCollisions(sorted, l);
 
+    const collisions = getAllCollisions(sorted, l);
+    console.log(collisions)
     // There was a collision; abort
     if (preventCollision && collisions.length) {
-        log(`Collision prevented on ${l.i}, reverting.`);
-        l.x = oldX;
-        l.y = oldY;
-        l.moved = false;
+        if (!allowOverlap) {
+            log(`Collision prevented on ${l.i}, reverting.`);
+            l.x = oldX;
+            l.y = oldY;
+            l.moved = false;
+        }
         return layout;
     }
 
@@ -202,4 +204,136 @@ export function moveElement(
     }
 
     return layout;
+}
+
+
+export function getAllCollisions(
+    layout: Layout,
+    layoutItem: LayoutItem
+): Array<LayoutItem> {
+    return layout.filter(l => collides(l, layoutItem));
+}
+
+/**
+* Given two layoutitems, check if they collide.
+*/
+export function collides(l1: LayoutItem, l2: LayoutItem): boolean {
+    if (l1.i === l2.i) return false; // same element
+    if (l1.x + l1.w <= l2.x) return false; // l1 is left of l2
+    if (l1.x >= l2.x + l2.w) return false; // l1 is right of l2
+    if (l1.y + l1.h <= l2.y) return false; // l1 is above l2
+    if (l1.y >= l2.y + l2.h) return false; // l1 is below l2
+    return true; // boxes overlap
+}
+
+/**
+ * This is where the magic needs to happen - given a collision, move an element away from the collision.
+ * We attempt to move it up if there's room, otherwise it goes below.
+ *
+ * @param  {Array} layout            Full layout to modify.
+ * @param  {LayoutItem} collidesWith Layout item we're colliding with.
+ * @param  {LayoutItem} itemToMove   Layout item we're moving.
+ */
+export function moveElementAwayFromCollision(
+    layout: Layout,
+    collidesWith: LayoutItem,
+    itemToMove: LayoutItem,
+    isUserAction: ?boolean,
+    compactType: CompactType,
+    cols: number
+): Layout {
+    const compactH = compactType === "horizontal";
+    // Compact vertically if not set to horizontal
+    const compactV = compactType !== "horizontal";
+    const preventCollision = collidesWith.static; // we're already colliding (not for static items)
+
+    // If there is enough space above the collision to put this element, move it there.
+    // We only do this on the main collision as this can get funky in cascades and cause
+    // unwanted swapping behavior.
+    if (isUserAction) {
+        // Reset isUserAction flag because we're not in the main collision anymore.
+        isUserAction = false;
+
+        // Make a mock item so we don't modify the item here, only modify in moveElement.
+        const fakeItem: LayoutItem = {
+            x: compactH ? Math.max(collidesWith.x - itemToMove.w, 0) : itemToMove.x,
+            y: compactV ? Math.max(collidesWith.y - itemToMove.h, 0) : itemToMove.y,
+            w: itemToMove.w,
+            h: itemToMove.h,
+            i: "-1"
+        };
+
+        // No collision? If so, we can go up there; otherwise, we'll end up moving down as normal
+        if (!getFirstCollision(layout, fakeItem)) {
+            log(
+                `Doing reverse collision on ${itemToMove.i} up to [${fakeItem.x},${fakeItem.y}].`
+            );
+            return moveElement(
+                layout,
+                itemToMove,
+                compactH ? fakeItem.x : undefined,
+                compactV ? fakeItem.y : undefined,
+                isUserAction,
+                preventCollision,
+                compactType,
+                cols
+            );
+        }
+    }
+
+    return moveElement(
+        layout,
+        itemToMove,
+        compactH ? itemToMove.x + 1 : undefined,
+        compactV ? itemToMove.y + 1 : undefined,
+        isUserAction,
+        preventCollision,
+        compactType,
+        cols
+    );
+}
+
+/**
+ * Given a layout, compact it. This involves going down each y coordinate and removing gaps
+ * between items.
+ *
+ * Does not modify layout items (clones). Creates a new layout array.
+ *
+ * @param  {Array} layout Layout.
+ * @param  {Boolean} verticalCompact Whether or not to compact the layout
+ *   vertically.
+ * @return {Array}       Compacted Layout.
+ */
+export function compact(
+    layout: Layout,
+    compactType: CompactType,
+    cols: number
+): Layout {
+    // Statics go in the compareWith array right away so items flow around them.
+    const compareWith = getStatics(layout);
+    // We go through the items by row and column.
+    const sorted = sortLayoutItems(layout, compactType);
+    // Holding for new items.
+    const out = Array(layout.length);
+
+    for (let i = 0, len = sorted.length; i < len; i++) {
+        let l = cloneLayoutItem(sorted[i]);
+
+        // Don't move static elements
+        if (!l.static) {
+            l = compactItem(compareWith, l, compactType, cols, sorted);
+
+            // Add to comparison array. We only collide with items before this one.
+            // Statics are already in this array.
+            compareWith.push(l);
+        }
+
+        // Add to output array to make sure they still come out in the right order.
+        out[layout.indexOf(sorted[i])] = l;
+
+        // Clear moved flag, if it exists.
+        l.moved = false;
+    }
+
+    return out;
 }
