@@ -71,11 +71,6 @@
             <vIcon
                 style="width:90px"
                 type="https://www.com.c"
-                fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-            ></vIcon>
-            <vIcon
-                style="width:90px"
-                type="https://www.com.c"
                 loading="https://www.baidu.com/img/flexible/logo/pc/result.png"
                 fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
             ></vIcon>
@@ -98,9 +93,7 @@
                             :data-clipboard-text="getCodeCopy(item, config)"
                             >复制组件</span
                         >
-                        <span class="icons-copy2" v-v-Clipboard.copy="handleSuccess" :data-clipboard-text="item"
-                            >复制类型</span
-                        >
+                        <span class="icons-copy2" v-v-Clipboard.copy="handleSuccess" :data-clipboard-text="item">复制类型</span>
                     </div>
                 </div>
             </div>
@@ -115,9 +108,6 @@ export default {
             iconName: "",
         }
     },
-    // created() {
-    //     console.log(this)
-    // },
     methods: {
         handleSuccess(value) {
             this.$VNotice.success({
@@ -135,11 +125,12 @@ export default {
             return this.iconslist.filter((item) => item.indexOf(this.iconName) > -1)
         },
         getCode() {
-            return `<Icon v-bind=CODE>vIcon</Icon>
-					<Icon
-						style="width:90px"
-						type="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
-					></Icon>
+            return `<Icon
+                        style="width:90px"
+                        type="https://www.com.c"
+                        loading="https://www.baidu.com/img/flexible/logo/pc/result.png"
+                        fallback="https://www.baidu.com/img/dong_5a30169b33012332baafb15938f6f19f.gif"
+                    ></Icon>
 					`
         },
         getConfig() {

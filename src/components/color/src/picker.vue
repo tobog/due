@@ -120,6 +120,7 @@ export default {
         handleInput() {
             // this.visible = false;
             this.$emit("on-change", this.model);
+            this.$emit("input", this.model);
             this.handleDispatch("on-validate", this.model, 'change');
         },
         handleVisibleChange(val) {
