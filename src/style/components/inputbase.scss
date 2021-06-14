@@ -280,7 +280,7 @@ $prefix-cls-textarea: #{$prefix}-textarea;
 .#{$prefix-cls-select},
 .#{$prefix-cls-input} {
     &-wrapper > .#{$prefix-cls-dropbase}-drop,
-    &-drop-wrapper {
+    &-drop {
         max-height: 260px;
         background-color: $backColor;
         box-shadow: 0 0 0 1px $border;

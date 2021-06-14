@@ -4,7 +4,7 @@
         isOutRef
         isToggle
         :class="[_tobogPrefix_ + '-wrapper']"
-        :dropClass="[_tobogPrefix_ + '-drop-wrapper', dropClass]"
+        :dropClass="[_tobogPrefix_ + '-drop', dropClass]"
         :is="showDrop ? 'DropBase' : 'section'"
         :data-vue-module="$options.name"
         :transfer="transfer"
