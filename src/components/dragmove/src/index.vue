@@ -27,13 +27,13 @@ export default {
     methods: {
         dragMove() {
             if (this.disabled) {
-                this._DragMoveList && this._DragMoveList.destroy();
-                this._DragMoveList = null;
+                this._DragMove && this._DragMove.destroy();
+                this._DragMove = null;
                 return;
             }
             this.$nextTick(() => {
-                if (!this.$el || this._DragMoveList) return;
-                this._DragMoveList = new DragMove(
+                if (!this.$el || this._DragMove) return;
+                this._DragMove = new DragMove(
                     this.$el,
                     {
                         boundaryElement: this.boundaryElement === true ? this.$el.offsetParent : this.boundaryElement,
@@ -74,8 +74,8 @@ export default {
         },
     },
     beforeDestroy() {
-        this._DragMoveList && this._DragMoveList.destroy();
-        this._DragMoveList = null;
+        this._DragMove && this._DragMove.destroy();
+        this._DragMove = null;
     },
 };
 </script>
