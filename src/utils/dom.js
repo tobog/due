@@ -878,18 +878,21 @@ export class DragMove {
         if (!element) return {};
         const styles = getStyles(element);
         const { style, props } = this._options;
-        if (this._isTransform && !props) {
-            return transformStyle(styles.transform);
-        }
         const target = {};
-        if (props) {
-            props.forEach((key) => {
-                target[key] = element[key];
-            });
-        }
         if (style) {
             style.forEach((key) => {
                 target[key] = styles[key];
+            });
+        }
+        if (this._isTransform && !props) {
+            return {
+                ...target,
+                ...transformStyle(styles.transform),
+            };
+        }
+        if (props) {
+            props.forEach((key) => {
+                target[key] = element[key];
             });
         }
         return target;
@@ -904,13 +907,13 @@ export class DragMove {
             const eleData = element
                 ? Offset.boundingClientRect(element)
                 : {
-                    left: clientX,
-                    right: clientX,
-                    top: clientY,
-                    bottom: clientY,
-                    width: 0,
-                    height: 0,
-                };
+                      left: clientX,
+                      right: clientX,
+                      top: clientY,
+                      bottom: clientY,
+                      width: 0,
+                      height: 0,
+                  };
             const { left = 0, right = 0, top = 0, bottom = 0 } = this._options.boundaryPoint || {};
             return {
                 left: [
@@ -1014,13 +1017,13 @@ export class DragMove {
         event.preventDefault();
         const getSpeed = (data, time) => {
             time = (time || 17) / 1000;
-            let radix = (data[0] < 0 || data[1] < 0) ? 1 : -1;
+            let radix = data[0] < 0 || data[1] < 0 ? 1 : -1;
             return [
                 data[0] / time,
                 data[1] / time,
-                Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time * radix,
+                (Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time) * radix,
                 time,
-            ]
+            ];
         };
         const { style, props } = this._options,
             // 瞬时距离
@@ -1053,7 +1056,7 @@ export class DragMove {
                 isTransform: this._isTransform,
                 tempSpeed, // 临时速度
                 tempDistance, // 临时速度
-                speed
+                speed,
             },
             event
         );
@@ -1062,13 +1065,13 @@ export class DragMove {
         if (event && this._handler && !this._isDestroy && this._isRun) {
             const getSpeed = (data, time) => {
                 time = (time || 17) / 1000;
-                let radix = (data[0] < 0 || data[1] < 0) ? 1 : -1;
+                let radix = data[0] < 0 || data[1] < 0 ? 1 : -1;
                 return [
                     data[0] / time,
                     data[1] / time,
-                    Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time * radix,
+                    (Math.sqrt(Math.pow(data[0], 2) + Math.pow(data[1], 2)) / time) * radix,
                     time,
-                ]
+                ];
             };
             const { style, props } = this._options,
                 { clientX = 0, clientY = 0 } = event,
@@ -1082,7 +1085,7 @@ export class DragMove {
                 // 总速度
                 speed = getSpeed(distance, nowTime - this._initTime),
                 boundaryData = this._getBoundaryPosition(this._distance, [clientX, clientY]);
-            console.log(nowTime - this._tempNowTime, 'nowTime2')
+            console.log(nowTime - this._tempNowTime, "nowTime2");
             this._handler({
                 boundaryPosition: boundaryData && boundaryData[1],
                 distance: boundaryData ? boundaryData[0] : this._distance, // 移动总距离
@@ -1096,7 +1099,7 @@ export class DragMove {
                 isTransform: this._isTransform,
                 cancel: true,
                 tempSpeed: nowTime - this._tempNowTime < 30 && this._tempSpeed, // 临时速度，
-                tempDistance: nowTime - this._tempNowTime < 30 && this._tempDistance || null,
+                tempDistance: (nowTime - this._tempNowTime < 30 && this._tempDistance) || null,
                 speed,
             });
             this._tempSpeed = this._tempSpeed = this._tempNowTime = null;
