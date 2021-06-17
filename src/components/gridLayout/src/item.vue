@@ -1,5 +1,7 @@
 <template>
-    <Dragresize v-bind="getPositionParams" hover></Dragresize>
+    <Dragresize v-bind="getPositionParams" hover :style="getStyle" @on-move="handleMove">
+        <slot>{{ getPositionParams }}</slot>
+    </Dragresize>
 </template>
 <script>
 import {setTransform, setTopLeft, perc} from "./utils"
@@ -13,9 +15,18 @@ export default {
     },
     props: {
         // isBounded: Boolean,
-        draggable: Boolean,
-        resizable: Boolean,
-        droppable: Boolean,
+        draggable: {
+            type: Boolean,
+            default: null,
+        },
+        resizable: {
+            type: Boolean,
+            default: null,
+        },
+        droppable: {
+            type: Boolean,
+            default: null,
+        },
         // transformScale: Number,
         static: Boolean,
         // useCSSTransforms: Boolean,
@@ -30,7 +41,7 @@ export default {
         maxW: Number,
         minH: Number,
         maxH: Number,
-        i: String,
+        i: [String, Number],
 
         margin: Array,
         containerPadding: Array,
@@ -41,21 +52,23 @@ export default {
         return {
             resizing: null,
             dragging: null,
+            pos: {},
         }
     },
-    mounted() {
-        
-    },
+    mounted() {},
     methods: {
         updateSize() {},
+        handleMove(val) {
+            this.dragging = val.result
+        },
     },
     computed: {
         getPositionParams() {
             return {
                 rowHeight: this.$GridLayoutContext.rowHeight,
                 cols: this.$GridLayoutContext.cols,
-                containerWidth: this.$GridLayoutContext.width,
-                containerPadding: this.$GridLayoutContext.containerPadding,
+                containerWidth: this.$GridLayoutContext.width || 1200,
+                containerPadding: this.$GridLayoutContext.containerPadding || [0, 0],
                 margin: this.$GridLayoutContext.margin,
                 maxRows: this.$GridLayoutContext.maxRows,
                 usePercentages: this.$GridLayoutContext.usePercentages,

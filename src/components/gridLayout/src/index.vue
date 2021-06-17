@@ -3,7 +3,7 @@
 <template>
     <div :class="classes" :style="getStyle">
         <slot></slot>
-        <GridLayoutItem
+        <!-- <GridLayoutItem
             v-if="activeDrag"
             :class="[_tobogPrefix_ + '-placeholder']"
             :w="activeDrag.w"
@@ -17,12 +17,12 @@
             :containerPadding="containerPadding || margin"
             :maxRows="maxRows"
             :rowHeight="rowHeight"
-            :isDraggable="false"
-            :isResizable="false"
+            :draggable="false"
+            :resizable="false"
             :isBounded="false"
             :useCSSTransforms="useCSSTransforms"
             :transformScale="transformScale"
-        ></GridLayoutItem>
+        ></GridLayoutItem> -->
     </div>
 </template>
 <script>
@@ -81,17 +81,17 @@ export default {
             type: Boolean,
             default: true,
         },
-        isDraggable: {
+        draggable: {
             type: Boolean,
             default: true,
         },
-        isResizable: {
+        resizable: {
             type: Boolean,
-            default: true,
+            default: false,
         },
-        isDroppable: {
+        droppable: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         useCSSTransforms: Boolean,
         transformScale: Boolean,
@@ -103,7 +103,7 @@ export default {
             isDragging: false,
             layouts: synchronizeLayoutWithChildren(
                 this.layout,
-                this.children,
+                [],
                 this.cols,
                 // Legacy support for verticalCompact: false
                 this.getCompactType,
@@ -117,7 +117,6 @@ export default {
     },
     created() {},
     methods: {
-        layoutUpdate() {},
         layoutMaybeChanged(newLayout, oldLayout) {
             if (!oldLayout) oldLayout = this.layouts
             if (this.layouts !== newLayout) {
