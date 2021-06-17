@@ -1,22 +1,21 @@
-<style lang="scss"></style>
-
 <template>
-    <ul :class="classes" :style="getStyle">
-        <slot></slot>
-    </ul>
+    <Dragresize v-bind="getPositionParams" hover></Dragresize>
 </template>
 <script>
 import {setTransform, setTopLeft, perc} from "./utils"
 import {calcGridItemPosition} from "./calculateUtils"
-import {DragMove} from "../../../utils/dom"
+import Dragresize from "../../dragresize/src/index"
 export default {
     name: "GridLayoutItem",
     inject: ["$GridLayoutContext"],
+    components: {
+        Dragresize,
+    },
     props: {
         // isBounded: Boolean,
-        isDraggable: Boolean,
-        isResizable: Boolean,
-        isDroppable: Boolean,
+        draggable: Boolean,
+        resizable: Boolean,
+        droppable: Boolean,
         // transformScale: Number,
         static: Boolean,
         // useCSSTransforms: Boolean,
@@ -45,49 +44,10 @@ export default {
         }
     },
     mounted() {
-        this.dragMove();
+        
     },
     methods: {
         updateSize() {},
-        dragMove() {
-            if (!this.getPositionParams.isDraggable) {
-                this._DragMove && this._DragMove.destroy()
-                this._DragMove = null
-                return
-            }
-            this.$nextTick(() => {
-                if (!this.$el || this._DragMove) return
-                this._DragMove = new DragMove(
-                    this.$el,
-                    {
-                        boundaryElement: this.$GridLayoutContext && this.$GridLayoutContext.$el,
-                        throttle: null,
-                    },
-                    (obj) => {
-                        // this.style =
-                        //     this.setStyle === "function"
-                        //         ? this.setStyle(obj)
-                        //         : {
-                        //               transform: `translate(${obj.data.translateX + obj.distance[0]}px,${obj.data
-                        //                   .translateY + obj.distance[1]}px)`,
-                        //           }
-                        // this.$emit("on-move", {
-                        //     boundaryPosition: obj.boundaryPosition,
-                        //     distance: obj.distance,
-                        //     data: obj.data,
-                        //     axis: obj.axis,
-                        //     tempSpeed: obj.tempSpeed,
-                        //     speed: obj.speed,
-                        //     cancel: obj.cancel,
-                        //     style: obj.style,
-                        //     props: obj.props,
-                        //     tempDistance: obj.tempDistance,
-                        //     result: this.style,
-                        // })
-                    }
-                )
-            })
-        },
     },
     computed: {
         getPositionParams() {
@@ -100,9 +60,9 @@ export default {
                 maxRows: this.$GridLayoutContext.maxRows,
                 usePercentages: this.$GridLayoutContext.usePercentages,
                 useCSSTransforms: this.$GridLayoutContext.useCSSTransforms,
-                isDraggable: this.isDraggable == null ? this.$GridLayoutContext.isDraggable : this.isDraggable,
-                isResizable: this.isDraggable == null ? this.$GridLayoutContext.isResizable : this.isResizable,
-                isDroppable: this.isDroppable == null ? this.$GridLayoutContext.isDroppable : this.isDroppable,
+                draggable: this.draggable == null ? this.$GridLayoutContext.draggable : this.draggable,
+                resizable: this.draggable == null ? this.$GridLayoutContext.resizable : this.resizable,
+                droppable: this.droppable == null ? this.$GridLayoutContext.droppable : this.droppable,
             }
         },
         classes() {
@@ -110,7 +70,7 @@ export default {
             return [
                 _tobogPrefix_,
                 {
-                    [`${_tobogPrefix_}-draggable`]: this.getPositionParams.isDraggable,
+                    [`${_tobogPrefix_}-draggable`]: this.getPositionParams.draggable,
                     [`${_tobogPrefix_}-draggable-dragging`]: !!this.dragging,
                     [`${_tobogPrefix_}-resizable`]: this.getPositionParams.resizable,
                     [`${_tobogPrefix_}-resizable-resizing`]: !!this.resizing,
@@ -138,9 +98,9 @@ export default {
         },
     },
     watch: {
-        'getPositionParams.isDraggable': function() {
+        "getPositionParams.draggable": function() {
             this.dragMove()
-        }
+        },
     },
     beforeDestroy() {
         this._DragMove && this._DragMove.destroy()

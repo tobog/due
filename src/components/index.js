@@ -35,8 +35,8 @@ import Row from "./gridRow/src/index"
 import Col from "./gridRow/src/col"
 import Grid from "./grid/src/index"
 import GridItem from "./grid/src/item"
-// import GridLayout from "./gridLayout/src/index"
-// import GridLayoutItem from "./gridLayout/src/item"
+import GridLayout from "./gridLayout/src/index"
+import GridLayoutItem from "./gridLayout/src/item"
 
 
 import Icon from "./icons/src/index"
@@ -176,8 +176,8 @@ export default {
     Row,
     Grid,
     GridItem,
-    // GridLayout,
-    // GridLayoutItem,
+    GridLayout,
+    GridLayoutItem,
     Dragresize,
     Badge,
     Alert,
