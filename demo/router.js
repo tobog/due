@@ -181,8 +181,8 @@ export default new Router({
                 //     },
                 // },
                 {
-                    path: "dragmove",
-                    component: () => import("./components/dragmove"),
+                    path: "dragresize",
+                    component: () => import("./components/dragresize"),
                     meta: {
                         label: "拖动",
                     },
@@ -325,13 +325,6 @@ export default new Router({
                     component: () => import("./components/rate"),
                     meta: {
                         label: "评分",
-                    },
-                },
-                {
-                    path: "resize",
-                    component: () => import("./components/resize"),
-                    meta: {
-                        label: "调整",
                     },
                 },
                 {

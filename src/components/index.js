@@ -23,7 +23,7 @@ import Config from "./config/index"
 import DateBase from "./date/src/base/index"
 import Datepicker from "./date/src/datepicker"
 import DatePanel from "./date/src/index"
-import Dragmove from "./dragmove/src/index"
+import Dragresize from "./dragresize/src/index"
 import Dropdown from "./dropdown/src/index"
 import DropdownItem from "./dropdown/src/dropdownItem"
 import Fluid from "./fluid/src/index"
@@ -35,8 +35,8 @@ import Row from "./gridRow/src/index"
 import Col from "./gridRow/src/col"
 import Grid from "./grid/src/index"
 import GridItem from "./grid/src/item"
-import GridLayout from "./gridLayout/src/index"
-import GridLayoutItem from "./gridLayout/src/item"
+// import GridLayout from "./gridLayout/src/index"
+// import GridLayoutItem from "./gridLayout/src/item"
 
 
 import Icon from "./icons/src/index"
@@ -92,9 +92,6 @@ import Menu from "./menu/menu"
 import MenuItem from "./menu/menuitem"
 import MenuTree from "./menu/menutree"
 import Tree from "./tree/index"
-
-
-import Resize from "./resize"
 
 
 
@@ -179,10 +176,9 @@ export default {
     Row,
     Grid,
     GridItem,
-    GridLayout,
-    GridLayoutItem,
-    Resize,
-    Dragmove,
+    // GridLayout,
+    // GridLayoutItem,
+    Dragresize,
     Badge,
     Alert,
     Datepicker,

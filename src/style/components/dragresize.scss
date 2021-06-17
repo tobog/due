@@ -1,20 +1,7 @@
-$prefix-cls: #{$prefix}-dragmove;
-
-.#{$prefix-cls} {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
 
 $prefix-cls: #{$prefix}-dragresize;
 
 .#{$prefix-cls} {
-    // display: inline-block;
     border: 1px solid $border;
     display: inline-block;
     position: absolute;
@@ -34,10 +21,7 @@ $prefix-cls: #{$prefix}-dragresize;
         height: 18px;
         border-right: 1px solid;
         transform-origin: center center;
-        transform: rotate(45deg) translate(-64%, 0);
-        cursor: nw-resize !important;
         z-index: 5;
-
         &::after {
             content: "";
             position: absolute;
@@ -48,9 +32,14 @@ $prefix-cls: #{$prefix}-dragresize;
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
+        &[data-position="top-left"] {
+            top: 0;
+            left: 0;
+            transform: rotate(45deg) translate(-64%, 0);
+            cursor: nw-resize !important;;
+        }
         &[data-position="top-right"] {
-            // top: 0;
+            top: 0;
             right: 0;
             transform: rotate(135deg) translate(-64%, 0);
             cursor: sw-resize !important;
@@ -64,6 +53,7 @@ $prefix-cls: #{$prefix}-dragresize;
         }
 
         &[data-position="bottom-left"] {
+            left: 0;
             bottom: 0;
             transform: rotate(-45deg) translate(-64%, 0);
             cursor: sw-resize !important;
@@ -74,10 +64,9 @@ $prefix-cls: #{$prefix}-dragresize;
         overflow: visible;
         box-sizing: border-box;
         position: absolute;
-        color: $border;
+        color: transparent;
         width: 100%;
         height: 0;
-        cursor: s-resize !important;
         z-index: 1;
         opacity: 0;
         background: transparent;
@@ -86,12 +75,15 @@ $prefix-cls: #{$prefix}-dragresize;
             content: "";
             position: absolute;
             width: 100%;
-            height: 6px;
+            height: 8px;
             top: 0;
             left: 0;
             transform: translate(0, -50%);
         }
-
+        &[data-position="top"] {
+            top: 0;
+            cursor: s-resize !important;
+        }
         &[data-position="right"] {
             top: 0;
             right: 0;
@@ -100,7 +92,7 @@ $prefix-cls: #{$prefix}-dragresize;
             cursor: w-resize !important;
 
             &::after {
-                width: 6px;
+                width: 8px;
                 height: 100%;
                 transform: translate(-50%, 0);
             }
@@ -108,6 +100,8 @@ $prefix-cls: #{$prefix}-dragresize;
 
         &[data-position="bottom"] {
             bottom: 0;
+            left: 0;
+            right: 0;
             cursor: s-resize !important;
         }
 
@@ -119,7 +113,7 @@ $prefix-cls: #{$prefix}-dragresize;
             cursor: w-resize !important;
 
             &::after {
-                width: 6px;
+                width: 8px;
                 height: 100%;
                 transform: translate(-50%, 0);
             }
