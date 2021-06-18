@@ -64,7 +64,8 @@ export default {
     mounted() {},
     methods: {
         handleMove(val) {
-            this.dragging = val.cancel ? null : val.result
+            this.dragging = val.cancel ? null : val.result;
+            
         },
     },
     computed: {

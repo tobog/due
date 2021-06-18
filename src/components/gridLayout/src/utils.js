@@ -657,7 +657,6 @@ export function synchronizeLayoutWithChildren(
             });
         }
     });
-    console.log(layout, 'layout')
     // Correct the layout.
     const correctedLayout = correctBounds(layout, { cols });
     return allowOverlap
