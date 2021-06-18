@@ -21,6 +21,7 @@ export default {
             } else {
                 this.mediaSize = getClientSize("viewport");
             }
+            typeof this.__clientCallback === 'function' && this.__clientCallback();
             this.$nextTick(() => {
                 this.$emit('on-resize', this.mediaSize)
             });

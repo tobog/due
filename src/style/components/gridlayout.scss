@@ -1,0 +1,11 @@
+$prefix-cls: #{$prefix}-gridlayout;
+
+.#{$prefix-cls} {
+    position: relative;
+    #{&}item {
+        z-index: 0;
+    }
+    #{&}item-dragging {
+        z-index: 10;
+    }
+}

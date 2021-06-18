@@ -248,3 +248,46 @@ export function componentInstall(Component, name) {
     };
     return Component;
 }
+
+// 获取系统属性
+export function getSysPlatform() {
+    try {
+        let ua = window.navigator.userAgent;
+        let sys = ''; // Android IOS Windows
+        let browser = '';
+        let client = ''; // WX H5 PC
+        // 检测系统
+        if (/Android|Adr/i.test(ua)) {
+            sys = 'Android';
+        } else if (ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
+            sys = 'IOS';
+        } else {
+            sys = 'Windows';
+        }
+        // 检测浏览器
+        if (/Opera/i.test(ua)) {
+            browser = 'Opera';
+        } else if (/Firefox/i.test(ua)) {
+            browser = 'Firefox';
+        } else if (/Chrome/i.test(ua)) {
+            browser = 'Chrome';
+        } else if (/Safari/i.test(ua)) {
+            browser = 'Safari';
+        } else if (/compatible|MSIE/i.test(ua) && browser !== 'Opera') {
+            browser = 'IE';
+        } else {
+            browser = 'Others';
+        }
+        if (!/wxwork/i.test(ua) && /micromessenger/i.test(ua)) {
+            client = 'WX';
+        } else if (/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|IEMobile)/i.test(ua)) {
+            client = 'H5';
+        } else {
+            client = 'PC';
+        }
+        console.log(sys, browser, client, 'getSysPlatform');
+        return [sys, browser, client];
+    } catch (error) {
+        return [];
+    }
+}

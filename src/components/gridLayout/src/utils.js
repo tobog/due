@@ -73,7 +73,7 @@
  * @param  {Array} layout Layout array.
  * @return {Number}       Bottom coordinate.
  */
-export function bottom(layou) {
+export function bottom(layout) {
     let max = 0,
         bottomY;
     for (let i = 0, len = layout.length; i < len; i++) {
@@ -186,11 +186,7 @@ export function collides(l1, l2) {
  *   vertically.
  * @return {Array}       Compacted Layout.
  */
-export function compact(
-    layout,
-    compactType,
-    cols
-) {
+export function compact(layout, compactType, cols) {
     // Statics go in the compareWith array right away so items flow around them.
     const compareWith = getStatics(layout);
     // We go through the items by row and column.
@@ -224,19 +220,12 @@ const heightWidth = { x: "w", y: "h" };
 /**
  * Before moving item down, it will check if the movement will cause collisions and move those items down before.
  */
-function resolveCompactionCollision(
-    layout,
-    item,
-    moveToCoord,
-    axis
-) {
+function resolveCompactionCollision(layout, item, moveToCoord, axis) {
     const sizeProp = heightWidth[axis];
     item[axis] += 1;
-    const itemIndex = layout
-        .map(layoutItem => {
-            return layoutItem.i;
-        })
-        .indexOf(item.i);
+    const itemIndex = layout.map(layoutItem => {
+        return layoutItem.i;
+    }).indexOf(item.i);
 
     // Go through each item we collide with.
     for (let i = itemIndex + 1; i < layout.length; i++) {
@@ -267,13 +256,7 @@ function resolveCompactionCollision(
  * Modifies item.
  *
  */
-export function compactItem(
-    compareWith,
-    l,
-    compactType,
-    cols,
-    fullLayout
-) {
+export function compactItem(compareWith, l, compactType, cols, fullLayout) {
     const compactV = compactType === "vertical";
     const compactH = compactType === "horizontal";
     if (compactV) {
@@ -322,10 +305,7 @@ export function compactItem(
  * @param  {Array} layout Layout array.
  * @param  {Number} bounds Number of columns.
  */
-export function correctBounds(
-    layout,
-    bounds
-) {
+export function correctBounds(layout, bounds) {
     const collidesWith = getStatics(layout);
     for (let i = 0, len = layout.length; i < len; i++) {
         const l = layout[i];
@@ -336,8 +316,9 @@ export function correctBounds(
             l.x = 0;
             l.w = bounds.cols;
         }
-        if (!l.static) collidesWith.push(l);
-        else {
+        if (!l.static) {
+            collidesWith.push(l);
+        } else {
             // If this is static and collides with other statics, we must move it down.
             // We have to do something nicer than just letting them overlap.
             while (getFirstCollision(collidesWith, l)) {
@@ -369,19 +350,13 @@ export function getLayoutItem(layout, id) {
  * @param  {Object} layoutItem Layout item.
  * @return {Object|undefined}  A colliding layout item, or undefined.
  */
-export function getFirstCollision(
-    layout,
-    layoutItem
-) {
+export function getFirstCollision(layout, layoutItem) {
     for (let i = 0, len = layout.length; i < len; i++) {
         if (collides(layout[i], layoutItem)) return layout[i];
     }
 }
 
-export function getAllCollisions(
-    layout,
-    layoutItem
-) {
+export function getAllCollisions(layout, layoutItem) {
     return layout.filter(l => collides(l, layoutItem));
 }
 
@@ -605,10 +580,7 @@ export function setTopLeft({ top, left, width, height }) {
  * @return {Array} Array of layout objects.
  * @return {Array}        Layout, sorted static items first.
  */
-export function sortLayoutItems(
-    layout,
-    compactType
-) {
+export function sortLayoutItems(layout, compactType) {
     if (compactType === "horizontal") return sortLayoutItemsByColRow(layout);
     if (compactType === "vertical") return sortLayoutItemsByRowCol(layout);
     else return layout;
@@ -670,7 +642,7 @@ export function synchronizeLayoutWithChildren(
     const layout = [];
     children.forEach((child, i) => {
         // Don't overwrite if it already exists.
-        const exists = getLayoutItem(initialLayout, String(child.i));
+        const exists = getLayoutItem(initialLayout, child.i);
         if (exists) {
             layout[i] = cloneLayoutItem(exists);
         } else {
@@ -681,12 +653,11 @@ export function synchronizeLayoutWithChildren(
                 h: 1,
                 x: 0,
                 y: bottom(layout),
-                i: String(child.key)
+                i: child.i
             });
-
         }
     });
-
+    console.log(layout, 'layout')
     // Correct the layout.
     const correctedLayout = correctBounds(layout, { cols });
     return allowOverlap
@@ -749,7 +720,7 @@ export function compactType(
 }
 
 function log(...args) {
-// eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.log(...args);
 }
 

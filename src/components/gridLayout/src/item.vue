@@ -1,6 +1,13 @@
 <template>
-    <Dragresize v-bind="getPositionParams" hover :style="getStyle" @on-move="handleMove">
-        <slot>{{ getPositionParams }}</slot>
+    <Dragresize
+        v-bind="getPositionParams"
+        hover
+        :style="getStyle"
+        :class="classes"
+        :data-vue-module="$options.name"
+        @on-move="handleMove"
+    >
+        <slot></slot>
     </Dragresize>
 </template>
 <script>
@@ -52,14 +59,12 @@ export default {
         return {
             resizing: null,
             dragging: null,
-            pos: {},
         }
     },
     mounted() {},
     methods: {
-        updateSize() {},
         handleMove(val) {
-            this.dragging = val.result
+            this.dragging = val.cancel ? null : val.result
         },
     },
     computed: {
@@ -67,7 +72,7 @@ export default {
             return {
                 rowHeight: this.$GridLayoutContext.rowHeight,
                 cols: this.$GridLayoutContext.cols,
-                containerWidth: this.$GridLayoutContext.width || 1200,
+                containerWidth: this.$GridLayoutContext.width || 100,
                 containerPadding: this.$GridLayoutContext.containerPadding || [0, 0],
                 margin: this.$GridLayoutContext.margin,
                 maxRows: this.$GridLayoutContext.maxRows,
@@ -84,9 +89,9 @@ export default {
                 _tobogPrefix_,
                 {
                     [`${_tobogPrefix_}-draggable`]: this.getPositionParams.draggable,
-                    [`${_tobogPrefix_}-draggable-dragging`]: !!this.dragging,
+                    [`${_tobogPrefix_}-dragging`]: !!this.dragging,
                     [`${_tobogPrefix_}-resizable`]: this.getPositionParams.resizable,
-                    [`${_tobogPrefix_}-resizable-resizing`]: !!this.resizing,
+                    [`${_tobogPrefix_}-resizing`]: !!this.resizing,
                 },
             ]
         },

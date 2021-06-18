@@ -1,7 +1,7 @@
 <style lang="scss"></style>
 
 <template>
-    <div :class="classes" :style="getStyle">
+    <div :class="classes" :style="getStyle" :data-vue-module="$options.name">
         <slot></slot>
         <!-- <GridLayoutItem
             v-if="activeDrag"
@@ -61,11 +61,10 @@ export default {
             type: [Object, Number],
             default: 12,
         }, //{lg:[]},[x,y],xy
-        // margin: [Object, Array, Number, String], //{lg:[]},[x,y],xy
         layout: [Object, Array], //{lg:[x1,x2]},[x1,x2],// size,position
         rowHeight: {
             type: Number,
-            default: 150,
+            default: 30,
         },
         maxRows: {
             type: Number,
@@ -99,35 +98,50 @@ export default {
     data() {
         return {
             activeDrag: null,
-            originalLayout: null,
-            isDragging: false,
-            layouts: synchronizeLayoutWithChildren(
-                this.layout,
-                [],
-                this.cols,
-                // Legacy support for verticalCompact: false
-                this.getCompactType,
-                this.allowOverlap
-            ),
+            layouts: [],
             oldDragItem: null,
             oldLayout: null,
             oldResizeItem: null,
             droppingDOMNode: null,
+            width: 0,
+            height: ''
         }
     },
-    created() {},
+    beforeCreate() {
+        this.__clientCallback = () => {
+            this.width = this.$el.clientWidth
+        }
+    },
+    mounted() {
+        this.__clientCallback();
+        this.initLayout()
+        this.mounted = true;
+        console.log(this)
+    },
     methods: {
+        initLayout() {
+            this.layouts = synchronizeLayoutWithChildren(
+                this.layout,
+                this.$children,
+                this.cols,
+                this.getCompactType,
+                this.allowOverlap
+            )
+            this.layoutMaybeChanged(this.layouts, this.layout);
+        },
         layoutMaybeChanged(newLayout, oldLayout) {
+            this.containerHeight();
             if (!oldLayout) oldLayout = this.layouts
             if (this.layouts !== newLayout) {
                 this.$emit("on-change", newLayout)
+                this.$emit("update:sync", newLayout)
             }
         },
         containerHeight() {
-            if (!this.autoSize) return
+            if (!this.autoSize) return  this.height = '';
             const nbRow = bottom(this.layouts)
             const containerPaddingY = this.containerPadding ? this.containerPadding[1] : this.margin[1]
-            return nbRow * this.rowHeight + (nbRow - 1) * this.margin[1] + containerPaddingY * 2 + "px"
+            this.height = nbRow * this.rowHeight + (nbRow - 1) * this.margin[1] + containerPaddingY * 2 + "px";
         },
         onDragStart(i, x, y, {e, node}) {
             const l = getLayoutItem(this.layouts, i)
@@ -267,8 +281,9 @@ export default {
             ]
         },
         getStyle() {
-            let style = {}
-            return style
+            return {
+                height: this.height
+            }
         },
         getInitLayout() {
             // if (Array.isArray(this.layouts)) return [...this.layouts]
