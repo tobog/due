@@ -74,7 +74,7 @@ export default {
     },
     model: {
         prop: "value",
-        event: 'on-change'
+        event: "on-change",
     },
     props: {
         value: String,
@@ -106,7 +106,7 @@ export default {
                 copy: (value) => {
                     console.log(value, "copySuccessed---------");
                     this.copySuccessed = true;
-                    this.$emig('on-copy', value);
+                    this.$emig("on-copy", value);
                 },
             });
         });
@@ -182,6 +182,7 @@ export default {
             }
         },
         handlePos(type, obj) {
+            if (obj.status == 0) return;
             const { data, distance, element } = obj,
                 clientWidth = element.offsetParent.clientWidth;
             let val = parseFloat(data.left) + distance[0];

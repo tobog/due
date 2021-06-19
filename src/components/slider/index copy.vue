@@ -139,6 +139,7 @@ export default {
             }
         },
         handleLeftPos(obj) {
+            if (obj.status == 0) return;
             if (this.disabled || this.readonly) return
             this.showTooltipStatus = "left"
             if (obj.cancel) {
@@ -155,6 +156,7 @@ export default {
             this.updateModel()
         },
         handleRightPos(obj) {
+            if (obj.status == 0) return;
             if (this.disabled || this.readonly) return
             this.showTooltipStatus = "right"
             if (obj.cancel) {

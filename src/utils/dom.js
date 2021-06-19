@@ -865,11 +865,11 @@ export class DragMove {
     _binding() {
         if (this._isBind) return;
         this._isBind = true;
-        this._isCursorMove = false;
+        // this._isCursorMove = false;
         if (this._element) {
             EventListener.on(this._element, "mousedown", this._initAxis);
         } else if (this._boundaryElement) {
-            this._isCursorMove = true;
+            // this._isCursorMove = true;
             EventListener.on(this._boundaryElement, "mousedown", this._initAxis);
         }
     }
@@ -960,7 +960,7 @@ export class DragMove {
             this._boundaryElement && EventListener.on(this._boundaryElement, "mouseup", this._cancel);
         }
         this._boundaryData = this._handleBoundaryRange(event);
-        if (this._isCursorMove) this._handleCallback(event);
+        this._handleCallback(event, true);
     }
     // 性能节流
     _isMousemove(pos) {
@@ -1010,7 +1010,7 @@ export class DragMove {
             return [distance, position];
         }
     }
-    _handleCallback(event) {
+    _handleCallback(event, isInit) {
         const { clientX, clientY } = event;
         if (!this._isRun || !this._handler || !this._isMousemove(`${clientX}&${clientY}`)) return;
         event.stopPropagation();
@@ -1057,6 +1057,8 @@ export class DragMove {
                 tempSpeed, // 临时速度
                 tempDistance, // 临时速度
                 speed,
+                // 0 初始化开始，-1，结束， 1，移动中
+                status: isInit === true ? 0 : 1
             },
             event
         );
@@ -1097,10 +1099,11 @@ export class DragMove {
                 props,
                 axis: this._axis,
                 isTransform: this._isTransform,
-                cancel: true,
                 tempSpeed: nowTime - this._tempNowTime < 30 && this._tempSpeed, // 临时速度，
                 tempDistance: (nowTime - this._tempNowTime < 30 && this._tempDistance) || null,
                 speed,
+                status: -1,
+                cancel: true,
             });
             this._tempSpeed = this._tempSpeed = this._tempNowTime = null;
             this._distance = [0, 0];
@@ -1132,7 +1135,6 @@ export class DragMove {
     }
     destroy() {
         this._isDestroy = true;
-        this._isCursorMove = false;
         this._handleCancel();
         this._element && EventListener.off(this._element, "mousedown", this._initAxis);
         this._boundaryElement && EventListener.off(this._boundaryElement, "mousedown", this._initAxis);

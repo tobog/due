@@ -7,5 +7,6 @@ $prefix-cls: #{$prefix}-gridlayout;
     }
     #{&}item-dragging {
         z-index: 10;
+        transition: none !important;
     }
 }

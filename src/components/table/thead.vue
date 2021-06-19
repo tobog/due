@@ -164,6 +164,7 @@ export default {
                 target,
                 { style: ["width"], cursor: " col-resize", boundaryElement: this.$parent.$el, boundaryCalc: false },
                 (obj) => {
+                    if (obj.status == 0) return;
                     const { distance, data, cancel, boundaryPosition } = obj;
                     if (column.resizable !== "auto" && !cancel) {
                         this.$parent.setSplitWidth(null, null, boundaryPosition);

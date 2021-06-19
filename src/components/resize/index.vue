@@ -73,6 +73,7 @@ export default {
             });
         },
         handlePos(type, obj) {
+            if (obj.status == 0) return;
             const { data, distance } = obj;
             console.log(obj);
             const min = this.getMin;

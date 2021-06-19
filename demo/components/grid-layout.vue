@@ -3,11 +3,12 @@
     position: relative;
 }
 .demo-item {
-    background-color: #ccc;
+    background-color: rgba($color: #000000, $alpha: 0.3);
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
+    align-items: flex-start;
+    // justify-content: center;
+    flex-direction: column;
+    font-size: 20px;
 }
 </style>
 
@@ -20,8 +21,14 @@
             </h4> -->
         </template>
         <template v-slot="config">
-            <vGridLayout :layout.sync="layout" class="demo-grid" v-bind="config">
-                <vGridLayoutItem v-for="item in layout" v-bind="item" class="demo-item" :key="item.i">{{item.i}}</vGridLayoutItem>
+            {{layout}}
+            <vGridLayout v-model="layout" class="demo-grid" v-bind="config">
+                <vGridLayoutItem v-for="item in layout" v-bind="item" class="demo-item" :key="item.i">
+                    <span> {{ item.i }}</span>
+                    <span> @x:{{ item.x }}</span>
+                    <span> @y:{{ item.y }}</span>
+                    <span> @h:{{ item.h }}</span>
+                </vGridLayoutItem>
                 <!-- <vGridLayoutItem v-bind="layout[1]" class="demo-item">grid:2</vGridLayoutItem>
                 <vGridLayoutItem v-bind="layout[2]" class="demo-item"></vGridLayoutItem> -->
             </vGridLayout>
@@ -56,20 +63,20 @@ export default {
                 //     h: 3,
                 // },
             ],
-        }
+        };
     },
     created() {
         this.layout = this.generateLayout();
-        console.log(this.layout);
     },
     methods: {
-        generateLayout(len = 20) {
+        generateLayout(len = 12) {
             let arr = [];
             for (let i = 0; i < len; i++) {
-                const y =  Math.ceil(Math.random() * 4) + 1;
-                arr.push( {
+                const y = Math.ceil(Math.random() * 4) + 2;
+                arr.push({
                     x: (i * 2) % 12,
                     y: Math.floor(i / 6) * y,
+                    // w: Math.random() > 0.5 ? 2 : 4,
                     w: 2,
                     h: y,
                     i,
@@ -80,11 +87,11 @@ export default {
     },
     computed: {
         getCode() {
-            return ``
+            return ``;
         },
         getConfig() {
-            return []
+            return [];
         },
     },
-}
+};
 </script>

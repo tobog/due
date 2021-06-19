@@ -12,7 +12,7 @@
 //     maxH?: number,
 //     moved?: boolean,
 //     static?: boolean,
-//     isDraggable?: ?boolean,
+//     draggable?: ?boolean,
 //     isResizable?: ?boolean,
 //     resizeHandles?: Array<"s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne">,
 //     isBounded?: ?boolean
@@ -107,11 +107,7 @@ export function modifyLayout(layout, layoutItem) {
 
 // Function to be called to modify a layout item.
 // Does defensive clones to ensure the layout is not modified.
-export function withLayoutItem(
-    layout,
-    itemKey,
-    cb
-) {
+export function withLayoutItem(layout, itemKey, cb) {
     let item = getLayoutItem(layout, itemKey);
     if (!item) return [layout, null];
     item = cb(cloneLayoutItem(item)); // defensive clone then modify
@@ -135,10 +131,10 @@ export function cloneLayoutItem(layoutItem) {
         moved: Boolean(layoutItem.moved),
         static: Boolean(layoutItem.static),
         // These can be null/undefined
-        isDraggable: layoutItem.isDraggable,
+        draggable: layoutItem.draggable,
         isResizable: layoutItem.isResizable,
         resizeHandles: layoutItem.resizeHandles,
-        isBounded: layoutItem.isBounded
+        isBounded: layoutItem.isBounded,
     };
 }
 
@@ -155,12 +151,7 @@ export function cloneLayoutItem(layoutItem) {
 
 // Like the above, but a lot simpler.
 export function fastPositionEqual(a, b) {
-    return (
-        a.left === b.left &&
-        a.top === b.top &&
-        a.width === b.width &&
-        a.height === b.height
-    );
+    return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height;
 }
 
 /**
@@ -193,7 +184,6 @@ export function compact(layout, compactType, cols) {
     const sorted = sortLayoutItems(layout, compactType);
     // Holding for new items.
     const out = Array(layout.length);
-
     for (let i = 0, len = sorted.length; i < len; i++) {
         let l = cloneLayoutItem(sorted[i]);
 
@@ -216,17 +206,14 @@ export function compact(layout, compactType, cols) {
     return out;
 }
 
-const heightWidth = { x: "w", y: "h" };
 /**
  * Before moving item down, it will check if the movement will cause collisions and move those items down before.
  */
 function resolveCompactionCollision(layout, item, moveToCoord, axis) {
-    const sizeProp = heightWidth[axis];
+    const sizeProp = axis === "x" ? "w" : "h";
+    const itemIndex = layout.findIndex((layoutItem) => layoutItem.i === item.i);
     item[axis] += 1;
-    const itemIndex = layout.map(layoutItem => {
-        return layoutItem.i;
-    }).indexOf(item.i);
-
+    // console.log(axis,sizeProp, { ...item }, moveToCoord);
     // Go through each item we collide with.
     for (let i = itemIndex + 1; i < layout.length; i++) {
         const otherItem = layout[i];
@@ -238,12 +225,7 @@ function resolveCompactionCollision(layout, item, moveToCoord, axis) {
         if (otherItem.y > item.y + item.h) break;
 
         if (collides(item, otherItem)) {
-            resolveCompactionCollision(
-                layout,
-                otherItem,
-                moveToCoord + item[sizeProp],
-                axis
-            );
+            resolveCompactionCollision(layout, otherItem, moveToCoord + item[sizeProp], axis);
         }
     }
 
@@ -284,10 +266,10 @@ export function compactItem(compareWith, l, compactType, cols, fullLayout) {
             resolveCompactionCollision(fullLayout, l, collides.y + collides.h, "y");
         }
         // Since we can't grow without bounds horizontally, if we've overflown, let's move it down and try again.
-        if (compactH && l.x + l.w > cols) {
-            l.x = cols - l.w;
-            l.y++;
-        }
+        // if (compactH && l.x + l.w > cols) {
+        //     l.x = cols - l.w;
+        //     l.y++;
+        // }
     }
 
     // Ensure that there are no negative positions
@@ -357,7 +339,7 @@ export function getFirstCollision(layout, layoutItem) {
 }
 
 export function getAllCollisions(layout, layoutItem) {
-    return layout.filter(l => collides(l, layoutItem));
+    return layout.filter((l) => collides(l, layoutItem));
 }
 
 /**
@@ -366,7 +348,7 @@ export function getAllCollisions(layout, layoutItem) {
  * @return {Array}        Array of static layout items..
  */
 export function getStatics(layout) {
-    return layout.filter(l => l.static);
+    return layout.filter((l) => l.static);
 }
 
 /**
@@ -379,27 +361,14 @@ export function getStatics(layout) {
  * @param  {Number}     [x]               X position in grid units.
  * @param  {Number}     [y]               Y position in grid units.
  */
-export function moveElement(
-    layout,
-    l,
-    x,
-    y,
-    isUserAction,
-    preventCollision,
-    compactType,
-    cols,
-    allowOverlap
-) {
+export function moveElement(layout, l, x, y, isUserAction, preventCollision, compactType, cols, allowOverlap) {
     // If this is static and not explicitly enabled as draggable,
     // no move is possible, so we can short-circuit this immediately.
-    if (l.static && l.isDraggable !== true) return layout;
+    if (l.static && !l.draggable) return layout;
 
     // Short-circuit if nothing to do.
     if (l.y === y && l.x === x) return layout;
 
-    log(
-        `Moving element ${l.i} to [${String(x)},${String(y)}] from [${l.x},${l.y}]`
-    );
     const oldX = l.x;
     const oldY = l.y;
 
@@ -418,14 +387,13 @@ export function moveElement(
         compactType === "vertical" && typeof y === "number"
             ? oldY >= y
             : compactType === "horizontal" && typeof x === "number"
-                ? oldX >= x
-                : false;
+            ? oldX >= x
+            : false;
 
     // $FlowIgnore acceptable modification of read-only array as it was recently cloned
     if (movingUp) sorted = sorted.reverse();
 
     const collisions = getAllCollisions(sorted, l);
-    console.log(collisions)
     // There was a collision; abort
     if (preventCollision && collisions.length) {
         if (!allowOverlap) {
@@ -449,23 +417,9 @@ export function moveElement(
 
         // Don't move static items - we have to move *this* element away
         if (collision.static) {
-            layout = moveElementAwayFromCollision(
-                layout,
-                collision,
-                l,
-                isUserAction,
-                compactType,
-                cols
-            );
+            layout = moveElementAwayFromCollision(layout, collision, l, isUserAction, compactType, cols);
         } else {
-            layout = moveElementAwayFromCollision(
-                layout,
-                l,
-                collision,
-                isUserAction,
-                compactType,
-                cols
-            );
+            layout = moveElementAwayFromCollision(layout, l, collision, isUserAction, compactType, cols);
         }
     }
 
@@ -480,14 +434,7 @@ export function moveElement(
  * @param  {LayoutItem} collidesWith Layout item we're colliding with.
  * @param  {LayoutItem} itemToMove   Layout item we're moving.
  */
-export function moveElementAwayFromCollision(
-    layout,
-    collidesWith,
-    itemToMove,
-    isUserAction,
-    compactType,
-    cols
-) {
+export function moveElementAwayFromCollision(layout, collidesWith, itemToMove, isUserAction, compactType, cols) {
     const compactH = compactType === "horizontal";
     // Compact vertically if not set to horizontal
     const compactV = compactType !== "horizontal";
@@ -506,14 +453,12 @@ export function moveElementAwayFromCollision(
             y: compactV ? Math.max(collidesWith.y - itemToMove.h, 0) : itemToMove.y,
             w: itemToMove.w,
             h: itemToMove.h,
-            i: "-1"
+            i: "-1",
         };
 
         // No collision? If so, we can go up there; otherwise, we'll end up moving down as normal
         if (!getFirstCollision(layout, fakeItem)) {
-            log(
-                `Doing reverse collision on ${itemToMove.i} up to [${fakeItem.x},${fakeItem.y}].`
-            );
+            log(`Doing reverse collision on ${itemToMove.i} up to [${fakeItem.x},${fakeItem.y}].`);
             return moveElement(
                 layout,
                 itemToMove,
@@ -553,14 +498,14 @@ export function setTransform({ top, left, width, height }) {
     // Replace unitless items with px
     const translate = `translate(${left}px,${top}px)`;
     return {
-        transform,
-        WebkitTransform,
-        MozTransform,
-        msTransform,
-        OTransform,
+        transform: translate,
+        WebkitTransform: translate,
+        MozTransform: translate,
+        msTransform: translate,
+        OTransform: translate,
         width: `${width}px`,
         height: `${height}px`,
-        position: "absolute"
+        position: "absolute",
     };
 }
 
@@ -570,7 +515,7 @@ export function setTopLeft({ top, left, width, height }) {
         left: `${left}px`,
         width: `${width}px`,
         height: `${height}px`,
-        position: "absolute"
+        position: "absolute",
     };
 }
 
@@ -593,7 +538,7 @@ export function sortLayoutItems(layout, compactType) {
  */
 export function sortLayoutItemsByRowCol(layout) {
     // Slice to clone array as sort modifies
-    return layout.slice(0).sort(function (a, b) {
+    return layout.slice(0).sort(function(a, b) {
         if (a.y > b.y || (a.y === b.y && a.x > b.x)) {
             return 1;
         } else if (a.y === b.y && a.x === b.x) {
@@ -610,7 +555,7 @@ export function sortLayoutItemsByRowCol(layout) {
  * Does not modify Layout.
  */
 export function sortLayoutItemsByColRow(layout) {
-    return layout.slice(0).sort(function (a, b) {
+    return layout.slice(0).sort(function(a, b) {
         if (a.x > b.x || (a.x === b.x && a.y > b.y)) {
             return 1;
         }
@@ -629,13 +574,7 @@ export function sortLayoutItemsByColRow(layout) {
  * @param  {?String} compact      Compaction option.
  * @return {Array}                Working layout.
  */
-export function synchronizeLayoutWithChildren(
-    initialLayout,
-    children,
-    cols,
-    compactType,
-    allowOverlap
-) {
+export function synchronizeLayoutWithChildren(initialLayout, children, cols, compactType, allowOverlap) {
     initialLayout = initialLayout || [];
 
     // Generate one layout item per child.
@@ -653,15 +592,13 @@ export function synchronizeLayoutWithChildren(
                 h: 1,
                 x: 0,
                 y: bottom(layout),
-                i: child.i
+                i: child.i,
             });
         }
     });
     // Correct the layout.
     const correctedLayout = correctBounds(layout, { cols });
-    return allowOverlap
-        ? correctedLayout
-        : compact(correctedLayout, compactType, cols);
+    return allowOverlap ? correctedLayout : compact(correctedLayout, compactType, cols);
 }
 
 /**
@@ -671,49 +608,29 @@ export function synchronizeLayoutWithChildren(
  * @param  {String} [contextName] Context name for errors.
  * @throw  {Error}                Validation error.
  */
-export function validateLayout(
-    layout,
-    contextName = "Layout"
-) {
+export function validateLayout(layout, contextName = "Layout") {
     const subProps = ["x", "y", "w", "h"];
-    if (!Array.isArray(layout))
-        throw new Error(contextName + " must be an array!");
+    if (!Array.isArray(layout)) throw new Error(contextName + " must be an array!");
     for (let i = 0, len = layout.length; i < len; i++) {
         const item = layout[i];
         for (let j = 0; j < subProps.length; j++) {
             if (typeof item[subProps[j]] !== "number") {
                 throw new Error(
-                    "ReactGridLayout: " +
-                    contextName +
-                    "[" +
-                    i +
-                    "]." +
-                    subProps[j] +
-                    " must be a number!"
+                    "ReactGridLayout: " + contextName + "[" + i + "]." + subProps[j] + " must be a number!"
                 );
             }
         }
         if (item.i && typeof item.i !== "string") {
-            throw new Error(
-                "ReactGridLayout: " + contextName + "[" + i + "].i must be a string!"
-            );
+            throw new Error("ReactGridLayout: " + contextName + "[" + i + "].i must be a string!");
         }
         if (item.static !== undefined && typeof item.static !== "boolean") {
-            throw new Error(
-                "ReactGridLayout: " +
-                contextName +
-                "[" +
-                i +
-                "].static must be a boolean!"
-            );
+            throw new Error("ReactGridLayout: " + contextName + "[" + i + "].static must be a boolean!");
         }
     }
 }
 
 // Legacy support for verticalCompact: false
-export function compactType(
-    props
-) {
+export function compactType(props) {
     const { verticalCompact, compactType } = props || {};
     return verticalCompact === false ? null : compactType;
 }
@@ -723,4 +640,4 @@ function log(...args) {
     console.log(...args);
 }
 
-export const noop = () => { };
+export const noop = () => {};
