@@ -76,8 +76,8 @@ export default {
                 arr.push({
                     x: (i * 2) % 12,
                     y: Math.floor(i / 6) * y,
-                    // w: Math.random() > 0.5 ? 2 : 4,
-                    w: 2,
+                    w: Math.random() > 0.5 ? 2 : 4,
+                    // w: 2,
                     h: y,
                     i,
                 });

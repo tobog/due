@@ -1,37 +1,12 @@
-// @flow
-// import type { Position } from "./utils";
-
-// export type PositionParams = {
-//     margin: [number, number],
-//     containerPadding: [number, number],
-//     containerWidth: number,
-//     cols: number,
-//     rowHeight: number,
-//     maxRows: number
-// };
-
-// Helper for generating column width
 export function calcGridColWidth(positionParams) {
     const { margin, containerPadding, containerWidth, cols } = positionParams;
-    return (
-        (containerWidth - margin[0] * (cols - 1) - containerPadding[0] * 2) / cols
-    );
+    return (containerWidth - margin[0] * (cols - 1) - containerPadding[0] * 2) / cols;
 }
 
-// This can either be called:
-// calcGridItemWHPx(w, colWidth, margin[0])
-// or
-// calcGridItemWHPx(h, rowHeight, margin[1])
-export function calcGridItemWHPx(
-    gridUnits,
-    colOrRowSize,
-    marginPx
-) {
+export function calcGridItemWHPx(gridUnits, colOrRowSize, marginPx) {
     // 0 * Infinity === NaN, which causes problems with resize contraints
     if (!Number.isFinite(gridUnits)) return gridUnits;
-    return Math.round(
-        colOrRowSize * gridUnits + Math.max(0, gridUnits - 1) * marginPx
-    );
+    return Math.round(colOrRowSize * gridUnits + Math.max(0, gridUnits - 1) * marginPx);
 }
 
 /**
@@ -44,14 +19,7 @@ export function calcGridItemWHPx(
  * @param  {Number}  h                      H coordinate in grid units.
  * @return {Position}                       Object containing coords.
  */
-export function calcGridItemPosition(
-    positionParams,
-    x,
-    y,
-    w,
-    h,
-    state
-) {
+export function calcGridItemPosition(positionParams, x, y, w, h, state) {
     const { margin, containerPadding, rowHeight } = positionParams;
     const colWidth = calcGridColWidth(positionParams);
     const out = {};
@@ -90,13 +58,7 @@ export function calcGridItemPosition(
  * @param  {Number} h                       H coordinate in grid units.
  * @return {Object}                         x and y in grid units.
  */
-export function calcXY(
-    positionParams,
-    top,
-    left,
-    w,
-    h
-) {
+export function calcXY(positionParams, top, left, w, h) {
     const { margin, cols, rowHeight, maxRows } = positionParams;
     const colWidth = calcGridColWidth(positionParams);
 
@@ -125,13 +87,7 @@ export function calcXY(
  * @param  {Number} y                       Y coordinate in grid units.
  * @return {Object}                         w, h as grid units.
  */
-export function calcWH(
-    positionParams,
-    width,
-    height,
-    x,
-    y
-) {
+export function calcWH(positionParams, width, height, x, y) {
     const { margin, maxRows, cols, rowHeight } = positionParams;
     const colWidth = calcGridColWidth(positionParams);
 
@@ -148,10 +104,6 @@ export function calcWH(
 }
 
 // Similar to _.clamp
-export function clamp(
-    num,
-    lowerBound,
-    upperBound
-) {
+export function clamp(num, lowerBound, upperBound) {
     return Math.max(Math.min(num, upperBound), lowerBound);
 }

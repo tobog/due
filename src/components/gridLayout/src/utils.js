@@ -1,71 +1,3 @@
-// // @flow
-
-// export type LayoutItem = {
-//     w: number,
-//     h: number,
-//     x: number,
-//     y: number,
-//     i: string,
-//     minW?: number,
-//     minH?: number,
-//     maxW?: number,
-//     maxH?: number,
-//     moved?: boolean,
-//     static?: boolean,
-//     draggable?: ?boolean,
-//     isResizable?: ?boolean,
-//     resizeHandles?: Array<"s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne">,
-//     isBounded?: ?boolean
-// };
-// export type Layout = $ReadOnlyArray<LayoutItem>;
-// export type Position = {
-//     left: number,
-//     top: number,
-//     width: number,
-//     height: number
-// };
-// export type ReactDraggableCallbackData = {
-//     node: HTMLElement,
-//     x?: number,
-//     y?: number,
-//     deltaX: number,
-//     deltaY: number,
-//     lastX?: number,
-//     lastY?: number
-// };
-
-// export type PartialPosition = { left: number, top: number };
-// export type DroppingPosition = { left: number, top: number, e: Event };
-// export type Size = { width: number, height: number };
-// export type GridDragEvent = {
-//     e: Event,
-//     node: HTMLElement,
-//     newPosition: PartialPosition
-// };
-// export type GridResizeEvent = { e: Event, node: HTMLElement, size: Size };
-// export type DragOverEvent = MouseEvent & {
-//     nativeEvent: {
-//         layerX: number,
-//         layerY: number,
-//     ...Event
-//     }
-// };
-
-// // Helpful port from TS
-// export type Pick<FromType, Properties: { [string]: 0 }> = $Exact <
-//     $ObjMapi < Properties, <K, V>(k: K, v: V) => $ElementType < FromType, K >>
-// >;
-
-// // All callbacks are of the signature (layout, oldItem, newItem, placeholder, e).
-// export type EventCallback = (
-//     Layout,
-//     oldItem: ?LayoutItem,
-//     newItem: ?LayoutItem,
-//     placeholder: ?LayoutItem,
-//     Event,
-//   ?HTMLElement
-// ) => void;
-// export type CompactType = ?("horizontal" | "vertical");
 
 /**
  * Return the bottom coordinate of the layout.
@@ -212,7 +144,8 @@ export function compact(layout, compactType, cols) {
 function resolveCompactionCollision(layout, item, moveToCoord, axis) {
     const sizeProp = axis === "x" ? "w" : "h";
     const itemIndex = layout.findIndex((layoutItem) => layoutItem.i === item.i);
-    item[axis] += 1;
+    // item[axis] += 1;
+    item[axis] = moveToCoord;
     // console.log(axis,sizeProp, { ...item }, moveToCoord);
     // Go through each item we collide with.
     for (let i = itemIndex + 1; i < layout.length; i++) {
@@ -229,7 +162,7 @@ function resolveCompactionCollision(layout, item, moveToCoord, axis) {
         }
     }
 
-    item[axis] = moveToCoord;
+    // item[axis] = moveToCoord;
 }
 
 /**
@@ -397,7 +330,6 @@ export function moveElement(layout, l, x, y, isUserAction, preventCollision, com
     // There was a collision; abort
     if (preventCollision && collisions.length) {
         if (!allowOverlap) {
-            log(`Collision prevented on ${l.i}, reverting.`);
             l.x = oldX;
             l.y = oldY;
             l.moved = false;
@@ -408,9 +340,6 @@ export function moveElement(layout, l, x, y, isUserAction, preventCollision, com
     // Move each item that collides away from this element.
     for (let i = 0, len = collisions.length; i < len; i++) {
         const collision = collisions[i];
-        log(
-            `Resolving collision between ${l.i} at [${l.x},${l.y}] and ${collision.i} at [${collision.x},${collision.y}]`
-        );
 
         // Short circuit so we can't infinite loop
         if (collision.moved) continue;
@@ -437,7 +366,7 @@ export function moveElement(layout, l, x, y, isUserAction, preventCollision, com
 export function moveElementAwayFromCollision(layout, collidesWith, itemToMove, isUserAction, compactType, cols) {
     const compactH = compactType === "horizontal";
     // Compact vertically if not set to horizontal
-    const compactV = compactType !== "horizontal";
+    const compactV = !compactH;
     const preventCollision = collidesWith.static; // we're already colliding (not for static items)
 
     // If there is enough space above the collision to put this element, move it there.
@@ -458,7 +387,6 @@ export function moveElementAwayFromCollision(layout, collidesWith, itemToMove, i
 
         // No collision? If so, we can go up there; otherwise, we'll end up moving down as normal
         if (!getFirstCollision(layout, fakeItem)) {
-            log(`Doing reverse collision on ${itemToMove.i} up to [${fakeItem.x},${fakeItem.y}].`);
             return moveElement(
                 layout,
                 itemToMove,
@@ -633,11 +561,6 @@ export function validateLayout(layout, contextName = "Layout") {
 export function compactType(props) {
     const { verticalCompact, compactType } = props || {};
     return verticalCompact === false ? null : compactType;
-}
-
-function log(...args) {
-    // eslint-disable-next-line no-console
-    console.log(...args);
 }
 
 export const noop = () => {};

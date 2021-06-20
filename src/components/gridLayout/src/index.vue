@@ -99,8 +99,10 @@ export default {
         useCSSTransforms: Boolean,
         transformScale: Boolean,
         compactType: {
+            type: String,
             default: 'vertical'
-        }
+        },
+        containerPadding: Array
     },
     data() {
         return {
