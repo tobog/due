@@ -1,17 +1,16 @@
+import LoadingBar from "./loading-bar.vue";
 
-
-import LoadingBar from './loading-bar.vue';
-
-LoadingBar.newInstance = function (props = {}, vmOptions = {}) {
+LoadingBar.newInstance = function(props = {}, vmOptions = {}) {
     let Instance = new global.__VUE__({
-        mixins: [vmOptions],
-        render(h) {
-            let render = props.render,vNode
-            delete props.render;
-            if (typeof vNode === 'function') vNode = render(h)
-            return h(LoadingBar, { attrs: props }, vNode ? [vNode] : void 0)
-        }
-    }),
+            mixins: [vmOptions],
+            render(h) {
+                let render = props.render,
+                    vNode;
+                delete props.render;
+                if (typeof vNode === "function") vNode = render(h);
+                return h(LoadingBar, { attrs: props }, vNode ? [vNode] : void 0);
+            },
+        }),
         component = Instance.$mount(),
         element = component.$el,
         child = Instance.$children[0];
@@ -32,7 +31,7 @@ LoadingBar.newInstance = function (props = {}, vmOptions = {}) {
                 // console.log(error)
             }
             Instance = element = component = child = null;
-        }
+        },
     };
 };
 

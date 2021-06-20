@@ -1,42 +1,23 @@
 <template>
-    <vRow class="demo-layout" flex>
-        <vCol span="24" class="demo-header">
+    <Demo :config="getConfig" :code="getCode">
+        <template slot="header">
             <h2>代码示例 (Loading 加载中)</h2>
             <h4 class="padding-top-10">当区块正在获取数据中时可使用，适当的等待动画可以提升用户体验。</h4>
-        </vCol>
-        <vCol lg="14" span="24" class="demo-form">
-            <Formedit :formdata="getBase" v-model="formData"></Formedit>
-        </vCol>
-        <vCol lg="10" span="24" class="demo-view">
-            <vSwitch v-model="show" class="margin-bottom-10">
-                <span slot="open">开</span>
-                <span slot="close">关</span>
-            </vSwitch>
-            <section v-if="show">
-                <vLoading v-bind="formData" style="border:1px solid #ccc">
-                    <div slot="label">title</div>
-                </vLoading>
-                <vButton @click="handleLoading('show')">show</vButton>
-                <vButton @click="handleLoading('init')">init</vButton>
-                <vButton @click="handleLoading('destroy')">destroy</vButton>
-                <vButton @click="handleLoading('hide')">hide</vButton>
-            </section>
-        </vCol>
-        <vCol span="24" class="demo-code">
-            <pre v-highlight>
-				<code v-text="getFormatCode" class="html"></code>
-			</pre>
-        </vCol>
-        <vCol span="24" class="demo-props">
-            <h2 class="demo-header">Props & Events</h2>
-            <vTable :columns="getTableColumns" :data="compProps" class="demo-table" border stripe></vTable>
-        </vCol>
-    </vRow>
+        </template>
+        <template v-slot="config">
+            <vLoading v-bind="formData" style="border:1px solid #ccc">
+                <div slot="label">title</div>
+            </vLoading>
+            <vButton @click="handleLoading('show', config)">show</vButton>
+            <vButton @click="handleLoading('init', config)">init</vButton>
+            <vButton @click="handleLoading('destroy', config)">destroy</vButton>
+            <vButton @click="handleLoading('hide', config)">hide</vButton>
+        </template>
+    </Demo>
 </template>
 
 <script>
 export default {
-    // ${this.getCodeString(this.formData)}
     data() {
         return {
             val: "",
@@ -44,140 +25,121 @@ export default {
     },
     computed: {
         getCode() {
-            return `<vLoading v-bind="formData">
-						<div slot="label">title</div>
-					</vLoading>
-					<vButton @click="handleLoading('show')">show</vButton>
-					<vButton @click="handleLoading('init')">init</vButton>
-					<vButton @click="handleLoading('destroy')">destroy</vButton>
-					<vButton @click="handleLoading('hide')">hide</vButton>`;
+            return ``;
         },
-        getBase() {
+        getConfig() {
             return [
                 {
+                    showConfig: true,
                     label: "是否固定",
                     key: "fix",
+                    explain: "是否固定，需要父级有relative或absolute",
+                    dataType: "Boolean",
                     tag: "vSwitch",
+                    demoDefault: false,
                     default: false,
                 },
                 {
+                    showConfig: true,
                     label: "全局覆盖:全屏",
                     key: "fullscreen",
+                    explain: "位于body下全局覆盖，是否可以全屏",
+                    dataType: "Boolean",
                     tag: "vSwitch",
+                    demoDefault: false,
                     default: false,
                 },
                 {
-                    label: "初始化显示loading",
+                    showConfig: true,
+                    label: "初始化显示",
                     key: "loading",
+                    explain: "是否初始化显示loading",
+                    dataType: "Boolean",
                     tag: "vSwitch",
-                    default: true,
+                    demoDefault: false,
+                    default: false,
                 },
                 {
+                    showConfig: true,
                     label: "可关闭",
                     key: "closable",
+                    explain: "是否可关闭",
+                    dataType: "Boolean",
                     tag: "vSwitch",
+                    demoDefault: true,
                     default: true,
                 },
                 {
+                    showConfig: true,
                     label: "锁定屏幕的滚动",
                     key: "lock",
+                    explain: "是否锁定屏幕的滚动",
+                    dataType: "Boolean",
                     tag: "vSwitch",
+                    demoDefault: true,
                     default: true,
+                },
+                {
+                    showConfig: true,
+                    label: "覆盖的 DOM 节点",
+                    key: "target",
+                    explain: "Loading 需要覆盖的 DOM 节点",
+                    dataType: "String|Element",
+                    tag: "vInput",
+                    demoDefault: "",
+                    default: "",
+                },
+                {
+                    // showConfig: true,
+                    label: "延迟时间",
+                    key: "delay",
+                    explain: "延迟显示时间",
+                    dataType: "Number",
+                    tag: "vInputNumber",
+                    demoDefault: "",
+                    default: "",
                 },
                 {
                     label: "自定义文本",
                     key: "text",
-                    tag: "vInput",
+                    explain: "自定义文本内容",
+                    dataType: "String",
                     default: "",
                 },
                 {
-                    label: "覆盖的 DOM 节点",
-                    key: "target",
-                    tag: "vInput",
+                    label: "自定义文本",
+                    key: "$slot:text",
+                    explain: "自定义渲染文本内容",
+                    dataType: "VNode",
                     default: "",
                 },
                 {
-                    label: "延迟时间",
-                    key: "delay",
-                    tag: "vInputNumber",
-                    // default: ""
-                },
-            ];
-        },
-        compProps() {
-            return [
-                {
-                    prop: "fix",
-                    explain: "是否固定，需要父级有relative或absolute",
-                    type: "Boolean",
-                    default: "-",
-                },
-                {
-                    prop: "fullscreen",
-                    explain: "位于body下全局覆盖，是否可以全屏",
-                    type: "Boolean",
-                    default: "-",
-                },
-                {
-                    prop: "loading",
-                    explain: "是否显示loading",
-                    type: "Boolean",
-                    default: "-",
-                },
-                {
-                    prop: "closable",
-                    explain: "是否可关闭",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    explain: "锁定屏幕的滚动",
-                    prop: "lock",
-                    type: "Boolean",
-                    default: "true",
-                },
-                {
-                    explain: "Loading 需要覆盖的 DOM 节点",
-                    prop: "target",
-                    type: "String|Element",
+                    label: "自定义loading",
+                    key: "$slot:default",
+                    explain: "自定义渲染loading",
+                    dataType: "VNode",
                     default: "",
                 },
                 {
-                    explain: "自定义文本",
-                    prop: "text||$slot:text",
-                    type: "String|VNode",
-                    default: "",
-                },
-                {
-                    explain: "自定义loading",
-                    prop: "$slot:default",
-                    type: "VNode",
-                    default: "",
-                },
-                {
-                    explain: "延迟时间",
-                    prop: "delay",
-                    type: "Number",
-                    default: "",
-                },
-                {
-                    prop: "on-close",
+                    label: "事件",
+                    key: "on-close",
                     explain: "关闭事件",
-                    type: "Event",
-                    default: "()=>{}",
+                    dataType: "Function:Event",
+                    default: "-",
                 },
                 {
-                    prop: "config|init|hide|show|destroy|get",
-                    explain: "通过this.$VLoading：js直接调用以下方法来使用组件,提供name处理特定loading",
-                    type: "Function:options=》Instances.name默认vue._uid",
+                    label: "事件",
+                    key: "config|init|hide|show|destroy|get",
+                    explain: "通过this.$Loading：js直接调用以下方法来使用组件,提供name处理特定loading",
+                    dataType: "Function:options=》Instances.name默认vue._uid",
                     default: "-",
                 },
             ];
         },
     },
     methods: {
-        handleLoading(type) {
-            this.$VLoading[type]();
+        handleLoading(type, config) {
+            this.$VLoading[type](config);
         },
     },
 };
