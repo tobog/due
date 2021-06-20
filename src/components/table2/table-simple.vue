@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import Loading from "../loading/loading.vue";
+import Loading from "../loading/src/loading.vue";
 import Thead from "./thead";
 import Tbody from "./tbody";
 import Colgroups from "./colgroups";

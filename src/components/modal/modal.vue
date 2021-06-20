@@ -78,7 +78,7 @@ import {EventListener, Fullscreen, DragMove} from "../../utils/dom"
 import {unit, validVal} from "../../utils/tool"
 import Icons from "../icons/src/index"
 import Button from "../button/src/index"
-import Loading from "../loading/loading"
+import Loading from "../loading/src/loading.vue"
 import langMinix from "../../mixins/lang"
 export default {
     name: "Modal",

@@ -27,7 +27,7 @@
 <script>
 import { ScrollLoad } from "../../utils/dom"
 import { unit } from "../../utils/tool"
-import Loading from "../loading/loading.vue"
+import Loading from "../loading/src/loading.vue"
 export default {
     name: "Scroll",
     components: {
