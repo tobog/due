@@ -41,6 +41,9 @@ import GridLayoutItem from "./gridLayout/src/item"
 import Icon from "./icons/src/index"
 
 import Loading from "./loading/src/index"
+import LoadingBar from "./loading-bar/src/index.js"
+
+
 
 import Layout from "./layout/index"
 import Content from "./layout/content"
@@ -73,7 +76,7 @@ import Upload from "./upload/index"
 import Progress from "./progress/index"
 
 
-import LoadingBar from "./loading-bar/index.js"
+
 import Step from "./steps/step"
 import Steps from "./steps/steps"
 import Tooltip from "./tooltip/index"
